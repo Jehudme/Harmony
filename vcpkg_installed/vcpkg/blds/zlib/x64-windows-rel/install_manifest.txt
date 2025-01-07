@@ -1,0 +1,4 @@
+C:/Users/jehud/source/repos/Harmony/vcpkg_installed/vcpkg/pkgs/zlib_x64-windows/lib/zlib.lib
+C:/Users/jehud/source/repos/Harmony/vcpkg_installed/vcpkg/pkgs/zlib_x64-windows/bin/zlib1.dll
+C:/Users/jehud/source/repos/Harmony/vcpkg_installed/vcpkg/pkgs/zlib_x64-windows/include/zconf.h
+C:/Users/jehud/source/repos/Harmony/vcpkg_installed/vcpkg/pkgs/zlib_x64-windows/include/zlib.h
