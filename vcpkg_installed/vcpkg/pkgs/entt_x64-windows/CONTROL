@@ -1,0 +1,7 @@
+Package: entt
+Version: 3.13.2
+Depends: vcpkg-cmake, vcpkg-cmake-config
+Architecture: x64-windows
+Multi-Arch: same
+Abi: 4313e62123efc485cc700cad310b61875bcc0da2883968cc802e9c17ed7ceb19
+Description: Gaming meets modern C++ - a fast and reliable entity-component system and much more

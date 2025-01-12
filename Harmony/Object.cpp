@@ -36,6 +36,7 @@ namespace Harmony {
         catch (const std::exception& e) {
             HM_LOGGER_ERROR("Error while setting ID for Object with ID [{}] [{}]: {}", typeId_, uniqueID_, e.what());
             throw;
+
         }
     }
 
