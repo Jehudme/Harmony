@@ -1,6 +1,7 @@
 {
   "dependencies": [
+    "sfml",
     "spdlog",
-    "sfml"
+    "entt"
   ]
 }
