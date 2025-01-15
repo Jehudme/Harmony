@@ -1,5 +1,5 @@
-#include "Harmony/Object.h"
-
-int main() {
-	auto object = Harmony::Core::Object::create<Harmony::Core::Object>();
+#include "FlappyBird.h"
+int main()
+{
+	Harmony::Core::Object::create<FlappyBird::Application>()->run();
 }
