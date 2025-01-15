@@ -1,182 +1,76 @@
 #include "pch.h"
 #include "SceneNode.h"
+#include <algorithm>
 
-namespace Harmony {
+namespace Harmony::Core {
 
-    SceneNode::SceneNode()
-        : Object(INVALID_UNIQUE_ID), parent_(nullptr)
-    {
-        initialize(*DefaultConfiguration);
+    // Constructor
+    SceneNode::SceneNode(const uint64_t& uniqueId)
+        : Object(uniqueId), m_parent(nullptr), m_isDrawEnabled(true), m_isUpdateEnabled(true) {
     }
 
-    SceneNode::SceneNode(const uint64_t& configurationId)
-        : Object(configurationId), parent_(nullptr)
-    {
-        initialize(*Object::find<Configuration>(configurationId));
-    }
-
-    SceneNode::SceneNode(const std::shared_ptr<Configuration>& configuration)
-        : Object(configuration->getParameterOrDefault<uint64_t>("unique_id", INVALID_UNIQUE_ID)), parent_(nullptr)
-    {
-        initialize(*configuration);
-    }
-
+    // Attach a child node
     void SceneNode::attachChild(std::shared_ptr<SceneNode> sceneNode) {
-        try {
-            if (!sceneNode) {
-                HM_LOGGER_WARN("Attempted to attach a null child to SceneNode with ID: {}", getID());
-                return;
-            }
-
-            sceneNode->parent_ = this;
-            children_.emplace_back(std::move(sceneNode));
-            HM_LOGGER_INFO("Child SceneNode attached to parent with ID: {}", getID());
-        }
-        catch (const std::exception& e) {
-            HM_LOGGER_ERROR("Failed to attach child to SceneNode with ID: {}: {}", getID(), e.what());
-            throw;
+        if (sceneNode) {
+            sceneNode->m_parent = this;
+            m_children.push_back(std::move(sceneNode));
         }
     }
 
+    // Detach a child node
     void SceneNode::detachChild(std::shared_ptr<SceneNode> sceneNode) {
-        try {
-            if (!sceneNode) {
-                HM_LOGGER_WARN("Attempted to detach a null child from SceneNode with ID: {}", getID());
-                return;
-            }
+        if (!sceneNode) return;
 
-            auto it = std::remove(children_.begin(), children_.end(), sceneNode);
-            if (it != children_.end()) {
-                (*it)->parent_ = nullptr;
-                children_.erase(it);
-                HM_LOGGER_INFO("Child SceneNode detached from parent with ID: {}", getID());
-            }
-            else {
-                HM_LOGGER_WARN("Child SceneNode not found for detachment in parent with ID: {}", getID());
-            }
-        }
-        catch (const std::exception& e) {
-            HM_LOGGER_ERROR("Failed to detach child from SceneNode with ID: {}: {}", getID(), e.what());
-            throw;
+        auto it = std::find(m_children.begin(), m_children.end(), sceneNode);
+        if (it != m_children.end()) {
+            (*it)->m_parent = nullptr; // Reset the parent pointer
+            m_children.erase(it);      // Remove the child from the vector
         }
     }
 
+    // Get global position
     sf::Vector2f SceneNode::getGlobalPosition() {
-        try {
-            // Start with the local position of this node
-            sf::Vector2f globalPosition = getPosition();
-
-            // Traverse up the hierarchy, accumulating parent transformations
-            SceneNode* currentParent = parent_;
-            while (currentParent != nullptr) {
-                globalPosition += currentParent->getPosition();
-                currentParent = currentParent->parent_;
-            }
-
-            HM_LOGGER_TRACE("Global position calculated: ({}, {})", globalPosition.x, globalPosition.y);
-            return globalPosition;
+        sf::Transform transform = getTransform();
+        if (m_parent) {
+            transform = m_parent->getTransform() * transform;
         }
-        catch (const std::exception& e) {
-            HM_LOGGER_ERROR("Error calculating global position: {}", e.what());
-            throw;
-        }
+        return transform.transformPoint(0.f, 0.f);
     }
 
+    // Execute a function on the node and its arguments
     template<typename... Args>
     void SceneNode::execute(const std::function<void(SceneNode&, Args...)>& func, Args&&... args) {
-        try {
-            HM_LOGGER_DEBUG("Executing function on SceneNode with ID: {}", getID());
+        if (func) {
             func(*this, std::forward<Args>(args)...);
-
-            for (const auto& child : children_) {
-                if (child) {
-                    child->execute(func, std::forward<Args>(args)...);
-                }
-            }
-        }
-        catch (const std::exception& e) {
-            HM_LOGGER_ERROR("Error executing function on SceneNode with ID: {}: {}", getID(), e.what());
-            throw;
         }
     }
 
-    void SceneNode::addChildConfigurationID(std::shared_ptr<Configuration> configuration_parent, std::shared_ptr<Configuration> configuration_child) {
-        const uint64_t& childConfigurationId = configuration_child->getID();
-        try {
-            auto childIds = configuration_parent->getParameterOrDefault<std::vector<uint64_t>>("child_configuration_ids", {});
-            childIds.push_back(childConfigurationId);
-            configuration_parent->setParameter("child_configuration_ids", childIds);
-            HM_LOGGER_INFO("Added child configuration ID {} to parent configuration.", childConfigurationId);
-        }
-        catch (const std::exception& e) {
-            HM_LOGGER_ERROR("Error adding child configuration ID to parent: {}", e.what());
-            throw;
+    // Draw the scene node
+    void SceneNode::draw(sf::RenderTarget& target, sf::RenderStates states) const {
+        states.transform *= getTransform();
+        if (m_isDrawEnabled) {
+            drawCurrent(target, states);
+            for (const auto& child : m_children) {
+                child->draw(target, states);
+            }
         }
     }
 
-    void SceneNode::rmvChildConfigurationID(std::shared_ptr<Configuration> configuration_parent, std::shared_ptr<Configuration> configuration_child) {
-        try {
-            const uint64_t& childConfigurationId = configuration_child->getID();
-            auto childIds = configuration_parent->getParameterOrDefault<std::vector<uint64_t>>("child_configuration_ids", {});
-            auto it = std::remove(childIds.begin(), childIds.end(), childConfigurationId);
-            if (it != childIds.end()) {
-                childIds.erase(it);
-                configuration_parent->setParameter("child_configuration_ids", childIds);
-                HM_LOGGER_INFO("Removed child configuration ID {} from parent configuration.", childConfigurationId);
+    // Draw the current node
+    void SceneNode::drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const {
+    }
+
+    // Update the scene node
+    void SceneNode::update(const sf::Time& time) {
+        if (m_isUpdateEnabled) {
+            updateCurrent(time);
+            for (auto& child : m_children) {
+                child->update(time);
             }
-            else {
-                HM_LOGGER_WARN("Child configuration ID {} not found in parent configuration.", childConfigurationId);
-            }
-        }
-        catch (const std::exception& e) {
-            HM_LOGGER_ERROR("Error removing child configuration ID from parent: {}", e.what());
-            throw;
         }
     }
 
-    void SceneNode::initialize(const Configuration& configuration) {
-        try {
-            // Set Transformable properties
-            const float posX = configuration.getParameterOrDefault<float>("position_x", 0.0f);
-            const float posY = configuration.getParameterOrDefault<float>("position_y", 0.0f);
-            const float rotation = configuration.getParameterOrDefault<float>("rotation", 0.0f);
-            const float scaleX = configuration.getParameterOrDefault<float>("scale_x", 1.0f);
-            const float scaleY = configuration.getParameterOrDefault<float>("scale_y", 1.0f);
-            const float originX = configuration.getParameterOrDefault<float>("origin_x", 0.0f);
-            const float originY = configuration.getParameterOrDefault<float>("origin_y", 0.0f);
-
-            setPosition(posX, posY);
-            setRotation(rotation);
-            setScale(scaleX, scaleY);
-            setOrigin(originX, originY);
-
-            HM_LOGGER_INFO("Transformable properties initialized: position=({}, {}), rotation={}, scale=({}, {}), origin=({}, {})",
-                posX, posY, rotation, scaleX, scaleY, originX, originY);
-
-            // Attach child SceneNodes
-            const std::vector<uint64_t> childrenIds = configuration.getParameterOrDefault("child_configuration_ids", std::vector<uint64_t>());
-            for (const uint64_t& childId : childrenIds) {
-                try {
-                    auto childConfig = Object::find<Configuration>(childId);
-                    if (!childConfig) {
-                        HM_LOGGER_WARN("Child configuration with ID {} not found. Skipping.", childId);
-                        continue;
-                    }
-
-                    attachChild(childConfig->create<SceneNode>());
-                    HM_LOGGER_INFO("Successfully attached child SceneNode with configuration ID: {}", childId);
-                }
-                catch (const std::exception& e) {
-                    HM_LOGGER_ERROR("Error during SceneNode initialization for child ID: {}. Error: {}", childId, e.what());
-                    throw;
-                }
-            }
-        }
-        catch (const std::exception& e) {
-            HM_LOGGER_CRITICAL("Error initializing SceneNode with ID: {}. Exception: {}", getID(), e.what());
-            throw;
-        }
+    void SceneNode::updateCurrent(const sf::Time& time) {
     }
 
-} // namespace Harmony
-
+} // namespace Harmony::Core

@@ -1,19 +1,14 @@
 #pragma once
-
 #include "Object.h"
-#include "Configuration.h"
-#include "Logger.h"
-#include <vector>
-#include <functional>
-#include <memory>
 
-namespace Harmony {
+namespace Harmony::Core {
+    class Scene;
 
-    class SceneNode : public Object, sf::Transformable {
+    class SceneNode : public Object, public sf::Transformable, public sf::Drawable {
     public:
-        SceneNode();
-          SceneNode(const uint64_t& configurationId);
-          SceneNode(const std::shared_ptr<Configuration>& configuration);
+        friend Scene;
+
+        SceneNode(const uint64_t& uniqueId = Utilities::Random::generateId());
 
         void attachChild(std::shared_ptr<SceneNode> sceneNode);
         void detachChild(std::shared_ptr<SceneNode> sceneNode);
@@ -23,17 +18,18 @@ namespace Harmony {
         template<typename... Args>
         void execute(const std::function<void(SceneNode&, Args...)>& func, Args&&... args);
 
-        static void addChildConfigurationID(std::shared_ptr<Configuration> configuration_parent, std::shared_ptr<Configuration> configuration_child);
-        static void rmvChildConfigurationID(std::shared_ptr<Configuration> configuration_parent, std::shared_ptr<Configuration> configuration_child);
+    protected:
+        virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
+        virtual void drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const;
 
-    private:
-        void initialize(const Configuration& configuration); // Implementation left for you
+        virtual void update(const sf::Time& time);
+        virtual void updateCurrent(const sf::Time& time);
 
     protected:
-        std::vector<std::shared_ptr<SceneNode>> children_;
-        SceneNode* parent_ = nullptr;
+        std::vector<std::shared_ptr<SceneNode>> m_children;
+        SceneNode* m_parent = nullptr;
+        bool m_isDrawEnabled;
+        bool m_isUpdateEnabled;
     };
 
 } // namespace Harmony
-
-

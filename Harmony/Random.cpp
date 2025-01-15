@@ -3,24 +3,18 @@
 ////////////////////////////////////////////////////////////////////////////////////
 
 #include "pch.h"
-#include "Object.h"
+#include "Random.h"
+#include "random"
 
 ////////////////////////////////////////////////////////////////////////////////////
 // Definition
 ////////////////////////////////////////////////////////////////////////////////////
 
-void Harmony::Core::Object::retainSelf()
+uint64_t Harmony::Utilities::Random::generateId()
 {
-	m_retainedObjects[this] = shared_from_this();
-}
+    static std::random_device rd;
+    static std::mt19937_64 engine(rd());
+    static std::uniform_int_distribution<uint64_t> dist;
 
-void Harmony::Core::Object::releaseSelf()
-{
-	if (m_retainedObjects.contains(this))
-		m_retainedObjects.erase(this);
-}
-
-Harmony::Core::Object::Object(const uint64_t& uniqueId) :
-	uniqueId(uniqueId)
-{
+    return dist(engine);
 }

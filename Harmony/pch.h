@@ -7,7 +7,21 @@
 #ifndef PCH_H
 #define PCH_H
 
-// add headers that you want to pre-compile here
-#include "include.h"
+#include <unordered_map>
+#include <memory>
+#include <map>
+#include <any>
+#include <assert.h>
+#include <vector>
+#include <random>
+#include <algorithm>
+#include <array>
+#include <string>
+#include <optional>
+#include <functional>
+#include <fstream>
+#include <stdexcept>
+
+#include <SFML/Graphics.hpp>
 
 #endif //PCH_H

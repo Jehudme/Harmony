@@ -1,33 +1,32 @@
 #pragma once
 
-#include "Configuration.h"
-#include <SFML/Graphics.hpp>
-#include <memory>
-#include "Logger.h"
+#include "StateManager.h"
+#include <SFML/Graphics/RenderWindow.hpp>
+#include <SFML/System/Clock.hpp>
 
-namespace Harmony {
+namespace Harmony::Core {
 
-    class Engine : public Object {
+    class Engine {
     public:
-          Engine();
-          Engine(const uint64_t& configuration_id);
-          Engine(const std::shared_ptr<Configuration>& configuration);
+        Engine(const uint64_t& uniqueId = Utilities::Random::generateId());
 
+        // Run the main game loop
         void run();
 
     private:
-        void initialize(const Configuration& configuration);
+        // Event handling method
+        void event();
 
-        virtual void event();
-        virtual void update();
-        virtual void draw();
+        // Update method for updating the current active state
+        void update();
 
-    protected:
+        // Draw method for drawing the current active state
+        void draw();
 
-        sf::RenderWindow renderWindow_;
-        sf::Clock clock_;
+    public:
+        sf::RenderWindow renderWindow; // The window to render to
+        sf::Clock clock;               // Clock to track time between frames
+        StateManager stateManager;     // Manages the states of the game (e.g., GameState, PauseState)
     };
 
-} // namespace Harmony
-
-
+}
