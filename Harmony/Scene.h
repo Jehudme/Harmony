@@ -15,14 +15,15 @@ namespace Harmony::Core
 		friend State;
 
 	private:
-		virtual void onEnter();
-		virtual void onExit();
+		void onEnter();
+		void onExit();
+
+		virtual void onEnterCurrent();
+		virtual void onExitCurrent();
 
 	public:
 		sf::View view;
-
-	private:
-		std::shared_ptr<SceneNode> m_sceneGraph;
+		std::shared_ptr<SceneNode> sceneGraph;
 	};
 }
 

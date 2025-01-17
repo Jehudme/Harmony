@@ -53,6 +53,11 @@ namespace Harmony::Core {
             m_renderBuffer.pop();
         }
     }
+    
+    void State::clearBuffer() {
+        while (!m_renderBuffer.empty())
+            m_renderBuffer.pop();
+    }
 
     bool State::isSceneActive(const std::string& sceneName) const {
         return m_scenes.find(sceneName) != m_scenes.end();

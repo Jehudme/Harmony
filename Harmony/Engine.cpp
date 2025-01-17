@@ -33,10 +33,13 @@ namespace Harmony::Core
 
     // Handle events (user input, window events)
     void Engine::event() {
+        if (!displayWindow)
+            return;
+
         sf::Event sfEvent;
-        while (std::dynamic_pointer_cast<sf::RenderWindow>(renderTarget)->pollEvent(sfEvent)) {
+        while (std::static_pointer_cast<sf::RenderWindow>(renderTarget)->pollEvent(sfEvent)) {
             if (sfEvent.type == sf::Event::Closed) {
-                std::dynamic_pointer_cast<sf::RenderWindow>(renderTarget)->close();
+                std::static_pointer_cast<sf::RenderWindow>(renderTarget)->close();
             }
         }
     }

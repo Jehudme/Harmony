@@ -17,6 +17,7 @@ namespace Harmony::Core {
         std::shared_ptr<Scene> getScene(const std::string& sceneName) const;
         void switchToScene(const std::string& sceneName);
         void popScene();
+        void clearBuffer();
         bool isSceneActive(const std::string& sceneName) const;
 
     private:

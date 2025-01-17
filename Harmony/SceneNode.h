@@ -1,7 +1,6 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 
-#include "Event.h"
 #include "Object.h"
 
 namespace Harmony::Core
@@ -23,22 +22,47 @@ namespace Harmony::Core
 		sf::Vector2f getGlobalPosition();
 		std::shared_ptr<SceneNode> getRootNode();
 
-	public:
 		void draw(sf::RenderTarget& renderTarget, sf::RenderStates state) const override;
 		void update(const sf::Time& time);
+
+		void onEnter(Scene& scene);
+		void onExit(Scene& scene);
+
+		friend Scene;
 
 	private:
 		virtual void drawCurrent(sf::RenderTarget& renderTarget, sf::RenderStates state) const;
 		virtual void updateCurrent(const sf::Time& time);
 
-	private:
+		virtual void onEnterCurrent(Scene& scene);
+		virtual void onExitCurrent(Scene& scene);
+
+		void updateTransform(const sf::Time& time);
+
+	public:
 		bool isDrawEnable;
 		bool isUpdateEnable;
 
-		SceneNode* m_parent;
-		Scene* m_scene;
+		SceneNode* parentNode;
+		Scene* currentScene;
 
+		float rotationVelocity;
+		float rotationAcceleration;
+
+		sf::Vector2f positionVelocity;
+		sf::Vector2f positionAcceleration;
+
+		std::shared_ptr<sf::Drawable> drawable;
+
+	private:
 		std::vector<std::shared_ptr<SceneNode>> m_children;
 	};
+}
+
+namespace Harmony::Utilities
+{
+	sf::FloatRect getRect(const std::shared_ptr<Core::SceneNode> node);
+	bool intersect(const std::shared_ptr<Core::SceneNode> node1, const std::shared_ptr<Core::SceneNode> node2);
+
 }
 

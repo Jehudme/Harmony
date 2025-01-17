@@ -1,5 +1,5 @@
-#include "FlappyBird.h"
+#include "Pong.h"
 int main()
 {
-	Harmony::Core::Object::create<FlappyBird::Application>()->run();
+	Pong::run();
 }
