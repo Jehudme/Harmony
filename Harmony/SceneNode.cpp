@@ -100,10 +100,12 @@ namespace Harmony::Core {
     }
 
     void SceneNode::update(const sf::Time& time) {
+        auto test = std::vector<std::shared_ptr<Object>>();
         if (isUpdateEnable) {
             updateCurrent(time);
             updateTransform(time);
-            for (const auto& child : m_children) {
+            for (const std::shared_ptr<SceneNode> child : m_children) {
+                test.push_back(child);
                 child->update(time);
             }
         }

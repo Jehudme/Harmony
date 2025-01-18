@@ -12,6 +12,8 @@ namespace Harmony::Core
 		void update(const sf::Time& time);
 		void draw(sf::RenderTarget& renderTarget, sf::RenderStates states) const override;
 		
+		void reset();
+
 		friend State;
 
 	private:

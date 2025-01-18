@@ -16,16 +16,22 @@ void Harmony::Core::Scene::draw(sf::RenderTarget& renderTarget, sf::RenderStates
 	renderTarget.draw(*sceneGraph, states);
 }
 
+void Harmony::Core::Scene::reset()
+{
+	sceneGraph = Object::create<SceneNode>();
+}
+
 void Harmony::Core::Scene::onEnter()
 {
-	sceneGraph->onEnter(*this);
 	onEnterCurrent();
+	sceneGraph->onEnter(*this);
 }
 
 void Harmony::Core::Scene::onExit()
 {
 	sceneGraph->onExit(*this);
 	onExitCurrent();
+	reset();
 }
 
 void Harmony::Core::Scene::onEnterCurrent() {}
