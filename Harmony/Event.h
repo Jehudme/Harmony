@@ -4,69 +4,63 @@
 #include <optional>
 #include <functional>
 #include <queue>
+#include <string>
 
 #include "Object.h"
 
-namespace Harmony
-{
-	class EventQueue;
+namespace Harmony::Core {
 
-	class Event : public Core::Object
-	{
-	public:
-		Event(const std::string& type, const uint64_t& uniqueId = NULL);
+    class Event_t : public Core::Object {
+    public:
+        Event_t(const std::string& type = "Unknown", const uint64_t& uniqueId = 0);
 
-		const std::string getType() const;
+        virtual void execute();
 
-		void setFunction(const std::function<void(const Event&)>& function);
-		void executeFunction();
+        template<typename Type>
+        void setOption(const std::string& name, const Type& option);
 
-		template<typename Type>
-		std::optional<Type> getData(const std::string& name) const;
+        template<typename Type>
+        std::optional<Type> getOption(const std::string& name) const;
 
-		template<typename Type>
-		void setData(const std::string& name, const Type& data);
+    public:
+        const std::string type;
+        std::function<void(const Event_t&)> function;
 
-		friend EventQueue;
 
-	private:
-		const std::string m_type;
-		std::function<void(const Event&)> m_function;
-		std::map<std::string, std::any> m_dataMap;
-	};
+    private:
+        std::map<std::string, std::optional<std::any>> m_options;
+    };
 
-	class EventQueue : public Core::Object
-	{
-	public:
-		EventQueue(const uint64_t& uniqueId = NULL);
+    class EventPool : public Core::Object
+    {
+    public:
+        EventPool() = default;
 
-		void addEvent(const std::shared_ptr<Event>& event);
-		void processEvents();
-		void clearEvents();
+        void addEvent(const std::shared_ptr<Event_t> event);
+        void handleEvent();
 
-		bool hasEvents() const;
+    private:
+        std::queue<std::shared_ptr<Event_t>> m_events;
+    };
 
-	private:
-		std::queue<std::shared_ptr<Event>> m_eventQueue;
-	};
-}
+    template<typename Type>
+    void Harmony::Core::Event_t::setOption(const std::string& name, const Type& option) {
+        m_options[name] = std::make_any<Type>(option);
+    }
 
-template<typename Type>
-inline std::optional<Type> Harmony::Event::getData(const std::string& name) const
-{
-	if (!m_dataMap.contains(name))
-		return std::nullopt;
+    template<typename Type>
+    std::optional<Type> Harmony::Core::Event_t::getOption(const std::string& name) const {
+        auto it = m_options.find(name);
+        if (it == m_options.end() || !it->second.has_value())
+            return std::nullopt;
 
-	try {
-		return std::make_optional<Type>(std::any_cast<Type>(m_dataMap[name]));
-	} catch (const std::exception&) {
-		return std::nullopt;
-	}
-}
+        try {
+            return std::any_cast<Type>(it->second.value());
+        }
+        catch (const std::bad_any_cast&) {
+            return std::nullopt;
+        }
+    }
 
-template<typename Type>
-inline void Harmony::Event::setData(const std::string& name, const Type& data)
-{
-	m_dataMap[name] = std::make_any<Type>(data);
 }
 

@@ -37,6 +37,12 @@ namespace Harmony::Core {
         return nullptr;
     }
 
+    std::shared_ptr<SceneNode> SceneNode::detachChild()
+    {
+        parentNode->detachChild(*this);
+        return std::static_pointer_cast<SceneNode>(shared_from_this());
+    }
+
     void SceneNode::enableDraw(const bool option) {
         isDrawEnable = option;
     }
@@ -51,7 +57,7 @@ namespace Harmony::Core {
         const SceneNode* currentParent = parentNode;
 
         while (currentParent) {
-            position = currentParent->getPosition();
+            position += currentParent->getPosition();
             currentParent = currentParent->parentNode;
         }
         return position;
@@ -99,19 +105,22 @@ namespace Harmony::Core {
         rotationVelocity += rotationAcceleration * deltaTime;
     }
 
-    void SceneNode::update(const sf::Time& time) {
-        auto test = std::vector<std::shared_ptr<Object>>();
+    void SceneNode::update(const sf::Time& time, EventPool& eventPool) {
         if (isUpdateEnable) {
-            updateCurrent(time);
+            updateCurrent(time, eventPool);
             updateTransform(time);
-            for (const std::shared_ptr<SceneNode> child : m_children) {
-                test.push_back(child);
-                child->update(time);
+            for (const auto child : m_children) {
+                child->update(time, eventPool);
+            }
+
+            if (m_toBeRemove.size()) {
+                for (const auto child : m_toBeRemove)
+                    detachChild(*child);
             }
         }
     }
 
-    void SceneNode::updateCurrent(const sf::Time& time) {}
+    void SceneNode::updateCurrent(const sf::Time& time, EventPool& eventPool) {}
 
     void SceneNode::onEnter(Scene& scene) {
         onEnterCurrent(scene);

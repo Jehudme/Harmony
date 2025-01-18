@@ -132,12 +132,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Asteroid.h" />
+    <ClInclude Include="AsteroidGroup.h" />
     <ClInclude Include="Bullet.h" />
     <ClInclude Include="Gameplay.h" />
     <ClInclude Include="GameState.h" />
     <ClInclude Include="Player.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Asteroid.cpp" />
+    <ClCompile Include="AsteroidGroup.cpp" />
     <ClCompile Include="Bullet.cpp" />
     <ClCompile Include="Gameplay.cpp" />
     <ClCompile Include="GameState.cpp" />

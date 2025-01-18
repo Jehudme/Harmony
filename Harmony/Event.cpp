@@ -1,48 +1,34 @@
 #include "pch.h"
 #include "Event.h"
 
-Harmony::Event::Event(const std::string& type, const uint64_t& uniqueId) : 
-	Core::Object(uniqueId) {}
 
-const std::string Harmony::Event::getType() const {
-	return m_type;
-}
 
-void Harmony::Event::setFunction(const std::function<void(const Event&)>& function) {
-	m_function = function;
-}
 
-void Harmony::Event::executeFunction() {
-	m_function(*this);
-}
+namespace Harmony::Core {
 
-Harmony::EventQueue::EventQueue(const uint64_t& uniqueId) :
-	Core::Object(uniqueId) {}
+    Event_t::Event_t(const std::string& type, const uint64_t& uniqueId)
+        : Core::Object(), type(type) {
+    }
 
-void Harmony::EventQueue::addEvent(const std::shared_ptr<Event>& event)
-{
-	if(event)
-		m_eventQueue.push(event);
-}
+    void Event_t::execute() {
+        if (function) {
+            function(*this);
+        }
+    }
 
-void Harmony::EventQueue::processEvents()
-{
-	while (!m_eventQueue.empty()) {
-		std::shared_ptr<Event> event = m_eventQueue.front();
-		if (event && event->m_function) 
-			event->executeFunction();
+    void EventPool::addEvent(const std::shared_ptr<Event_t> event)
+    {
+        m_events.emplace(event);
+    }
 
-		m_eventQueue.pop();
-	}
-}
+    void Harmony::Core::EventPool::handleEvent()
+    {
+        while (!m_events.empty())
+        {
+            m_events.front()->execute();
+            m_events.pop();
+        }
 
-void Harmony::EventQueue::clearEvents()
-{
-	while (!m_eventQueue.empty()) {
-		m_eventQueue.pop();
-	}
-}
+    }
 
-bool Harmony::EventQueue::hasEvents() const {
-	return m_eventQueue.empty();
 }

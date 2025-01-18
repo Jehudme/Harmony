@@ -16,9 +16,9 @@ namespace Harmony::Core
     }
 
     // Update the current state
-    void StateManager::update(const sf::Time& time) {
+    void StateManager::update(const sf::Time& time, EventPool& eventPool) {
         if (m_currentState) {
-            m_currentState->update(time);
+            m_currentState->update(time, eventPool);
         }
     }
 

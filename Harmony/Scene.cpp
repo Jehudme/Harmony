@@ -1,14 +1,15 @@
 #include "pch.h"
 #include "Scene.h"
 #include "Object.h"
+#
 
 Harmony::Core::Scene::Scene(const uint64_t& uniqueId) : 
 	Object(uniqueId), sceneGraph(Object::create<SceneNode>()) {
 	sceneGraph->currentScene = this;
 }
 
-void Harmony::Core::Scene::update(const sf::Time& time) {
-	sceneGraph->update(time);
+void Harmony::Core::Scene::update(const sf::Time& time, EventPool& eventPool) {
+	sceneGraph->update(time, eventPool);
 }
 
 void Harmony::Core::Scene::draw(sf::RenderTarget& renderTarget, sf::RenderStates states) const {

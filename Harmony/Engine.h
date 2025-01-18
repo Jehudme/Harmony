@@ -9,7 +9,7 @@ namespace Harmony::Core
 		Engine(const uint64_t& uniqueId = NULL);
 
 		void initializeWindow(
-			const unsigned int width = 600, const unsigned int height = 900, 
+			const unsigned int width = 600, const unsigned int height = 600, 
 			const std::string& title = "Harmony", const unsigned int framerateLimit = 60, const bool verticalSyncEnabled = false
 		);
 
@@ -24,6 +24,7 @@ namespace Harmony::Core
 		std::shared_ptr<sf::RenderTarget> renderTarget;
 		std::shared_ptr<StateManager> stateManager;
 		sf::Clock clock;
+		EventPool eventPool;
 
 		bool displayWindow;
 	};

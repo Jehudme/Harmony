@@ -7,7 +7,7 @@ namespace Harmony::Core {
     public:
         State(const uint64_t& uniqueId = NULL);
 
-        virtual void update(const sf::Time& time);
+        virtual void update(const sf::Time& time, EventPool& eventPool);
         virtual void draw(sf::RenderTarget& renderTarget, sf::RenderStates states) const;
 
         virtual void onEnter();

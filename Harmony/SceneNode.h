@@ -1,7 +1,8 @@
 #pragma once
 #include <SFML/Graphics.hpp>
-
 #include "Object.h"
+#include "Event.h"
+
 
 namespace Harmony::Core
 {
@@ -15,6 +16,8 @@ namespace Harmony::Core
 
 		void attachChild(const std::shared_ptr<SceneNode> child);
 		std::shared_ptr<SceneNode> detachChild(const SceneNode& child);
+		std::shared_ptr<SceneNode> detachChild();
+
 
 		void enableDraw(const bool option);
 		void enableUpdate(const bool option);
@@ -23,7 +26,7 @@ namespace Harmony::Core
 		std::shared_ptr<SceneNode> getRootNode();
 
 		void draw(sf::RenderTarget& renderTarget, sf::RenderStates state) const override;
-		void update(const sf::Time& time);
+		void update(const sf::Time& time, EventPool& eventPool);
 
 		void onEnter(Scene& scene);
 		void onExit(Scene& scene);
@@ -32,7 +35,7 @@ namespace Harmony::Core
 
 	private:
 		virtual void drawCurrent(sf::RenderTarget& renderTarget, sf::RenderStates state) const;
-		virtual void updateCurrent(const sf::Time& time);
+		virtual void updateCurrent(const sf::Time& time, EventPool& eventPool);
 
 		virtual void onEnterCurrent(Scene& scene);
 		virtual void onExitCurrent(Scene& scene);
@@ -56,6 +59,7 @@ namespace Harmony::Core
 
 	private:
 		std::vector<std::shared_ptr<SceneNode>> m_children;
+		std::vector<std::shared_ptr<SceneNode>> m_toBeRemove;
 	};
 }
 

@@ -3,6 +3,8 @@
 #include <unordered_map>
 #include <memory>
 
+#include "Utilities.h"
+
 namespace Harmony::Core 
 {
 	class Object : private sf::NonCopyable, public std::enable_shared_from_this<Object> 
@@ -28,11 +30,6 @@ namespace Harmony::Core
 		static inline std::unordered_map<uint64_t, std::weak_ptr<Object>> m_registers;
 		static inline std::unordered_map<Object*, std::shared_ptr<Object>> m_retained;
 	};
-}
-
-namespace Harmony::Utilities
-{
-	uint64_t generateRandomId();
 }
 
 template<typename Type, typename ...ARGS>

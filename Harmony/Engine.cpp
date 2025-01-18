@@ -47,7 +47,8 @@ namespace Harmony::Core
     // Update the game logic and current state
     void Engine::update() {
         sf::Time deltaTime = clock.restart();
-        stateManager->update(deltaTime);
+        eventPool.handleEvent();
+        stateManager->update(deltaTime, eventPool);
     }
 
     // Render the current state to the screen

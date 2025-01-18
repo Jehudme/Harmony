@@ -2,7 +2,7 @@
 #include "Object.h"
 
 Harmony::Core::Object::Object(const uint64_t uniqueId) :
-	uniqueId(uniqueId ? uniqueId : Utilities::generateRandomId()) {}
+	uniqueId(uniqueId ? uniqueId : Utilities::generateRandomNumber<uint64_t>()) {}
 
 Harmony::Core::Object::~Object()
 {
@@ -19,13 +19,4 @@ void Harmony::Core::Object::releaseSelf()
 {
     if (m_retained.contains(this))
         m_retained.erase(this);
-}
-
-uint64_t Harmony::Utilities::generateRandomId()
-{
-    static std::random_device rd;
-    static std::mt19937_64 engine(rd());
-    static std::uniform_int_distribution<uint64_t> dist;
-
-    return dist(engine);
 }

@@ -7,9 +7,9 @@ namespace Harmony::Core {
         : Object(uniqueId) {
     }
 
-    void State::update(const sf::Time& time) {
+    void State::update(const sf::Time& time, EventPool& eventPool) {
         if (!m_renderBuffer.empty()) {
-            m_renderBuffer.top()->update(time);
+            m_renderBuffer.top()->update(time, eventPool);
         }
     }
 
