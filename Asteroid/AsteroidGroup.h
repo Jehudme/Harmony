@@ -1,19 +1,27 @@
 #pragma once
-#include "Harmony/Scene.h"
+#pragma once
+
+#include "Harmony/SceneNode.h"
+#include "Asteroid.h"
+#include <vector>
+#include <random>
 
 namespace Asteroid
 {
-	class AsteroidGroup : public Harmony::Core::SceneNode
-	{
-	public:
-		AsteroidGroup() = default;
+    extern const uint64_t AsteroidGroupUniqueId;
 
-		void onEnterCurrent(Harmony::Core::Scene& scene) override;
-		void onExitCurrent(Harmony::Core::Scene& scene) override;
+    class AsteroidGroup : public Harmony::Core::SceneNode
+    {
+    public:
+        AsteroidGroup();
 
-		void updateCurrent(const sf::Time& time, Harmony::Core::EventPool& eventPool);
+        void onEnterCurrent(Harmony::Core::Scene& scene) override;
+        void onExitCurrent(Harmony::Core::Scene& scene) override;
 
-	public:
+        void updateCurrent(const sf::Time& time, Harmony::Core::EventPool& eventPool) override;
 
-	};
+    private:
+
+    };
 }
+

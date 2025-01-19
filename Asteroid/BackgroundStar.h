@@ -1,21 +1,23 @@
 #pragma once
+#include <Harmony/Scene.h>
+
 
 namespace Asteroid
 {
-	extern const uint64_t PlayerUniqueId;
-
-	class Player : public Harmony::Core::SceneNode
+	class BackgroundStar : public Harmony::Core::SceneNode
 	{
 	public:
-		Player();
+		BackgroundStar() {};
 
 		void onEnterCurrent(Harmony::Core::Scene& scene) override;
 		void onExitCurrent(Harmony::Core::Scene& scene) override;
 
 		void updateCurrent(const sf::Time& time, Harmony::Core::EventPool& eventPool) override;
 
-		sf::Clock bulletClock;
-		sf::Clock trailClock;
+	public:
+		sf::Clock clock;
+		float offset;
+		float duration;
 	};
 }
 

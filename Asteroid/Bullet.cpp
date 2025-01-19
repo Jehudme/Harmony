@@ -1,5 +1,7 @@
 #include "Bullet.h"
-
+#include <Harmony/Scene.h>
+#include "AsteroidGroup.h"
+#include <Harmony/NodeEvent.h>
 
 namespace Asteroid
 {
@@ -9,7 +11,7 @@ namespace Asteroid
 
 	Asteroid::Bullet::Bullet(const float angle, sf::Vector2f position)
 	{
-		const float velocity = -500;
+		const float velocity = -800;
 
 		this->drawable = std::make_shared<sf::CircleShape>();
 		auto circle = std::static_pointer_cast<sf::CircleShape>(drawable);
@@ -17,7 +19,7 @@ namespace Asteroid
 		circle->setOutlineColor(sf::Color::White);
 		circle->setFillColor(sf::Color::Black);
 		circle->setOutlineThickness(2);
-		circle->setPointCount(5);
+		circle->setPointCount(4);
 		circle->setRadius(3);
 
 		setPosition(position);
@@ -41,9 +43,49 @@ namespace Asteroid
 
 	void Asteroid::Bullet::updateCurrent(const sf::Time& time, Harmony::Core::EventPool& eventPool)
 	{
+		const sf::FloatRect field = Harmony::Utilities::getViewBounds(currentScene->view);
+
+		const sf::Vector2f curentPosition = getPosition();
+		const sf::Vector2f currentViewSize = currentScene->view.getSize();
+
+		const std::shared_ptr<sf::CircleShape> circle = std::static_pointer_cast<sf::CircleShape>(drawable);
+
+		// Wrap the asteroid's position around the screen boundaries
+		float newX = curentPosition.x;
+		float newY = curentPosition.y;
+
+		if (curentPosition.x < field.left)
+			newX += field.width;
+		else if (curentPosition.x > field.left + field.width)
+			newX -= field.width;
+
+		if (curentPosition.y < field.top)
+			newY += field.height;
+		else if (curentPosition.y > field.top + field.height)
+			newY -= field.height;
+
+		setPosition(newX, newY);
 		if (clock.getElapsedTime().asSeconds() > 2) {
 			eventPool.addEvent(Harmony::Core::Object::create<DetachChildEvent>(std::static_pointer_cast<SceneNode>(shared_from_this())));
 			clock.restart();
 		}
+
+		auto asteroidGroup = Harmony::Core::Object::find<Harmony::Core::SceneNode>(AsteroidGroupUniqueId);
+
+		for (auto node : asteroidGroup->children) {
+			if (intersect(node)) {
+				eventPool.addEvent(Harmony::Core::Object::create<Harmony::Event::DetachNode>(node));
+				eventPool.addEvent(Harmony::Core::Object::create<Harmony::Event::DetachNode>(std::static_pointer_cast<SceneNode>(shared_from_this())));
+				return;
+			}
+		}
+
+		const std::vector<sf::Color> OutlineColorStages = {
+			{ 255,   255,    255,    255 },
+			{ 255,   255,    255,    0 },
+		};
+
+		std::static_pointer_cast<sf::CircleShape>(drawable)->setOutlineColor(Harmony::Utilities::getInterpolatedColor(clock.getElapsedTime().asSeconds(), 2, OutlineColorStages));
+
 	}
 }

@@ -18,11 +18,12 @@ namespace Harmony::Core
 		std::shared_ptr<SceneNode> detachChild(const SceneNode& child);
 		std::shared_ptr<SceneNode> detachChild();
 
-
 		void enableDraw(const bool option);
 		void enableUpdate(const bool option);
 
-		sf::Vector2f getGlobalPosition();
+		sf::Transform getGlobalTransform() const;
+		sf::Vector2f getGlobalPosition() const;
+		sf::FloatRect getGlobalBounds() const;
 		std::shared_ptr<SceneNode> getRootNode();
 
 		void draw(sf::RenderTarget& renderTarget, sf::RenderStates state) const override;
@@ -30,6 +31,9 @@ namespace Harmony::Core
 
 		void onEnter(Scene& scene);
 		void onExit(Scene& scene);
+
+		bool intersect(const std::shared_ptr<Core::SceneNode> target);
+		static bool intersect(const std::shared_ptr<Core::SceneNode> node1, const std::shared_ptr<Core::SceneNode> node2);
 
 		friend Scene;
 
@@ -56,17 +60,7 @@ namespace Harmony::Core
 		sf::Vector2f positionAcceleration;
 
 		std::shared_ptr<sf::Drawable> drawable;
-
-	private:
-		std::vector<std::shared_ptr<SceneNode>> m_children;
-		std::vector<std::shared_ptr<SceneNode>> m_toBeRemove;
+		std::vector<std::shared_ptr<SceneNode>> children;
 	};
-}
-
-namespace Harmony::Utilities
-{
-	sf::FloatRect getRect(const std::shared_ptr<Core::SceneNode> node);
-	bool intersect(const std::shared_ptr<Core::SceneNode> node1, const std::shared_ptr<Core::SceneNode> node2);
-
 }
 

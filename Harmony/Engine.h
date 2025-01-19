@@ -10,7 +10,7 @@ namespace Harmony::Core
 
 		void initializeWindow(
 			const unsigned int width = 600, const unsigned int height = 600, 
-			const std::string& title = "Harmony", const unsigned int framerateLimit = 60, const bool verticalSyncEnabled = false
+			const std::string& title = "Harmony", const unsigned int framerateLimit = 0, const bool verticalSyncEnabled = false
 		);
 
 		void run();

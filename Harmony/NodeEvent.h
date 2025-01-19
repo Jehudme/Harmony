@@ -13,7 +13,8 @@ namespace Harmony::Event
 			Core::Event_t("Attach_Node"), m_parentNode(parentNode), m_childNode(childNode){}
 
 		inline void execute() override {
-			m_parentNode->attachChild(m_childNode);
+			if (m_parentNode && m_childNode)
+				m_parentNode->attachChild(m_childNode);
 		}
 	
 	private:
@@ -28,7 +29,8 @@ namespace Harmony::Event
 			Core::Event_t("Detach_Node"), m_node(node) {}
 
 		inline void execute() override {
-			m_node->detachChild();
+			if(m_node)
+				m_node->detachChild();
 		}
 
 	private:
