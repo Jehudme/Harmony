@@ -21,6 +21,12 @@
 #include <functional>
 #include <fstream>
 #include <stdexcept>
+#include <mutex>
+
+#include <spdlog/spdlog.h>
+#include <spdlog/async.h>
+#include <spdlog/sinks/basic_file_sink.h>
+#include <spdlog/sinks/stdout_color_sinks.h>
 
 #include <SFML/Graphics.hpp>
 
