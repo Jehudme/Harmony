@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "StateManager.h"
 
-namespace Harmony::Core
+namespace harmony::core
 {
     // Constructor
     StateManager::StateManager()
@@ -43,18 +43,18 @@ namespace Harmony::Core
     void StateManager::pushState(const std::string& name) {
         if (m_states.find(name) != m_states.end()) {
             if (m_currentState) {
-                m_currentState->onExit();
+                m_currentState->destroy();
             }
 
             m_currentState = m_states[name];
-            m_currentState->onEnter();
+            m_currentState->create();
         }
     }
 
     // Pop the current state
     void StateManager::popState() {
         if (m_currentState) {
-            m_currentState->onExit();
+            m_currentState->destroy();
             m_currentState = nullptr;
         }
     }

@@ -1,9 +1,10 @@
 #pragma once
-#include <cstdint>
 #include <random>
 #include <algorithm>
+#include <SFML/Graphics.hpp>
+#include "Logger.h"
 
-namespace Harmony::Utilities
+namespace harmony::utilities
 {
 	inline float degreesToRadians(float degrees) {
 		return degrees * 3.1415926535f / 180.0f;

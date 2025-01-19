@@ -2,7 +2,7 @@
 #include "Scene.h"
 #include <stack>
 
-namespace Harmony::Core {
+namespace harmony::core {
     class State : public Object, public sf::Drawable {
     public:
         State(const uint64_t& uniqueId = NULL);
@@ -10,8 +10,8 @@ namespace Harmony::Core {
         virtual void update(const sf::Time& time, EventPool& eventPool);
         virtual void draw(sf::RenderTarget& renderTarget, sf::RenderStates states) const;
 
-        virtual void onEnter();
-        virtual void onExit();
+        virtual void create();
+        virtual void destroy();
 
         void addScene(const std::string& sceneName, std::shared_ptr<Scene> scene);
         std::shared_ptr<Scene> getScene(const std::string& sceneName) const;

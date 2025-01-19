@@ -1,15 +1,15 @@
 #pragma once
-#include "Harmony/Scene.h"
+#include <Harmony/Engine.h>
 
 namespace Asteroid
 {
-	class Gameplay : public Harmony::Core::Scene
+	class Gameplay : public harmony::core::Scene
 	{
 	public:
 		Gameplay() = default;
 
-		void onEnterCurrent() override;
-		void onExitCurrent() override;
+		void onCreate() override;
+		void onDestroy() override;
 	};
 }
 

@@ -1,9 +1,10 @@
+#include <Harmony/Scene.h>
+#include <Harmony/Utilities.h>
 
 #include "Asteroid.h"
 #include "Player.h"
 #include "Bullet.h"
 #include "PlayerTrail.h"
-#include "Harmony/Scene.h"
 
 
 namespace Asteroid
@@ -16,17 +17,17 @@ namespace Asteroid
     constexpr float MaxVelocity = 300.0f;     // Increased max velocity for faster movement
     constexpr float MinVelocity = -300.0f;    // Increased min velocity for faster reverse
     constexpr float AccelerationSpeed = 300.0f; // Higher acceleration for more dynamic movement
-    constexpr float BulletCooldown = 0.1;    // Faster bullet cooldown for quicker firing
-    constexpr float TrailCooldown = 0.001;     // Faster trail cooldown for more frequent trail effects
+    constexpr float BulletCooldown = 0.1f;    // Faster bullet cooldown for quicker firing
+    constexpr float TrailCooldown = 0.01f;     // Faster trail cooldown for more frequent trail effects
     constexpr float AccelerationDeadzone = .5f; // Smaller deadzone for more fluid movement
 
-    const uint64_t Asteroid::PlayerUniqueId = Harmony::Utilities::generateRandomNumber<uint64_t>();
+    const uint64_t Asteroid::PlayerUniqueId = harmony::utilities::generateRandomNumber<uint64_t>();
 
-    Player::Player() : Harmony::Core::SceneNode(PlayerUniqueId)
+    Player::Player() : harmony::core::SceneNode(PlayerUniqueId)
     {
     }
 
-    void Asteroid::Player::onEnterCurrent(Harmony::Core::Scene& scene)
+    void Asteroid::Player::onCreate(harmony::core::Scene& scene)
     {
         this->drawable = std::make_shared<sf::CircleShape>();
         auto circle = std::static_pointer_cast<sf::CircleShape>(drawable);
@@ -41,7 +42,7 @@ namespace Asteroid
         setOrigin(PlayerRadius, PlayerRadius); // Set the origin at the right side of the circle
     }
 
-    void Asteroid::Player::onExitCurrent(Harmony::Core::Scene& scene)
+    void Asteroid::Player::onDestroy(harmony::core::Scene& scene)
     {
         // Handle any necessary cleanup here
     }
@@ -52,12 +53,12 @@ namespace Asteroid
         return degrees * Pi / 180.0f;
     }
 
-    class AttachChildEvent : public Harmony::Core::Event_t
+    class AttachChildEvent : public harmony::core::Event_t
     {
     public:
         AttachChildEvent(
-            const std::shared_ptr<Harmony::Core::SceneNode> parent,
-            const std::shared_ptr<Harmony::Core::SceneNode> child) :
+            const std::shared_ptr<harmony::core::SceneNode> parent,
+            const std::shared_ptr<harmony::core::SceneNode> child) :
             m_parent(parent), m_child(child) {
         }
 
@@ -66,15 +67,15 @@ namespace Asteroid
         }
 
     private:
-        std::shared_ptr<Harmony::Core::SceneNode> m_parent;
-        std::shared_ptr<Harmony::Core::SceneNode> m_child;
+        std::shared_ptr<harmony::core::SceneNode> m_parent;
+        std::shared_ptr<harmony::core::SceneNode> m_child;
     };
 
-    void Asteroid::Player::updateCurrent(const sf::Time& time, Harmony::Core::EventPool& eventPool)
+    void Asteroid::Player::onUpdate(const sf::Time& time, harmony::core::EventPool& eventPool)
     {
         const float deltaTime = time.asSeconds();
 
-        const sf::FloatRect field = Harmony::Utilities::getViewBounds(currentScene->view);
+        const sf::FloatRect field = harmony::utilities::getViewBounds(currentScene->view);
 
         const sf::Vector2f curentPosition = getPosition();
         const sf::Vector2f currentViewSize = currentScene->view.getSize();
@@ -100,9 +101,9 @@ namespace Asteroid
 
         // Handle shooting logic with cooldown
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && bulletClock.getElapsedTime().asSeconds() > BulletCooldown) {
-            eventPool.addEvent(Harmony::Core::Object::create<AttachChildEvent>(
+            eventPool.addEvent(harmony::utilities::create<AttachChildEvent>(
                 std::static_pointer_cast<SceneNode>(parentNode->shared_from_this()),
-                Harmony::Core::Object::create<Bullet>(getRotation(), getGlobalPosition()))
+                harmony::utilities::create<Bullet>(getRotation(), getGlobalPosition()))
             );
 
             bulletClock.restart();
@@ -122,9 +123,9 @@ namespace Asteroid
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
             acceleration += -AccelerationSpeed;
             if (trailClock.getElapsedTime().asSeconds() > TrailCooldown) {
-                eventPool.addEvent(Harmony::Core::Object::create<AttachChildEvent>(
+                eventPool.addEvent(harmony::utilities::create<AttachChildEvent>(
                     std::static_pointer_cast<SceneNode>(parentNode->shared_from_this()),
-                    Harmony::Core::Object::create<PlayerTrail>(getRotation(), getGlobalPosition()))
+                    harmony::utilities::create<PlayerTrail>(getRotation(), getGlobalPosition()))
                 );
                 trailClock.restart();
             }
@@ -134,10 +135,10 @@ namespace Asteroid
         }
 
         const float angle = getRotation();
-        positionAcceleration.x = acceleration * sin(-Harmony::Utilities::degreesToRadians(getRotation()));
-        positionAcceleration.y = acceleration * cos(-Harmony::Utilities::degreesToRadians(getRotation()));
+        positionAcceleration.x = acceleration * sin(-harmony::utilities::degreesToRadians(getRotation()));
+        positionAcceleration.y = acceleration * cos(-harmony::utilities::degreesToRadians(getRotation()));
 
-        std::clamp(positionVelocity.x, MinVelocity, MaxVelocity);
-        std::clamp(positionVelocity.y, MinVelocity, MaxVelocity);
+        positionVelocity.x = std::clamp(positionVelocity.x, MinVelocity, MaxVelocity);
+        positionVelocity.y = std::clamp(positionVelocity.y, MinVelocity, MaxVelocity);
     }
 }

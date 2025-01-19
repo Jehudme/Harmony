@@ -1,5 +1,9 @@
 #pragma once
 
+// Enable or disable logging macros by commenting/uncommenting
+#define ENABLE_LOGGING
+
+#ifdef ENABLE_LOGGING
 #include <spdlog/spdlog.h>
 #include <spdlog/async.h>
 #include <spdlog/sinks/basic_file_sink.h>
@@ -8,9 +12,7 @@
 #include <string>
 #include <unordered_map>
 #include <mutex>
-
-// Enable or disable logging macros by commenting/uncommenting
-#define ENABLE_LOGGING
+#endif // ENABLE_LOGGING
 
 #ifdef ENABLE_LOGGING
 #define LOG_TRACE(logger, ...) SPDLOG_LOGGER_CALL(logger, spdlog::level::trace, __VA_ARGS__)
@@ -28,11 +30,13 @@
 #define LOG_CRITICAL(...)
 #endif
 
-namespace Harmony
+
+#ifdef ENABLE_LOGGING
+namespace harmony
 {
     class Logger {
     public:
-        static void initialize(const std::string& logFilePath, spdlog::level::level_enum globalLevel = spdlog::level::info);
+        static void create(const std::string& logFilePath, spdlog::level::level_enum globalLevel = spdlog::level::info);
 
         static std::shared_ptr<spdlog::logger> createLogger(const std::string& loggerName, spdlog::level::level_enum level = spdlog::level::info);
 
@@ -46,11 +50,12 @@ namespace Harmony
 
         // Static initialization function
         static inline const bool loggerInitialized = []() {
-            Logger::initialize("application.log", spdlog::level::debug); // Initialize the logger
+            Logger::create("application.log", spdlog::level::debug); // Initialize the logger
             return true; }();
 
     public:
         static inline auto core = Logger::createLogger("Core", spdlog::level::info);
     };
 }
+#endif // ENABLE_LOGGING
 

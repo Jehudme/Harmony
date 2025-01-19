@@ -1,10 +1,10 @@
 #pragma once
 #include "SceneNode.h"
 
-namespace Harmony::Core
+namespace harmony::core
 {
 	class State;
-	class Scene : public Core::Object, public sf::Drawable
+	class Scene : public core::Object, public sf::Drawable
 	{
 	public:
 		Scene(const uint64_t& uniqueId = NULL);
@@ -17,11 +17,11 @@ namespace Harmony::Core
 		friend State;
 
 	private:
-		void onEnter();
-		void onExit();
+		void create();
+		void destroy();
 
-		virtual void onEnterCurrent();
-		virtual void onExitCurrent();
+		virtual void onCreate();
+		virtual void onDestroy();
 
 	public:
 		sf::View view;

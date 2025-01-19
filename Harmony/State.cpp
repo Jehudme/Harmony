@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "State.h"
 
-namespace Harmony::Core {
+namespace harmony::core {
 
     State::State(const uint64_t& uniqueId)
         : Object(uniqueId) {
@@ -19,10 +19,10 @@ namespace Harmony::Core {
         }
     }
 
-    void State::onEnter() {
+    void State::create() {
     }
 
-    void State::onExit() {
+    void State::destroy() {
     }
 
     void State::addScene(const std::string& sceneName, std::shared_ptr<Scene> scene) {
@@ -42,14 +42,14 @@ namespace Harmony::Core {
         auto scene = getScene(sceneName);
         if (scene) {
             m_renderBuffer.push(scene);
-            scene->onEnter();
+            scene->create();
         }
     }
 
     void State::popScene() {
         if (!m_renderBuffer.empty()) {
             auto currentScene = m_renderBuffer.top();
-            currentScene->onExit();
+            currentScene->destroy();
             m_renderBuffer.pop();
         }
     }

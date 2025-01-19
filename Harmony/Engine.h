@@ -1,7 +1,7 @@
 #pragma once
 #include "StateManager.h"
 
-namespace Harmony::Core
+namespace harmony::core
 {
 	class Engine : public Object
 	{

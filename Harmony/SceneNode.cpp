@@ -1,9 +1,9 @@
 #include "pch.h"
 #include "SceneNode.h"
-#include <algorithm>
 #include <stdexcept>
+#include "Logger.h"
 
-namespace Harmony::Core {
+namespace harmony::core {
 
     SceneNode::SceneNode(const uint64_t& uniqueId)
         : Object(uniqueId), isDrawEnable(true), isUpdateEnable(true), parentNode(nullptr),
@@ -148,7 +148,7 @@ namespace Harmony::Core {
         if (isDrawEnable) {
             LOG_TRACE(Logger::core, "Drawing SceneNode with uniqueId: {}", uniqueId);
             state.transform *= getTransform();
-            drawCurrent(renderTarget, state);
+            onDraw(renderTarget, state);
 
             for (const auto& child : children) {
                 child->draw(renderTarget, state);
@@ -159,7 +159,7 @@ namespace Harmony::Core {
     void SceneNode::update(const sf::Time& time, EventPool& eventPool) {
         if (isUpdateEnable) {
             LOG_TRACE(Logger::core, "Updating SceneNode with uniqueId: {}", uniqueId);
-            updateCurrent(time, eventPool);
+            onUpdate(time, eventPool);
             updateTransform(time);
 
             for (const auto& child : children) {
@@ -182,40 +182,40 @@ namespace Harmony::Core {
         rotationVelocity += (rotationAcceleration * deltaTime);
     }
 
-    void SceneNode::drawCurrent(sf::RenderTarget& renderTarget, sf::RenderStates state) const {
+    void SceneNode::onDraw(sf::RenderTarget& renderTarget, sf::RenderStates state) const {
         if (drawable) {
             renderTarget.draw(*drawable, state);
         }
     }
 
-    void SceneNode::updateCurrent(const sf::Time& time, EventPool& eventPool) {
+    void SceneNode::onUpdate(const sf::Time& time, EventPool& eventPool) {
     }
 
-    void SceneNode::onEnterCurrent(Scene& scene)
+    void SceneNode::onCreate(Scene& scene)
     {
     }
 
-    void SceneNode::onExitCurrent(Scene& scene)
+    void SceneNode::onDestroy(Scene& scene)
     {
     }
 
-    void SceneNode::onEnter(Scene& scene) {
-        onEnterCurrent(scene);
+    void SceneNode::create(Scene& scene) {
+        onCreate(scene);
         for (auto child : children)
-            child->onEnter(scene);
+            child->create(scene);
     }
 
-    void SceneNode::onExit(Scene& scene) {
-        onExitCurrent(scene);
+    void SceneNode::destroy(Scene& scene) {
+        onDestroy(scene);
         for (auto child : children)
-            onExit(scene);
+            destroy(scene);
     }
 
-    bool SceneNode::intersect(const std::shared_ptr<Core::SceneNode> target) {
+    bool SceneNode::intersect(const std::shared_ptr<core::SceneNode> target) {
         return intersect(std::static_pointer_cast<SceneNode>(shared_from_this()), target);
     }
 
-    bool SceneNode::intersect(const std::shared_ptr<Core::SceneNode> node1, const std::shared_ptr<Core::SceneNode> node2) {
+    bool SceneNode::intersect(const std::shared_ptr<core::SceneNode> node1, const std::shared_ptr<core::SceneNode> node2) {
         return node1->getGlobalBounds().intersects(node2->getGlobalBounds());
     }
 

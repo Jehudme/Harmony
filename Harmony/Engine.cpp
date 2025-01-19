@@ -2,7 +2,7 @@
 #include "Engine.h"
 #include "StateManager.h"
 
-namespace Harmony::Core
+namespace harmony::core
 {
     // Constructor
     Engine::Engine(const uint64_t& uniqueId)

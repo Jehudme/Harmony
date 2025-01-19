@@ -1,0 +1,11 @@
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/pkgs/libpng_x64-windows-static/lib/libpng16.lib
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/pkgs/libpng_x64-windows-static/include/png.h
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/pkgs/libpng_x64-windows-static/include/pngconf.h
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/pkgs/libpng_x64-windows-static/include/pnglibconf.h
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/pkgs/libpng_x64-windows-static/include/libpng16/png.h
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/pkgs/libpng_x64-windows-static/include/libpng16/pngconf.h
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/pkgs/libpng_x64-windows-static/include/libpng16/pnglibconf.h
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/pkgs/libpng_x64-windows-static/lib/pkgconfig/libpng16.pc
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/pkgs/libpng_x64-windows-static/lib/libpng/libpng16.cmake
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/pkgs/libpng_x64-windows-static/lib/libpng/libpng16-release.cmake
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/pkgs/libpng_x64-windows-static/lib/libpng/libpng-config.cmake

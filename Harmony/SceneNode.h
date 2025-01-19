@@ -2,9 +2,8 @@
 #include <SFML/Graphics.hpp>
 #include "Object.h"
 #include "Event.h"
-#include "Logger.h"
 
-namespace Harmony::Core
+namespace harmony::core
 {
     class Scene;
 
@@ -28,20 +27,20 @@ namespace Harmony::Core
         void draw(sf::RenderTarget& renderTarget, sf::RenderStates state) const override;
         void update(const sf::Time& time, EventPool& eventPool);
 
-        void onEnter(Scene& scene);
-        void onExit(Scene& scene);
+        void create(Scene& scene);
+        void destroy(Scene& scene);
 
-        bool intersect(const std::shared_ptr<Core::SceneNode> target);
-        static bool intersect(const std::shared_ptr<Core::SceneNode> node1, const std::shared_ptr<Core::SceneNode> node2);
+        bool intersect(const std::shared_ptr<core::SceneNode> target);
+        static bool intersect(const std::shared_ptr<core::SceneNode> node1, const std::shared_ptr<core::SceneNode> node2);
 
         friend Scene;
 
     private:
-        virtual void drawCurrent(sf::RenderTarget& renderTarget, sf::RenderStates state) const;
-        virtual void updateCurrent(const sf::Time& time, EventPool& eventPool);
+        virtual void onDraw(sf::RenderTarget& renderTarget, sf::RenderStates state) const;
+        virtual void onUpdate(const sf::Time& time, EventPool& eventPool);
 
-        virtual void onEnterCurrent(Scene& scene);
-        virtual void onExitCurrent(Scene& scene);
+        virtual void onCreate(Scene& scene);
+        virtual void onDestroy(Scene& scene);
 
         void updateTransform(const sf::Time& time);
 
@@ -62,4 +61,3 @@ namespace Harmony::Core
         std::vector<std::shared_ptr<SceneNode>> children;
     };
 }
-

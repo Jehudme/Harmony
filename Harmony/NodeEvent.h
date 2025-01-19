@@ -2,15 +2,15 @@
 #include "Event.h"
 #include "SceneNode.h"
 
-namespace Harmony::Event
+namespace harmony::Event
 {
-	class AttachNode : public Harmony::Core::Event_t
+	class AttachNode : public harmony::core::Event_t
 	{
 	public:
 		AttachNode(
-			const std::shared_ptr<Core::SceneNode> parentNode,
-			const std::shared_ptr<Core::SceneNode> childNode) : 
-			Core::Event_t("Attach_Node"), m_parentNode(parentNode), m_childNode(childNode){}
+			const std::shared_ptr<core::SceneNode> parentNode,
+			const std::shared_ptr<core::SceneNode> childNode) : 
+			core::Event_t("Attach_Node"), m_parentNode(parentNode), m_childNode(childNode){}
 
 		inline void execute() override {
 			if (m_parentNode && m_childNode)
@@ -18,15 +18,15 @@ namespace Harmony::Event
 		}
 	
 	private:
-		std::shared_ptr<Core::SceneNode> m_parentNode;
-		std::shared_ptr<Core::SceneNode> m_childNode;
+		std::shared_ptr<core::SceneNode> m_parentNode;
+		std::shared_ptr<core::SceneNode> m_childNode;
 	};
 
-	class DetachNode : public Harmony::Core::Event_t
+	class DetachNode : public harmony::core::Event_t
 	{
 	public:
-		DetachNode(const std::shared_ptr<Core::SceneNode> node) :
-			Core::Event_t("Detach_Node"), m_node(node) {}
+		DetachNode(const std::shared_ptr<core::SceneNode> node) :
+			core::Event_t("Detach_Node"), m_node(node) {}
 
 		inline void execute() override {
 			if(m_node)
@@ -34,7 +34,7 @@ namespace Harmony::Event
 		}
 
 	private:
-		std::shared_ptr<Core::SceneNode> m_node;
+		std::shared_ptr<core::SceneNode> m_node;
 	};
 }
 

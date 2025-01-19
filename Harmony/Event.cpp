@@ -4,10 +4,10 @@
 
 
 
-namespace Harmony::Core {
+namespace harmony::core {
 
     Event_t::Event_t(const std::string& type, const uint64_t& uniqueId)
-        : Core::Object(), type(type) {
+        : core::Object(), type(type) {
     }
 
     void Event_t::execute() {
@@ -21,7 +21,7 @@ namespace Harmony::Core {
         m_events.emplace(event);
     }
 
-    void Harmony::Core::EventPool::handleEvent()
+    void harmony::core::EventPool::handleEvent()
     {
         while (!m_events.empty())
         {

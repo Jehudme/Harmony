@@ -1,7 +1,7 @@
 #pragma once
 #include "State.h"
 
-namespace Harmony::Core
+namespace harmony::core
 {
 	class StateManager : public sf::Drawable
 	{

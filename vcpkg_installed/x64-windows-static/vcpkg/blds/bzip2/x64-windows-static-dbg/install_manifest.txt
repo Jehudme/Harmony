@@ -1,0 +1,1 @@
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/pkgs/bzip2_x64-windows-static/debug/lib/bz2d.lib

@@ -1,7 +1,10 @@
 #include "Bullet.h"
 #include <Harmony/Scene.h>
-#include "AsteroidGroup.h"
 #include <Harmony/NodeEvent.h>
+#include <Harmony/Utilities.h>
+#include "AsteroidGroup.h"
+#include "Bullet.h"
+
 
 namespace Asteroid
 {
@@ -27,10 +30,10 @@ namespace Asteroid
 		positionVelocity = { velocity * sin(-degreesToRadians(angle)), velocity * cos(-degreesToRadians(angle)) };
 	}
 
-	class DetachChildEvent : public Harmony::Core::Event_t
+	class DetachChildEvent : public harmony::core::Event_t
 	{
 	public:
-		DetachChildEvent(const std::shared_ptr<Harmony::Core::SceneNode> node) :
+		DetachChildEvent(const std::shared_ptr<harmony::core::SceneNode> node) :
 			m_node(node) {}
 
 		void execute() override {
@@ -38,12 +41,12 @@ namespace Asteroid
 		}
 
 	private:
-		std::shared_ptr<Harmony::Core::SceneNode> m_node;
+		std::shared_ptr<harmony::core::SceneNode> m_node;
 	};
 
-	void Asteroid::Bullet::updateCurrent(const sf::Time& time, Harmony::Core::EventPool& eventPool)
+	void Asteroid::Bullet::onUpdate(const sf::Time& time, harmony::core::EventPool& eventPool)
 	{
-		const sf::FloatRect field = Harmony::Utilities::getViewBounds(currentScene->view);
+		const sf::FloatRect field = harmony::utilities::getViewBounds(currentScene->view);
 
 		const sf::Vector2f curentPosition = getPosition();
 		const sf::Vector2f currentViewSize = currentScene->view.getSize();
@@ -66,16 +69,16 @@ namespace Asteroid
 
 		setPosition(newX, newY);
 		if (clock.getElapsedTime().asSeconds() > 2) {
-			eventPool.addEvent(Harmony::Core::Object::create<DetachChildEvent>(std::static_pointer_cast<SceneNode>(shared_from_this())));
+			eventPool.addEvent(harmony::utilities::create<DetachChildEvent>(std::static_pointer_cast<SceneNode>(shared_from_this())));
 			clock.restart();
 		}
 
-		auto asteroidGroup = Harmony::Core::Object::find<Harmony::Core::SceneNode>(AsteroidGroupUniqueId);
+		auto asteroidGroup = harmony::utilities::find<harmony::core::SceneNode>(AsteroidGroupUniqueId);
 
 		for (auto node : asteroidGroup->children) {
 			if (intersect(node)) {
-				eventPool.addEvent(Harmony::Core::Object::create<Harmony::Event::DetachNode>(node));
-				eventPool.addEvent(Harmony::Core::Object::create<Harmony::Event::DetachNode>(std::static_pointer_cast<SceneNode>(shared_from_this())));
+				eventPool.addEvent(harmony::utilities::create<harmony::Event::DetachNode>(node));
+				eventPool.addEvent(harmony::utilities::create<harmony::Event::DetachNode>(std::static_pointer_cast<SceneNode>(shared_from_this())));
 				return;
 			}
 		}
@@ -85,7 +88,7 @@ namespace Asteroid
 			{ 255,   255,    255,    0 },
 		};
 
-		std::static_pointer_cast<sf::CircleShape>(drawable)->setOutlineColor(Harmony::Utilities::getInterpolatedColor(clock.getElapsedTime().asSeconds(), 2, OutlineColorStages));
+		std::static_pointer_cast<sf::CircleShape>(drawable)->setOutlineColor(harmony::utilities::getInterpolatedColor(clock.getElapsedTime().asSeconds(), 2, OutlineColorStages));
 
 	}
 }

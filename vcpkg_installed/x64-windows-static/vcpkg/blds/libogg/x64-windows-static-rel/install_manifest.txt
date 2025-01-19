@@ -1,0 +1,9 @@
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/pkgs/libogg_x64-windows-static/lib/ogg.lib
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/pkgs/libogg_x64-windows-static/include/ogg/config_types.h
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/pkgs/libogg_x64-windows-static/include/ogg/ogg.h
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/pkgs/libogg_x64-windows-static/include/ogg/os_types.h
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/pkgs/libogg_x64-windows-static/lib/cmake/Ogg/OggTargets.cmake
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/pkgs/libogg_x64-windows-static/lib/cmake/Ogg/OggTargets-release.cmake
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/pkgs/libogg_x64-windows-static/lib/cmake/Ogg/OggConfig.cmake
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/pkgs/libogg_x64-windows-static/lib/cmake/Ogg/OggConfigVersion.cmake
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/pkgs/libogg_x64-windows-static/lib/pkgconfig/ogg.pc

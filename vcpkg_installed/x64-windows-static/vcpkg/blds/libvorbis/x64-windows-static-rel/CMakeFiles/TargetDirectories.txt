@@ -1,0 +1,13 @@
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/blds/libvorbis/x64-windows-static-rel/CMakeFiles/edit_cache.dir
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/blds/libvorbis/x64-windows-static-rel/CMakeFiles/rebuild_cache.dir
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/blds/libvorbis/x64-windows-static-rel/CMakeFiles/list_install_components.dir
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/blds/libvorbis/x64-windows-static-rel/CMakeFiles/install.dir
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/blds/libvorbis/x64-windows-static-rel/CMakeFiles/install/local.dir
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/blds/libvorbis/x64-windows-static-rel/lib/CMakeFiles/vorbis.dir
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/blds/libvorbis/x64-windows-static-rel/lib/CMakeFiles/vorbisenc.dir
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/blds/libvorbis/x64-windows-static-rel/lib/CMakeFiles/vorbisfile.dir
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/blds/libvorbis/x64-windows-static-rel/lib/CMakeFiles/edit_cache.dir
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/blds/libvorbis/x64-windows-static-rel/lib/CMakeFiles/rebuild_cache.dir
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/blds/libvorbis/x64-windows-static-rel/lib/CMakeFiles/list_install_components.dir
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/blds/libvorbis/x64-windows-static-rel/lib/CMakeFiles/install.dir
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/blds/libvorbis/x64-windows-static-rel/lib/CMakeFiles/install/local.dir

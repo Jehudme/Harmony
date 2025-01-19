@@ -1,0 +1,9 @@
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/pkgs/brotli_x64-windows-static/debug/tools/brotli/brotli.exe
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/pkgs/brotli_x64-windows-static/debug/lib/brotlienc.lib
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/pkgs/brotli_x64-windows-static/debug/lib/brotlidec.lib
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/pkgs/brotli_x64-windows-static/debug/lib/brotlicommon.lib
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/pkgs/brotli_x64-windows-static/debug/share/unofficial-brotli/unofficial-brotli-config.cmake
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/pkgs/brotli_x64-windows-static/debug/share/unofficial-brotli/unofficial-brotli-config-debug.cmake
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/pkgs/brotli_x64-windows-static/debug/lib/pkgconfig/libbrotlicommon.pc
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/pkgs/brotli_x64-windows-static/debug/lib/pkgconfig/libbrotlidec.pc
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/pkgs/brotli_x64-windows-static/debug/lib/pkgconfig/libbrotlienc.pc

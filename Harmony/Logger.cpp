@@ -1,10 +1,9 @@
 #include "pch.h"
 #include "Logger.h"
 
-
-namespace Harmony
+namespace harmony
 {
-    void Logger::initialize(const std::string& logFilePath, spdlog::level::level_enum globalLevel) {
+    void Logger::create(const std::string& logFilePath, spdlog::level::level_enum globalLevel) {
         // Create sinks for console and file
         auto consoleSink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
         auto fileSink = std::make_shared<spdlog::sinks::basic_file_sink_mt>(logFilePath, true);

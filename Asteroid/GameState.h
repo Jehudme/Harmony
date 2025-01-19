@@ -1,15 +1,15 @@
 #pragma once
-#include "Harmony/State.h"
+#include <Harmony/Engine.h>
 
 namespace Asteroid
 {
-	class GameState : public Harmony::Core::State
+	class GameState : public harmony::core::State
 	{
 	public:
 		GameState() = default;
 
-		void onEnter() override;
-		void onExit() override;
+		void create() override;
+		void destroy() override;
 	};
 }
 

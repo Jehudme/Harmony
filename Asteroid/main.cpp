@@ -1,11 +1,10 @@
 #include "Harmony/Engine.h"
 #include "GameState.h"
-
 int main()
 {
-	auto engine = Harmony::Core::Object::create<Harmony::Core::Engine>();
+	auto engine = harmony::utilities::create<harmony::core::Engine>();
 
-	engine->stateManager->addState("GameState", Harmony::Core::Object::create<Asteroid::GameState>());
+	engine->stateManager->addState("GameState", harmony::utilities::create<Asteroid::GameState>());
 	engine->stateManager->pushState("GameState");
 
 	engine->run();

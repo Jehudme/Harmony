@@ -1,15 +1,16 @@
+#include <Harmony/Scene.h>
+#include <Harmony/Utilities.h>
 #include "Asteroid.h"
-#include "Harmony/Scene.h"
 #include "Player.h"
 
 namespace Asteroid
 {
 	Asteroid_t::Asteroid_t(const sf::View& sceneView)
 	{
-		const float velocity = Harmony::Utilities::generateRandomNumber<int>(100, 500);
-		const float angle = Harmony::Utilities::generateRandomNumber<int>(0, 360);
+		const float velocity = static_cast<float>(harmony::utilities::generateRandomNumber<int>(100, 500));
+		const float angle = static_cast<float>(harmony::utilities::generateRandomNumber<int>(0, 360));
 
-		rotationVelocity = Harmony::Utilities::generateRandomNumber<int>(-500, 500);
+		rotationVelocity = static_cast<float>(harmony::utilities::generateRandomNumber<int>(-500, 500));
 
 		this->drawable = std::make_shared<sf::CircleShape>();
 		auto circle = std::static_pointer_cast<sf::CircleShape>(drawable);
@@ -23,16 +24,16 @@ namespace Asteroid
 
 
 		setPosition(
-			Harmony::Utilities::getViewBounds(sceneView).left - circle->getRadius(),
-			Harmony::Utilities::getViewBounds(sceneView).top - circle->getRadius()
+			harmony::utilities::getViewBounds(sceneView).left - circle->getRadius(),
+			harmony::utilities::getViewBounds(sceneView).top - circle->getRadius()
 		);
 
-		positionVelocity = { velocity * sin(-Harmony::Utilities::degreesToRadians(angle)), velocity * cos(-Harmony::Utilities::degreesToRadians(angle)) };
+		positionVelocity = { velocity * sin(-harmony::utilities::degreesToRadians(angle)), velocity * cos(-harmony::utilities::degreesToRadians(angle)) };
 	}
 
-	void Asteroid_t::updateCurrent(const sf::Time& time, Harmony::Core::EventPool& eventPool)
+	void Asteroid_t::onUpdate(const sf::Time& time, harmony::core::EventPool& eventPool)
 	{
-		const sf::FloatRect field = Harmony::Utilities::getViewBounds(currentScene->view);
+		const sf::FloatRect field = harmony::utilities::getViewBounds(currentScene->view);
 
 		const sf::Vector2f curentPosition = getPosition();
 		const sf::Vector2f currentViewSize = currentScene->view.getSize();
@@ -55,7 +56,7 @@ namespace Asteroid
 
 		setPosition(newX, newY);
 
-		if (intersect(Harmony::Core::Object::find<Player>(PlayerUniqueId)))
+		if (intersect(harmony::utilities::find<Player>(PlayerUniqueId)))
 		{
 			//exit(0);
 		}

@@ -1,14 +1,14 @@
 #pragma once
-#include "Harmony/SceneNode.h"
+#include <Harmony/Engine.h>
 
 namespace Asteroid
 {
-	class Bullet : public Harmony::Core::SceneNode
+	class Bullet : public harmony::core::SceneNode
 	{
 	public:
 		Bullet(const float angle, sf::Vector2f position);
 
-		void updateCurrent(const sf::Time& time, Harmony::Core::EventPool& eventPool) override;
+		void onUpdate(const sf::Time& time, harmony::core::EventPool& eventPool) override;
 
 	public:
 		sf::Clock clock;

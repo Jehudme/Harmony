@@ -1,5 +1,6 @@
 #include "PlayerTrail.h"
-#include "Harmony/NodeEvent.h"
+#include <Harmony/NodeEvent.h>
+#include <Harmony/Utilities.h>
 
 Asteroid::PlayerTrail::PlayerTrail(float angle, sf::Vector2f position)
 {
@@ -11,24 +12,24 @@ Asteroid::PlayerTrail::PlayerTrail(float angle, sf::Vector2f position)
 	circle->setOutlineColor(sf::Color::White);
 	circle->setFillColor(sf::Color::Red);
 	circle->setOutlineThickness(0.5f);
-	circle->setPointCount(Harmony::Utilities::generateRandomNumber<int>(3, 6));
+	circle->setPointCount(harmony::utilities::generateRandomNumber<int>(3, 6));
 
-	angle += Harmony::Utilities::generateRandomNumber<int>(-5, 5);
-    rotationVelocity = Harmony::Utilities::generateRandomNumber<int>(-1000, 1000);
+    angle += static_cast<float>(harmony::utilities::generateRandomNumber<int>(-5, 5));
+    rotationVelocity = static_cast<float>(harmony::utilities::generateRandomNumber<int>(-1000, 1000));
 	
 	setPosition(
-		position.x + 20 * sin(-Harmony::Utilities::degreesToRadians(angle)),
-		position.y + 20 * cos(-Harmony::Utilities::degreesToRadians(angle))
+		position.x + 20 * sin(-harmony::utilities::degreesToRadians(angle)),
+		position.y + 20 * cos(-harmony::utilities::degreesToRadians(angle))
 
 	);
 	
 	positionVelocity = { 
-		velocity * sin(-Harmony::Utilities::degreesToRadians(angle)), 
-		velocity * cos(-Harmony::Utilities::degreesToRadians(angle)) 
+		velocity * sin(-harmony::utilities::degreesToRadians(angle)), 
+		velocity * cos(-harmony::utilities::degreesToRadians(angle)) 
 	};
 }
 
-void Asteroid::PlayerTrail::updateCurrent(const sf::Time& time, Harmony::Core::EventPool& eventPool)
+void Asteroid::PlayerTrail::onUpdate(const sf::Time& time, harmony::core::EventPool& eventPool)
 {
     // Constants
     constexpr float FadeDuration = .55f; // Total duration for fading (in seconds)
@@ -59,16 +60,16 @@ void Asteroid::PlayerTrail::updateCurrent(const sf::Time& time, Harmony::Core::E
 
     // Check if the node should be detached
     if (elapseTime > FadeDuration) {
-        eventPool.addEvent(Harmony::Core::Object::create<Harmony::Event::DetachNode>(std::static_pointer_cast<SceneNode>(shared_from_this())));
+        eventPool.addEvent(harmony::utilities::create<harmony::Event::DetachNode>(std::static_pointer_cast<SceneNode>(shared_from_this())));
         return;
     }
 
     // Increase the radius
-    circle->setRadius(Harmony::Utilities::sinus(FadeDuration * 2, 20, elapseTime));
+    circle->setRadius(harmony::utilities::sinus(FadeDuration * 2, 20, elapseTime));
     setOrigin(circle->getRadius(), circle->getRadius());
 
-    circle->setFillColor(Harmony::Utilities::getInterpolatedColor(elapseTime, FadeDuration, FillColorStages));
-    circle->setOutlineColor(Harmony::Utilities::getInterpolatedColor(elapseTime, FadeDuration * 0.75f, OutlineColorStages));
+    circle->setFillColor(harmony::utilities::getInterpolatedColor(elapseTime, FadeDuration, FillColorStages));
+    circle->setOutlineColor(harmony::utilities::getInterpolatedColor(elapseTime, FadeDuration * 0.75f, OutlineColorStages));
 }
 
 

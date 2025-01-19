@@ -3,18 +3,18 @@
 #include "AsteroidGroup.h"
 #include "BackgroundStar.h"
 
-void Asteroid::Gameplay::onEnterCurrent()
+void Asteroid::Gameplay::onCreate()
 {
 	for (int index = 0; index < 160; index++)
 	{
-		sceneGraph->attachChild(Harmony::Core::Object::create<BackgroundStar>());
+		sceneGraph->attachChild(harmony::utilities::create<BackgroundStar>());
 	}
 
-	sceneGraph->attachChild(Harmony::Core::Object::create<AsteroidGroup>());
-	sceneGraph->attachChild(Harmony::Core::Object::create<Player>());
+	sceneGraph->attachChild(harmony::utilities::create<AsteroidGroup>());
+	sceneGraph->attachChild(harmony::utilities::create<Player>());
 }
 
-void Asteroid::Gameplay::onExitCurrent()
+void Asteroid::Gameplay::onDestroy()
 {
 
 }

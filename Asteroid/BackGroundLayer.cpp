@@ -1,13 +1,13 @@
 #include "BackGroundLayer.h"
 
-void Asteroid::BackGroundLayer::onEnterCurrent(Harmony::Core::Scene& scene)
+void Asteroid::BackGroundLayer::onCreate(harmony::core::Scene& scene)
 {
 }
 
-void Asteroid::BackGroundLayer::onExitCurrent(Harmony::Core::Scene& scene)
+void Asteroid::BackGroundLayer::onDestroy(harmony::core::Scene& scene)
 {
 }
 
-void Asteroid::BackGroundLayer::updateCurrent(const sf::Time& time, Harmony::Core::EventPool& eventPool)
+void Asteroid::BackGroundLayer::onUpdate(const sf::Time& time, harmony::core::EventPool& eventPool)
 {
 }

@@ -1,14 +1,14 @@
 #pragma once
-#include "Harmony/SceneNode.h"
+#include <Harmony/Engine.h>
 
 namespace Asteroid
 {
-    class Asteroid_t : public Harmony::Core::SceneNode
+    class Asteroid_t : public harmony::core::SceneNode
     {
     public:
         Asteroid_t(const sf::View& sceneView);
 
-        void updateCurrent(const sf::Time& time, Harmony::Core::EventPool& eventPool) override;
+        void onUpdate(const sf::Time& time, harmony::core::EventPool& eventPool) override;
     };
 }
 

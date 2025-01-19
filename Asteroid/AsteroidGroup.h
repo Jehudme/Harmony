@@ -1,7 +1,6 @@
 #pragma once
-#pragma once
 
-#include "Harmony/SceneNode.h"
+#include <Harmony/Engine.h>
 #include "Asteroid.h"
 #include <vector>
 #include <random>
@@ -10,15 +9,15 @@ namespace Asteroid
 {
     extern const uint64_t AsteroidGroupUniqueId;
 
-    class AsteroidGroup : public Harmony::Core::SceneNode
+    class AsteroidGroup : public harmony::core::SceneNode
     {
     public:
         AsteroidGroup();
 
-        void onEnterCurrent(Harmony::Core::Scene& scene) override;
-        void onExitCurrent(Harmony::Core::Scene& scene) override;
+        void onCreate(harmony::core::Scene& scene) override;
+        void onDestroy(harmony::core::Scene& scene) override;
 
-        void updateCurrent(const sf::Time& time, Harmony::Core::EventPool& eventPool) override;
+        void onUpdate(const sf::Time& time, harmony::core::EventPool& eventPool) override;
 
     private:
 

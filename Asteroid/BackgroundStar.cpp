@@ -1,27 +1,28 @@
+#include <Harmony/Utilities.h>
 #include "BackgroundStar.h"
 
-void Asteroid::BackgroundStar::onEnterCurrent(Harmony::Core::Scene& scene)
+void Asteroid::BackgroundStar::onCreate(harmony::core::Scene& scene)
 {
     this->drawable = std::make_shared<sf::CircleShape>();
     auto circle = std::static_pointer_cast<sf::CircleShape>(drawable);
 
     setPosition(
-        Harmony::Utilities::generateRandomNumber<int>(0, static_cast<int>(currentScene->view.getSize().x)),
-        Harmony::Utilities::generateRandomNumber<int>(0, static_cast<int>(currentScene->view.getSize().y))
+        static_cast<float>(harmony::utilities::generateRandomNumber<int>(NULL, static_cast<int>(currentScene->view.getSize().x))),
+        static_cast<float>(harmony::utilities::generateRandomNumber<int>(NULL, static_cast<int>(currentScene->view.getSize().y)))
     );
 
     circle->setPointCount(10);
-    circle->setRadius(Harmony::Utilities::generateRandomNumber<int>(1, 3));
+    circle->setRadius(static_cast<float>(harmony::utilities::generateRandomNumber<int>(1, 3)));
 
-    offset = static_cast<float>(Harmony::Utilities::generateRandomNumber<int>(0, 100)) / 10;
-    duration = static_cast<float>(Harmony::Utilities::generateRandomNumber<int>(0, 10));
+    offset = static_cast<float>(harmony::utilities::generateRandomNumber<int>(0, 100)) / 10;
+    duration = static_cast<float>(harmony::utilities::generateRandomNumber<int>(0, 10));
 }
 
-void Asteroid::BackgroundStar::onExitCurrent(Harmony::Core::Scene& scene)
+void Asteroid::BackgroundStar::onDestroy(harmony::core::Scene& scene)
 {
 }
 
-void Asteroid::BackgroundStar::updateCurrent(const sf::Time& time, Harmony::Core::EventPool& eventPool)
+void Asteroid::BackgroundStar::onUpdate(const sf::Time& time, harmony::core::EventPool& eventPool)
 {
     const float FadeDuration = 2.0f;
 
@@ -46,6 +47,6 @@ void Asteroid::BackgroundStar::updateCurrent(const sf::Time& time, Harmony::Core
     };
 
     // Get the interpolated color based on elapsed time and duration
-    circle->setFillColor(Harmony::Utilities::getInterpolatedColor(elapsedTime, duration + FadeDuration, FillColorStages));
+    circle->setFillColor(harmony::utilities::getInterpolatedColor(elapsedTime, duration + FadeDuration, FillColorStages));
 }
 

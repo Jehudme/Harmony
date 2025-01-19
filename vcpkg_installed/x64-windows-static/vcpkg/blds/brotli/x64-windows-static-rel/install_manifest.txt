@@ -1,0 +1,14 @@
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/pkgs/brotli_x64-windows-static/tools/brotli/brotli.exe
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/pkgs/brotli_x64-windows-static/lib/brotlienc.lib
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/pkgs/brotli_x64-windows-static/lib/brotlidec.lib
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/pkgs/brotli_x64-windows-static/lib/brotlicommon.lib
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/pkgs/brotli_x64-windows-static/include/brotli/decode.h
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/pkgs/brotli_x64-windows-static/include/brotli/encode.h
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/pkgs/brotli_x64-windows-static/include/brotli/port.h
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/pkgs/brotli_x64-windows-static/include/brotli/shared_dictionary.h
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/pkgs/brotli_x64-windows-static/include/brotli/types.h
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/pkgs/brotli_x64-windows-static/share/unofficial-brotli/unofficial-brotli-config.cmake
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/pkgs/brotli_x64-windows-static/share/unofficial-brotli/unofficial-brotli-config-release.cmake
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/pkgs/brotli_x64-windows-static/lib/pkgconfig/libbrotlicommon.pc
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/pkgs/brotli_x64-windows-static/lib/pkgconfig/libbrotlidec.pc
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/pkgs/brotli_x64-windows-static/lib/pkgconfig/libbrotlienc.pc
