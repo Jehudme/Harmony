@@ -11,8 +11,8 @@ void Asteroid::BackgroundStar::onCreate(harmony::core::Scene& scene)
         static_cast<float>(harmony::utilities::generateRandomNumber<int>(NULL, static_cast<int>(currentScene->view.getSize().y)))
     );
 
-    circle->setPointCount(10);
-    circle->setRadius(static_cast<float>(harmony::utilities::generateRandomNumber<int>(1, 3)));
+    circle->setPointCount(6);
+    circle->setRadius(static_cast<float>(harmony::utilities::generateRandomNumber<int>(1, 10)) / 10);
 
     offset = static_cast<float>(harmony::utilities::generateRandomNumber<int>(0, 100)) / 10;
     duration = static_cast<float>(harmony::utilities::generateRandomNumber<int>(0, 10));

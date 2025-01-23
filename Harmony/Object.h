@@ -5,6 +5,7 @@
 #include <memory>
 #include "Logger.h"
 
+
 namespace harmony::utilities 
 {
 	template<typename Type, typename ...ARGS>
@@ -17,7 +18,7 @@ namespace harmony::utilities
 namespace harmony::core {
     class Object : private sf::NonCopyable, public std::enable_shared_from_this<Object> {
     public:
-        explicit Object(const uint64_t uniqueId = 0);
+        Object(const uint64_t uniqueId = NULL);
         virtual ~Object();
 
         void retainSelf();

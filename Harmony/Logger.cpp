@@ -4,7 +4,7 @@
 namespace harmony
 {
     void Logger::create(const std::string& logFilePath, spdlog::level::level_enum globalLevel) {
-        // Create sinks for console and file
+        // Create thread-safe sinks for console and file
         auto consoleSink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
         auto fileSink = std::make_shared<spdlog::sinks::basic_file_sink_mt>(logFilePath, true);
 
@@ -27,11 +27,12 @@ namespace harmony
     std::shared_ptr<spdlog::logger> Logger::createLogger(const std::string& loggerName, spdlog::level::level_enum level) {
         std::lock_guard<std::mutex> lock(loggerMutex);
 
+        // Check if the logger already exists
         if (loggers.find(loggerName) != loggers.end()) {
             return loggers[loggerName];
         }
 
-        // Create a new logger with console and file sinks
+        // Create a new thread-safe logger with console and file sinks
         auto consoleSink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
         auto fileSink = std::make_shared<spdlog::sinks::basic_file_sink_mt>(loggerName + ".log", true);
 
@@ -49,6 +50,8 @@ namespace harmony
     }
 
     void Logger::setGlobalLogLevel(spdlog::level::level_enum level) {
+        std::lock_guard<std::mutex> lock(loggerMutex);
+
         spdlog::set_level(level);
         for (auto& pair : loggers) {
             pair.second->set_level(level);

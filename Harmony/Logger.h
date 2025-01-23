@@ -54,7 +54,7 @@ namespace harmony
             return true; }();
 
     public:
-        static inline auto core = Logger::createLogger("Core", spdlog::level::info);
+        static inline auto core = Logger::createLogger("Core", spdlog::level::err);
     };
 }
 #endif // ENABLE_LOGGING

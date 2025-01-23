@@ -6,6 +6,6 @@ int main()
 
 	engine->stateManager->addState("GameState", harmony::utilities::create<Asteroid::GameState>());
 	engine->stateManager->pushState("GameState");
-
+	engine->initializeWindow();
 	engine->run();
 }

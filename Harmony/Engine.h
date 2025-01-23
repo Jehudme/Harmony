@@ -8,10 +8,7 @@ namespace harmony::core
 	public:
 		Engine(const uint64_t& uniqueId = NULL);
 
-		void initializeWindow(
-			const unsigned int width = 600, const unsigned int height = 600, 
-			const std::string& title = "Harmony", const unsigned int framerateLimit = 0, const bool verticalSyncEnabled = false
-		);
+		void initializeWindow(const uint64_t& windowId = NULL);
 
 		void run();
 

@@ -5,7 +5,7 @@
 
 void Asteroid::Gameplay::onCreate()
 {
-	for (int index = 0; index < 160; index++)
+	for (int index = 0; index < 1000; index++)
 	{
 		sceneGraph->attachChild(harmony::utilities::create<BackgroundStar>());
 	}

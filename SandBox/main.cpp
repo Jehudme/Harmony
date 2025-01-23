@@ -1,5 +1,3 @@
-#include "Pong.h"
-int main()
-{
-	Pong::run();
-}
+
+
+extern int main();
