@@ -22,7 +22,7 @@ void Asteroid::BackgroundStar::onDestroy(harmony::core::Scene& scene)
 {
 }
 
-void Asteroid::BackgroundStar::onUpdate(const sf::Time& time, harmony::core::EventPool& eventPool)
+void Asteroid::BackgroundStar::onUpdate(const sf::Time& time, harmony::core::EventQueue& eventQueue)
 {
     const float FadeDuration = 2.0f;
 

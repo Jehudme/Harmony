@@ -4,88 +4,118 @@
 #include "StateManager.h"
 #include "Configuration.h"
 #include "Window.h"
-#include "Logger.h"
+#include "Event.h"
+#include <exception>
+#include <memory>
+#include <stdexcept>
+#include <string>
+#include "State.h"
+#include <SFML/Graphics/RenderTarget.hpp>
+#include <SFML/Graphics/RenderTexture.hpp>
+#include <SFML/Graphics/RenderWindow.hpp>
+#include <SFML/Window/Event.hpp>
 
 namespace harmony::core
 {
-    Engine::Engine(const std::shared_ptr<Configuration> configuration) 
-        : Object(configuration), stateManager(std::make_shared<StateManager>())
+    Engine::Engine(const std::shared_ptr<Configuration> config)
+        : Object(*config), stateManager(std::make_shared<StateManager>())
     {
-        if (const auto states = configuration->getData({ "Configurations", "States" })) {
-            for (const auto& state : states.value()) {
-                stateManager->addState(utilities::create<State>(utilities::create<Configuration>(state)));
+        try {
+            // Create states if provided
+            if (const auto states = config->getData({ "Configurations", "States" })) {
+                for (const auto& state : states.value()) {
+                    stateManager->addState(utilities::create<State>(Configuration(state)));
+                }
             }
+
+            // Create window if provided
+            if (const auto window = config->getData({ "Configurations", "Window" })) {
+                this->window = utilities::create<Window>(Configuration(window.value()));
+                setRenderTarget(this->window->instance);
+                renderMode = RenderMode::WindowRendering;
+            }
+            else {
+                throw std::runtime_error("No window configuration provided");
+            }
+        }
+        catch (const std::exception& e) {
+            throw std::runtime_error("Error during initialization: " + std::string(e.what()));
         }
     }
 
-    void Engine::initializeWindow(const uint64_t& windowId) {
-        LOG_TRACE(Logger::core, "[Engine] Initializing window with ID: {}", windowId);
-        renderTarget = utilities::create<Window>(windowId)->instance;
-        displayWindow = true;
-        LOG_TRACE(Logger::core, "[Engine] Window initialized successfully with ID: {}", windowId);
+    void Engine::setRenderTarget(std::shared_ptr<sf::RenderTarget> renderTarget)
+    {
+        this->renderTarget = renderTarget;
+
+        renderMode = std::dynamic_pointer_cast<sf::RenderWindow>(renderTarget)
+            ? RenderMode::WindowRendering
+            : RenderMode::TextureRendering;
     }
 
-    // The main game loop
     void Engine::run() {
-        LOG_INFO(Logger::core, "[Engine] Starting main game loop for Engine ID: {}", uniqueId);
-        if (!renderTarget) {
-            LOG_WARN(Logger::core, "[Engine] No render target for Engine ID: {}, creating RenderTexture", uniqueId);
-            renderTarget = std::make_shared<sf::RenderTexture>();
-        }
+        try {
+            if (!renderTarget) {
+                renderTarget = std::make_shared<sf::RenderTexture>();
+            }
 
-        while (displayWindow && std::dynamic_pointer_cast<sf::RenderWindow>(renderTarget)->isOpen()) {
-            event();
-            update();
-            draw();
-        }
-        LOG_INFO(Logger::core, "[Engine] Main game loop ended for Engine ID: {}", uniqueId);
-    }
-
-    // Handle events (user input, window events)
-    void Engine::event() {
-        if (!displayWindow)
-            return;
-
-        sf::Event sfEvent;
-        while (std::static_pointer_cast<sf::RenderWindow>(renderTarget)->pollEvent(sfEvent)) {
-            if (sfEvent.type == sf::Event::Closed) {
-                std::static_pointer_cast<sf::RenderWindow>(renderTarget)->close();
-                LOG_INFO(Logger::core, "[Engine] Window closed event detected for Engine ID: {}", uniqueId);
+            while (std::dynamic_pointer_cast<sf::RenderWindow>(renderTarget)->isOpen()) {
+                handleEvents();
+                update();
+                render();
             }
         }
-    }
-
-    void Engine::initialize(const std::shared_ptr<Configuration> configuration)
-    {
-    }
-
-    void Engine::initiStates(const std::shared_ptr<Configuration> configuration)
-    {
-        if (const auto states = configuration->getData({ "Configurations", "States" })) {
-            for (const auto& state : states.value()) {
-                stateManager->addState(utilities::create<State>(utilities::create<Configuration>(state)));
-            }
+        catch (const std::exception& e) {
+            throw std::runtime_error("Error during run: " + std::string(e.what()));
         }
     }
 
-    // Update the game logic and current state
+    void Engine::handleWindowEvents()
+    {
+        try {
+            sf::Event event;
+            while (std::static_pointer_cast<sf::RenderWindow>(renderTarget)->pollEvent(event)) {
+                if (event.type == sf::Event::Closed) {
+                    std::static_pointer_cast<sf::RenderWindow>(renderTarget)->close();
+                }
+            }
+        }
+        catch (const std::exception& e) {
+            throw std::runtime_error("Error handling window events: " + std::string(e.what()));
+        }
+    }
+
+    void Engine::handleEvents() {
+        try {
+            eventQueue.handleEvents();
+            if (renderMode == RenderMode::WindowRendering) {
+                handleWindowEvents();
+            }
+        }
+        catch (const std::exception& e) {
+            throw std::runtime_error("Error handling events: " + std::string(e.what()));
+        }
+    }
+
     void Engine::update() {
-        sf::Time deltaTime = clock.restart();
-        LOG_TRACE(Logger::core, "[Engine] Updating game logic for Engine ID: {} with delta time: {}", uniqueId, deltaTime.asSeconds());
-        eventPool.handleEvent();
-        stateManager->update(deltaTime, eventPool);
+        try {;
+            stateManager->update(clock.restart(), eventQueue);
+        }
+        catch (const std::exception& e) {
+            throw std::runtime_error("Error during update: " + std::string(e.what()));
+        }
     }
 
-    // Render the current state to the screen
-    void Engine::draw() {
-        LOG_TRACE(Logger::core, "[Engine] Drawing current state to screen for Engine ID: {}", uniqueId);
-        renderTarget->clear();
-        renderTarget->draw(*stateManager);
+    void Engine::render() {
+        try {
+            renderTarget->clear();
+            renderTarget->draw(*stateManager);
 
-        if (displayWindow) {
-            static auto renderWindow = std::static_pointer_cast<sf::RenderWindow>(renderTarget);
-            renderWindow->display();
+            if (renderMode == RenderMode::WindowRendering) {
+                std::static_pointer_cast<sf::RenderWindow>(renderTarget)->display();
+            }
         }
-        LOG_TRACE(Logger::core, "[Engine] Drawing completed for Engine ID: {}", uniqueId);
+        catch (const std::exception& e) {
+            throw std::runtime_error("Error during render: " + std::string(e.what()));
+        }
     }
 }

@@ -71,7 +71,7 @@ namespace Asteroid
         std::shared_ptr<harmony::core::SceneNode> m_child;
     };
 
-    void Asteroid::Player::onUpdate(const sf::Time& time, harmony::core::EventPool& eventPool)
+    void Asteroid::Player::onUpdate(const sf::Time& time, harmony::core::EventQueue& eventQueue)
     {
         const float deltaTime = time.asSeconds();
 
@@ -101,7 +101,7 @@ namespace Asteroid
 
         // Handle shooting logic with cooldown
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && bulletClock.getElapsedTime().asSeconds() > BulletCooldown) {
-            eventPool.addEvent(harmony::utilities::create<AttachChildEvent>(
+            eventQueue.addEvent(harmony::utilities::create<AttachChildEvent>(
                 std::static_pointer_cast<SceneNode>(parentNode->shared_from_this()),
                 harmony::utilities::create<Bullet>(getRotation(), getGlobalPosition()))
             );
@@ -123,7 +123,7 @@ namespace Asteroid
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
             acceleration += -AccelerationSpeed;
             if (trailClock.getElapsedTime().asSeconds() > TrailCooldown) {
-                eventPool.addEvent(harmony::utilities::create<AttachChildEvent>(
+                eventQueue.addEvent(harmony::utilities::create<AttachChildEvent>(
                     std::static_pointer_cast<SceneNode>(parentNode->shared_from_this()),
                     harmony::utilities::create<PlayerTrail>(getRotation(), getGlobalPosition()))
                 );

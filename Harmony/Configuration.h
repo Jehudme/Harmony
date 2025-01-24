@@ -4,7 +4,6 @@
 #include <nlohmann/json.hpp>
 #include "Object.h"
 
-
 namespace harmony 
 {
 	class Configuration : public  core::Object
@@ -27,7 +26,7 @@ namespace harmony
 
 
 	private:
-		bool contain(const std::initializer_list<Key> keys);
+		bool contain(const std::initializer_list<Key> keys) const;
 
 	public:
 		std::string path;
@@ -52,14 +51,12 @@ namespace harmony
     template<typename Type>
     void Configuration::setData(const std::initializer_list<Key> keys, Type& data)
     {
-        LOG_TRACE(Logger::core, "Setting data with keys");
         auto& current = this->data;
         for (auto key : keys)
         {
             if (current.find(key) == current.end())
-            {
                 current[key] = nlohmann::json::object();
-            }
+
             current = current[key];
         }
 

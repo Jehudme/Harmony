@@ -29,7 +29,7 @@ Asteroid::PlayerTrail::PlayerTrail(float angle, sf::Vector2f position)
 	};
 }
 
-void Asteroid::PlayerTrail::onUpdate(const sf::Time& time, harmony::core::EventPool& eventPool)
+void Asteroid::PlayerTrail::onUpdate(const sf::Time& time, harmony::core::EventQueue& eventQueue)
 {
     // Constants
     constexpr float FadeDuration = .55f; // Total duration for fading (in seconds)
@@ -60,7 +60,7 @@ void Asteroid::PlayerTrail::onUpdate(const sf::Time& time, harmony::core::EventP
 
     // Check if the node should be detached
     if (elapseTime > FadeDuration) {
-        eventPool.addEvent(harmony::utilities::create<harmony::Event::DetachNode>(std::static_pointer_cast<SceneNode>(shared_from_this())));
+        eventQueue.addEvent(harmony::utilities::create<harmony::Event::DetachNode>(std::static_pointer_cast<SceneNode>(shared_from_this())));
         return;
     }
 

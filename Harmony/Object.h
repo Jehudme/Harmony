@@ -22,7 +22,7 @@ namespace harmony::core {
     class Object : private sf::NonCopyable, public std::enable_shared_from_this<Object> {
     public:
         Object(const uint64_t uniqueId = NULL);
-		Object(const std::shared_ptr<Configuration> configuration);
+		Object(const Configuration& configuration);
         virtual ~Object();
 
         void retainSelf();

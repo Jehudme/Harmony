@@ -1,7 +1,10 @@
 {
   "Configurations": {
     "Window": {
+      "Name": "Main",
       "Title": "Hello World",
+      "Width": 800,
+      "Height": 600,
       "UniqueID": 1
     },
     "States": [

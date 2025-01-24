@@ -1,18 +1,31 @@
 #include "pch.h"
 #include "SceneNode.h"
 #include <stdexcept>
-#include "Logger.h"
+#include <memory>
+#include <utility>
+#include "Event.h"
+#include "Object.h"
+#include <SFML/Graphics/CircleShape.hpp>
+#include <SFML/Graphics/ConvexShape.hpp>
+#include <SFML/Graphics/Rect.hpp>
+#include <SFML/Graphics/RectangleShape.hpp>
+#include <SFML/Graphics/RenderStates.hpp>
+#include <SFML/Graphics/RenderTarget.hpp>
+#include <SFML/Graphics/Sprite.hpp>
+#include <SFML/Graphics/Text.hpp>
+#include <SFML/Graphics/Transform.hpp>
+#include <SFML/Graphics/VertexArray.hpp>
+#include <SFML/System/Time.hpp>
+#include <SFML/System/Vector2.hpp>
 
 namespace harmony::core {
 
-    SceneNode::SceneNode(const uint64_t& uniqueId)
-        : Object(uniqueId), isDrawEnable(true), isUpdateEnable(true), parentNode(nullptr),
-        currentScene(nullptr), rotationVelocity(0), rotationAcceleration(0)
-    {
+    SceneNode::SceneNode(const Configuration& configuration)
+        : Object(configuration), isDrawEnable(true), isUpdateEnable(true), parentNode(nullptr), currentScene(nullptr), rotationVelocity(0), rotationAcceleration(0) {
     }
 
     SceneNode::~SceneNode() {
-        for (auto child : children) {
+        for (auto& child : children) {
             child->parentNode = nullptr;
         }
         children.clear();
@@ -20,61 +33,47 @@ namespace harmony::core {
 
     void SceneNode::attachChild(const std::shared_ptr<SceneNode> child) {
         if (child) {
-            LOG_TRACE(Logger::core, "Attaching child node to SceneNode with uniqueId: {}", uniqueId);
             child->parentNode = this;
             child->currentScene = currentScene;
             children.push_back(child);
         }
         else {
-            LOG_WARN(Logger::core, "Attempted to attach a null child to SceneNode with uniqueId: {}", uniqueId);
+            throw std::invalid_argument("Attempted to attach a null child to SceneNode.");
         }
     }
 
     std::shared_ptr<SceneNode> SceneNode::detachChild(const SceneNode& child) {
-        LOG_TRACE(Logger::core, "Detaching child node from SceneNode with uniqueId: {}", uniqueId);
+        auto found = std::find_if(children.begin(), children.end(),
+            [&child](const std::shared_ptr<SceneNode>& ptr) { return ptr.get() == &child; });
 
-        try {
-            auto found = std::find_if(children.begin(), children.end(),
-                [&child](const std::shared_ptr<SceneNode>& ptr) { return ptr.get() == &child; });
-
-            if (found != children.end()) {
-                auto detachedChild = *found;
-                detachedChild->parentNode = nullptr;
-                detachedChild->currentScene = nullptr;
-                children.erase(found);
-                return detachedChild;
-            }
-            else {
-                LOG_WARN(Logger::core, "Child node not found in SceneNode of type '{}' with uniqueId: {}", objectType, uniqueId);
-            }
+        if (found != children.end()) {
+            auto detachedChild = *found;
+            detachedChild->parentNode = nullptr;
+            detachedChild->currentScene = nullptr;
+            children.erase(found);
+            return detachedChild;
         }
-        catch (const std::exception& e) {
-            LOG_ERROR(Logger::core, "Exception during child detachment: {}", e.what());
+        else {
+            throw std::runtime_error("Child node not found in SceneNode.");
         }
-
-        return nullptr;
     }
 
     std::shared_ptr<SceneNode> SceneNode::detachChild() {
         if (parentNode) {
-            LOG_TRACE(Logger::core, "Detaching from parent node for SceneNode of type '{}' with uniqueId: {}", objectType, uniqueId);
             parentNode->detachChild(*this);
         }
         return std::static_pointer_cast<SceneNode>(shared_from_this());
     }
 
     void SceneNode::enableDraw(const bool option) {
-        LOG_TRACE(Logger::core, "Setting draw enable to {} for SceneNode of type '{}' with uniqueId: {}", option, objectType, uniqueId);
         isDrawEnable = option;
     }
 
     void SceneNode::enableUpdate(const bool option) {
-        LOG_TRACE(Logger::core, "Setting update enable to {} for SceneNode with uniqueId: {}", option, uniqueId);
         isUpdateEnable = option;
     }
 
     sf::Transform SceneNode::getGlobalTransform() const {
-        LOG_TRACE(Logger::core, "Calculating global transform for SceneNode with uniqueId: {}", uniqueId);
         sf::Transform transform = getTransform();
         const SceneNode* currentParent = parentNode;
 
@@ -86,7 +85,6 @@ namespace harmony::core {
     }
 
     sf::Vector2f SceneNode::getGlobalPosition() const {
-        LOG_TRACE(Logger::core, "Calculating global position for SceneNode with uniqueId: {}", uniqueId);
         sf::Vector2f position = getPosition();
         const SceneNode* currentParent = parentNode;
 
@@ -98,55 +96,47 @@ namespace harmony::core {
     }
 
     sf::FloatRect SceneNode::getGlobalBounds() const {
-        LOG_TRACE(Logger::core, "Calculating global bounds for SceneNode with uniqueId: {}", uniqueId);
-        try {
-            const sf::Transform globalTransform = getGlobalTransform();
+        const sf::Transform globalTransform = getGlobalTransform();
 
-            if (auto rectangle = std::dynamic_pointer_cast<sf::RectangleShape>(drawable)) {
-                return globalTransform.transformRect(rectangle->getGlobalBounds());
-            }
+        if (auto rectangle = std::dynamic_pointer_cast<sf::RectangleShape>(drawable)) {
+            return globalTransform.transformRect(rectangle->getGlobalBounds());
+        }
 
-            else if (auto circle = std::dynamic_pointer_cast<sf::CircleShape>(drawable)) {
-                return globalTransform.transformRect(circle->getLocalBounds());
-            }
+        if (auto circle = std::dynamic_pointer_cast<sf::CircleShape>(drawable)) {
+            return globalTransform.transformRect(circle->getLocalBounds());
+        }
 
-            else if (auto sprite = std::dynamic_pointer_cast<sf::Sprite>(drawable)) {
-                return globalTransform.transformRect(sprite->getGlobalBounds());
-            }
+        if (auto sprite = std::dynamic_pointer_cast<sf::Sprite>(drawable)) {
+            return globalTransform.transformRect(sprite->getGlobalBounds());
+        }
 
-            else if (auto text = std::dynamic_pointer_cast<sf::Text>(drawable)) {
-                return globalTransform.transformRect(text->getGlobalBounds());
-            }
+        if (auto text = std::dynamic_pointer_cast<sf::Text>(drawable)) {
+            return globalTransform.transformRect(text->getGlobalBounds());
+        }
 
-            else if (auto convex = std::dynamic_pointer_cast<sf::ConvexShape>(drawable)) {
-                return globalTransform.transformRect(convex->getGlobalBounds());
-            }
+        if (auto convex = std::dynamic_pointer_cast<sf::ConvexShape>(drawable)) {
+            return globalTransform.transformRect(convex->getGlobalBounds());
+        }
 
-            else if (auto vertexArray = std::dynamic_pointer_cast<sf::VertexArray>(drawable)) {
-                if (vertexArray->getVertexCount() > 0) {
-                    sf::FloatRect bounds;
-                    for (size_t i = 0; i < vertexArray->getVertexCount(); ++i) {
-                        bounds = bounds == sf::FloatRect() ? sf::FloatRect(vertexArray->operator[](i).position, { 0.f, 0.f }) : bounds;
-                        bounds.left = std::min(bounds.left, vertexArray->operator[](i).position.x);
-                        bounds.top = std::min(bounds.top, vertexArray->operator[](i).position.y);
-                        bounds.width = std::max(bounds.width, vertexArray->operator[](i).position.x - bounds.left);
-                        bounds.height = std::max(bounds.height, vertexArray->operator[](i).position.y - bounds.top);
-                    }
-                    return globalTransform.transformRect(bounds);
+        if (auto vertexArray = std::dynamic_pointer_cast<sf::VertexArray>(drawable)) {
+            if (vertexArray->getVertexCount() > 0) {
+                sf::FloatRect bounds;
+                for (size_t i = 0; i < vertexArray->getVertexCount(); ++i) {
+                    bounds = bounds == sf::FloatRect() ? sf::FloatRect(vertexArray->operator[](i).position, { 0.f, 0.f }) : bounds;
+                    bounds.left = std::min(bounds.left, vertexArray->operator[](i).position.x);
+                    bounds.top = std::min(bounds.top, vertexArray->operator[](i).position.y);
+                    bounds.width = std::max(bounds.width, vertexArray->operator[](i).position.x - bounds.left);
+                    bounds.height = std::max(bounds.height, vertexArray->operator[](i).position.y - bounds.top);
                 }
+                return globalTransform.transformRect(bounds);
             }
+        }
 
-            throw std::runtime_error("no matching drawable type is found");
-        }
-        catch (const std::exception& e) {
-            LOG_ERROR(Logger::core, "Exception during global bounds calculation: {}", e.what());
-            return sf::FloatRect();
-        }
+        throw std::runtime_error("No matching drawable type found.");
     }
 
     void SceneNode::draw(sf::RenderTarget& renderTarget, sf::RenderStates state) const {
         if (isDrawEnable) {
-            LOG_TRACE(Logger::core, "Drawing SceneNode with uniqueId: {}", uniqueId);
             state.transform *= getTransform();
             onDraw(renderTarget, state);
 
@@ -156,14 +146,13 @@ namespace harmony::core {
         }
     }
 
-    void SceneNode::update(const sf::Time& time, EventPool& eventPool) {
+    void SceneNode::update(const sf::Time& time, EventQueue& eventQueue) {
         if (isUpdateEnable) {
-            LOG_TRACE(Logger::core, "Updating SceneNode with uniqueId: {}", uniqueId);
-            onUpdate(time, eventPool);
+            onUpdate(time, eventQueue);
             updateTransform(time);
 
             for (const auto& child : children) {
-                child->update(time, eventPool);
+                child->update(time, eventQueue);
             }
         }
     }
@@ -188,34 +177,31 @@ namespace harmony::core {
         }
     }
 
-    void SceneNode::onUpdate(const sf::Time& time, EventPool& eventPool) {
-    }
+    void SceneNode::onUpdate(const sf::Time& time, EventQueue& eventQueue) {}
 
-    void SceneNode::onCreate(Scene& scene)
-    {
-    }
+    void SceneNode::onCreate(Scene& scene) {}
 
-    void SceneNode::onDestroy(Scene& scene)
-    {
-    }
+    void SceneNode::onDestroy(Scene& scene) {}
 
     void SceneNode::onEnter(Scene& scene) {
         onCreate(scene);
-        for (auto child : children)
+        for (auto& child : children) {
             child->onEnter(scene);
+        }
     }
 
     void SceneNode::onExit(Scene& scene) {
         onDestroy(scene);
-        for (auto child : children)
-            onExit(scene);
+        for (auto& child : children) {
+            child->onExit(scene);
+        }
     }
 
-    bool SceneNode::intersect(const std::shared_ptr<core::SceneNode> target) {
+    bool SceneNode::intersect(const std::shared_ptr<SceneNode> target) {
         return intersect(std::static_pointer_cast<SceneNode>(shared_from_this()), target);
     }
 
-    bool SceneNode::intersect(const std::shared_ptr<core::SceneNode> node1, const std::shared_ptr<core::SceneNode> node2) {
+    bool SceneNode::intersect(const std::shared_ptr<SceneNode> node1, const std::shared_ptr<SceneNode> node2) {
         return node1->getGlobalBounds().intersects(node2->getGlobalBounds());
     }
 

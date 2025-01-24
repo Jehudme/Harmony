@@ -8,7 +8,7 @@ namespace Asteroid
     public:
         Asteroid_t(const sf::View& sceneView);
 
-        void onUpdate(const sf::Time& time, harmony::core::EventPool& eventPool) override;
+        void onUpdate(const sf::Time& time, harmony::core::EventQueue& eventQueue) override;
     };
 }
 

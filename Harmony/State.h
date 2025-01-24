@@ -6,23 +6,23 @@
 namespace harmony::core {
     class State : public Object, public sf::Drawable {
     public:
-        State(const std::shared_ptr<Configuration> configuration);
+        State(const Configuration& configuration);
 
-        void update(const sf::Time& time, EventPool& eventPool);
+        void update(const sf::Time& time, EventQueue& eventQueue);
         void draw(sf::RenderTarget& renderTarget, sf::RenderStates states) const;
 
         void onEnter();
         void onExit();
 
         void addScene(std::shared_ptr<Scene> scene);
-        std::shared_ptr<Scene> getScene(const uint64_t& uniqueId) const;
-        void pushScene(const uint64_t& uniqueId);
+        std::shared_ptr<Scene> getScene(const std::string& name) const;
+        void pushScene(const std::string& name);
         void popScene();
         void clearBuffer();
-        bool isSceneActive(const uint64_t& uniqueId) const;
+        bool isSceneActive(const std::string& name) const;
 
     private:
-        std::map<uint64_t, std::shared_ptr<Scene>> m_scenes;
+        std::map<std::string, std::shared_ptr<Scene>> m_scenes;
         std::stack<std::shared_ptr<Scene>> m_renderBuffer;
     };
 }

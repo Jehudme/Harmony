@@ -6,6 +6,5 @@
 int main() {
 	harmony::configuration->load();
 	auto engine = harmony::utilities::create<harmony::core::Engine>(harmony::configuration);
-	engine->initializeWindow(10000);
 	engine->run();
 }

@@ -1,5 +1,13 @@
 #include "pch.h"
 #include "Logger.h"
+#include <memory>
+#include <mutex>
+#include <string>
+#include <spdlog/common.h>
+#include <spdlog/logger.h>
+#include <spdlog/sinks/basic_file_sink.h>
+#include <spdlog/sinks/stdout_color_sinks.h>
+#include <spdlog/spdlog.h>
 
 namespace harmony
 {

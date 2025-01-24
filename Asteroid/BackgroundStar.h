@@ -12,7 +12,7 @@ namespace Asteroid
 		void onCreate(harmony::core::Scene& scene) override;
 		void onDestroy(harmony::core::Scene& scene) override;
 
-		void onUpdate(const sf::Time& time, harmony::core::EventPool& eventPool) override;
+		void onUpdate(const sf::Time& time, harmony::core::EventQueue& eventQueue) override;
 
 	public:
 		sf::Clock clock;

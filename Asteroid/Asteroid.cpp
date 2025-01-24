@@ -31,7 +31,7 @@ namespace Asteroid
 		positionVelocity = { velocity * sin(-harmony::utilities::degreesToRadians(angle)), velocity * cos(-harmony::utilities::degreesToRadians(angle)) };
 	}
 
-	void Asteroid_t::onUpdate(const sf::Time& time, harmony::core::EventPool& eventPool)
+	void Asteroid_t::onUpdate(const sf::Time& time, harmony::core::EventQueue& eventQueue)
 	{
 		const sf::FloatRect field = harmony::utilities::getViewBounds(currentScene->view);
 

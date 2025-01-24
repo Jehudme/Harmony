@@ -10,7 +10,7 @@ namespace harmony::core
     class SceneNode : public sf::Transformable, public sf::Drawable, public Object
     {
     public:
-        SceneNode(const uint64_t& uniqueId = NULL);
+        SceneNode(const Configuration& configuration);
         ~SceneNode();
 
         void attachChild(const std::shared_ptr<SceneNode> child);
@@ -25,7 +25,7 @@ namespace harmony::core
         sf::FloatRect getGlobalBounds() const;
 
         void draw(sf::RenderTarget& renderTarget, sf::RenderStates state) const override;
-        void update(const sf::Time& time, EventPool& eventPool);
+        void update(const sf::Time& time, EventQueue& eventQueue);
 
         void onEnter(Scene& scene);
         void onExit(Scene& scene);
@@ -37,7 +37,7 @@ namespace harmony::core
 
     private:
         virtual void onDraw(sf::RenderTarget& renderTarget, sf::RenderStates state) const;
-        virtual void onUpdate(const sf::Time& time, EventPool& eventPool);
+        virtual void onUpdate(const sf::Time& time, EventQueue& eventQueue);
 
         virtual void onCreate(Scene& scene);
         virtual void onDestroy(Scene& scene);

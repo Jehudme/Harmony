@@ -21,10 +21,10 @@ void Asteroid::AsteroidGroup::onDestroy(harmony::core::Scene& scene)
 {
 }
 
-void Asteroid::AsteroidGroup::onUpdate(const sf::Time& time, harmony::core::EventPool& eventPool)
+void Asteroid::AsteroidGroup::onUpdate(const sf::Time& time, harmony::core::EventQueue& eventQueue)
 {
 	if (children.size() < 6) {
-		eventPool.addEvent(harmony::utilities::create<harmony::Event::AttachNode>(
+		eventQueue.addEvent(harmony::utilities::create<harmony::Event::AttachNode>(
 			std::static_pointer_cast<SceneNode>(shared_from_this()),
 			harmony::utilities::create<Asteroid_t>(currentScene->view)
 		));

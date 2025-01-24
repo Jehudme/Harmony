@@ -8,7 +8,7 @@ namespace Asteroid
 	public:
 		PlayerTrail(float angle, sf::Vector2f position);
 
-		void onUpdate(const sf::Time& time, harmony::core::EventPool& eventPool) override;
+		void onUpdate(const sf::Time& time, harmony::core::EventQueue& eventQueue) override;
 
 	public:
 		sf::Clock clock;

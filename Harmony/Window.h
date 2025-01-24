@@ -6,7 +6,7 @@ namespace harmony
 	class Window : public core::Object
 	{
 	public:
-		Window(const uint64_t& uniqueId = NULL);
+		Window(const Configuration& configuration);
 
 	public:
 		std::shared_ptr<sf::RenderWindow> instance;
