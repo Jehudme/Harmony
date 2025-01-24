@@ -1,5 +1,6 @@
 #pragma once
 #include "State.h"
+#include <map>
 
 namespace harmony::core
 {
@@ -12,18 +13,18 @@ namespace harmony::core
 		void update(const sf::Time& time, EventPool& eventPool);
 
 		void addState(const std::shared_ptr<State> state);
-		void removeState(const uint64_t& uniqueId);
+		void removeState(const std::string& name);
 
-		void swichState(const uint64_t& uniqueId);
+		void swichState(const std::string& name);
 		void popState();
 
-		void switchState(const uint64_t& name);
+		void switchState(const std::string& name);
 
 		std::shared_ptr<State> getCurrentState();
 
 	private:
 		std::shared_ptr<State> m_currentState;
-		std::map<uint64_t, std::shared_ptr<State>> m_states;
+		std::map<std::string, std::shared_ptr<State>> m_states;
 	};
 }
 

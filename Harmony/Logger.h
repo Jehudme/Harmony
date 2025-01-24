@@ -36,7 +36,7 @@ namespace harmony
 {
     class Logger {
     public:
-        static void onEnter(const std::string& logFilePath, spdlog::level::level_enum globalLevel = spdlog::level::info);
+        static void create(const std::string& logFilePath, spdlog::level::level_enum globalLevel = spdlog::level::info);
 
         static std::shared_ptr<spdlog::logger> createLogger(const std::string& loggerName, spdlog::level::level_enum level = spdlog::level::info);
 
@@ -50,7 +50,7 @@ namespace harmony
 
         // Static initialization function
         static inline const bool loggerInitialized = []() {
-            Logger::onEnter("application.log", spdlog::level::debug); // Initialize the logger
+            Logger::create("application.log", spdlog::level::debug); // Initialize the logger
             return true; }();
 
     public:

@@ -1,21 +1,13 @@
 {
-  "Static": {
+  "Configurations": {
     "Window": {
       "Title": "Hello World",
       "UniqueID": 1
     },
     "States": [
       {
-        "name": "main",
-        "Id": 6
+        "Name": "Main"
       }
     ]
-  },
-
-
-
-  "Dynamics": {
-    "10000": { "Title": "Hello World" },
-    "1": { "StatesId": [ 10 ] }
   }
 }

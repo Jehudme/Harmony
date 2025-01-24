@@ -1,4 +1,5 @@
 #include "pch.h"
+#include "Object.h"
 #include "Engine.h"
 #include "StateManager.h"
 #include "Configuration.h"
@@ -7,32 +8,19 @@
 
 namespace harmony::core
 {
-    Engine::Engine()
+    Engine::Engine(const std::shared_ptr<Configuration> configuration) 
+        : Object(configuration), stateManager(std::make_shared<StateManager>())
     {
-        const std::string uniqueIdKey = std::to_string(uniqueId);
-
-        if (const auto states = configuration->getData({ "Configurations", uniqueIdKey, "States" })) {
-            for (const auto& stateId : states.value()) {
-                stateManager->addState(utilities::onEnter<State>(stateId.get<uint64_t>()));
-            }
-        }
-    }
-    // Constructor
-    Engine::Engine(const uint64_t& uniqueId)
-        : Object(uniqueId), displayWindow(false), stateManager(std::make_shared<StateManager>())
-    {
-        const std::string uniqueIdKey = std::to_string(uniqueId);
-
-        if (const auto states = configuration->getData({ "Objects", uniqueIdKey, "StatesId" })) {
-            for (const auto& stateId : states.value()) {
-                stateManager->addState(utilities::onEnter<State>(stateId.get<uint64_t>()));
+        if (const auto states = configuration->getData({ "Configurations", "States" })) {
+            for (const auto& state : states.value()) {
+                stateManager->addState(utilities::create<State>(utilities::create<Configuration>(state)));
             }
         }
     }
 
     void Engine::initializeWindow(const uint64_t& windowId) {
         LOG_TRACE(Logger::core, "[Engine] Initializing window with ID: {}", windowId);
-        renderTarget = utilities::onEnter<Window>(windowId)->instance;
+        renderTarget = utilities::create<Window>(windowId)->instance;
         displayWindow = true;
         LOG_TRACE(Logger::core, "[Engine] Window initialized successfully with ID: {}", windowId);
     }
@@ -67,8 +55,17 @@ namespace harmony::core
         }
     }
 
-    void Engine::initialize(const std::initializer_list<std::string> keys)
+    void Engine::initialize(const std::shared_ptr<Configuration> configuration)
     {
+    }
+
+    void Engine::initiStates(const std::shared_ptr<Configuration> configuration)
+    {
+        if (const auto states = configuration->getData({ "Configurations", "States" })) {
+            for (const auto& state : states.value()) {
+                stateManager->addState(utilities::create<State>(utilities::create<Configuration>(state)));
+            }
+        }
     }
 
     // Update the game logic and current state

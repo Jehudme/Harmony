@@ -1,11 +1,12 @@
 #pragma once
 #include "Scene.h"
 #include <stack>
+#include "Configuration.h"
 
 namespace harmony::core {
     class State : public Object, public sf::Drawable {
     public:
-        State(const uint64_t& uniqueId);
+        State(const std::shared_ptr<Configuration> configuration);
 
         void update(const sf::Time& time, EventPool& eventPool);
         void draw(sf::RenderTarget& renderTarget, sf::RenderStates states) const;

@@ -13,14 +13,14 @@ namespace harmony
 		using Key = const std::string;
 
 	public:
-		Configuration(const std::string path, const uint64_t& uniqueId = NULL);
+        Configuration(const nlohmann::json& data = nlohmann::json(), const std::string& path = std::string(), const uint64_t& uniqueId = NULL);
 
 		void load();
 		void save();
 
 		template<typename Type>
-		std::optional<Type> getData(const std::initializer_list<Key> keys);
-        std::optional<nlohmann::json> getData(const std::initializer_list<Key> keys);
+		std::optional<Type> getData(const std::initializer_list<Key> keys) const;
+        std::optional<nlohmann::json> getData(const std::initializer_list<Key> keys) const;
 
 		template<typename Type>
 		void setData(const std::initializer_list<Key> keys, Type& data);
@@ -41,7 +41,7 @@ namespace harmony
 namespace harmony
 {
     template<typename Type>
-    std::optional<Type> Configuration::getData(const std::initializer_list<Key> keys)
+    std::optional<Type> Configuration::getData(const std::initializer_list<Key> keys) const
     {
         if (const std::optional<Type> data = getData(keys))
             return std::make_optional<Type>(data.value());

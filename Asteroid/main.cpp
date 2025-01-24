@@ -2,9 +2,9 @@
 #include "GameState.h"
 int main()
 {
-	auto engine = harmony::utilities::onEnter<harmony::core::Engine>();
+	auto engine = harmony::utilities::create<harmony::core::Engine>();
 
-	engine->stateManager->addState("GameState", harmony::utilities::onEnter<Asteroid::GameState>());
+	engine->stateManager->addState("GameState", harmony::utilities::create<Asteroid::GameState>());
 	engine->stateManager->swichState("GameState");
 	engine->initializeWindow();
 	engine->run();

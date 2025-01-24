@@ -6,7 +6,7 @@ namespace harmony::core
 {
     // Constructor
     StateManager::StateManager()
-        : m_currentState(nullptr)
+        : m_currentState(nullptr), m_states(std::map<std::string, std::shared_ptr<State>>())
     {
         LOG_TRACE(Logger::core, "[StateManager] StateManager created");
     }
@@ -36,39 +36,39 @@ namespace harmony::core
     {
         if (state)
         {
-            LOG_TRACE(Logger::core, "[StateManager] Adding state with ID: {}", state->uniqueId);
-            m_states[state->uniqueId] = state;
+            LOG_INFO(Logger::core, "[StateManager] Adding state with ID: {}", state->uniqueId);
+            m_states[state->name] = state;
         }
     }
 
     // Remove a state from the manager
-    void StateManager::removeState(const uint64_t& uniqueId)
+    void StateManager::removeState(const std::string& name)
     {
-        if (m_states.find(uniqueId) != m_states.end())
+        if (m_states.find(name) != m_states.end())
         {
-            LOG_TRACE(Logger::core, "[StateManager] Removing state with ID: {}", uniqueId);
-            if (m_currentState == m_states[uniqueId])
+            LOG_INFO(Logger::core, "[StateManager] Removing state with Name: {}", name);
+            if (m_currentState == m_states[name])
             {
                 LOG_TRACE(Logger::core, "[StateManager] Current state matches removing state, setting current state to nullptr");
                 m_currentState = nullptr;
             }
-            m_states.erase(uniqueId);
+            m_states.erase(name);
         }
     }
 
     // Push a state to become the current state
-    void StateManager::swichState(const uint64_t& uniqueId)
+    void StateManager::swichState(const std::string& name)
     {
-        if (m_states.find(uniqueId) != m_states.end())
+        if (m_states.find(name) != m_states.end())
         {
-            LOG_TRACE(Logger::core, "[StateManager] Pushing state with ID: {}", uniqueId);
+            LOG_INFO(Logger::core, "[StateManager] Pushing state with Name: {}", name);
             if (m_currentState)
             {
-                LOG_TRACE(Logger::core, "[StateManager] Exiting current state with ID: {}", m_currentState->uniqueId);
+                LOG_INFO(Logger::core, "[StateManager] Exiting current state with ID: {}", m_currentState->uniqueId);
                 m_currentState->onExit();
             }
 
-            m_currentState = m_states[uniqueId];
+            m_currentState = m_states[name];
             LOG_TRACE(Logger::core, "[StateManager] Entering new state with ID: {}", m_currentState->uniqueId);
             m_currentState->onEnter();
         }
@@ -86,11 +86,11 @@ namespace harmony::core
     }
 
     // Switch to a different state
-    void StateManager::switchState(const uint64_t& uniqueId)
+    void StateManager::switchState(const std::string& name)
     {
-        LOG_TRACE(Logger::core, "[StateManager] Switching to state with ID: {}", uniqueId);
+        LOG_TRACE(Logger::core, "[StateManager] Switching to state with name: {}", name);
         popState();
-        swichState(uniqueId);
+        swichState(name);
     }
 
     // Get the current state

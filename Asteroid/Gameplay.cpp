@@ -7,11 +7,11 @@ void Asteroid::Gameplay::onCreate()
 {
 	for (int index = 0; index < 1000; index++)
 	{
-		sceneGraph->attachChild(harmony::utilities::onEnter<BackgroundStar>());
+		sceneGraph->attachChild(harmony::utilities::create<BackgroundStar>());
 	}
 
-	sceneGraph->attachChild(harmony::utilities::onEnter<AsteroidGroup>());
-	sceneGraph->attachChild(harmony::utilities::onEnter<Player>());
+	sceneGraph->attachChild(harmony::utilities::create<AsteroidGroup>());
+	sceneGraph->attachChild(harmony::utilities::create<Player>());
 }
 
 void Asteroid::Gameplay::onDestroy()

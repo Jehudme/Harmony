@@ -1,20 +1,22 @@
 #pragma once
 #include "StateManager.h"
+#include "Configuration.h"
 
 namespace harmony::core
 {
 	class Engine : public Object
 	{
 	public:
-		Engine();
-		Engine(const uint64_t& uniqueId = NULL);
+		Engine(const std::shared_ptr<Configuration> configuration);
 
 		void initializeWindow(const uint64_t& windowId = NULL);
 
 		void run();
 
 	private:
-		void initialize(const std::initializer_list<std::string> keys);
+		void initialize(const std::shared_ptr<Configuration> configuration);
+
+		void initiStates(const std::shared_ptr<Configuration> configuration);
 
 		void update();
 		void event();

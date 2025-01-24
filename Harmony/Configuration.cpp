@@ -4,10 +4,10 @@
 
 namespace harmony
 {
-    std::shared_ptr<Configuration> configuration = utilities::onEnter<Configuration>("config.json");
+    std::shared_ptr<Configuration> configuration = utilities::create<Configuration>(nlohmann::json(), "config.json");
 
-    Configuration::Configuration(const std::string path, const uint64_t& uniqueId)
-        : core::Object(uniqueId), path(path)
+    Configuration::Configuration(const nlohmann::json& data, const std::string& path, const uint64_t& uniqueId)
+        : core::Object(uniqueId), path(path), data(data)
     {
     }
 
@@ -57,7 +57,7 @@ namespace harmony
         }
     }
 
-    std::optional<nlohmann::json> Configuration::getData(const std::initializer_list<Key> keys)
+    std::optional<nlohmann::json> Configuration::getData(const std::initializer_list<Key> keys) const
     {
         LOG_TRACE(Logger::core, "Getting data with keys");
         auto current = this->data;

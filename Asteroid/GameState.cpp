@@ -3,7 +3,7 @@
 
 void Asteroid::GameState::onEnter()
 {
-	this->addScene("Gameplay", harmony::utilities::onEnter<Gameplay>());
+	this->addScene("Gameplay", harmony::utilities::create<Gameplay>());
 	this->pushScene("Gameplay");
 }
 

@@ -1,10 +1,10 @@
 #include "pch.h"
 #include "Scene.h"
 #include "Object.h"
-#
+#include "Configuration.h"
 
-harmony::core::Scene::Scene(const uint64_t& uniqueId) : 
-	Object(uniqueId), sceneGraph(utilities::onEnter<SceneNode>()) {
+harmony::core::Scene::Scene(const std::shared_ptr<Configuration> configuration) :
+	Object(uniqueId), sceneGraph(utilities::create<SceneNode>()) {
 	sceneGraph->currentScene = this;
 }
 
@@ -19,7 +19,7 @@ void harmony::core::Scene::draw(sf::RenderTarget& renderTarget, sf::RenderStates
 
 void harmony::core::Scene::reset()
 {
-	sceneGraph = utilities::onEnter<SceneNode>();
+	sceneGraph = utilities::create<SceneNode>();
 }
 
 void harmony::core::Scene::onEnter()

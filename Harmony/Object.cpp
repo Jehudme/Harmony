@@ -5,17 +5,20 @@
 #include "Configuration.h"
 
 const uint64_t getID(const uint64_t& uniqueId) {
-    if(!uniqueId || !harmony::configuration)
-        return harmony::utilities::generateRandomNumber<uint64_t>();
+    return uniqueId ? uniqueId : harmony::utilities::generateRandomNumber<uint64_t>();
+}
 
-    if (harmony::configuration->getData<bool>({ "Objects", std::to_string(uniqueId), "randomId" }).value_or(false))
-        return harmony::utilities::generateRandomNumber<uint64_t>();
-    
-    return uniqueId;
+const uint64_t getID(const std::shared_ptr<harmony::Configuration> configuration) {
+    return getID(configuration->getData<uint64_t>({ "UniqueId" }).value_or(harmony::utilities::generateRandomNumber<uint64_t>()));
 }
 
 harmony::core::Object::Object(const uint64_t uniqueId)
-    : uniqueId(getID(uniqueId)) {
+    : uniqueId(getID(uniqueId)), name(std::to_string(uniqueId)) {
+    LOG_TRACE(Logger::core, "[Object] Initialized object with ID: {}", this->uniqueId);
+}
+
+harmony::core::Object::Object(const std::shared_ptr<Configuration> configuration) : 
+    uniqueId(getID(configuration)), name(configuration->getData({"Name"}).value_or(std::to_string(uniqueId))) {
     LOG_TRACE(Logger::core, "[Object] Initialized object with ID: {}", this->uniqueId);
 }
 

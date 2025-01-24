@@ -5,27 +5,31 @@
 #include <memory>
 #include "Logger.h"
 
-
 namespace harmony::utilities 
 {
 	template<typename Type, typename ...ARGS>
-	inline std::shared_ptr<Type> onEnter(ARGS&& ...args);
+	inline std::shared_ptr<Type> create(ARGS&& ...args);
 
 	template<typename Type>
 	inline std::shared_ptr<Type> find(const uint64_t& uniqueId);
+}
+
+namespace harmony {
+	class Configuration;
 }
 
 namespace harmony::core {
     class Object : private sf::NonCopyable, public std::enable_shared_from_this<Object> {
     public:
         Object(const uint64_t uniqueId = NULL);
+		Object(const std::shared_ptr<Configuration> configuration);
         virtual ~Object();
 
         void retainSelf();
         void releaseSelf();
 
         template<typename Type, typename... ARGS>
-        friend std::shared_ptr<Type> utilities::onEnter(ARGS&&... args);
+        friend std::shared_ptr<Type> utilities::create(ARGS&&... args);
 
         template<typename Type>
         friend std::shared_ptr<Type> utilities::find(const uint64_t& uniqueId);
@@ -33,6 +37,7 @@ namespace harmony::core {
     public:
         const uint64_t uniqueId;
         std::string objectType;
+		std::string name;
 
     private:
         static inline std::unordered_map<uint64_t, std::weak_ptr<Object>> m_registers;
@@ -43,7 +48,7 @@ namespace harmony::core {
 namespace harmony::utilities
 {
 	template<typename Type, typename ...ARGS>
-	inline std::shared_ptr<Type> onEnter(ARGS&& ...args) {
+	inline std::shared_ptr<Type> create(ARGS&& ...args) {
 		static_assert(std::is_base_of<core::Object, Type>::value, "Type must inherit from Object");
 
 		auto object = std::make_shared<Type>(std::forward<ARGS>(args)...);

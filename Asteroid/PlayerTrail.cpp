@@ -60,7 +60,7 @@ void Asteroid::PlayerTrail::onUpdate(const sf::Time& time, harmony::core::EventP
 
     // Check if the node should be detached
     if (elapseTime > FadeDuration) {
-        eventPool.addEvent(harmony::utilities::onEnter<harmony::Event::DetachNode>(std::static_pointer_cast<SceneNode>(shared_from_this())));
+        eventPool.addEvent(harmony::utilities::create<harmony::Event::DetachNode>(std::static_pointer_cast<SceneNode>(shared_from_this())));
         return;
     }
 

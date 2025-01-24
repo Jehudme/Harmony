@@ -69,7 +69,7 @@ namespace Asteroid
 
 		setPosition(newX, newY);
 		if (clock.getElapsedTime().asSeconds() > 2) {
-			eventPool.addEvent(harmony::utilities::onEnter<DetachChildEvent>(std::static_pointer_cast<SceneNode>(shared_from_this())));
+			eventPool.addEvent(harmony::utilities::create<DetachChildEvent>(std::static_pointer_cast<SceneNode>(shared_from_this())));
 			clock.restart();
 		}
 
@@ -77,8 +77,8 @@ namespace Asteroid
 
 		for (auto node : asteroidGroup->children) {
 			if (intersect(node)) {
-				eventPool.addEvent(harmony::utilities::onEnter<harmony::Event::DetachNode>(node));
-				eventPool.addEvent(harmony::utilities::onEnter<harmony::Event::DetachNode>(std::static_pointer_cast<SceneNode>(shared_from_this())));
+				eventPool.addEvent(harmony::utilities::create<harmony::Event::DetachNode>(node));
+				eventPool.addEvent(harmony::utilities::create<harmony::Event::DetachNode>(std::static_pointer_cast<SceneNode>(shared_from_this())));
 				return;
 			}
 		}

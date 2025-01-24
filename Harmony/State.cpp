@@ -4,17 +4,13 @@
 
 namespace harmony::core {
 
-    State::State(const uint64_t& uniqueId)
-        : Object(uniqueId) {
+    State::State(const std::shared_ptr<Configuration> configuration)
+    {
         const std::string uniqueIdKey = std::to_string(uniqueId);
 
-        if (!configuration->getData({ "Objects", uniqueIdKey })) {
-            throw std::runtime_error("State Require Valid Argument");
-        }
-
-        if (const auto sceneIds = configuration->getData({ "Objects", uniqueIdKey, "StatesId" })) {
-            for (const auto& stateId : sceneIds.value()) {
-                addScene(utilities::onEnter<Scene>(stateId.get<uint64_t>()));
+        if (const auto scenes = configuration->getData({"Scenes" })) {
+            for (const auto& scene : scenes.value()) {
+                addScene(utilities::create<Scene>(utilities::create<Configuration>(scene)));
             }
         }
     }
