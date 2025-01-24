@@ -27,8 +27,8 @@ namespace harmony::core
         void draw(sf::RenderTarget& renderTarget, sf::RenderStates state) const override;
         void update(const sf::Time& time, EventPool& eventPool);
 
-        void create(Scene& scene);
-        void destroy(Scene& scene);
+        void onEnter(Scene& scene);
+        void onExit(Scene& scene);
 
         bool intersect(const std::shared_ptr<core::SceneNode> target);
         static bool intersect(const std::shared_ptr<core::SceneNode> node1, const std::shared_ptr<core::SceneNode> node2);

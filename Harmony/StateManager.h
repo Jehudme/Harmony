@@ -11,19 +11,19 @@ namespace harmony::core
 		void draw(sf::RenderTarget& renderState, sf::RenderStates states) const override;
 		void update(const sf::Time& time, EventPool& eventPool);
 
-		void addState(const std::string& name, const std::shared_ptr<State> state);
-		void removeState(const std::string& name);
+		void addState(const std::shared_ptr<State> state);
+		void removeState(const uint64_t& uniqueId);
 
-		void pushState(const std::string& name);
+		void swichState(const uint64_t& uniqueId);
 		void popState();
 
-		void switchState(const std::string& name);
+		void switchState(const uint64_t& name);
 
 		std::shared_ptr<State> getCurrentState();
 
 	private:
 		std::shared_ptr<State> m_currentState;
-		std::map<std::string, std::shared_ptr<State>> m_states;
+		std::map<uint64_t, std::shared_ptr<State>> m_states;
 	};
 }
 

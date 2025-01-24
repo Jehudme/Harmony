@@ -9,7 +9,7 @@
 namespace harmony::utilities 
 {
 	template<typename Type, typename ...ARGS>
-	inline std::shared_ptr<Type> create(ARGS&& ...args);
+	inline std::shared_ptr<Type> onEnter(ARGS&& ...args);
 
 	template<typename Type>
 	inline std::shared_ptr<Type> find(const uint64_t& uniqueId);
@@ -25,7 +25,7 @@ namespace harmony::core {
         void releaseSelf();
 
         template<typename Type, typename... ARGS>
-        friend std::shared_ptr<Type> utilities::create(ARGS&&... args);
+        friend std::shared_ptr<Type> utilities::onEnter(ARGS&&... args);
 
         template<typename Type>
         friend std::shared_ptr<Type> utilities::find(const uint64_t& uniqueId);
@@ -43,7 +43,7 @@ namespace harmony::core {
 namespace harmony::utilities
 {
 	template<typename Type, typename ...ARGS>
-	inline std::shared_ptr<Type> create(ARGS&& ...args) {
+	inline std::shared_ptr<Type> onEnter(ARGS&& ...args) {
 		static_assert(std::is_base_of<core::Object, Type>::value, "Type must inherit from Object");
 
 		auto object = std::make_shared<Type>(std::forward<ARGS>(args)...);

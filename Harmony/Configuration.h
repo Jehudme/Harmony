@@ -20,9 +20,11 @@ namespace harmony
 
 		template<typename Type>
 		std::optional<Type> getData(const std::initializer_list<Key> keys);
+        std::optional<nlohmann::json> getData(const std::initializer_list<Key> keys);
 
 		template<typename Type>
 		void setData(const std::initializer_list<Key> keys, Type& data);
+
 
 	private:
 		bool contain(const std::initializer_list<Key> keys);
@@ -41,20 +43,10 @@ namespace harmony
     template<typename Type>
     std::optional<Type> Configuration::getData(const std::initializer_list<Key> keys)
     {
-        LOG_TRACE(Logger::core, "Getting data with keys");
-        auto current = this->data;
-        for (auto key : keys)
-        {
-            if (!current.contains(key))
-            {
-                return std::nullopt;
-            }
-            current = current[key];
-        }
+        if (const std::optional<Type> data = getData(keys))
+            return std::make_optional<Type>(data.value());
 
-        Type value = current.get<Type>();
-        LOG_TRACE(Logger::core, "Data retrieved successfully");
-        return std::make_optional<Type>(value);
+        return std::nullopt;
     }
 
     template<typename Type>

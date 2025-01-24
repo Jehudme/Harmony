@@ -13,7 +13,7 @@ Asteroid::AsteroidGroup::AsteroidGroup() : SceneNode(AsteroidGroupUniqueId)
 void Asteroid::AsteroidGroup::onCreate(harmony::core::Scene& scene)
 {
 	while (children.size() < 6) {
-		attachChild(harmony::utilities::create<Asteroid_t>(currentScene->view));
+		attachChild(harmony::utilities::onEnter<Asteroid_t>(currentScene->view));
 	}
 }
 
@@ -24,9 +24,9 @@ void Asteroid::AsteroidGroup::onDestroy(harmony::core::Scene& scene)
 void Asteroid::AsteroidGroup::onUpdate(const sf::Time& time, harmony::core::EventPool& eventPool)
 {
 	if (children.size() < 6) {
-		eventPool.addEvent(harmony::utilities::create<harmony::Event::AttachNode>(
+		eventPool.addEvent(harmony::utilities::onEnter<harmony::Event::AttachNode>(
 			std::static_pointer_cast<SceneNode>(shared_from_this()),
-			harmony::utilities::create<Asteroid_t>(currentScene->view)
+			harmony::utilities::onEnter<Asteroid_t>(currentScene->view)
 		));
 	}
 }

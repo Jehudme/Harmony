@@ -199,16 +199,16 @@ namespace harmony::core {
     {
     }
 
-    void SceneNode::create(Scene& scene) {
+    void SceneNode::onEnter(Scene& scene) {
         onCreate(scene);
         for (auto child : children)
-            child->create(scene);
+            child->onEnter(scene);
     }
 
-    void SceneNode::destroy(Scene& scene) {
+    void SceneNode::onExit(Scene& scene) {
         onDestroy(scene);
         for (auto child : children)
-            destroy(scene);
+            onExit(scene);
     }
 
     bool SceneNode::intersect(const std::shared_ptr<core::SceneNode> target) {

@@ -7,15 +7,32 @@
 
 namespace harmony::core
 {
+    Engine::Engine()
+    {
+        const std::string uniqueIdKey = std::to_string(uniqueId);
+
+        if (const auto states = configuration->getData({ "Configurations", uniqueIdKey, "States" })) {
+            for (const auto& stateId : states.value()) {
+                stateManager->addState(utilities::onEnter<State>(stateId.get<uint64_t>()));
+            }
+        }
+    }
     // Constructor
     Engine::Engine(const uint64_t& uniqueId)
         : Object(uniqueId), displayWindow(false), stateManager(std::make_shared<StateManager>())
     {
+        const std::string uniqueIdKey = std::to_string(uniqueId);
+
+        if (const auto states = configuration->getData({ "Objects", uniqueIdKey, "StatesId" })) {
+            for (const auto& stateId : states.value()) {
+                stateManager->addState(utilities::onEnter<State>(stateId.get<uint64_t>()));
+            }
+        }
     }
 
     void Engine::initializeWindow(const uint64_t& windowId) {
         LOG_TRACE(Logger::core, "[Engine] Initializing window with ID: {}", windowId);
-        renderTarget = utilities::create<Window>(windowId)->instance;
+        renderTarget = utilities::onEnter<Window>(windowId)->instance;
         displayWindow = true;
         LOG_TRACE(Logger::core, "[Engine] Window initialized successfully with ID: {}", windowId);
     }
@@ -48,6 +65,10 @@ namespace harmony::core
                 LOG_INFO(Logger::core, "[Engine] Window closed event detected for Engine ID: {}", uniqueId);
             }
         }
+    }
+
+    void Engine::initialize(const std::initializer_list<std::string> keys)
+    {
     }
 
     // Update the game logic and current state

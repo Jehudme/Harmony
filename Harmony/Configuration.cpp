@@ -4,7 +4,7 @@
 
 namespace harmony
 {
-    std::shared_ptr<Configuration> configuration = utilities::create<Configuration>("config.json");
+    std::shared_ptr<Configuration> configuration = utilities::onEnter<Configuration>("config.json");
 
     Configuration::Configuration(const std::string path, const uint64_t& uniqueId)
         : core::Object(uniqueId), path(path)
@@ -55,6 +55,22 @@ namespace harmony
             LOG_ERROR(Logger::core, "Unable to open configuration file: {}", path);
             throw std::runtime_error("Unable to open configuration file: " + path);
         }
+    }
+
+    std::optional<nlohmann::json> Configuration::getData(const std::initializer_list<Key> keys)
+    {
+        LOG_TRACE(Logger::core, "Getting data with keys");
+        auto current = this->data;
+        for (auto key : keys)
+        {
+            if (!current.contains(key))
+            {
+                return std::nullopt;
+            }
+            current = current[key];
+        }
+        LOG_TRACE(Logger::core, "Data retrieved successfully");
+        return std::make_optional<nlohmann::json>(current);
     }
 
     bool Configuration::contain(const std::initializer_list<Key> keys)

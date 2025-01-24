@@ -17,8 +17,8 @@ namespace harmony::core
 		friend State;
 
 	private:
-		void create();
-		void destroy();
+		void onEnter();
+		void onExit();
 
 		virtual void onCreate();
 		virtual void onDestroy();

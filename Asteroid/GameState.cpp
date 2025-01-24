@@ -1,12 +1,12 @@
 #include "GameState.h"
 #include "Gameplay.h"
 
-void Asteroid::GameState::create()
+void Asteroid::GameState::onEnter()
 {
-	this->addScene("Gameplay", harmony::utilities::create<Gameplay>());
-	this->switchToScene("Gameplay");
+	this->addScene("Gameplay", harmony::utilities::onEnter<Gameplay>());
+	this->pushScene("Gameplay");
 }
 
-void Asteroid::GameState::destroy()
+void Asteroid::GameState::onExit()
 {
 }

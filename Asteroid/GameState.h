@@ -8,8 +8,8 @@ namespace Asteroid
 	public:
 		GameState() = default;
 
-		void create() override;
-		void destroy() override;
+		void onEnter() override;
+		void onExit() override;
 	};
 }
 

@@ -101,9 +101,9 @@ namespace Asteroid
 
         // Handle shooting logic with cooldown
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && bulletClock.getElapsedTime().asSeconds() > BulletCooldown) {
-            eventPool.addEvent(harmony::utilities::create<AttachChildEvent>(
+            eventPool.addEvent(harmony::utilities::onEnter<AttachChildEvent>(
                 std::static_pointer_cast<SceneNode>(parentNode->shared_from_this()),
-                harmony::utilities::create<Bullet>(getRotation(), getGlobalPosition()))
+                harmony::utilities::onEnter<Bullet>(getRotation(), getGlobalPosition()))
             );
 
             bulletClock.restart();
@@ -123,9 +123,9 @@ namespace Asteroid
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
             acceleration += -AccelerationSpeed;
             if (trailClock.getElapsedTime().asSeconds() > TrailCooldown) {
-                eventPool.addEvent(harmony::utilities::create<AttachChildEvent>(
+                eventPool.addEvent(harmony::utilities::onEnter<AttachChildEvent>(
                     std::static_pointer_cast<SceneNode>(parentNode->shared_from_this()),
-                    harmony::utilities::create<PlayerTrail>(getRotation(), getGlobalPosition()))
+                    harmony::utilities::onEnter<PlayerTrail>(getRotation(), getGlobalPosition()))
                 );
                 trailClock.restart();
             }

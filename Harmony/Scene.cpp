@@ -4,7 +4,7 @@
 #
 
 harmony::core::Scene::Scene(const uint64_t& uniqueId) : 
-	Object(uniqueId), sceneGraph(utilities::create<SceneNode>()) {
+	Object(uniqueId), sceneGraph(utilities::onEnter<SceneNode>()) {
 	sceneGraph->currentScene = this;
 }
 
@@ -19,18 +19,18 @@ void harmony::core::Scene::draw(sf::RenderTarget& renderTarget, sf::RenderStates
 
 void harmony::core::Scene::reset()
 {
-	sceneGraph = utilities::create<SceneNode>();
+	sceneGraph = utilities::onEnter<SceneNode>();
 }
 
-void harmony::core::Scene::create()
+void harmony::core::Scene::onEnter()
 {
 	onCreate();
-	sceneGraph->create(*this);
+	sceneGraph->onEnter(*this);
 }
 
-void harmony::core::Scene::destroy()
+void harmony::core::Scene::onExit()
 {
-	sceneGraph->destroy(*this);
+	sceneGraph->onExit(*this);
 	onDestroy();
 	reset();
 }

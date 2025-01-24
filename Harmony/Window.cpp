@@ -47,7 +47,7 @@ harmony::Window::Window(const uint64_t& uniqueId) : Object(uniqueId)
     // Set window properties based on provided arguments
     instance = std::make_shared<sf::RenderWindow>();
 
-    instance->create(videoMode, title);
+    instance->onEnter(videoMode, title);
     instance->setFramerateLimit(frameRateLimit);
     instance->setVerticalSyncEnabled(verticalSyncEnabled);
 
