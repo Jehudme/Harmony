@@ -4,6 +4,7 @@
 #include "Configuration.h"
 #include "Event.h"
 #include "Object.h"
+#include "Script.h"
 #include <SFML/Graphics/Drawable.hpp>
 #include <SFML/Graphics/RenderStates.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
@@ -17,6 +18,7 @@ namespace harmony::core
 	{
 	public:
 		Scene(const Configuration& configuration);
+		~Scene();
 
 		void update(const sf::Time& time, EventQueue& eventQueue);
 		void draw(sf::RenderTarget& renderTarget, sf::RenderStates states) const override;
@@ -29,12 +31,17 @@ namespace harmony::core
 		void onEnter();
 		void onExit();
 
-		virtual void onCreate();
-		virtual void onDestroy();
-
 	public:
 		sf::View view;
 		std::shared_ptr<SceneNode> sceneGraph;
+
+	private:
+		std::shared_ptr<DrawScript> m_drawScript;
+		std::shared_ptr<UpdateScript> m_updateScript;
+		std::shared_ptr<CreateScript> m_createScript;
+		std::shared_ptr<DestroyScript> m_destroyScript;
+		std::shared_ptr<EnterScript> m_enterScript;
+		std::shared_ptr<ExitScript> m_exitScript;
 	};
 }
 

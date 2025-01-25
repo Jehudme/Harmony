@@ -2,6 +2,8 @@
 #include <SFML/Graphics.hpp>
 #include "Object.h"
 #include "Event.h"
+#include "Script.h"
+#include "Configuration.h"
 
 namespace harmony::core
 {
@@ -33,6 +35,8 @@ namespace harmony::core
         bool intersect(const std::shared_ptr<core::SceneNode> target);
         static bool intersect(const std::shared_ptr<core::SceneNode> node1, const std::shared_ptr<core::SceneNode> node2);
 
+		static std::shared_ptr<SceneNode> create(const Configuration& configuration);
+
         friend Scene;
 
     private:
@@ -59,5 +63,11 @@ namespace harmony::core
 
         std::shared_ptr<sf::Drawable> drawable;
         std::vector<std::shared_ptr<SceneNode>> children;
+
+    private:
+        std::shared_ptr<CreateScript> m_createScript;
+        std::shared_ptr<DestroyScript> m_destroyScript;
+        std::shared_ptr<EnterScript> m_enterScript;
+        std::shared_ptr<ExitScript> m_exitScript;
     };
 }

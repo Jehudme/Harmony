@@ -5,6 +5,8 @@
 #include <utility>
 #include "Event.h"
 #include "Object.h"
+#include "Circle.h"
+#include "Rectangle.h"
 #include <SFML/Graphics/CircleShape.hpp>
 #include <SFML/Graphics/ConvexShape.hpp>
 #include <SFML/Graphics/Rect.hpp>
@@ -21,14 +23,91 @@
 namespace harmony::core {
 
     SceneNode::SceneNode(const Configuration& configuration)
-        : Object(configuration), isDrawEnable(true), isUpdateEnable(true), parentNode(nullptr), currentScene(nullptr), rotationVelocity(0), rotationAcceleration(0) {
+        : Object(configuration), isDrawEnable(true), isUpdateEnable(true),
+        parentNode(nullptr), currentScene(nullptr),
+        rotationVelocity(0), rotationAcceleration(0) {
+        
+		if (const auto children = configuration.getData({ "Children" })) {
+			for (const auto& child : children.value()) {
+				attachChild(create(Configuration(child)));
+			}
+		}
+
+        // Set position
+        if (const auto position = configuration.getData({ "Position" })) {
+            setPosition(position.value()[0], position.value()[1]);
+        }
+
+        // Set scale
+        if (const auto scale = configuration.getData({ "Scale" })) {
+            setScale(scale.value()[0], scale.value()[1]);
+        }
+
+        // Set rotation
+        if (const auto rotation = configuration.getData<float>({ "Rotation" })) {
+            setRotation(rotation.value());
+        }
+
+        // Set origin
+        if (const auto origin = configuration.getData({ "Origin" })) {
+            setOrigin(origin.value()[0], origin.value()[1]);
+        }
+
+        // Set position velocity
+        if (const auto positionVelocity = configuration.getData({ "PositionVelocity" })) {
+            this->positionVelocity = { positionVelocity.value()[0], positionVelocity.value()[1] };
+        }
+
+        // Set position acceleration
+        if (const auto positionAcceleration = configuration.getData({ "PositionAcceleration" })) {
+            this->positionAcceleration = { positionAcceleration.value()[0], positionAcceleration.value()[1] };
+        }
+
+        // Set rotation velocity
+        if (const auto rotationVelocity = configuration.getData<float>({ "RotationVelocity" })) {
+            this->rotationVelocity = rotationVelocity.value();
+        }
+
+        // Set rotation acceleration
+        if (const auto rotationAcceleration = configuration.getData<float>({ "RotationAcceleration" })) {
+            this->rotationAcceleration = rotationAcceleration.value();
+        }
+
+        // Set scripts
+        try {
+            if (const auto createScript = configuration.getData<std::string>({ "CreateScript" })) {
+                this->m_createScript = CreateScript::getScript(createScript.value());
+            }
+            if (const auto destroyScript = configuration.getData<std::string>({ "DestroyScript" })) {
+                this->m_destroyScript = DestroyScript::getScript(destroyScript.value());
+            }
+            if (const auto enterScript = configuration.getData<std::string>({ "EnterScript" })) {
+                this->m_enterScript = EnterScript::getScript(enterScript.value());
+            }
+            if (const auto exitScript = configuration.getData<std::string>({ "ExitScript" })) {
+                this->m_exitScript = ExitScript::getScript(exitScript.value());
+            }
+		} catch (const std::exception& e) {
+			throw std::runtime_error("Error setting scripts: " + std::string(e.what()));
+		}
+
+        // Execute create script
+        if (m_createScript) {
+
+			int a = 0;
+            m_createScript->execute(this);
+        }
     }
+
 
     SceneNode::~SceneNode() {
         for (auto& child : children) {
             child->parentNode = nullptr;
         }
         children.clear();
+        if (m_destroyScript){
+            m_destroyScript->execute(shared_from_this());
+        }
     }
 
     void SceneNode::attachChild(const std::shared_ptr<SceneNode> child) {
@@ -204,5 +283,16 @@ namespace harmony::core {
     bool SceneNode::intersect(const std::shared_ptr<SceneNode> node1, const std::shared_ptr<SceneNode> node2) {
         return node1->getGlobalBounds().intersects(node2->getGlobalBounds());
     }
-
+    std::shared_ptr<SceneNode> SceneNode::create(const Configuration& configuration)
+    {
+        if (const auto type = configuration.getData<std::string>({ "Type" })) {
+            if (type.value() == "Rectangle") {
+                return utilities::create<Rectangle>(configuration);
+            }
+            if (type.value() == "Circle") {
+                return utilities::create<Circle>(configuration);
+            }
+        }
+		return utilities::create<SceneNode>(configuration);
+    }
 }

@@ -42,8 +42,8 @@ namespace harmony
     template<typename Type>
     std::optional<Type> Configuration::getData(const std::initializer_list<Key> keys) const
     {
-        if (const std::optional<Type> data = getData(keys))
-            return std::make_optional<Type>(data.value());
+        if (const std::optional<nlohmann::json> data = getData(keys))
+            return std::make_optional<Type>(data.value().get<Type>());
 
         return std::nullopt;
     }
@@ -63,3 +63,4 @@ namespace harmony
         current = data;
     }
 }
+

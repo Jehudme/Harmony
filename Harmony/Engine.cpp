@@ -26,7 +26,17 @@ namespace harmony::core
                 for (const auto& state : states.value()) {
                     stateManager->addState(utilities::create<State>(Configuration(state)));
                 }
-            }
+			}
+			else {
+				throw std::runtime_error("No states configuration provided");
+			}
+
+			if (const auto initialState = config->getData<std::string>({ "Configurations", "InitialState" })) {
+				stateManager->swichState(initialState.value());
+			}
+			else {
+				throw std::runtime_error("No initial state provided");
+			}
 
             // Create window if provided
             if (const auto window = config->getData({ "Configurations", "Window" })) {

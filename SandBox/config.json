@@ -4,12 +4,27 @@
       "Name": "Main",
       "Title": "Hello World",
       "Width": 800,
-      "Height": 600,
-      "UniqueID": 1
+      "Height": 600
     },
+    "InitialState": "Main",
     "States": [
       {
-        "Name": "Main"
+        "Name": "Main",
+        "Scenes": [
+          {
+            "Name": "Main",
+            "SceneGraph": [
+              {
+                "Name": "Rectangle",
+                "Type": "Rectangle",
+                "Position": [ 10, 10 ],
+                "Size": [ 100, 100 ],
+                "CreateScript": "Script1"
+              }
+            ]
+          }
+        ],
+        "InitialScenes": [ "Main" ]
       }
     ]
   }

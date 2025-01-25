@@ -6,6 +6,7 @@
 #include "Object.h"
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Window/VideoMode.hpp>
+#include "Script.h"
 
 namespace harmony {
 
