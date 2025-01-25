@@ -5,24 +5,34 @@
 #include <SFML/Graphics/RenderStates.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
 
-#define UPDATE_SCRIPT_ARGUMENTS std::shared_ptr<harmony::core::Object>, const sf::Time&, harmony::core::EventQueue&
-#define DRAW_SCRIPT_ARGUMENTS const std::shared_ptr<harmony::core::Object>, sf::RenderTarget&, sf::RenderStates
+#define UPDATE_SCRIPT_ARGUMENTS_TYPES std::shared_ptr<harmony::core::Object>, const sf::Time&, harmony::core::EventQueue&
+#define DRAW_SCRIPT_ARGUMENTS_TYPES const std::shared_ptr<harmony::core::Object>, sf::RenderTarget&, sf::RenderStates
 
-#define CREATE_SCRIPT_ARGUMENTS harmony::core::Object*
-#define DESTROY_SCRIPT_ARGUMENTS std::shared_ptr<harmony::core::Object> 
+#define CREATE_SCRIPT_ARGUMENTS_TYPES harmony::core::Object*
+#define DESTROY_SCRIPT_ARGUMENTS_TYPES std::shared_ptr<harmony::core::Object> 
 
-#define ENTER_SCRIPT_ARGUMENTS std::shared_ptr<harmony::core::Object> 
-#define EXIT_SCRIPT_ARGUMENTS std::shared_ptr<harmony::core::Object> 
+#define ENTER_SCRIPT_ARGUMENTS_TYPES std::shared_ptr<harmony::core::Object> 
+#define EXIT_SCRIPT_ARGUMENTS_TYPES std::shared_ptr<harmony::core::Object>
 
 
-#define REGISTER_UPDATE_SCRIPT(function) inline static bool _REGISTER_UPDATE_SCRIPT_##function = []() { harmony::CreateScript::addScript(#function, function); return true; }();
-#define REGISTER_DRAW_SCRIPT(function) inline static bool _REGISTER_UPDATE_SCRIPT_##function = []() {harmony::DrawScript::addScript(#function, function); return true; }();
+#define UPDATE_SCRIPT_ARGUMENTS std::shared_ptr<harmony::core::Object> target, const sf::Time&, harmony::core::EventQueue& eventQueue
+#define DRAW_SCRIPT_ARGUMENTS const std::shared_ptr<harmony::core::Object> target, sf::RenderTarget& renderTarget, sf::RenderStates states
 
-#define REGISTER_CREATE_SCRIPT(function) inline static bool _REGISTER_UPDATE_SCRIPT_##function = []() {harmony::CreateScript::addScript(#function, function); return true; }();
-#define REGISTER_DESTROY_SCRIPT(function) inline static bool _REGISTER_UPDATE_SCRIPT_##function = []() {harmony::DestroyScript::addScript(#function, function); return true; }();
+#define CREATE_SCRIPT_ARGUMENTS harmony::core::Object* target
+#define DESTROY_SCRIPT_ARGUMENTS std::shared_ptr<harmony::core::Object> target
 
-#define REGISTER_ENTER_SCRIPT(function) inline static bool _REGISTER_UPDATE_SCRIPT_##function = []() {harmony::EnterScript::addScript(#function, function); return true; }();
-#define REGISTER_EXIT_SCRIPT(function) inline static bool _REGISTER_UPDATE_SCRIPT_##function = []() {harmomy::ExitScript::addScript(#function, function); return true; }();
+#define ENTER_SCRIPT_ARGUMENTS std::shared_ptr<harmony::core::Object> target
+#define EXIT_SCRIPT_ARGUMENTS std::shared_ptr<harmony::core::Object> target
+
+
+#define REGISTER_UPDATE_SCRIPT(function) void function(UPDATE_SCRIPT_ARGUMENTS); inline static bool _REGISTER_UPDATE_SCRIPT_##function = []() { harmony::CreateScript::addScript(#function, function); return true; }();
+#define REGISTER_DRAW_SCRIPT(function) void function(DRAW_SCRIPT_ARGUMENTS); inline static bool _REGISTER_UPDATE_SCRIPT_##function = []() {harmony::DrawScript::addScript(#function, function); return true; }();
+
+#define REGISTER_CREATE_SCRIPT(function) void function(CREATE_SCRIPT_ARGUMENTS); inline static bool _REGISTER_UPDATE_SCRIPT_##function = []() {harmony::CreateScript::addScript(#function, function); return true; }();
+#define REGISTER_DESTROY_SCRIPT(function) void function(DESTROY_SCRIPT_ARGUMENTS); inline static bool _REGISTER_UPDATE_SCRIPT_##function = []() {harmony::DestroyScript::addScript(#function, function); return true; }();
+
+#define REGISTER_ENTER_SCRIPT(function) void function(ENTER_SCRIPT_ARGUMENTS); inline static bool _REGISTER_UPDATE_SCRIPT_##function = []() {harmony::EnterScript::addScript(#function, function); return true; }();
+#define REGISTER_EXIT_SCRIPT(function) void function(EXIT_SCRIPT_ARGUMENTS); inline static bool _REGISTER_UPDATE_SCRIPT_##function = []() {harmomy::ExitScript::addScript(#function, function); return true; }();
 
 namespace harmony {
 
@@ -77,13 +87,13 @@ namespace harmony {
         static inline std::unordered_map<std::string, std::shared_ptr<Script>> m_scripts;
     };
 
-    using UpdateScript = Script<UPDATE_SCRIPT_ARGUMENTS>;
-    using DrawScript = Script<DRAW_SCRIPT_ARGUMENTS>;
+    using UpdateScript = Script<UPDATE_SCRIPT_ARGUMENTS_TYPES>;
+    using DrawScript = Script<DRAW_SCRIPT_ARGUMENTS_TYPES>;
 
-    using CreateScript = Script<CREATE_SCRIPT_ARGUMENTS>;
-    using DestroyScript = Script<DESTROY_SCRIPT_ARGUMENTS>;
+    using CreateScript = Script<CREATE_SCRIPT_ARGUMENTS_TYPES>;
+    using DestroyScript = Script<DESTROY_SCRIPT_ARGUMENTS_TYPES>;
 
-    using EnterScript = Script<ENTER_SCRIPT_ARGUMENTS>;
-    using ExitScript = Script<EXIT_SCRIPT_ARGUMENTS>;
+    using EnterScript = Script<ENTER_SCRIPT_ARGUMENTS_TYPES>;
+    using ExitScript = Script<EXIT_SCRIPT_ARGUMENTS_TYPES>;
 
 }
