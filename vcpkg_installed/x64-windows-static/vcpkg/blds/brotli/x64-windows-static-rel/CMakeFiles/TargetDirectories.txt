@@ -1,0 +1,9 @@
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/blds/brotli/x64-windows-static-rel/CMakeFiles/brotlicommon.dir
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/blds/brotli/x64-windows-static-rel/CMakeFiles/brotlidec.dir
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/blds/brotli/x64-windows-static-rel/CMakeFiles/brotlienc.dir
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/blds/brotli/x64-windows-static-rel/CMakeFiles/brotli.dir
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/blds/brotli/x64-windows-static-rel/CMakeFiles/edit_cache.dir
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/blds/brotli/x64-windows-static-rel/CMakeFiles/rebuild_cache.dir
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/blds/brotli/x64-windows-static-rel/CMakeFiles/list_install_components.dir
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/blds/brotli/x64-windows-static-rel/CMakeFiles/install.dir
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/blds/brotli/x64-windows-static-rel/CMakeFiles/install/local.dir

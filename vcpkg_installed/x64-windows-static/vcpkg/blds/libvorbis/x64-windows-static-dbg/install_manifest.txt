@@ -1,0 +1,13 @@
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/pkgs/libvorbis_x64-windows-static/debug/lib/pkgconfig/vorbis.pc
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/pkgs/libvorbis_x64-windows-static/debug/lib/pkgconfig/vorbisenc.pc
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/pkgs/libvorbis_x64-windows-static/debug/lib/pkgconfig/vorbisfile.pc
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/pkgs/libvorbis_x64-windows-static/debug/include/vorbis/codec.h
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/pkgs/libvorbis_x64-windows-static/debug/include/vorbis/vorbisenc.h
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/pkgs/libvorbis_x64-windows-static/debug/include/vorbis/vorbisfile.h
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/pkgs/libvorbis_x64-windows-static/debug/lib/vorbis.lib
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/pkgs/libvorbis_x64-windows-static/debug/lib/vorbisenc.lib
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/pkgs/libvorbis_x64-windows-static/debug/lib/vorbisfile.lib
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/pkgs/libvorbis_x64-windows-static/debug/lib/cmake/Vorbis/VorbisTargets.cmake
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/pkgs/libvorbis_x64-windows-static/debug/lib/cmake/Vorbis/VorbisTargets-debug.cmake
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/pkgs/libvorbis_x64-windows-static/debug/lib/cmake/Vorbis/VorbisConfig.cmake
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/pkgs/libvorbis_x64-windows-static/debug/lib/cmake/Vorbis/VorbisConfigVersion.cmake

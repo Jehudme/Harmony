@@ -1,0 +1,8 @@
+Package: sfml
+Version: 2.6.1
+Depends: freetype, libflac, libogg, libvorbis, openal-soft, opengl, stb, vcpkg-cmake:x64-windows, vcpkg-cmake-config:x64-windows
+Architecture: x64-windows-static
+Multi-Arch: same
+Abi: 94523ed93fadd7eb59553fa682e9c6ccd6770bd38e0a05304b103dbb05c03918
+Description: Simple and fast multimedia library
+Status: install ok installed

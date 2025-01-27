@@ -1,182 +1,298 @@
 #include "pch.h"
 #include "SceneNode.h"
+#include <stdexcept>
+#include <memory>
+#include <utility>
+#include "Event.h"
+#include "Object.h"
+#include "Circle.h"
+#include "Rectangle.h"
+#include <SFML/Graphics/CircleShape.hpp>
+#include <SFML/Graphics/ConvexShape.hpp>
+#include <SFML/Graphics/Rect.hpp>
+#include <SFML/Graphics/RectangleShape.hpp>
+#include <SFML/Graphics/RenderStates.hpp>
+#include <SFML/Graphics/RenderTarget.hpp>
+#include <SFML/Graphics/Sprite.hpp>
+#include <SFML/Graphics/Text.hpp>
+#include <SFML/Graphics/Transform.hpp>
+#include <SFML/Graphics/VertexArray.hpp>
+#include <SFML/System/Time.hpp>
+#include <SFML/System/Vector2.hpp>
 
-namespace Harmony {
+namespace harmony::core {
 
-    SceneNode::SceneNode()
-        : Object(INVALID_UNIQUE_ID), parent_(nullptr)
-    {
-        initialize(*DefaultConfiguration);
-    }
+    SceneNode::SceneNode(const Configuration& configuration)
+        : Object(configuration), isDrawEnable(true), isUpdateEnable(true),
+        parentNode(nullptr), currentScene(nullptr),
+        rotationVelocity(0), rotationAcceleration(0) {
+        
+		if (const auto children = configuration.getData({ "Children" })) {
+			for (const auto& child : children.value()) {
+				attachChild(create(Configuration(child)));
+			}
+		}
 
-    SceneNode::SceneNode(const uint64_t& configurationId)
-        : Object(configurationId), parent_(nullptr)
-    {
-        initialize(*Object::find<Configuration>(configurationId));
-    }
+        // Set position
+        if (const auto position = configuration.getData({ "Position" })) {
+            setPosition(position.value()[0], position.value()[1]);
+        }
 
-    SceneNode::SceneNode(const std::shared_ptr<Configuration>& configuration)
-        : Object(configuration->getParameterOrDefault<uint64_t>("unique_id", INVALID_UNIQUE_ID)), parent_(nullptr)
-    {
-        initialize(*configuration);
-    }
+        // Set scale
+        if (const auto scale = configuration.getData({ "Scale" })) {
+            setScale(scale.value()[0], scale.value()[1]);
+        }
 
-    void SceneNode::attachChild(std::shared_ptr<SceneNode> sceneNode) {
+        // Set rotation
+        if (const auto rotation = configuration.getData<float>({ "Rotation" })) {
+            setRotation(rotation.value());
+        }
+
+        // Set origin
+        if (const auto origin = configuration.getData({ "Origin" })) {
+            setOrigin(origin.value()[0], origin.value()[1]);
+        }
+
+        // Set position velocity
+        if (const auto positionVelocity = configuration.getData({ "PositionVelocity" })) {
+            this->positionVelocity = { positionVelocity.value()[0], positionVelocity.value()[1] };
+        }
+
+        // Set position acceleration
+        if (const auto positionAcceleration = configuration.getData({ "PositionAcceleration" })) {
+            this->positionAcceleration = { positionAcceleration.value()[0], positionAcceleration.value()[1] };
+        }
+
+        // Set rotation velocity
+        if (const auto rotationVelocity = configuration.getData<float>({ "RotationVelocity" })) {
+            this->rotationVelocity = rotationVelocity.value();
+        }
+
+        // Set rotation acceleration
+        if (const auto rotationAcceleration = configuration.getData<float>({ "RotationAcceleration" })) {
+            this->rotationAcceleration = rotationAcceleration.value();
+        }
+
+        // Set scripts
         try {
-            if (!sceneNode) {
-                HM_LOGGER_WARN("Attempted to attach a null child to SceneNode with ID: {}", getID());
-                return;
+            if (const auto createScript = configuration.getData<std::string>({ "CreateScript" })) {
+                this->m_createScript = CreateScript::getScript(createScript.value());
             }
+            if (const auto destroyScript = configuration.getData<std::string>({ "DestroyScript" })) {
+                this->m_destroyScript = DestroyScript::getScript(destroyScript.value());
+            }
+            if (const auto enterScript = configuration.getData<std::string>({ "EnterScript" })) {
+                this->m_enterScript = EnterScript::getScript(enterScript.value());
+            }
+            if (const auto exitScript = configuration.getData<std::string>({ "ExitScript" })) {
+                this->m_exitScript = ExitScript::getScript(exitScript.value());
+            }
+		} catch (const std::exception& e) {
+			throw std::runtime_error("Error setting scripts: " + std::string(e.what()));
+		}
 
-            sceneNode->parent_ = this;
-            children_.emplace_back(std::move(sceneNode));
-            HM_LOGGER_INFO("Child SceneNode attached to parent with ID: {}", getID());
-        }
-        catch (const std::exception& e) {
-            HM_LOGGER_ERROR("Failed to attach child to SceneNode with ID: {}: {}", getID(), e.what());
-            throw;
+        // Execute create script
+        if (m_createScript) {
+
+			int a = 0;
+            m_createScript->execute(this);
         }
     }
 
-    void SceneNode::detachChild(std::shared_ptr<SceneNode> sceneNode) {
-        try {
-            if (!sceneNode) {
-                HM_LOGGER_WARN("Attempted to detach a null child from SceneNode with ID: {}", getID());
-                return;
-            }
 
-            auto it = std::remove(children_.begin(), children_.end(), sceneNode);
-            if (it != children_.end()) {
-                (*it)->parent_ = nullptr;
-                children_.erase(it);
-                HM_LOGGER_INFO("Child SceneNode detached from parent with ID: {}", getID());
-            }
-            else {
-                HM_LOGGER_WARN("Child SceneNode not found for detachment in parent with ID: {}", getID());
-            }
+    SceneNode::~SceneNode() {
+        for (auto& child : children) {
+            child->parentNode = nullptr;
         }
-        catch (const std::exception& e) {
-            HM_LOGGER_ERROR("Failed to detach child from SceneNode with ID: {}: {}", getID(), e.what());
-            throw;
+        children.clear();
+        if (m_destroyScript){
+            m_destroyScript->execute(shared_from_this());
         }
     }
 
-    sf::Vector2f SceneNode::getGlobalPosition() {
-        try {
-            // Start with the local position of this node
-            sf::Vector2f globalPosition = getPosition();
-
-            // Traverse up the hierarchy, accumulating parent transformations
-            SceneNode* currentParent = parent_;
-            while (currentParent != nullptr) {
-                globalPosition += currentParent->getPosition();
-                currentParent = currentParent->parent_;
-            }
-
-            HM_LOGGER_TRACE("Global position calculated: ({}, {})", globalPosition.x, globalPosition.y);
-            return globalPosition;
+    void SceneNode::attachChild(const std::shared_ptr<SceneNode> child) {
+        if (child) {
+            child->parentNode = this;
+            child->currentScene = currentScene;
+            children.push_back(child);
         }
-        catch (const std::exception& e) {
-            HM_LOGGER_ERROR("Error calculating global position: {}", e.what());
-            throw;
+        else {
+            throw std::invalid_argument("Attempted to attach a null child to SceneNode.");
         }
     }
 
-    template<typename... Args>
-    void SceneNode::execute(const std::function<void(SceneNode&, Args...)>& func, Args&&... args) {
-        try {
-            HM_LOGGER_DEBUG("Executing function on SceneNode with ID: {}", getID());
-            func(*this, std::forward<Args>(args)...);
+    std::shared_ptr<SceneNode> SceneNode::detachChild(const SceneNode& child) {
+        auto found = std::find_if(children.begin(), children.end(),
+            [&child](const std::shared_ptr<SceneNode>& ptr) { return ptr.get() == &child; });
 
-            for (const auto& child : children_) {
-                if (child) {
-                    child->execute(func, std::forward<Args>(args)...);
+        if (found != children.end()) {
+            auto detachedChild = *found;
+            detachedChild->parentNode = nullptr;
+            detachedChild->currentScene = nullptr;
+            children.erase(found);
+            return detachedChild;
+        }
+        else {
+            throw std::runtime_error("Child node not found in SceneNode.");
+        }
+    }
+
+    std::shared_ptr<SceneNode> SceneNode::detachChild() {
+        if (parentNode) {
+            parentNode->detachChild(*this);
+        }
+        return std::static_pointer_cast<SceneNode>(shared_from_this());
+    }
+
+    void SceneNode::enableDraw(const bool option) {
+        isDrawEnable = option;
+    }
+
+    void SceneNode::enableUpdate(const bool option) {
+        isUpdateEnable = option;
+    }
+
+    sf::Transform SceneNode::getGlobalTransform() const {
+        sf::Transform transform = getTransform();
+        const SceneNode* currentParent = parentNode;
+
+        while (currentParent) {
+            transform *= currentParent->getTransform();
+            currentParent = currentParent->parentNode;
+        }
+        return transform;
+    }
+
+    sf::Vector2f SceneNode::getGlobalPosition() const {
+        sf::Vector2f position = getPosition();
+        const SceneNode* currentParent = parentNode;
+
+        while (currentParent) {
+            position += currentParent->getPosition();
+            currentParent = currentParent->parentNode;
+        }
+        return position;
+    }
+
+    sf::FloatRect SceneNode::getGlobalBounds() const {
+        const sf::Transform globalTransform = getGlobalTransform();
+
+        if (auto rectangle = std::dynamic_pointer_cast<sf::RectangleShape>(drawable)) {
+            return globalTransform.transformRect(rectangle->getGlobalBounds());
+        }
+
+        if (auto circle = std::dynamic_pointer_cast<sf::CircleShape>(drawable)) {
+            return globalTransform.transformRect(circle->getLocalBounds());
+        }
+
+        if (auto sprite = std::dynamic_pointer_cast<sf::Sprite>(drawable)) {
+            return globalTransform.transformRect(sprite->getGlobalBounds());
+        }
+
+        if (auto text = std::dynamic_pointer_cast<sf::Text>(drawable)) {
+            return globalTransform.transformRect(text->getGlobalBounds());
+        }
+
+        if (auto convex = std::dynamic_pointer_cast<sf::ConvexShape>(drawable)) {
+            return globalTransform.transformRect(convex->getGlobalBounds());
+        }
+
+        if (auto vertexArray = std::dynamic_pointer_cast<sf::VertexArray>(drawable)) {
+            if (vertexArray->getVertexCount() > 0) {
+                sf::FloatRect bounds;
+                for (size_t i = 0; i < vertexArray->getVertexCount(); ++i) {
+                    bounds = bounds == sf::FloatRect() ? sf::FloatRect(vertexArray->operator[](i).position, { 0.f, 0.f }) : bounds;
+                    bounds.left = std::min(bounds.left, vertexArray->operator[](i).position.x);
+                    bounds.top = std::min(bounds.top, vertexArray->operator[](i).position.y);
+                    bounds.width = std::max(bounds.width, vertexArray->operator[](i).position.x - bounds.left);
+                    bounds.height = std::max(bounds.height, vertexArray->operator[](i).position.y - bounds.top);
                 }
+                return globalTransform.transformRect(bounds);
             }
         }
-        catch (const std::exception& e) {
-            HM_LOGGER_ERROR("Error executing function on SceneNode with ID: {}: {}", getID(), e.what());
-            throw;
+
+        throw std::runtime_error("No matching drawable type found.");
+    }
+
+    void SceneNode::draw(sf::RenderTarget& renderTarget, sf::RenderStates state) const {
+        if (isDrawEnable) {
+            state.transform *= getTransform();
+            onDraw(renderTarget, state);
+
+            for (const auto& child : children) {
+                child->draw(renderTarget, state);
+            }
         }
     }
 
-    void SceneNode::addChildConfigurationID(std::shared_ptr<Configuration> configuration_parent, std::shared_ptr<Configuration> configuration_child) {
-        const uint64_t& childConfigurationId = configuration_child->getID();
-        try {
-            auto childIds = configuration_parent->getParameterOrDefault<std::vector<uint64_t>>("child_configuration_ids", {});
-            childIds.push_back(childConfigurationId);
-            configuration_parent->setParameter("child_configuration_ids", childIds);
-            HM_LOGGER_INFO("Added child configuration ID {} to parent configuration.", childConfigurationId);
-        }
-        catch (const std::exception& e) {
-            HM_LOGGER_ERROR("Error adding child configuration ID to parent: {}", e.what());
-            throw;
+    void SceneNode::update(const sf::Time& time, EventQueue& eventQueue) {
+        if (isUpdateEnable) {
+            onUpdate(time, eventQueue);
+            updateTransform(time);
+
+            for (const auto& child : children) {
+                child->update(time, eventQueue);
+            }
         }
     }
 
-    void SceneNode::rmvChildConfigurationID(std::shared_ptr<Configuration> configuration_parent, std::shared_ptr<Configuration> configuration_child) {
-        try {
-            const uint64_t& childConfigurationId = configuration_child->getID();
-            auto childIds = configuration_parent->getParameterOrDefault<std::vector<uint64_t>>("child_configuration_ids", {});
-            auto it = std::remove(childIds.begin(), childIds.end(), childConfigurationId);
-            if (it != childIds.end()) {
-                childIds.erase(it);
-                configuration_parent->setParameter("child_configuration_ids", childIds);
-                HM_LOGGER_INFO("Removed child configuration ID {} from parent configuration.", childConfigurationId);
-            }
-            else {
-                HM_LOGGER_WARN("Child configuration ID {} not found in parent configuration.", childConfigurationId);
-            }
-        }
-        catch (const std::exception& e) {
-            HM_LOGGER_ERROR("Error removing child configuration ID from parent: {}", e.what());
-            throw;
+    void SceneNode::updateTransform(const sf::Time& time) {
+        float deltaTime = time.asSeconds();
+
+        move(
+            positionVelocity.x * deltaTime + 0.5f * positionAcceleration.x * deltaTime * deltaTime,
+            positionVelocity.y * deltaTime + 0.5f * positionAcceleration.y * deltaTime * deltaTime
+        );
+
+        rotate(rotationVelocity * deltaTime + 0.5f * rotationAcceleration * deltaTime * deltaTime);
+
+        positionVelocity += (positionAcceleration * deltaTime);
+        rotationVelocity += (rotationAcceleration * deltaTime);
+    }
+
+    void SceneNode::onDraw(sf::RenderTarget& renderTarget, sf::RenderStates state) const {
+        if (drawable) {
+            renderTarget.draw(*drawable, state);
         }
     }
 
-    void SceneNode::initialize(const Configuration& configuration) {
-        try {
-            // Set Transformable properties
-            const float posX = configuration.getParameterOrDefault<float>("position_x", 0.0f);
-            const float posY = configuration.getParameterOrDefault<float>("position_y", 0.0f);
-            const float rotation = configuration.getParameterOrDefault<float>("rotation", 0.0f);
-            const float scaleX = configuration.getParameterOrDefault<float>("scale_x", 1.0f);
-            const float scaleY = configuration.getParameterOrDefault<float>("scale_y", 1.0f);
-            const float originX = configuration.getParameterOrDefault<float>("origin_x", 0.0f);
-            const float originY = configuration.getParameterOrDefault<float>("origin_y", 0.0f);
+    void SceneNode::onUpdate(const sf::Time& time, EventQueue& eventQueue) {}
 
-            setPosition(posX, posY);
-            setRotation(rotation);
-            setScale(scaleX, scaleY);
-            setOrigin(originX, originY);
+    void SceneNode::onCreate(Scene& scene) {}
 
-            HM_LOGGER_INFO("Transformable properties initialized: position=({}, {}), rotation={}, scale=({}, {}), origin=({}, {})",
-                posX, posY, rotation, scaleX, scaleY, originX, originY);
+    void SceneNode::onDestroy(Scene& scene) {}
 
-            // Attach child SceneNodes
-            const std::vector<uint64_t> childrenIds = configuration.getParameterOrDefault("child_configuration_ids", std::vector<uint64_t>());
-            for (const uint64_t& childId : childrenIds) {
-                try {
-                    auto childConfig = Object::find<Configuration>(childId);
-                    if (!childConfig) {
-                        HM_LOGGER_WARN("Child configuration with ID {} not found. Skipping.", childId);
-                        continue;
-                    }
-
-                    attachChild(childConfig->create<SceneNode>());
-                    HM_LOGGER_INFO("Successfully attached child SceneNode with configuration ID: {}", childId);
-                }
-                catch (const std::exception& e) {
-                    HM_LOGGER_ERROR("Error during SceneNode initialization for child ID: {}. Error: {}", childId, e.what());
-                    throw;
-                }
-            }
-        }
-        catch (const std::exception& e) {
-            HM_LOGGER_CRITICAL("Error initializing SceneNode with ID: {}. Exception: {}", getID(), e.what());
-            throw;
+    void SceneNode::onEnter(Scene& scene) {
+        onCreate(scene);
+        for (auto& child : children) {
+            child->onEnter(scene);
         }
     }
 
-} // namespace Harmony
+    void SceneNode::onExit(Scene& scene) {
+        onDestroy(scene);
+        for (auto& child : children) {
+            child->onExit(scene);
+        }
+    }
 
+    bool SceneNode::intersect(const std::shared_ptr<SceneNode> target) {
+        return intersect(std::static_pointer_cast<SceneNode>(shared_from_this()), target);
+    }
+
+    bool SceneNode::intersect(const std::shared_ptr<SceneNode> node1, const std::shared_ptr<SceneNode> node2) {
+        return node1->getGlobalBounds().intersects(node2->getGlobalBounds());
+    }
+    std::shared_ptr<SceneNode> SceneNode::create(const Configuration& configuration)
+    {
+        if (const auto type = configuration.getData<std::string>({ "Type" })) {
+            if (type.value() == "Rectangle") {
+                return utilities::create<Rectangle>(configuration);
+            }
+            if (type.value() == "Circle") {
+                return utilities::create<Circle>(configuration);
+            }
+        }
+		return utilities::create<SceneNode>(configuration);
+    }
+}

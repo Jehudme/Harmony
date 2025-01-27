@@ -1,112 +1,66 @@
 #pragma once
 
+#include <string>
+#include <nlohmann/json.hpp>
 #include "Object.h"
-#include "Logger.h"
-#include <map>
-#include <any>
-#include <optional>
-#include <typeinfo>
-#include <stdexcept>
 
-namespace Harmony {
+namespace harmony 
+{
+	class Configuration : public  core::Object
+	{
+	public:
+		using Key = const std::string;
 
-    class Configuration : public Object {
-    public:
-        Configuration(uint64_t uuid = INVALID_UNIQUE_ID) : Object(uuid) {}
+	public:
+        Configuration(const nlohmann::json& data = nlohmann::json(), const std::string& path = std::string(), const uint64_t& uniqueId = NULL);
 
-        template<typename Type>
-        void setCreateType();
+		void load();
+		void save();
 
-        template<typename Type>
-        void setParameter(const std::string& parameterName, const Type& parameter);
+		template<typename Type>
+		std::optional<Type> getData(const std::initializer_list<Key> keys) const;
+        std::optional<nlohmann::json> getData(const std::initializer_list<Key> keys) const;
 
-        template<typename Type>
-        std::optional<Type> getParameter(const std::string& parameterName) const;
-
-        template<typename Type>
-        Type getParameterOrDefault(const std::string& parameterName, const Type& defaultParameter) const;
-
-        template<typename Type>
-        std::shared_ptr<Type> create() const;
-
-    private:
-        std::map<std::string, std::any> parameters;
-        std::function<std::shared_ptr<Object>()> factoryFunction;
-    };
-
-    static inline auto DefaultConfiguration = Object::create<Configuration>(INVALID_UNIQUE_ID);
-
-} // namespace Harmony
+		template<typename Type>
+		void setData(const std::initializer_list<Key> keys, Type& data);
 
 
-#include "Configuration.h"
+	private:
+		bool contain(const std::initializer_list<Key> keys) const;
 
-namespace Harmony {
+	public:
+		std::string path;
+		nlohmann::json data;
+	};
 
+    extern std::shared_ptr<Configuration> configuration;
+}
+
+
+namespace harmony
+{
     template<typename Type>
-    inline void Configuration::setCreateType() {
-        factoryFunction = [self = std::dynamic_pointer_cast<Configuration>(shared_from_this())]() -> std::shared_ptr<Object> {
-            return Object::create<Type>(self);
-            };
+    std::optional<Type> Configuration::getData(const std::initializer_list<Key> keys) const
+    {
+        if (const std::optional<nlohmann::json> data = getData(keys))
+            return std::make_optional<Type>(data.value().get<Type>());
+
+        return std::nullopt;
     }
 
     template<typename Type>
-    void Configuration::setParameter(const std::string& parameterName, const Type& parameter) {
-        try {
-            parameters[parameterName] = parameter;
-        }
-        catch (const std::exception& e) {
-            HM_LOGGER_ERROR("Failed to set parameter '{}' for Configuration ID [{}] [{}]: {}", parameterName, typeId_, uniqueID_, e.what());
-            throw;
-        }
-    }
+    void Configuration::setData(const std::initializer_list<Key> keys, Type& data)
+    {
+        auto& current = this->data;
+        for (auto key : keys)
+        {
+            if (current.find(key) == current.end())
+                current[key] = nlohmann::json::object();
 
-    template<typename Type>
-    std::optional<Type> Configuration::getParameter(const std::string& parameterName) const {
-        try {
-            auto it = parameters.find(parameterName);
-            if (it != parameters.end()) {
-                if (auto* value = std::any_cast<Type>(&it->second)) {
-                    return *value;
-                }
-                else {
-                    HM_LOGGER_ERROR("Type mismatch for parameter '{}' in Configuration ID [{}] [{}].", parameterName, typeId_, uniqueID_);
-                    return std::nullopt;
-                }
-            }
-            return std::nullopt;
+            current = current[key];
         }
-        catch (const std::exception& e) {
-            HM_LOGGER_ERROR("Error retrieving parameter '{}' for Configuration ID [{}] [{}]: {}", parameterName, typeId_, uniqueID_, e.what());
-            throw;
-        }
-    }
 
-    template<typename Type>
-    Type Configuration::getParameterOrDefault(const std::string& parameterName, const Type& defaultParameter) const {
-        try {
-            auto parameter = getParameter<Type>(parameterName);
-            if (parameter) {
-                return *parameter;
-            }
-            return defaultParameter;
-        }
-        catch (const std::exception& e) {
-            HM_LOGGER_ERROR("Error retrieving parameter '{}' with default for Configuration ID [{}] [{}]: {}", parameterName, typeId_, uniqueID_, e.what());
-            throw;
-        }
+        current = data;
     }
-
-    template<typename Type>
-    inline std::shared_ptr<Type> Configuration::create() const {
-        try {
-            return std::dynamic_pointer_cast<Type>(factoryFunction());
-        }
-        catch (const std::exception& e) {
-            HM_LOGGER_ERROR("Error creating object from factory function for Configuration ID [{}] [{}]: {}", typeId_, uniqueID_, e.what());
-            throw;
-        }
-    }
-
-} // namespace Harmony
+}
 

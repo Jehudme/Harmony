@@ -1,39 +1,73 @@
 #pragma once
-
+#include <SFML/Graphics.hpp>
 #include "Object.h"
+#include "Event.h"
+#include "Script.h"
 #include "Configuration.h"
-#include "Logger.h"
-#include <vector>
-#include <functional>
-#include <memory>
 
-namespace Harmony {
+namespace harmony::core
+{
+    class Scene;
 
-    class SceneNode : public Object, sf::Transformable {
+    class SceneNode : public sf::Transformable, public sf::Drawable, public Object
+    {
     public:
-        SceneNode();
-          SceneNode(const uint64_t& configurationId);
-          SceneNode(const std::shared_ptr<Configuration>& configuration);
+        SceneNode(const Configuration& configuration);
+        ~SceneNode();
 
-        void attachChild(std::shared_ptr<SceneNode> sceneNode);
-        void detachChild(std::shared_ptr<SceneNode> sceneNode);
+        void attachChild(const std::shared_ptr<SceneNode> child);
+        std::shared_ptr<SceneNode> detachChild(const SceneNode& child);
+        std::shared_ptr<SceneNode> detachChild();
 
-        sf::Vector2f getGlobalPosition();
+        void enableDraw(const bool option);
+        void enableUpdate(const bool option);
 
-        template<typename... Args>
-        void execute(const std::function<void(SceneNode&, Args...)>& func, Args&&... args);
+        sf::Transform getGlobalTransform() const;
+        sf::Vector2f getGlobalPosition() const;
+        sf::FloatRect getGlobalBounds() const;
 
-        static void addChildConfigurationID(std::shared_ptr<Configuration> configuration_parent, std::shared_ptr<Configuration> configuration_child);
-        static void rmvChildConfigurationID(std::shared_ptr<Configuration> configuration_parent, std::shared_ptr<Configuration> configuration_child);
+        void draw(sf::RenderTarget& renderTarget, sf::RenderStates state) const override;
+        void update(const sf::Time& time, EventQueue& eventQueue);
+
+        void onEnter(Scene& scene);
+        void onExit(Scene& scene);
+
+        bool intersect(const std::shared_ptr<core::SceneNode> target);
+        static bool intersect(const std::shared_ptr<core::SceneNode> node1, const std::shared_ptr<core::SceneNode> node2);
+
+		static std::shared_ptr<SceneNode> create(const Configuration& configuration);
+
+        friend Scene;
 
     private:
-        void initialize(const Configuration& configuration); // Implementation left for you
+        virtual void onDraw(sf::RenderTarget& renderTarget, sf::RenderStates state) const;
+        virtual void onUpdate(const sf::Time& time, EventQueue& eventQueue);
 
-    protected:
-        std::vector<std::shared_ptr<SceneNode>> children_;
-        SceneNode* parent_ = nullptr;
+        virtual void onCreate(Scene& scene);
+        virtual void onDestroy(Scene& scene);
+
+        void updateTransform(const sf::Time& time);
+
+    public:
+        bool isDrawEnable;
+        bool isUpdateEnable;
+
+        SceneNode* parentNode;
+        Scene* currentScene;
+
+        float rotationVelocity;
+        float rotationAcceleration;
+
+        sf::Vector2f positionVelocity;
+        sf::Vector2f positionAcceleration;
+
+        std::shared_ptr<sf::Drawable> drawable;
+        std::vector<std::shared_ptr<SceneNode>> children;
+
+    private:
+        std::shared_ptr<CreateScript> m_createScript;
+        std::shared_ptr<DestroyScript> m_destroyScript;
+        std::shared_ptr<EnterScript> m_enterScript;
+        std::shared_ptr<ExitScript> m_exitScript;
     };
-
-} // namespace Harmony
-
-
+}

@@ -12,6 +12,15 @@ Multi-Arch: same
 Abi: 34f408d1b3b27468e944db2e76080e0e1195e2b195fa54f61a03e8eed43c6f48
 Status: install ok installed
 
+Package: entt
+Version: 3.13.2
+Depends: vcpkg-cmake, vcpkg-cmake-config
+Architecture: x64-windows
+Multi-Arch: same
+Abi: 4313e62123efc485cc700cad310b61875bcc0da2883968cc802e9c17ed7ceb19
+Description: Gaming meets modern C++ - a fast and reliable entity-component system and much more
+Status: purge ok not-installed
+
 Package: stb
 Version: 2024-07-29
 Port-Version: 1
@@ -212,5 +221,25 @@ Architecture: x64-windows
 Multi-Arch: same
 Abi: c5f54fa8d27e91c2fc791ecd35aaa3bc7783750e99b79714a973edc6e6f47a31
 Description: Very fast, header-only/compiled, C++ logging library.
+Status: install ok installed
+
+Package: cereal
+Version: 1.3.2
+Port-Version: 1
+Depends: vcpkg-cmake, vcpkg-cmake-config
+Architecture: x64-windows
+Multi-Arch: same
+Abi: 5a00584b59413bbb029349b9c16d83bc8f59a8bf1f23085b23c712d622284e7f
+Description: a header-only C++11 serialization library (built in support for binary, XML and JSon)
+Status: purge ok not-installed
+
+Package: nlohmann-json
+Version: 3.11.3
+Port-Version: 1
+Depends: vcpkg-cmake, vcpkg-cmake-config
+Architecture: x64-windows
+Multi-Arch: same
+Abi: dd68fa1fc713175adbfbac664087fc2c6be51dcdb424ef4e4a3a436c4802ba71
+Description: JSON for Modern C++
 Status: install ok installed
 

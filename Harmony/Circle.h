@@ -1,26 +1,14 @@
-#pragma once
-#include "Entity.h"
-#include "Resource.h"
+#include "SceneNode.h"
+#include "Configuration.h"
 
-namespace Harmony
+namespace harmony
 {
-    class Circle : public Entity
+    class Circle : public core::SceneNode
     {
     public:
-        Circle();
-        Circle(const uint64_t& configuration_id);
-        Circle(const std::shared_ptr<Configuration> configuration);
-
-    protected:
-        virtual void drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const override;
-        virtual void updateCurrent(const sf::Time& time) override;
+        Circle(const Configuration& configuration);
 
     private:
-        void initialize(const Configuration& configuration);
-
-    private:
-        sf::CircleShape drawableInstance_;
-        std::shared_ptr<Resource<sf::Texture>> texture_;
-        std::shared_ptr<Resource<sf::Shader>> shader_;
+        std::shared_ptr<sf::CircleShape> circle;
     };
 }

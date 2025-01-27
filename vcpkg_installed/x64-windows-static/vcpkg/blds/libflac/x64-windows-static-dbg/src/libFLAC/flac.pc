@@ -1,0 +1,12 @@
+prefix=C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/pkgs/libflac_x64-windows-static/debug
+exec_prefix=C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/pkgs/libflac_x64-windows-static/debug
+libdir=C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/pkgs/libflac_x64-windows-static/debug/lib
+includedir=C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/pkgs/libflac_x64-windows-static/debug/include
+
+Name: FLAC
+Description: Free Lossless Audio Codec Library
+Version: 1.4.3
+Requires.private: ogg
+Libs: -L${libdir} -lFLAC
+Libs.private: -lm
+Cflags: -I${includedir}

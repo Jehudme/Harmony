@@ -1,107 +1,131 @@
 #include "pch.h"
+#include "Object.h"
 #include "Engine.h"
+#include "StateManager.h"
+#include "Configuration.h"
+#include "Window.h"
+#include "Event.h"
+#include <exception>
+#include <memory>
+#include <stdexcept>
+#include <string>
+#include "State.h"
+#include <SFML/Graphics/RenderTarget.hpp>
+#include <SFML/Graphics/RenderTexture.hpp>
+#include <SFML/Graphics/RenderWindow.hpp>
+#include <SFML/Window/Event.hpp>
 
-namespace Harmony {
+namespace harmony::core
+{
+    Engine::Engine(const std::shared_ptr<Configuration> config)
+        : Object(*config), stateManager(std::make_shared<StateManager>())
+    {
+        try {
+            // Create states if provided
+            if (const auto states = config->getData({ "Configurations", "States" })) {
+                for (const auto& state : states.value()) {
+                    stateManager->addState(utilities::create<State>(Configuration(state)));
+                }
+			}
+			else {
+				throw std::runtime_error("No states configuration provided");
+			}
 
-    Engine::Engine() {
-        initialize(*Harmony::DefaultConfiguration);
+			if (const auto initialState = config->getData<std::string>({ "Configurations", "InitialState" })) {
+				stateManager->swichState(initialState.value());
+			}
+			else {
+				throw std::runtime_error("No initial state provided");
+			}
+
+            // Create window if provided
+            if (const auto window = config->getData({ "Configurations", "Window" })) {
+                this->window = utilities::create<Window>(Configuration(window.value()));
+                setRenderTarget(this->window->instance);
+                renderMode = RenderMode::WindowRendering;
+            }
+            else {
+                throw std::runtime_error("No window configuration provided");
+            }
+        }
+        catch (const std::exception& e) {
+            throw std::runtime_error("Error during initialization: " + std::string(e.what()));
+        }
     }
 
-    Engine::Engine(const uint64_t& configuration_id) {
-        initialize(*Object::find<Configuration>(configuration_id));
-    }
+    void Engine::setRenderTarget(std::shared_ptr<sf::RenderTarget> renderTarget)
+    {
+        this->renderTarget = renderTarget;
 
-    Engine::Engine(const std::shared_ptr<Configuration>& configuration)
-        : Object(configuration->getParameterOrDefault<uint64_t>("engine_id", INVALID_UNIQUE_ID)) {
-        initialize(*configuration);
+        renderMode = std::dynamic_pointer_cast<sf::RenderWindow>(renderTarget)
+            ? RenderMode::WindowRendering
+            : RenderMode::TextureRendering;
     }
 
     void Engine::run() {
-        HM_LOGGER_INFO("Starting Engine main loop...");
         try {
-            while (renderWindow_.isOpen()) {
-                event();
-                update();
-                draw();
+            if (!renderTarget) {
+                renderTarget = std::make_shared<sf::RenderTexture>();
             }
-            HM_LOGGER_INFO("Engine main loop terminated gracefully.");
+
+            while (std::dynamic_pointer_cast<sf::RenderWindow>(renderTarget)->isOpen()) {
+                handleEvents();
+                update();
+                render();
+            }
         }
         catch (const std::exception& e) {
-            HM_LOGGER_CRITICAL("Unhandled exception during Engine run: {}", e.what());
-            throw;
+            throw std::runtime_error("Error during run: " + std::string(e.what()));
         }
     }
 
-    void Engine::initialize(const Configuration& configuration) {
-        HM_LOGGER_INFO("Initializing Engine with ID: {}", getID());
-
-        try {
-            // Load parameters from Configuration
-            const std::string windowTitle   = configuration.getParameterOrDefault<std::string>("window_title", "Harmony Engine");
-            const unsigned int width        = configuration.getParameterOrDefault<unsigned int>("window_width", 800);
-            const unsigned int height       = configuration.getParameterOrDefault<unsigned int>("window_height", 600);
-            const bool fullscreen           = configuration.getParameterOrDefault<bool>("fullscreen", false);
-            const int framerateLimit        = configuration.getParameterOrDefault<unsigned int>("framerate_limit", 60);
-            const bool verticalSync         = configuration.getParameterOrDefault<bool>("vertical_sync", true);
-
-            const sf::Uint32 style          = fullscreen ? sf::Style::Fullscreen : sf::Style::Default;
-            sf::VideoMode videoMode         = sf::VideoMode(width, height);
-
-            // Initialize RenderWindow
-            renderWindow_.create(videoMode, windowTitle, style);
-            renderWindow_.setFramerateLimit(framerateLimit);
-            renderWindow_.setVerticalSyncEnabled(verticalSync);
-
-            HM_LOGGER_INFO("Engine initialized with parameters: [Title: {}, Width: {}, Height: {}, Fullscreen: {}, Framerate: {}, VSync: {}]",
-                windowTitle, width, height, fullscreen, framerateLimit, verticalSync);
-        }
-        catch (const std::exception& e) {
-            HM_LOGGER_CRITICAL("Failed to initialize Engine: {}", e.what());
-            throw;
-        }
-    }
-
-    void Engine::event() {
+    void Engine::handleWindowEvents()
+    {
         try {
             sf::Event event;
-            while (renderWindow_.pollEvent(event)) {
+            while (std::static_pointer_cast<sf::RenderWindow>(renderTarget)->pollEvent(event)) {
                 if (event.type == sf::Event::Closed) {
-                    HM_LOGGER_INFO("Close event received. Closing RenderWindow.");
-                    renderWindow_.close();
+                    std::static_pointer_cast<sf::RenderWindow>(renderTarget)->close();
                 }
             }
         }
         catch (const std::exception& e) {
-            HM_LOGGER_ERROR("Exception during event handling: {}", e.what());
-            throw;
+            throw std::runtime_error("Error handling window events: " + std::string(e.what()));
+        }
+    }
+
+    void Engine::handleEvents() {
+        try {
+            eventQueue.handleEvents();
+            if (renderMode == RenderMode::WindowRendering) {
+                handleWindowEvents();
+            }
+        }
+        catch (const std::exception& e) {
+            throw std::runtime_error("Error handling events: " + std::string(e.what()));
         }
     }
 
     void Engine::update() {
-        try {
-            sf::Time deltaTime = clock_.restart();
-
-            // Update game state logic here...
+        try {;
+            stateManager->update(clock.restart(), eventQueue);
         }
         catch (const std::exception& e) {
-            HM_LOGGER_ERROR("Exception during update: {}", e.what());
-            throw;
+            throw std::runtime_error("Error during update: " + std::string(e.what()));
         }
     }
 
-    void Engine::draw() {
+    void Engine::render() {
         try {
-            renderWindow_.clear(sf::Color::Black);
+            renderTarget->clear();
+            renderTarget->draw(*stateManager);
 
-            // Draw game objects here...
-
-            renderWindow_.display();
+            if (renderMode == RenderMode::WindowRendering) {
+                std::static_pointer_cast<sf::RenderWindow>(renderTarget)->display();
+            }
         }
         catch (const std::exception& e) {
-            HM_LOGGER_ERROR("Exception during drawing: {}", e.what());
-            throw;
+            throw std::runtime_error("Error during render: " + std::string(e.what()));
         }
     }
-
-} // namespace Harmony
-
+}

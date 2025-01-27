@@ -1,33 +1,39 @@
 #pragma once
-
+#include "StateManager.h"
 #include "Configuration.h"
-#include <SFML/Graphics.hpp>
-#include <memory>
-#include "Logger.h"
+#include "Window.h"
 
-namespace Harmony {
-
-    class Engine : public Object {
+namespace harmony::core
+{
+    class Engine : public Object
+    {
     public:
-          Engine();
-          Engine(const uint64_t& configuration_id);
-          Engine(const std::shared_ptr<Configuration>& configuration);
-
+        Engine(const std::shared_ptr<Configuration> config);
+		void setRenderTarget(std::shared_ptr<sf::RenderTarget> renderTarget);
         void run();
 
     private:
-        void initialize(const Configuration& configuration);
+        void handleWindowEvents();
+        void handleEvents();
+        void update();
+        void render();
 
-        virtual void event();
-        virtual void update();
-        virtual void draw();
+    private:
+        enum RenderMode
+        {
+            TextureRendering,
+            WindowRendering
+        };
 
-    protected:
+    public:
+        std::shared_ptr<sf::RenderTarget> renderTarget;
+        std::shared_ptr<StateManager> stateManager;
+        std::shared_ptr<Window> window;
 
-        sf::RenderWindow renderWindow_;
-        sf::Clock clock_;
+        sf::Clock clock;
+        EventQueue eventQueue;
+        RenderMode renderMode;
     };
-
-} // namespace Harmony
+}
 
 

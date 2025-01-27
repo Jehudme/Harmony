@@ -1,0 +1,5 @@
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows/vcpkg/blds/cereal/x64-windows-dbg/CMakeFiles/edit_cache.dir
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows/vcpkg/blds/cereal/x64-windows-dbg/CMakeFiles/rebuild_cache.dir
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows/vcpkg/blds/cereal/x64-windows-dbg/CMakeFiles/list_install_components.dir
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows/vcpkg/blds/cereal/x64-windows-dbg/CMakeFiles/install.dir
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows/vcpkg/blds/cereal/x64-windows-dbg/CMakeFiles/install/local.dir

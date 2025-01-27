@@ -1,84 +1,61 @@
 #pragma once
 
-#include "include.h"
+// Enable or disable logging macros by commenting/uncommenting
+#define ENABLE_LOGGING
 
-#ifdef _DEBUG
-    #define HM_LOGGER_TRACE(MESSAGE, ...)       Harmony::Core::Logger::instance->trace(MESSAGE, __VA_ARGS__)
-    #define HM_LOGGER_INFO(MESSAGE, ...)        Harmony::Core::Logger::instance->info(MESSAGE, __VA_ARGS__)
-    #define HM_LOGGER_WARN(MESSAGE, ...)        Harmony::Core::Logger::instance->warn(MESSAGE, __VA_ARGS__)
-    #define HM_LOGGER_ERROR(MESSAGE, ...)       Harmony::Core::Logger::instance->error(MESSAGE, __VA_ARGS__)
-    #define HM_LOGGER_CRITICAL(MESSAGE, ...)    Harmony::Core::Logger::instance->critical(MESSAGE, __VA_ARGS__)
-    #define HM_LOGGER_DEBUG(MESSAGE, ...)       Harmony::Core::Logger::instance->debug(MESSAGE, __VA_ARGS__)
+#ifdef ENABLE_LOGGING
+#include <spdlog/spdlog.h>
+#include <spdlog/async.h>
+#include <spdlog/sinks/basic_file_sink.h>
+#include <spdlog/sinks/stdout_color_sinks.h>
+#include <memory>
+#include <string>
+#include <unordered_map>
+#include <mutex>
+#endif // ENABLE_LOGGING
+
+#ifdef ENABLE_LOGGING
+#define LOG_TRACE(logger, ...) SPDLOG_LOGGER_CALL(logger, spdlog::level::trace, __VA_ARGS__)
+#define LOG_DEBUG(logger, ...) SPDLOG_LOGGER_CALL(logger, spdlog::level::debug, __VA_ARGS__)
+#define LOG_INFO(logger, ...) SPDLOG_LOGGER_CALL(logger, spdlog::level::info, __VA_ARGS__)
+#define LOG_WARN(logger, ...) SPDLOG_LOGGER_CALL(logger, spdlog::level::warn, __VA_ARGS__)
+#define LOG_ERROR(logger, ...) SPDLOG_LOGGER_CALL(logger, spdlog::level::err, __VA_ARGS__)
+#define LOG_CRITICAL(logger, ...) SPDLOG_LOGGER_CALL(logger, spdlog::level::critical, __VA_ARGS__)
 #else
-    #define HM_LOGGER_INITIALIZE(SYSTEM_NAME, ...)
-    #define HM_LOGGER_TRACE(MESSAGE, ...)
-    #define HM_LOGGER_INFO(MESSAGE, ...)
-    #define HM_LOGGER_WARN(MESSAGE, ...)
-    #define HM_LOGGER_ERROR(MESSAGE, ...)
-    #define HM_LOGGER_CRITICAL(MESSAGE, ...)
-    #define HM_LOGGER_DEBUG(MESSAGE, ...)
+#define LOG_TRACE(...)
+#define LOG_DEBUG(logger, ...)
+#define LOG_INFO(...)
+#define LOG_WARN(...)
+#define LOG_ERROR(...)
+#define LOG_CRITICAL(...)
 #endif
 
-namespace Harmony::Core
+
+#ifdef ENABLE_LOGGING
+namespace harmony
 {
     class Logger {
     public:
-        static std::shared_ptr<Logger> create(const std::string& systemName, const spdlog::level::level_enum level = spdlog::level::trace) {
-            std::lock_guard<std::mutex> lock(m_mutex);
-            if (!m_instances.contains(systemName)) {
-                m_instances[systemName] = std::shared_ptr<Logger>(new Logger(systemName, level));
-            }
-            return m_instances[systemName];
-        }
+        static void create(const std::string& logFilePath, spdlog::level::level_enum globalLevel = spdlog::level::info);
 
-        template <typename... Args>
-        void trace(const spdlog::format_string_t<Args...>& message, Args&&... args) {
-            m_logger->trace(message, std::forward<Args>(args)...);
-        }
+        static std::shared_ptr<spdlog::logger> createLogger(const std::string& loggerName, spdlog::level::level_enum level = spdlog::level::info);
 
-        template <typename... Args>
-        void info(const spdlog::format_string_t<Args...>& message, Args&&... args) {
-            m_logger->info(message, std::forward<Args>(args)...);
-        }
-
-        template <typename... Args>
-        void warn(const spdlog::format_string_t<Args...>& message, Args&&... args) {
-            m_logger->warn(message, std::forward<Args>(args)...);
-        }
-
-        template <typename... Args>
-        void error(const spdlog::format_string_t<Args...>& message, Args&&... args) {
-            m_logger->error(message, std::forward<Args>(args)...);
-        }
-
-        template <typename... Args>
-        void critical(const spdlog::format_string_t<Args...>& message, Args&&... args) {
-            m_logger->critical(message, std::forward<Args>(args)...);
-        }
-
-        template <typename... Args>
-        void debug(const spdlog::format_string_t<Args...>& message, Args&&... args) {
-            m_logger->debug(message, std::forward<Args>(args)...);
-        }
+        static void setGlobalLogLevel(spdlog::level::level_enum level);
+        static void setLoggerLevel(const std::string& loggerName, spdlog::level::level_enum level);
 
     private:
-          Logger(const std::string& systemName, const spdlog::level::level_enum level) {
-            std::vector<spdlog::sink_ptr> sinks;
-            sinks.push_back(std::make_shared<spdlog::sinks::stdout_color_sink_mt>());
-            sinks.push_back(std::make_shared<spdlog::sinks::basic_file_sink_mt>(systemName + ".log", true));
+        static inline std::unordered_map<std::string, std::shared_ptr<spdlog::logger>> loggers;
+        static inline std::shared_ptr<spdlog::logger> defaultLogger = nullptr;
+        static inline std::mutex loggerMutex;
 
-            m_logger = std::make_shared<spdlog::logger>(systemName, begin(sinks), end(sinks));
-            spdlog::register_logger(m_logger);
-            m_logger->set_pattern("[%H:%M:%S %z] [%n] [%^%l%$] %v");
-            m_logger->set_level(level);
-        }
-
-        static inline std::unordered_map<std::string, std::shared_ptr<Logger>> m_instances;
-        static inline std::mutex m_mutex;
-
-        std::shared_ptr<spdlog::logger> m_logger;
+        // Static initialization function
+        static inline const bool loggerInitialized = []() {
+            Logger::create("application.log", spdlog::level::debug); // Initialize the logger
+            return true; }();
 
     public:
-        static inline auto instance = Harmony::Core::Logger::create("Core", spdlog::level::info);
+        static inline auto core = Logger::createLogger("Core", spdlog::level::err);
     };
 }
+#endif // ENABLE_LOGGING
+

@@ -1,0 +1,4 @@
+Name: nlohmann_json
+Description: JSON for Modern C++
+Version: 3.11.3
+Cflags: -IC:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows/vcpkg/pkgs/nlohmann-json_x64-windows/debug/include

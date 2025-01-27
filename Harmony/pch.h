@@ -7,7 +7,29 @@
 #ifndef PCH_H
 #define PCH_H
 
-// add headers that you want to pre-compile here
-#include "include.h"
+#include <unordered_map>
+#include <memory>
+#include <map>
+#include <any>
+#include <assert.h>
+#include <vector>
+#include <random>
+#include <algorithm>
+#include <array>
+#include <string>
+#include <optional>
+#include <functional>
+#include <fstream>
+#include <stdexcept>
+#include <mutex>
+
+#include <spdlog/spdlog.h>
+#include <spdlog/async.h>
+#include <spdlog/sinks/basic_file_sink.h>
+#include <spdlog/sinks/stdout_color_sinks.h>
+
+#include <nlohmann/json.hpp>
+
+#include <SFML/Graphics.hpp>
 
 #endif //PCH_H

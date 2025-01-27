@@ -1,84 +1,87 @@
 #pragma once
+
+#include <SFML/System/NonCopyable.hpp>
+#include <unordered_map>
+#include <memory>
 #include "Logger.h"
-#include <stdexcept>
 
-namespace Harmony {
+namespace harmony::utilities 
+{
+	template<typename Type, typename ...ARGS>
+	inline std::shared_ptr<Type> create(ARGS&& ...args);
 
-    constexpr uint64_t INVALID_UNIQUE_ID = 0;
+	template<typename Type>
+	inline std::shared_ptr<Type> find(const uint64_t& uniqueId);
+}
 
-    class Configuration;
+namespace harmony {
+	class Configuration;
+}
 
-    class Object : public std::enable_shared_from_this<Object>,
-        private sf::NonCopyable
-    {
+namespace harmony::core {
+    class Object : private sf::NonCopyable, public std::enable_shared_from_this<Object> {
     public:
-        Object(const uint64_t uuid = INVALID_UNIQUE_ID);
-        Object(const std::shared_ptr<Configuration>& configuration);
-        virtual                         ~Object();
+        Object(const uint64_t uniqueId = NULL);
+		Object(const Configuration& configuration);
+        virtual ~Object();
 
-        void                            setID(uint64_t uuid);
-        uint64_t                        getID() const;
+        void retainSelf();
+        void releaseSelf();
 
-        void                            retainSelf();
-        void                            releaseSelf();
-        bool                            isSelfRetained() const;
+        template<typename Type, typename... ARGS>
+        friend std::shared_ptr<Type> utilities::create(ARGS&&... args);
 
-        static uint64_t                 generateRandomUniqueID();
+        template<typename Type>
+        friend std::shared_ptr<Type> utilities::find(const uint64_t& uniqueId);
 
-        template                        <typename Type, typename... Args>
-        static std::shared_ptr<Type>    create(Args&&... args);
-
-        template                        <typename Type>
-        static std::shared_ptr<Type>    find(uint64_t uuid);
-
-    private:
-        void                            initialize();
+    public:
+        const uint64_t uniqueId;
+        std::string objectType;
+		std::string name;
 
     private:
-        static inline std::unordered_map<uint64_t, std::weak_ptr<Object>>
-            objectRegistry;
-
-        static inline std::unordered_map<const Object*, std::shared_ptr<Object>>
-            retainedObjects;
-
-    protected:
-        std::string                     typeId_;
-        uint64_t                        uniqueID_ = INVALID_UNIQUE_ID;
-        std::shared_ptr<Object>         selfPointer_;
+        static inline std::unordered_map<uint64_t, std::weak_ptr<Object>> m_registers;
+        static inline std::unordered_map<Object*, std::shared_ptr<Object>> m_retained;
     };
+}
 
-    template <typename Type, typename... Args>
-    std::shared_ptr<Type> Object::create(Args&&... args) {
-        static_assert(std::is_base_of<Object, Type>::value, "Type must inherit from Object");
-        try {
-            auto object = std::make_shared<Type>(std::forward<Args>(args)...);
-            object->typeId_ = typeid(Type).name();
+namespace harmony::utilities
+{
+	template<typename Type, typename ...ARGS>
+	inline std::shared_ptr<Type> create(ARGS&& ...args) {
+		static_assert(std::is_base_of<core::Object, Type>::value, "Type must inherit from Object");
 
-            object->Object::initialize();
-            return object;
-        }
-        catch (const std::exception& e) {
-            HM_LOGGER_ERROR("Error creating object of type '{}': {}", typeid(Type).name(), e.what());
-            throw;
-        }
-    }
+		auto object = std::make_shared<Type>(std::forward<ARGS>(args)...);
+		core::Object::m_registers[object->uniqueId] = object;
+		object->objectType = typeid(Type).name();
 
-    template <typename Type>
-    std::shared_ptr<Type> Object::find(uint64_t uuid) {
-        static_assert(std::is_base_of<Object, Type>::value, "Type must inherit from Object");
-        auto it = objectRegistry.find(uuid);
-        if (it != objectRegistry.end()) {
-            auto object = std::dynamic_pointer_cast<Type>(it->second.lock());
-            if (object) {
-                return object;
-            }
-            else {
-                HM_LOGGER_ERROR("Failed to cast object with ID {} to type '{}'.", uuid, typeid(Type).name());
-                throw std::runtime_error("Object casting failed.");
-            }
-        }
+		LOG_TRACE(Logger::core, "[Object] Created object of type '{}' with ID: {}", object->objectType, object->uniqueId);
+		return std::static_pointer_cast<Type>(object);
+	}
 
-        HM_LOGGER_ERROR("Object with ID {} not found in the registry.", uuid);
-        throw std::runtime_error("Object not found.");
-    }
+	template<typename Type>
+	inline std::shared_ptr<Type> find(const uint64_t& uniqueId) {
+		if (!core::Object::m_registers.contains(uniqueId)) {
+			LOG_ERROR(Logger::core, "[Object] Object with ID '{}' not found", uniqueId);
+			throw std::runtime_error("Object Not Found");
+		}
+
+		auto object = core::Object::m_registers[uniqueId].lock();
+		if (!object) {
+			LOG_ERROR(Logger::core, "[Object] Object with ID '{}' has expired", uniqueId);
+			return nullptr;
+		}
+
+		try {
+			auto castedObject = std::dynamic_pointer_cast<Type>(object);
+			if (!castedObject) {
+				LOG_ERROR(Logger::core, "[Object] Failed to cast object with ID '{}' to type '{}'", uniqueId, typeid(Type).name());
+			}
+			return castedObject;
+		}
+		catch (const std::exception& e) {
+			LOG_CRITICAL(Logger::core, "[Object] Exception while casting object with ID '{}': {}", uniqueId, e.what());
+			return nullptr;
+		}
+	}
 }

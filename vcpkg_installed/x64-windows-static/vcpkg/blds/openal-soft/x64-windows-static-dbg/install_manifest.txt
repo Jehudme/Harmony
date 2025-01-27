@@ -1,0 +1,21 @@
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/pkgs/openal-soft_x64-windows-static/debug/lib/OpenAL32.lib
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/pkgs/openal-soft_x64-windows-static/debug/lib/cmake/OpenAL/OpenALTargets.cmake
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/pkgs/openal-soft_x64-windows-static/debug/lib/cmake/OpenAL/OpenALTargets-debug.cmake
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/pkgs/openal-soft_x64-windows-static/debug/include/AL/al.h
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/pkgs/openal-soft_x64-windows-static/debug/include/AL/alc.h
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/pkgs/openal-soft_x64-windows-static/debug/include/AL/alext.h
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/pkgs/openal-soft_x64-windows-static/debug/include/AL/efx-creative.h
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/pkgs/openal-soft_x64-windows-static/debug/include/AL/efx-presets.h
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/pkgs/openal-soft_x64-windows-static/debug/include/AL/efx.h
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/pkgs/openal-soft_x64-windows-static/debug/lib/pkgconfig/openal.pc
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/pkgs/openal-soft_x64-windows-static/debug/lib/cmake/OpenAL/OpenALConfig.cmake
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/pkgs/openal-soft_x64-windows-static/debug/share/openal/alsoftrc.sample
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/pkgs/openal-soft_x64-windows-static/debug/share/openal/hrtf/Default HRTF.mhr
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/pkgs/openal-soft_x64-windows-static/debug/share/openal/presets/3D7.1.ambdec
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/pkgs/openal-soft_x64-windows-static/debug/share/openal/presets/hex-quad.ambdec
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/pkgs/openal-soft_x64-windows-static/debug/share/openal/presets/hexagon.ambdec
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/pkgs/openal-soft_x64-windows-static/debug/share/openal/presets/itu5.1-nocenter.ambdec
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/pkgs/openal-soft_x64-windows-static/debug/share/openal/presets/itu5.1.ambdec
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/pkgs/openal-soft_x64-windows-static/debug/share/openal/presets/presets.txt
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/pkgs/openal-soft_x64-windows-static/debug/share/openal/presets/rectangle.ambdec
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/pkgs/openal-soft_x64-windows-static/debug/share/openal/presets/square.ambdec

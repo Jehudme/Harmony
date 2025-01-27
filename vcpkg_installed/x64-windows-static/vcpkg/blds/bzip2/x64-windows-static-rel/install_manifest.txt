@@ -1,0 +1,4 @@
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/pkgs/bzip2_x64-windows-static/lib/bz2.lib
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/pkgs/bzip2_x64-windows-static/tools/bzip2/bzip2.exe
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/pkgs/bzip2_x64-windows-static/tools/bzip2/bzip2recover.exe
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows-static/vcpkg/pkgs/bzip2_x64-windows-static/include/bzlib.h
