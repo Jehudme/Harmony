@@ -18,10 +18,13 @@ namespace Harmony
 	template<typename Type, typename... ARGS>
 	std::shared_ptr<Type> find(const std::string& name);
 
+	class Configuration;
+
 	class Object : private sf::NonCopyable, public std::enable_shared_from_this<Object> 
 	{
 	public:
 		Object(const uint64_t& uniqueId);
+		Object(std::shared_ptr<Configuration> configuration);
 		virtual ~Object();
 
 		void retainSelf();

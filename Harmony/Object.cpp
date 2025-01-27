@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "Object.h"
 #include "Utilities.h"
+#include "Configuration.h"
+#include "Utilities.h"
 
 constexpr const char* INITIAL_OBJECT_NAME = "Unkow";
 
@@ -9,6 +11,14 @@ namespace Harmony
 {
 	Object::Object(const uint64_t& uniqueId)
 		: m_uniqueId(uniqueId ? uniqueId : Utilities::generateRandomNumber<uint64_t>()), m_name(INITIAL_OBJECT_NAME), m_isFoundByNameEnable(false) {
+	}
+
+	static inline uint64_t setUniqueId(std::shared_ptr<Configuration> configuration) {
+		return configuration->get<uint64_t>({ "UniqueId" }).value_or(Utilities::generateRandomNumber<uint64_t>());
+	}
+
+	Object::Object(std::shared_ptr<Configuration> configuration)
+		: m_uniqueId(setUniqueId(configuration)), m_name(INITIAL_OBJECT_NAME) {
 	}
 
 	Object::~Object()
