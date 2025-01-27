@@ -1,0 +1,40 @@
+#pragma once
+#include "Object.h"
+#include <nlohmann/json.hpp>
+#include <cstdint>
+#include <initializer_list>
+#include <string>
+
+namespace Harmony {
+
+    class Configuration : public Object {
+    public:
+        Configuration(const nlohmann::json& data = nlohmann::json(), const uint64_t& uniqueId = 0);
+
+        void set(const nlohmann::json& data, const std::initializer_list<const char*>& path = {});
+        std::optional<nlohmann::json> get(const std::initializer_list<const char*>& path = {}) const;
+
+        void load();
+        void unload();
+
+        void setFilePath(const std::string& filePath);
+        std::string getFilePath() const;
+
+        template<typename Type>
+        void set(const Type& data, const std::initializer_list<const char*>& path = {}) {
+            set(nlohmann::json(data), path);
+        }
+        template<typename Type>
+        std::optional<nlohmann::json> get(const std::initializer_list<const char*>& path = {}) const {
+            if (auto data = get(path)) {
+                return std::make_optional<Type>(data.value());
+            }
+            return std::nullopt;
+        }
+
+    private:
+        nlohmann::json m_data;
+        std::optional<std::string> m_filePath;
+    };
+
+}
