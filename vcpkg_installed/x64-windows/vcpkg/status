@@ -214,3 +214,12 @@ Abi: c5f54fa8d27e91c2fc791ecd35aaa3bc7783750e99b79714a973edc6e6f47a31
 Description: Very fast, header-only/compiled, C++ logging library.
 Status: install ok installed
 
+Package: entt
+Version: 3.13.2
+Depends: vcpkg-cmake, vcpkg-cmake-config
+Architecture: x64-windows
+Multi-Arch: same
+Abi: 4313e62123efc485cc700cad310b61875bcc0da2883968cc802e9c17ed7ceb19
+Description: Gaming meets modern C++ - a fast and reliable entity-component system and much more
+Status: install ok installed
+
