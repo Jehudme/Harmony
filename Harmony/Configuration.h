@@ -25,9 +25,9 @@ namespace Harmony {
             set(nlohmann::json(data), path);
         }
         template<typename Type>
-        std::optional<nlohmann::json> get(const std::initializer_list<const char*>& path = {}) const {
+        std::optional<Type> get(const std::initializer_list<const char*>& path = {}) const {
             if (auto data = get(path)) {
-                return std::make_optional<Type>(data.value());
+                return std::make_optional<Type>(data.value().get<Type>());
             }
             return std::nullopt;
         }

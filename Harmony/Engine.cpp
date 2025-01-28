@@ -20,7 +20,7 @@ namespace Harmony {
     {
         // Extract title and size from configuration
         const std::string title = configuration->get<std::string>({ "Title" }).value_or("Harmony Engine");
-        const sf::Vector2f size = {
+        const sf::Vector2u size = {
             configuration->get<unsigned int>({ "Size", "Width" }).value_or(600),
             configuration->get<unsigned int>({ "Size", "Height" }).value_or(600)
         };

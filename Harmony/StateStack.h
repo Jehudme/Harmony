@@ -23,8 +23,15 @@ namespace Harmony
 		void removeAll();
 		void clear();
 
-		std::shared_ptr<State> findState(const uint64_t& uniqueId);
-		std::shared_ptr<State> findState(const std::string& name);
+		void push(const std::string& stateName);
+		void push(const uint64_t& uniqueId);
+
+		void pop();
+
+		std::shared_ptr<State> getCurrent();
+
+		std::shared_ptr<State> get(const uint64_t& uniqueId);
+		std::shared_ptr<State> get(const std::string& name);
 
 	private:
 		std::vector<std::shared_ptr<State>> m_states;
