@@ -41,8 +41,7 @@ namespace Harmony {
     std::string Configuration::getFilePath() const {
         if (m_filePath) {
             return *m_filePath;
-        }
-        else {
+        } else {
             throw std::runtime_error("File path is not set.");
         }
     }
