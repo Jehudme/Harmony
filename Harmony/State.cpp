@@ -23,7 +23,7 @@ namespace Harmony {
     }
 
     void State::onEnter() {
-        processInitializeScene();
+        processInitializeScenes();
         for (auto scene : m_scenes) {
             scene->onEnter();
         }
@@ -114,7 +114,7 @@ namespace Harmony {
         m_sceneBuffer.clear();
     }
 
-    void State::processInitializeScene()
+    void State::processInitializeScenes()
     {
         for (const auto& item : m_initialBuffer) {
             std::visit([this](auto&& arg) {

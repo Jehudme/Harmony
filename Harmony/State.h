@@ -37,7 +37,7 @@ namespace Harmony {
         void clearSceneBuffer();
 
     private:
-        void processInitializeScene();
+        void processInitializeScenes();
 
     private:
         std::vector<std::variant<uint64_t, std::string>> m_initialBuffer;

@@ -36,5 +36,4 @@ namespace Harmony {
         nlohmann::json m_data;
         std::optional<std::string> m_filePath;
     };
-
 }
