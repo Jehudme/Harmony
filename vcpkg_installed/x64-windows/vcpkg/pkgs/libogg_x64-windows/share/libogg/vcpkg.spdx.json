@@ -3,13 +3,13 @@
   "spdxVersion": "SPDX-2.2",
   "dataLicense": "CC0-1.0",
   "SPDXID": "SPDXRef-DOCUMENT",
-  "documentNamespace": "https://spdx.org/spdxdocs/libogg-x64-windows-1.3.5#1-8e640f9a-8186-46ef-b0f9-a39518d90e1a",
-  "name": "libogg:x64-windows@1.3.5#1 e860e609e2406555b2cd271651dc38e45f3b53456d7e3df2e9db573a6cd76853",
+  "documentNamespace": "https://spdx.org/spdxdocs/libogg-x64-windows-1.3.5#1-ab92464f-b644-423a-8578-7bb10f9db89a",
+  "name": "libogg:x64-windows@1.3.5#1 286f87533e7186dae92992a15af56465417d2daffef49d675dd4bef3e0241f09",
   "creationInfo": {
     "creators": [
-      "Tool: vcpkg-2024-09-30-ab8988503c7cffabfd440b243a383c0a352a023d"
+      "Tool: vcpkg-2024-12-09-1005b78fa1bf1dde1a20c2734cba4ea61ca94d9a"
     ],
-    "created": "2025-01-07T07:54:55Z"
+    "created": "2025-02-11T19:45:53Z"
   },
   "relationships": [
     {
@@ -59,12 +59,26 @@
     {
       "name": "libogg:x64-windows",
       "SPDXID": "SPDXRef-binary",
-      "versionInfo": "e860e609e2406555b2cd271651dc38e45f3b53456d7e3df2e9db573a6cd76853",
+      "versionInfo": "286f87533e7186dae92992a15af56465417d2daffef49d675dd4bef3e0241f09",
       "downloadLocation": "NONE",
       "licenseConcluded": "BSD-3-Clause",
       "licenseDeclared": "NOASSERTION",
       "copyrightText": "NOASSERTION",
       "comment": "This is a binary package built by vcpkg."
+    },
+    {
+      "SPDXID": "SPDXRef-resource-0",
+      "name": "xiph/ogg",
+      "downloadLocation": "git+https://gitlab.xiph.org/xiph/ogg@v1.3.5",
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "NOASSERTION",
+      "copyrightText": "NOASSERTION",
+      "checksums": [
+        {
+          "algorithm": "SHA512",
+          "checksumValue": "72bfad534a459bfca534eae9b209fa630ac20364a82e82f2707b210a40deaf9a7dc9031532a8b27120a9dd66f804655ddce79875758ef14b109bf869e57fb747"
+        }
+      ]
     }
   ],
   "files": [

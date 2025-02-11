@@ -3,13 +3,13 @@
   "spdxVersion": "SPDX-2.2",
   "dataLicense": "CC0-1.0",
   "SPDXID": "SPDXRef-DOCUMENT",
-  "documentNamespace": "https://spdx.org/spdxdocs/libflac-x64-windows-1.4.3#2-459442c9-fde7-498d-98e5-4c0d3a09563c",
-  "name": "libflac:x64-windows@1.4.3#2 026363af2864b72149812d1c1ac74c7d3016512805a2507307eaf876f25fc85c",
+  "documentNamespace": "https://spdx.org/spdxdocs/libflac-x64-windows-1.4.3#2-2bf6e350-5c9f-46b2-b9cb-22a41f2232b1",
+  "name": "libflac:x64-windows@1.4.3#2 20b1e264c9ad5000f0a5127caeefbd08e6a4884ed0c3fdd747375eef9534915f",
   "creationInfo": {
     "creators": [
-      "Tool: vcpkg-2024-09-30-ab8988503c7cffabfd440b243a383c0a352a023d"
+      "Tool: vcpkg-2024-12-09-1005b78fa1bf1dde1a20c2734cba4ea61ca94d9a"
     ],
-    "created": "2025-01-07T07:55:48Z"
+    "created": "2025-02-11T19:46:35Z"
   },
   "relationships": [
     {
@@ -79,7 +79,7 @@
     {
       "name": "libflac:x64-windows",
       "SPDXID": "SPDXRef-binary",
-      "versionInfo": "026363af2864b72149812d1c1ac74c7d3016512805a2507307eaf876f25fc85c",
+      "versionInfo": "20b1e264c9ad5000f0a5127caeefbd08e6a4884ed0c3fdd747375eef9534915f",
       "downloadLocation": "NONE",
       "licenseConcluded": "BSD-3-Clause",
       "licenseDeclared": "NOASSERTION",
@@ -87,7 +87,7 @@
       "comment": "This is a binary package built by vcpkg."
     },
     {
-      "SPDXID": "SPDXRef-resource-1",
+      "SPDXID": "SPDXRef-resource-0",
       "name": "xiph/flac",
       "downloadLocation": "git+https://github.com/xiph/flac@1.4.3",
       "licenseConcluded": "NOASSERTION",

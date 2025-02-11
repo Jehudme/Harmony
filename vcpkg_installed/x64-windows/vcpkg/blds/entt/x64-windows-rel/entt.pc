@@ -1,4 +1,4 @@
-prefix=C:/Users/jehud/source/repos/Harmony/vcpkg_installed/x64-windows/vcpkg/pkgs/entt_x64-windows
+prefix=C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows/vcpkg/pkgs/entt_x64-windows
 includedir=${prefix}/include
 
 Name: EnTT

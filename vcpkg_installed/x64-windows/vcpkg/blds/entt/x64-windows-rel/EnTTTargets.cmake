@@ -51,7 +51,7 @@ add_library(EnTT::EnTT INTERFACE IMPORTED)
 
 set_target_properties(EnTT::EnTT PROPERTIES
   INTERFACE_COMPILE_FEATURES "cxx_std_17"
-  INTERFACE_INCLUDE_DIRECTORIES "C:/Users/jehud/source/repos/Harmony/vcpkg_installed/x64-windows/vcpkg/blds/entt/src/v3.13.2-13070622a4.clean/src"
+  INTERFACE_INCLUDE_DIRECTORIES "C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows/vcpkg/blds/entt/src/v3.13.2-13070622a4.clean/src"
 )
 
 # This file does not depend on other imported targets which have

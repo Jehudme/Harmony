@@ -3,13 +3,13 @@
   "spdxVersion": "SPDX-2.2",
   "dataLicense": "CC0-1.0",
   "SPDXID": "SPDXRef-DOCUMENT",
-  "documentNamespace": "https://spdx.org/spdxdocs/entt-x64-windows-3.13.2-5cefa733-f746-4a00-956f-1a03f4a95ab7",
-  "name": "entt:x64-windows@3.13.2 4313e62123efc485cc700cad310b61875bcc0da2883968cc802e9c17ed7ceb19",
+  "documentNamespace": "https://spdx.org/spdxdocs/entt-x64-windows-3.13.2-5c8d5543-838c-4b6b-8f8b-ce226cd58303",
+  "name": "entt:x64-windows@3.13.2 d9c9a535a48c6a4ee3361ff0ccfbf5a05b6e292036c8fe1797e7165228ce5b3d",
   "creationInfo": {
     "creators": [
-      "Tool: vcpkg-2024-09-30-ab8988503c7cffabfd440b243a383c0a352a023d"
+      "Tool: vcpkg-2024-12-09-1005b78fa1bf1dde1a20c2734cba4ea61ca94d9a"
     ],
-    "created": "2025-01-11T21:03:43Z"
+    "created": "2025-02-11T19:43:44Z"
   },
   "relationships": [
     {
@@ -69,7 +69,7 @@
     {
       "name": "entt:x64-windows",
       "SPDXID": "SPDXRef-binary",
-      "versionInfo": "4313e62123efc485cc700cad310b61875bcc0da2883968cc802e9c17ed7ceb19",
+      "versionInfo": "d9c9a535a48c6a4ee3361ff0ccfbf5a05b6e292036c8fe1797e7165228ce5b3d",
       "downloadLocation": "NONE",
       "licenseConcluded": "MIT",
       "licenseDeclared": "NOASSERTION",
@@ -77,7 +77,7 @@
       "comment": "This is a binary package built by vcpkg."
     },
     {
-      "SPDXID": "SPDXRef-resource-1",
+      "SPDXID": "SPDXRef-resource-0",
       "name": "skypjack/entt",
       "downloadLocation": "git+https://github.com/skypjack/entt@v3.13.2",
       "licenseConcluded": "NOASSERTION",

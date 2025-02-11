@@ -3,13 +3,13 @@
   "spdxVersion": "SPDX-2.2",
   "dataLicense": "CC0-1.0",
   "SPDXID": "SPDXRef-DOCUMENT",
-  "documentNamespace": "https://spdx.org/spdxdocs/bzip2-x64-windows-1.0.8#6-caef531c-e9bd-444e-9b81-546f3e144f06",
-  "name": "bzip2:x64-windows@1.0.8#6 372e04673caa1ce9f091b9ea71075fe695d3e15d2d8297ed59efce9abad8144d",
+  "documentNamespace": "https://spdx.org/spdxdocs/bzip2-x64-windows-1.0.8#6-d7865cf6-acca-4aac-a4ca-955a00767af4",
+  "name": "bzip2:x64-windows@1.0.8#6 aca5e71dce5e1135d60b0e29eb55fe0d188cc669685b54a8c2497dea3a5adff1",
   "creationInfo": {
     "creators": [
-      "Tool: vcpkg-2024-09-30-ab8988503c7cffabfd440b243a383c0a352a023d"
+      "Tool: vcpkg-2024-12-09-1005b78fa1bf1dde1a20c2734cba4ea61ca94d9a"
     ],
-    "created": "2025-01-07T07:56:30Z"
+    "created": "2025-02-11T19:47:06Z"
   },
   "relationships": [
     {
@@ -99,7 +99,7 @@
     {
       "name": "bzip2:x64-windows",
       "SPDXID": "SPDXRef-binary",
-      "versionInfo": "372e04673caa1ce9f091b9ea71075fe695d3e15d2d8297ed59efce9abad8144d",
+      "versionInfo": "aca5e71dce5e1135d60b0e29eb55fe0d188cc669685b54a8c2497dea3a5adff1",
       "downloadLocation": "NONE",
       "licenseConcluded": "bzip2-1.0.6",
       "licenseDeclared": "NOASSERTION",
@@ -107,7 +107,7 @@
       "comment": "This is a binary package built by vcpkg."
     },
     {
-      "SPDXID": "SPDXRef-resource-1",
+      "SPDXID": "SPDXRef-resource-0",
       "name": "bzip2-${VERSION}.tar.gz",
       "packageFileName": "bzip2-${VERSION}.tar.gz",
       "downloadLocation": "https://sourceware.org/pub/bzip2/bzip2-${VERSION}.tar.gz",

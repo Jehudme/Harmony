@@ -3,13 +3,13 @@
   "spdxVersion": "SPDX-2.2",
   "dataLicense": "CC0-1.0",
   "SPDXID": "SPDXRef-DOCUMENT",
-  "documentNamespace": "https://spdx.org/spdxdocs/fmt-x64-windows-11.0.2#1-24ec43e7-4b15-45a8-ac61-ce543a9221e8",
-  "name": "fmt:x64-windows@11.0.2#1 500d8f30b9dfc54974bf2e4a46d6c0219f68e60ea39dd0568e6a91b711c51fde",
+  "documentNamespace": "https://spdx.org/spdxdocs/fmt-x64-windows-11.0.2#1-f93bfea0-0e95-488f-9b83-507983eb80e5",
+  "name": "fmt:x64-windows@11.0.2#1 85fd37a72757c5d9b75d8df0d52124fd43efa681907437a7f11a358b4f876c8a",
   "creationInfo": {
     "creators": [
-      "Tool: vcpkg-2024-09-30-ab8988503c7cffabfd440b243a383c0a352a023d"
+      "Tool: vcpkg-2024-12-09-1005b78fa1bf1dde1a20c2734cba4ea61ca94d9a"
     ],
-    "created": "2024-12-10T15:56:13Z"
+    "created": "2025-02-11T19:48:59Z"
   },
   "relationships": [
     {
@@ -89,7 +89,7 @@
     {
       "name": "fmt:x64-windows",
       "SPDXID": "SPDXRef-binary",
-      "versionInfo": "500d8f30b9dfc54974bf2e4a46d6c0219f68e60ea39dd0568e6a91b711c51fde",
+      "versionInfo": "85fd37a72757c5d9b75d8df0d52124fd43efa681907437a7f11a358b4f876c8a",
       "downloadLocation": "NONE",
       "licenseConcluded": "MIT",
       "licenseDeclared": "NOASSERTION",
@@ -97,7 +97,7 @@
       "comment": "This is a binary package built by vcpkg."
     },
     {
-      "SPDXID": "SPDXRef-resource-1",
+      "SPDXID": "SPDXRef-resource-0",
       "name": "fmtlib/fmt",
       "downloadLocation": "git+https://github.com/fmtlib/fmt@11.0.2",
       "licenseConcluded": "NOASSERTION",

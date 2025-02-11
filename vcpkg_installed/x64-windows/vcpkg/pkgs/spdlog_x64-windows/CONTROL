@@ -3,5 +3,5 @@ Version: 1.14.1
 Depends: fmt, vcpkg-cmake, vcpkg-cmake-config
 Architecture: x64-windows
 Multi-Arch: same
-Abi: c5f54fa8d27e91c2fc791ecd35aaa3bc7783750e99b79714a973edc6e6f47a31
+Abi: e90131fc884858f570ff8a2ec8cb52135f31c413e3d5b3b5833fb1b940f46db8
 Description: Very fast, header-only/compiled, C++ logging library.

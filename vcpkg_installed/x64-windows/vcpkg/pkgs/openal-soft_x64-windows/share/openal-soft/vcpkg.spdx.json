@@ -3,13 +3,13 @@
   "spdxVersion": "SPDX-2.2",
   "dataLicense": "CC0-1.0",
   "SPDXID": "SPDXRef-DOCUMENT",
-  "documentNamespace": "https://spdx.org/spdxdocs/openal-soft-x64-windows-1.23.1#2-863fa08b-2817-4947-a3bb-590cde48d515",
-  "name": "openal-soft:x64-windows@1.23.1#2 eae62456838e126c3caf86b86498caf94ad1c292e9c750298854d1f6c529b9e8",
+  "documentNamespace": "https://spdx.org/spdxdocs/openal-soft-x64-windows-1.23.1#2-14170b6c-8285-4295-bd1a-1d50b1e6e042",
+  "name": "openal-soft:x64-windows@1.23.1#2 3c9080fa6721c8f1ed267ec1836f520c9e4aecad89f26535911c8e928a946e06",
   "creationInfo": {
     "creators": [
-      "Tool: vcpkg-2024-09-30-ab8988503c7cffabfd440b243a383c0a352a023d"
+      "Tool: vcpkg-2024-12-09-1005b78fa1bf1dde1a20c2734cba4ea61ca94d9a"
     ],
-    "created": "2025-01-07T07:54:31Z"
+    "created": "2025-02-11T19:45:25Z"
   },
   "relationships": [
     {
@@ -79,7 +79,7 @@
     {
       "name": "openal-soft:x64-windows",
       "SPDXID": "SPDXRef-binary",
-      "versionInfo": "eae62456838e126c3caf86b86498caf94ad1c292e9c750298854d1f6c529b9e8",
+      "versionInfo": "3c9080fa6721c8f1ed267ec1836f520c9e4aecad89f26535911c8e928a946e06",
       "downloadLocation": "NONE",
       "licenseConcluded": "LGPL-2.0-or-later",
       "licenseDeclared": "NOASSERTION",
@@ -87,7 +87,7 @@
       "comment": "This is a binary package built by vcpkg."
     },
     {
-      "SPDXID": "SPDXRef-resource-1",
+      "SPDXID": "SPDXRef-resource-0",
       "name": "kcat/openal-soft",
       "downloadLocation": "git+https://github.com/kcat/openal-soft@1.23.1",
       "licenseConcluded": "NOASSERTION",

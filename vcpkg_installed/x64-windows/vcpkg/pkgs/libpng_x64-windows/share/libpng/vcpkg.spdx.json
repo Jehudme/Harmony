@@ -3,13 +3,13 @@
   "spdxVersion": "SPDX-2.2",
   "dataLicense": "CC0-1.0",
   "SPDXID": "SPDXRef-DOCUMENT",
-  "documentNamespace": "https://spdx.org/spdxdocs/libpng-x64-windows-1.6.43#3-5dcbc2ff-3bc7-4ab3-98cb-4542d1b7585f",
-  "name": "libpng:x64-windows@1.6.43#3 d4dba6008c13c7a33ccf199d48c1779bb2b953ea8f5bfb5bbe1da0ef7494a2a3",
+  "documentNamespace": "https://spdx.org/spdxdocs/libpng-x64-windows-1.6.43#3-786a6b68-815e-488d-bb0a-a66981d8ea1e",
+  "name": "libpng:x64-windows@1.6.43#3 d83b3930419b68d0ba692cde5a0a838b286a3a821e896fb75acae2d3a6609d88",
   "creationInfo": {
     "creators": [
-      "Tool: vcpkg-2024-09-30-ab8988503c7cffabfd440b243a383c0a352a023d"
+      "Tool: vcpkg-2024-12-09-1005b78fa1bf1dde1a20c2734cba4ea61ca94d9a"
     ],
-    "created": "2025-01-07T07:56:16Z"
+    "created": "2025-02-11T19:46:57Z"
   },
   "relationships": [
     {
@@ -129,7 +129,7 @@
     {
       "name": "libpng:x64-windows",
       "SPDXID": "SPDXRef-binary",
-      "versionInfo": "d4dba6008c13c7a33ccf199d48c1779bb2b953ea8f5bfb5bbe1da0ef7494a2a3",
+      "versionInfo": "d83b3930419b68d0ba692cde5a0a838b286a3a821e896fb75acae2d3a6609d88",
       "downloadLocation": "NONE",
       "licenseConcluded": "libpng-2.0",
       "licenseDeclared": "NOASSERTION",
@@ -137,7 +137,7 @@
       "comment": "This is a binary package built by vcpkg."
     },
     {
-      "SPDXID": "SPDXRef-resource-1",
+      "SPDXID": "SPDXRef-resource-0",
       "name": "glennrp/libpng",
       "downloadLocation": "git+https://github.com/glennrp/libpng@v1.6.43",
       "licenseConcluded": "NOASSERTION",
@@ -151,7 +151,7 @@
       ]
     },
     {
-      "SPDXID": "SPDXRef-resource-2",
+      "SPDXID": "SPDXRef-resource-1",
       "name": "${LIBPNG_APNG_PATCH_NAME}.gz",
       "packageFileName": "${LIBPNG_APNG_PATCH_NAME}.gz",
       "downloadLocation": "https://downloads.sourceforge.net/project/libpng-apng/libpng16/${VERSION}/${LIBPNG_APNG_PATCH_NAME}.gz",

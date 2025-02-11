@@ -29,7 +29,7 @@ rule CUSTOM_COMMAND
 # Rule for re-running cmake.
 
 rule RERUN_CMAKE
-  command = "C:\Program Files\CMake\bin\cmake.exe" --regenerate-during-build -SC:\Users\jehud\source\repos\Harmony\vcpkg_installed\x64-windows\vcpkg\blds\entt\src\v3.13.2-13070622a4.clean -BC:\Users\jehud\source\repos\Harmony\vcpkg_installed\x64-windows\vcpkg\blds\entt\x64-windows-rel
+  command = "C:\Program Files\CMake\bin\cmake.exe" --regenerate-during-build -SC:\Users\jehud\source\repos\Jehudme\Harmony\vcpkg_installed\x64-windows\vcpkg\blds\entt\src\v3.13.2-13070622a4.clean -BC:\Users\jehud\source\repos\Jehudme\Harmony\vcpkg_installed\x64-windows\vcpkg\blds\entt\x64-windows-rel
   description = Re-running CMake...
   generator = 1
 
