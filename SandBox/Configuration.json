@@ -1,0 +1,24 @@
+{
+  "Window": {
+    "Title": "Harmony Enhjklgine",
+    "Size": {
+      "Width": 600,
+      "Height": 600
+    },
+    "Fullscreen": false,
+    "VerticalSync": true,
+    "FPS": 60
+  },
+
+  "States": [
+    {
+      "UniqueId": 1,
+      "Name": "State1"
+    },
+    {
+      "UniqueId": 2,
+      "Name": "State2"
+    }
+  ],
+  "InitialState": "State1"
+}

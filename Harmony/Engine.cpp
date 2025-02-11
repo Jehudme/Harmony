@@ -1,11 +1,13 @@
 #include "pch.h"
 #include "Engine.h"
 #include <SFML/Window/Event.hpp>
+#include "StateStack.h"
 
 namespace Harmony {
 
     Engine::Engine(std::shared_ptr<Configuration> configuration)
-        : Object(configuration) {
+        : Object(configuration), stateStack(create<StateStack>(configuration)) {
+        initializeWindow(configuration);
     }
 
     void Engine::run() {
@@ -19,14 +21,14 @@ namespace Harmony {
     void Engine::initializeWindow(std::shared_ptr<Configuration> configuration)
     {
         // Extract title and size from configuration
-        const std::string title = configuration->get<std::string>({ "Title" }).value_or("Harmony Engine");
+        const std::string title = configuration->get<std::string>({ "Window", "Title" }).value_or("Harmony Engine");
         const sf::Vector2u size = {
-            configuration->get<unsigned int>({ "Size", "Width" }).value_or(600),
-            configuration->get<unsigned int>({ "Size", "Height" }).value_or(600)
+            configuration->get<unsigned int>({ "Window", "Size", "Width" }).value_or(600),
+            configuration->get<unsigned int>({ "Window", "Size", "Height" }).value_or(600)
         };
 
         // Extract fullscreen mode setting
-        const bool fullscreen = configuration->get<bool>({ "Fullscreen" }).value_or(false);
+        const bool fullscreen = configuration->get<bool>({ "Window", "Fullscreen" }).value_or(false);
 
         // Set up window style based on fullscreen mode
         sf::Uint32 style = fullscreen ? sf::Style::Fullscreen : sf::Style::Default;
@@ -35,11 +37,11 @@ namespace Harmony {
         renderWindow.create(sf::VideoMode(static_cast<unsigned int>(size.x), static_cast<unsigned int>(size.y)), title, style);
 
         // Extract and apply vertical sync setting
-        const bool verticalSync = configuration->get<bool>({ "VerticalSync" }).value_or(true);
+        const bool verticalSync = configuration->get<bool>({ "Window", "VerticalSync" }).value_or(true);
         renderWindow.setVerticalSyncEnabled(verticalSync);
 
         // Extract and apply FPS limit setting
-        const unsigned int fps = configuration->get<unsigned int>({ "FPS" }).value_or(60);
+        const unsigned int fps = configuration->get<unsigned int>({ "Window", "FPS" }).value_or(60);
         renderWindow.setFramerateLimit(fps);
     }
 

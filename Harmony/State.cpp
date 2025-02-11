@@ -2,12 +2,24 @@
 #include "State.h"
 #include "TaskQueue.h"
 #include "Scene.h"
+#include "Configuration.h"
 
 namespace Harmony {
 
     State::State(std::shared_ptr<Configuration> configuration)
         : Object(configuration) {
 
+        if (const auto scenesConfigurationsData = configuration->get({ "Scenes" })) {
+            for (const auto scenesConfigurations : scenesConfigurationsData.value()) {
+                addScene(create<Scene>(create<Configuration>(scenesConfigurations)));
+            }
+        }
+
+        if (const auto initialScenesData = configuration->get({ "InitialScenes" })) {
+            for (const auto SceneName : initialScenesData.value()) {
+                m_initialBuffer.push_back(SceneName.get<std::string>());
+            }
+        }
     }
 
     void State::draw(sf::RenderTarget& renderTarget, sf::RenderStates states) const {

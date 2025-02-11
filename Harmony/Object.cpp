@@ -18,7 +18,8 @@ namespace Harmony
 	}
 
 	Object::Object(std::shared_ptr<Configuration> configuration)
-		: m_uniqueId(setUniqueId(configuration)), m_name(INITIAL_OBJECT_NAME), m_isFoundByNameEnable(false) {
+		: m_uniqueId(setUniqueId(configuration)), m_name(configuration->get<std::string>({ "Name" }).value_or(INITIAL_OBJECT_NAME)), 
+		m_isFoundByNameEnable(false) {
 	}
 
 	Object::~Object()
