@@ -12,7 +12,7 @@ namespace Harmony
         if (const auto position = configuration->get({ "Position" }))
         {
             setPosition(
-                position.value()["X"].get<float>(), 
+                position.value()["X"].get<float>(),
                 position.value()["Y"].get<float>()
             );
         }
@@ -20,7 +20,7 @@ namespace Harmony
         if (const auto scale = configuration->get({ "Scale" }))
         {
             setScale(
-                scale.value()["X"].get<float>(), 
+                scale.value()["X"].get<float>(),
                 scale.value()["Y"].get<float>()
             );
         }
@@ -28,7 +28,7 @@ namespace Harmony
         if (const auto origine = configuration->get({ "Origine" }))
         {
             setPosition(
-                origine.value()["X"].get<float>(), 
+                origine.value()["X"].get<float>(),
                 origine.value()["Y"].get<float>()
             );
         }
@@ -64,7 +64,7 @@ namespace Harmony
             rotation_acceleration = rotationAcceleration.value().get<float>();
         }
 
-        if (const auto configurationsData = configuration->get({ "Children" })) 
+        if (const auto configurationsData = configuration->get({ "Children" }))
         {
             for (const auto configurationData : configurationsData.value())
             {
