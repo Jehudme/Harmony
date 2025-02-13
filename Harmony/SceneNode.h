@@ -1,58 +1,72 @@
 #pragma once
+
 #include "Object.h"
 #include <SFML/Graphics/Drawable.hpp>
-#include <SFML/System/Time.hpp>
 #include <SFML/Graphics/Transformable.hpp>
+#include <SFML/System/Time.hpp>
+#include <vector>
+#include <memory>
+#include <string>
+#include <stdexcept>
 
-namespace Harmony
-{
-	class TaskQueue;
-	class Scene;
-	struct Script;
+namespace Harmony {
 
-	class SceneNode : public Object, public sf::Transformable, public sf::Drawable
-	{
-	public:
-		SceneNode(std::shared_ptr<Configuration> configuration, const bool enableCreateChildren = false);
-		~SceneNode();
+    // Constants for configuration keys
+    constexpr const char* CONFIG_POSITION = "Position";
+    constexpr const char* CONFIG_SCALE = "Scale";
+    constexpr const char* CONFIG_ORIGIN = "Origin";
+    constexpr const char* CONFIG_ROTATION = "Rotation";
+    constexpr const char* CONFIG_POSITION_VELOCITY = "PositionVelocity";
+    constexpr const char* CONFIG_POSITION_ACCELERATION = "PositionAcceleration";
+    constexpr const char* CONFIG_ROTATION_VELOCITY = "RotationVelocity";
+    constexpr const char* CONFIG_ROTATION_ACCELERATION = "RotationAcceleration";
+    constexpr const char* CONFIG_CHILDREN = "Children";
+    constexpr const char* CONFIG_TYPE = "Type";
+    constexpr const char* CONFIG_VECTOR_X = "X";
+    constexpr const char* CONFIG_VECTOR_Y = "Y";
 
-		void draw(sf::RenderTarget& renderTarget, sf::RenderStates states) const override;
-		void update(const sf::Time& time, TaskQueue& taskQueue);
+    constexpr const char* ERROR_UNKNOWN_TYPE = "Unknown type: ";
 
-		void attachChild(std::shared_ptr<SceneNode> sceneNode);
-		void detachChild(std::shared_ptr<SceneNode> sceneNode);
+    class TaskQueue;
+    class Scene;
+    struct Script;
 
-		sf::Vector2f getGlobalPosition() const;
+    class SceneNode : public Object, public sf::Transformable, public sf::Drawable {
+    public:
+        explicit SceneNode(std::shared_ptr<Configuration> configuration, bool enableOnEnter = false);
+        ~SceneNode();
 
-		std::vector<std::shared_ptr<SceneNode>> findChildrenByName(std::initializer_list<std::string> names);
-		std::vector<std::shared_ptr<SceneNode>> findChildrenByName(std::initializer_list<uint64_t> uniqueIds);
+        void draw(sf::RenderTarget& renderTarget, sf::RenderStates states) const override;
+        void update(const sf::Time& time, TaskQueue& taskQueue);
 
-		virtual void initialize(std::shared_ptr<Configuration> configuration);
+        void attachChild(std::shared_ptr<SceneNode> child);
+        void detachChild(std::shared_ptr<SceneNode> child);
 
-	private:
-		virtual void drawCurrent(sf::RenderTarget& renderTarget, sf::RenderStates states) const;
-		virtual void updateCurrrent(const sf::Time& time, TaskQueue& taskQueue);
+        sf::Vector2f getGlobalPosition() const;
 
-		void updateTransform(const sf::Time& time, TaskQueue& taskQueue);
+        std::vector<std::shared_ptr<SceneNode>> findChildrenByName(std::initializer_list<std::string> names);
+        std::vector<std::shared_ptr<SceneNode>> findChildrenByName(std::initializer_list<uint64_t> uniqueIds);
 
-	public:
-		std::vector<std::shared_ptr<SceneNode>> children;
+        virtual void initialize(std::shared_ptr<Configuration> configuration);
 
-		sf::Vector2f position_velocity;
-		sf::Vector2f position_acceleration;
+    private:
+        virtual void drawCurrent(sf::RenderTarget& renderTarget, sf::RenderStates states) const;
+        virtual void updateCurrent(const sf::Time& time, TaskQueue& taskQueue);
 
-		float rotation_velocity = 0;
-		float rotation_acceleration = 0;
-		
-	public:
-		SceneNode* parent;
-		Scene* scene;
+        void updateTransform(const sf::Time& time, TaskQueue& taskQueue);
 
-		std::shared_ptr<Script> script;
-		std::shared_ptr<Configuration> configuration;
-	};
+        std::vector<std::shared_ptr<SceneNode>> children_;
+        sf::Vector2f positionVelocity_;
+        sf::Vector2f positionAcceleration_;
+        float rotationVelocity_ = 0;
+        float rotationAcceleration_ = 0;
 
-	template<>
-	std::shared_ptr<SceneNode> create<SceneNode, std::shared_ptr<Configuration>>(std::shared_ptr<Configuration>&& configuration);
+        SceneNode* parent_ = nullptr;
+        Scene* scene_ = nullptr;
+        std::shared_ptr<Script> script_;
+        std::shared_ptr<Configuration> configuration_;
+    };
+
+    template<>
+    std::shared_ptr<SceneNode> create<SceneNode, std::shared_ptr<Configuration>>(std::shared_ptr<Configuration>&& configuration);
 }
-
