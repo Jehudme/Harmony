@@ -1,4 +1,5 @@
 #pragma once
+
 #include "Object.h"
 #include <SFML/Graphics/Drawable.hpp>
 #include <SFML/System/Time.hpp>
@@ -8,13 +9,20 @@
 #include <variant>
 
 namespace Harmony {
+
+    // Constants for configuration keys and error messages
+    constexpr const char* CONFIG_SCENES = "Scenes";
+    constexpr const char* CONFIG_INITIAL_SCENES = "InitialScenes";
+    constexpr const char* ERROR_SCENE_NOT_FOUND = "Scene not found: ";
+    constexpr const char* ERROR_NULL_SCENE = "Scene cannot be null.";
+
     class TaskQueue;
     class Scene;
     struct Script;
 
     class State : public Object, public sf::Drawable {
     public:
-        State(std::shared_ptr<Configuration> configuration);
+        explicit State(std::shared_ptr<Configuration> configuration);
 
         void draw(sf::RenderTarget& renderTarget, sf::RenderStates states) const override;
         void update(const sf::Time& time, TaskQueue& taskQueue);
@@ -22,30 +30,32 @@ namespace Harmony {
         void onEnter();
         void onExit();
 
-        std::shared_ptr<Scene> getSceneByName(const std::string& name);
-        std::shared_ptr<Scene> getSceneById(const uint64_t& uniqueId);
+        // Overloaded functions for getting scenes
+        std::shared_ptr<Scene> getScene(const std::string& name) const;
+        std::shared_ptr<Scene> getScene(uint64_t uniqueId) const;
 
         void addScene(std::shared_ptr<Scene> scene);
-        void removeSceneByName(const std::string& name);
-        void removeSceneById(const uint64_t& uniqueId);
 
-        void queueSceneByName(const std::string& name);
-        void queueSceneById(const uint64_t& uniqueId);
+        // Overloaded functions for removing scenes
+        void removeScene(const std::string& name);
+        void removeScene(uint64_t uniqueId);
 
-        void removeQueuedSceneByName(const std::string& name);
-        void removeQueuedSceneById(const uint64_t& uniqueId);
+        // Overloaded functions for queuing scenes
+        void queueScene(const std::string& name);
+        void queueScene(uint64_t uniqueId);
+
+        // Overloaded functions for removing queued scenes
+        void removeQueuedScene(const std::string& name);
+        void removeQueuedScene(uint64_t uniqueId);
 
         void clearSceneBuffer();
 
     private:
         void processInitializeScenes();
 
-    private:
-        std::vector<std::variant<uint64_t, std::string>> m_initialBuffer;
-        std::vector<std::shared_ptr<Scene>> m_sceneBuffer;
-        std::vector<std::shared_ptr<Scene>> m_scenes;
-        std::shared_ptr<Script> m_script;
+        std::vector<std::variant<uint64_t, std::string>> initialBuffer_;
+        std::vector<std::shared_ptr<Scene>> sceneBuffer_;
+        std::vector<std::shared_ptr<Scene>> scenes_;
+        std::shared_ptr<Script> script_;
     };
 }
-
-
