@@ -1,22 +1,27 @@
 #pragma once
+
 #include "Object.h"
 #include "Task.h"
 #include <queue>
-namespace Harmony
-{
-	class TaskQueue : Object
-	{
-	public:
-		TaskQueue(const uint64_t& uniqueId = NULL);
+#include <memory>
+#include <stdexcept>
 
-		void push(std::shared_ptr<Task> task);
-		void clean();
+namespace Harmony {
 
-		bool isEmpty() const;
-		void execute();
+    // Constants for error messages
+    constexpr const char* ERROR_NULL_TASK = "Task cannot be null.";
 
-	private:
-		std::queue<std::shared_ptr<Task>> m_tasks;
-	};
+    class TaskQueue : public Object {
+    public:
+        explicit TaskQueue(uint64_t uniqueId = 0);
+
+        void push(std::shared_ptr<Task> task);
+        void clear();
+
+        bool isEmpty() const;
+        void execute();
+
+    private:
+        std::queue<std::shared_ptr<Task>> tasks_;
+    };
 }
-

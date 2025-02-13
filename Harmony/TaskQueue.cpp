@@ -1,30 +1,35 @@
 #include "pch.h"
 #include "TaskQueue.h"
 
-namespace Harmony 
-{
-    TaskQueue::TaskQueue(const uint64_t& uniqueId)
+namespace Harmony {
+
+    TaskQueue::TaskQueue(uint64_t uniqueId)
         : Object(uniqueId) {
     }
 
     void TaskQueue::push(std::shared_ptr<Task> task) {
-        m_tasks.push(task);
+        if (!task) {
+            throw std::invalid_argument(ERROR_NULL_TASK);
+        }
+        tasks_.push(task);
     }
 
-    void TaskQueue::clean() {
-        std::queue<std::shared_ptr<Task>> empty;
-        std::swap(m_tasks, empty);
+    void TaskQueue::clear() {
+        std::queue<std::shared_ptr<Task>> emptyQueue;
+        std::swap(tasks_, emptyQueue);
     }
 
     bool TaskQueue::isEmpty() const {
-        return m_tasks.empty();
+        return tasks_.empty();
     }
 
     void TaskQueue::execute() {
-        while (!m_tasks.empty()) {
-            auto task = m_tasks.front();
-            task->execute();
-            m_tasks.pop();
+        while (!tasks_.empty()) {
+            auto task = tasks_.front();
+            if (task) {
+                task->execute();
+            }
+            tasks_.pop();
         }
     }
 }
