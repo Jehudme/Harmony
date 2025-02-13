@@ -7,7 +7,7 @@ namespace Harmony
 {
 	class State;
 	class TaskQueue;
-	class StateStack : public Object, private sf::Drawable
+	class StateStack : public Object, public sf::Drawable
 	{
 	public:
 		StateStack(std::shared_ptr<Configuration> configuration);

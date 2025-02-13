@@ -18,7 +18,7 @@ namespace Harmony
 	}
 
 	Object::Object(std::shared_ptr<Configuration> configuration)
-		: m_uniqueId(setUniqueId(configuration)), m_name(configuration->get<std::string>({ "Name" }).value_or(INITIAL_OBJECT_NAME)), 
+		: m_uniqueId(setUniqueId(configuration)), m_name(configuration->get<std::string>({ "Name" }).value_or(INITIAL_OBJECT_NAME)),
 		m_isFoundByNameEnable(false) {
 	}
 
@@ -26,7 +26,7 @@ namespace Harmony
 	{
 		if (m_registersById[m_uniqueId].expired()) {
 			m_registersById.erase(m_uniqueId);
-		} 
+		}
 		if (m_isFoundByNameEnable && m_registersByName[m_name].expired()) {
 			m_registersByName.erase(m_name);
 		}
@@ -44,7 +44,7 @@ namespace Harmony
 
 	void Object::setName(const std::string& name)
 	{
-		if(Object::m_registersByName.contains(name)) {
+		if (Object::m_registersByName.contains(name)) {
 			throw std::runtime_error("Object Not Find");
 		}
 

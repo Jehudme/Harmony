@@ -8,6 +8,7 @@ namespace Harmony
 {
 	class TaskQueue;
 	class Scene;
+
 	class SceneNode : public Object, public sf::Transformable, public sf::Drawable
 	{
 	public:
@@ -27,6 +28,8 @@ namespace Harmony
 		void onEnter();
 		void onExit();
 
+		virtual void initialize(std::shared_ptr<Configuration> configuration);
+
 	private:
 		virtual void drawCurrent(sf::RenderTarget& renderTarget, sf::RenderStates states) const;
 		virtual void updateCurrrent(const sf::Time& time, TaskQueue& taskQueue);
@@ -40,11 +43,16 @@ namespace Harmony
 		sf::Vector2f position_acceleration;
 
 		float rotation_velocity = 0;
-		float rotation_acceleration;
+		float rotation_acceleration = 0;
 		
-	private:
+	public:
 		SceneNode* parent;
 		Scene* scene;
+
+		std::shared_ptr<Configuration> configuration;
 	};
+
+	template<>
+	std::shared_ptr<SceneNode> create<SceneNode, std::shared_ptr<Configuration>>(std::shared_ptr<Configuration>&& configuration);
 }
 

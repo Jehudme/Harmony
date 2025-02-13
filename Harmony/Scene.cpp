@@ -1,14 +1,12 @@
 #include "pch.h"
 #include "Scene.h"
-#include "SceneNode.h"
+#include "Group.h"
 #include "Configuration.h"
 
 namespace Harmony
 {
     Scene::Scene(std::shared_ptr<Configuration> configuration)
-        : Object(configuration), configuration(configuration)
-    {
-        reset();
+        : Object(configuration), m_configuration(configuration) {
     }
 
     void Scene::draw(sf::RenderTarget& renderTarget, sf::RenderStates states) const
@@ -28,7 +26,7 @@ namespace Harmony
 
     void Scene::onEnter()
     {
-        reset();
+        initialize(m_configuration);
         if (sceneGraph) {
             sceneGraph->onEnter();
         }
@@ -41,14 +39,19 @@ namespace Harmony
         }
     }
 
-    void Scene::reset()
+    void Scene::initialize(std::shared_ptr<Configuration> configuration)
     {
-        if (auto sceneGraphConfig = configuration->get({ "SceneGraph" })) {
-            sceneGraph = create<SceneNode>(create<Configuration>());
+        configure_view(configuration);
+        if (auto sceneGraphData = configuration->get({ "SceneGraph" })) {
+            sceneGraph = create<Group>(create<Configuration>(sceneGraphData.value()));
         }
-        configureViewFromConfig();
+        else
+        {
+            sceneGraph = create<Group>(create<Configuration>());
+        }
     }
-    void Scene::configureViewFromConfig()
+
+    void Scene::configure_view(std::shared_ptr<Configuration> configuration)
     {
         view = sf::View();
         if (auto viewConfig = configuration->get({ "View" })) {

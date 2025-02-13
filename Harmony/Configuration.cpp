@@ -31,6 +31,20 @@ namespace Harmony {
     }
 
     void Configuration::unload() {
+        if (!m_filePath) {
+            throw std::runtime_error("File path is not set.");
+        }
+
+        // Export the data to the file before clearing it
+        std::ofstream file(*m_filePath);
+        if (!file.is_open()) {
+            throw std::runtime_error("Failed to open file for writing: " + *m_filePath);
+        }
+
+        file << m_data.dump(4); // Pretty-print with an indentation of 4 spaces
+        file.close();
+
+        // Clear the data
         m_data.clear();
     }
 

@@ -67,11 +67,15 @@ namespace Harmony {
     }
 
     void StateStack::push(const std::string& stateName) {
-        m_buffer.push(get(stateName));
+        auto state = get(stateName);
+        state->onEnter();
+        m_buffer.push(state);
     }
 
     void StateStack::push(const uint64_t& uniqueId) {
-        m_buffer.push(get(uniqueId));
+        auto state = get(uniqueId);
+        state->onEnter();
+        m_buffer.push(state);
     }
 
     void StateStack::pop() {

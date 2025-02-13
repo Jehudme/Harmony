@@ -1,4 +1,4 @@
-
+#include "pch.h"
 #include "Rectangle.h"
 #include "SFML/Graphics/RenderStates.hpp"
 #include "SFML/Graphics/RenderTarget.hpp"

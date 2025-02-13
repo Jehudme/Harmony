@@ -4,10 +4,13 @@
 #include <SFML/Graphics/RenderTarget.hpp>
 #include "Configuration.h"
 
+#include "Rectangle.h"
+#include "Group.h"
+
 namespace Harmony
 {
     SceneNode::SceneNode(std::shared_ptr<Configuration> configuration)
-        : Object(configuration), parent(nullptr), scene(nullptr)
+        : Object(configuration), configuration(configuration), parent(nullptr), scene(nullptr)
     {
         if (const auto position = configuration->get({ "Position" }))
         {
@@ -150,6 +153,10 @@ namespace Harmony
 
     void SceneNode::onEnter()
     {
+        initialize(configuration);
+
+
+
         for (const auto child : children)
             child->onEnter();
     }
@@ -160,13 +167,22 @@ namespace Harmony
             child->onExit();
     }
 
+    void SceneNode::initialize(std::shared_ptr<Configuration> configuration)
+    {
+        if (auto childrenData = configuration->get({ "Children" })) {
+            for (auto childData : childrenData.value()) {
+                auto childConfiguration = create<Configuration>(childData);
+                attachChild(create<SceneNode>(std::move(childConfiguration)));
+            }
+        }
+    }
+
     void SceneNode::drawCurrent(sf::RenderTarget& renderTarget, sf::RenderStates states) const
     {
     }
 
     void SceneNode::updateCurrrent(const sf::Time& time, TaskQueue& taskQueue)
     {
-
     }
 
     void SceneNode::updateTransform(const sf::Time& time, TaskQueue& taskQueue)
@@ -179,4 +195,21 @@ namespace Harmony
         rotation_velocity += rotation_acceleration * deltaTime;
         rotate(rotation_velocity * deltaTime);
     }
+
+    template<>
+    std::shared_ptr<SceneNode> create<SceneNode, std::shared_ptr<Configuration>>(std::shared_ptr<Configuration>&& configuration) {
+        const std::string type = configuration->get<std::string>({ "Type" }).value_or("NONE");
+
+        if (type == "Rectangle") {
+            return create<Rectangle>(configuration);
+        }
+
+        else if (type == "Group") {
+            return create<Group>(configuration);
+        }
+
+        else {
+            throw std::runtime_error("Unknow Type");
+        }
+    };
 }

@@ -2,6 +2,7 @@
 #include <SFML/Graphics/RenderWindow.hpp>
 #include "Object.h"
 #include "Configuration.h"
+#include "TaskQueue.h"
 
 namespace Harmony {
     class StateStack;
@@ -18,6 +19,8 @@ namespace Harmony {
         virtual void update();
         virtual void render();
 
+        sf::Clock clock;
+        TaskQueue taskQueue;
         sf::RenderWindow renderWindow;
         std::shared_ptr<StateStack> stateStack;
         std::shared_ptr<Configuration> configuration;    

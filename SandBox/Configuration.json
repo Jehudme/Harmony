@@ -12,12 +12,33 @@
 
   "States": [
     {
-      "UniqueId": 1,
-      "Name": "State1"
-    },
-    {
-      "UniqueId": 2,
-      "Name": "State2"
+      "Name": "State1",
+      "Scenes": [
+        {
+          "Name": "Main",
+          "SceneGraph": {
+            "Children": [
+              {
+                "Name": "Rectangle",
+                "Type": "Rectangle",
+                "Size": {
+                  "Width": 100,
+                  "Height": 100
+                },
+                "OutlineThickness": 5,
+                "PositionVelocity": {
+                  "X": 100,
+                  "Y": 0
+                } 
+              }
+            ]
+          }
+        }
+      ],
+
+      "InitialScenes": [
+        "Main"
+      ]
     }
   ],
   "InitialState": "State1"

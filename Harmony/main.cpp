@@ -1,11 +1,12 @@
 #include "pch.h"
 #include "Object.h"
 #include "Engine.h"
+#include "Rectangle.h"
 
 int main()
 {
 	std::shared_ptr<Harmony::Configuration> configuration = Harmony::create<Harmony::Configuration>();
-	
+
 	configuration->setFilePath("Configuration.json");
 	configuration->load();
 

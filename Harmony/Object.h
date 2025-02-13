@@ -19,8 +19,6 @@ namespace Harmony
 	std::shared_ptr<Type> find(const std::string& name);
 
 	class Configuration;
-	class Rectangle;
-	class Circle;
 
 	class Object : private sf::NonCopyable, public std::enable_shared_from_this<Object> 
 	{
@@ -58,27 +56,17 @@ namespace Harmony
 		static inline std::unordered_map<Object*, std::shared_ptr<Object>> m_retained;
 	};
 
-
-
 	template<typename Type, typename ...ARGS>
 	std::shared_ptr<Type> create(ARGS && ...args) {
 		static_assert(std::is_base_of<Object, Type>::value, "Type must inherit from Object");
 
-		std::shared_ptr<Type> object = std::make_shared<Type>(std::forward<ARGS>(args)...);
+		std::shared_ptr<Type> object = std::make_shared<Type>(args...);
 
-
-		// Check if the type is a SceneNode or derived from SceneNode
-		if constexpr (std::is_base_of<SceneNode, Type>::value) {
-			if () {
-				object->initializeSceneNode();
-			}
-		}
-		// Register the object by its unique ID
 		Object::m_registersById[object->m_uniqueId] = object;
-
-
 		return object;
 	}
+
+
 
 	template<typename Type, typename ...ARGS>
 	std::shared_ptr<Type> find(const uint64_t& uniqueId) {

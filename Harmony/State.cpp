@@ -10,8 +10,8 @@ namespace Harmony {
         : Object(configuration) {
 
         if (const auto scenesConfigurationsData = configuration->get({ "Scenes" })) {
-            for (const auto scenesConfigurations : scenesConfigurationsData.value()) {
-                addScene(create<Scene>(create<Configuration>(scenesConfigurations)));
+            for (const auto sceneConfigurations : scenesConfigurationsData.value()) {
+                addScene(create<Scene>(create<Configuration>(sceneConfigurations)));                
             }
         }
 

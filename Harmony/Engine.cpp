@@ -47,6 +47,8 @@ namespace Harmony {
 
     void Engine::handleEvent() {
         sf::Event event;
+
+        taskQueue.execute();
         while (renderWindow.pollEvent(event)) {
             if (event.type == sf::Event::Closed) {
                 renderWindow.close();
@@ -55,12 +57,12 @@ namespace Harmony {
     }
 
     void Engine::update() {
-        // Implement the update logic here
+        stateStack->update(clock.restart(), taskQueue);
     }
 
     void Engine::render() {
         renderWindow.clear();
-        // Implement the rendering logic here
+        renderWindow.draw(*stateStack);
         renderWindow.display();
     }
 

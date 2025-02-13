@@ -21,7 +21,7 @@ namespace Harmony
 {
     class Configuration;
     class TaskQueue;
-    class SceneNode;
+    class Group;
 
     class Scene : public Object, public sf::Drawable
     {
@@ -34,16 +34,16 @@ namespace Harmony
         void onEnter();
         void onExit();
 
-        void reset();
+        void initialize(std::shared_ptr<Configuration> configuration);
 
     private:
-        void configureViewFromConfig();
+        void configure_view(std::shared_ptr<Configuration> configuration);
 
     private:
-        std::shared_ptr<Configuration> configuration;
+        std::shared_ptr<Configuration> m_configuration;
 
     public:
-        std::shared_ptr<SceneNode> sceneGraph;
+        std::shared_ptr<Group> sceneGraph;
         sf::View view;
     };
 }
