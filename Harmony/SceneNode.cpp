@@ -9,72 +9,10 @@
 
 namespace Harmony
 {
-    SceneNode::SceneNode(std::shared_ptr<Configuration> configuration)
+    SceneNode::SceneNode(std::shared_ptr<Configuration> configuration, const bool enableOnEnter)
         : Object(configuration), configuration(configuration), parent(nullptr), scene(nullptr)
     {
-        if (const auto position = configuration->get({ "Position" }))
-        {
-            setPosition(
-                position.value()["X"].get<float>(),
-                position.value()["Y"].get<float>()
-            );
-        }
-
-        if (const auto scale = configuration->get({ "Scale" }))
-        {
-            setScale(
-                scale.value()["X"].get<float>(),
-                scale.value()["Y"].get<float>()
-            );
-        }
-
-        if (const auto origine = configuration->get({ "Origine" }))
-        {
-            setPosition(
-                origine.value()["X"].get<float>(),
-                origine.value()["Y"].get<float>()
-            );
-        }
-
-        if (const auto rotation = configuration->get({ "Rotation" }))
-        {
-            setRotation(rotation.value().get<float>());
-        }
-
-        if (const auto positionVelocity = configuration->get({ "PositionVelocity" }))
-        {
-            position_velocity = {
-                positionVelocity.value()["X"].get<float>(),
-                positionVelocity.value()["Y"].get<float>()
-            };
-        }
-
-        if (const auto positionAcceleration = configuration->get({ "PositionAcceleration" }))
-        {
-            position_acceleration = {
-                positionAcceleration.value()["X"].get<float>(),
-                positionAcceleration.value()["Y"].get<float>()
-            };
-        }
-
-        if (const auto rotationVelocity = configuration->get({ "RotationVelocity" }))
-        {
-            rotation_velocity = rotationVelocity.value().get<float>();
-        }
-
-        if (const auto rotationAcceleration = configuration->get({ "RotationAcceleration" }))
-        {
-            rotation_acceleration = rotationAcceleration.value().get<float>();
-        }
-
-        if (const auto configurationsData = configuration->get({ "Children" }))
-        {
-            for (const auto configurationData : configurationsData.value())
-            {
-                std::shared_ptr<Configuration> configuration = Harmony::create<Configuration>(configurationData);
-                attachChild(create<SceneNode>(configuration));
-            }
-        }
+        onEnter();
     }
 
     void SceneNode::draw(sf::RenderTarget& renderTarget, sf::RenderStates states) const
@@ -154,11 +92,6 @@ namespace Harmony
     void SceneNode::onEnter()
     {
         initialize(configuration);
-
-
-
-        for (const auto child : children)
-            child->onEnter();
     }
 
     void SceneNode::onExit()
@@ -169,8 +102,65 @@ namespace Harmony
 
     void SceneNode::initialize(std::shared_ptr<Configuration> configuration)
     {
-        if (auto childrenData = configuration->get({ "Children" })) {
-            for (auto childData : childrenData.value()) {
+        if (const auto position = configuration->get({ "Position" }))
+        {
+            setPosition(
+                position.value()["X"].get<float>(),
+                position.value()["Y"].get<float>()
+            );
+        }
+
+        if (const auto scale = configuration->get({ "Scale" }))
+        {
+            setScale(
+                scale.value()["X"].get<float>(),
+                scale.value()["Y"].get<float>()
+            );
+        }
+
+        if (const auto origine = configuration->get({ "Origine" }))
+        {
+            setPosition(
+                origine.value()["X"].get<float>(),
+                origine.value()["Y"].get<float>()
+            );
+        }
+
+        if (const auto rotation = configuration->get({ "Rotation" }))
+        {
+            setRotation(rotation.value().get<float>());
+        }
+
+        if (const auto positionVelocity = configuration->get({ "PositionVelocity" }))
+        {
+            position_velocity = {
+                positionVelocity.value()["X"].get<float>(),
+                positionVelocity.value()["Y"].get<float>()
+            };
+        }
+
+        if (const auto positionAcceleration = configuration->get({ "PositionAcceleration" }))
+        {
+            position_acceleration = {
+                positionAcceleration.value()["X"].get<float>(),
+                positionAcceleration.value()["Y"].get<float>()
+            };
+        }
+
+        if (const auto rotationVelocity = configuration->get({ "RotationVelocity" }))
+        {
+            rotation_velocity = rotationVelocity.value().get<float>();
+        }
+
+        if (const auto rotationAcceleration = configuration->get({ "RotationAcceleration" }))
+        {
+            rotation_acceleration = rotationAcceleration.value().get<float>();
+        }
+
+        if (const auto childrenData = configuration->get({ "Children" })) 
+        {
+            for (auto childData : childrenData.value()) 
+            {
                 auto childConfiguration = create<Configuration>(childData);
                 attachChild(create<SceneNode>(std::move(childConfiguration)));
             }

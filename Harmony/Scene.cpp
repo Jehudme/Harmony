@@ -27,9 +27,6 @@ namespace Harmony
     void Scene::onEnter()
     {
         initialize(m_configuration);
-        if (sceneGraph) {
-            sceneGraph->onEnter();
-        }
     }
 
     void Scene::onExit()

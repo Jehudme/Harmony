@@ -4,13 +4,10 @@
 #include "Configuration.h"
 #include "Utilities.h"
 
-constexpr const char* INITIAL_OBJECT_NAME = "Unkow";
-
-
 namespace Harmony
 {
-	Object::Object(const uint64_t& uniqueId)
-		: m_uniqueId(uniqueId ? uniqueId : Utilities::generateRandomNumber<uint64_t>()), m_name(INITIAL_OBJECT_NAME), m_isFoundByNameEnable(false) {
+	Object::Object(const uint64_t& uniqueId, const std::string& name)
+		: m_uniqueId(uniqueId ? uniqueId : Utilities::generateRandomNumber<uint64_t>()), m_name(INITIAL_OBJECT_NAME) {
 	}
 
 	static inline uint64_t setUniqueId(std::shared_ptr<Configuration> configuration) {
@@ -18,8 +15,7 @@ namespace Harmony
 	}
 
 	Object::Object(std::shared_ptr<Configuration> configuration)
-		: m_uniqueId(setUniqueId(configuration)), m_name(configuration->get<std::string>({ "Name" }).value_or(INITIAL_OBJECT_NAME)),
-		m_isFoundByNameEnable(false) {
+		: m_uniqueId(setUniqueId(configuration)), m_name(configuration->get<std::string>({ "Name" }).value_or(INITIAL_OBJECT_NAME)) {
 	}
 
 	Object::~Object()
@@ -27,7 +23,7 @@ namespace Harmony
 		if (m_registersById[m_uniqueId].expired()) {
 			m_registersById.erase(m_uniqueId);
 		}
-		if (m_isFoundByNameEnable && m_registersByName[m_name].expired()) {
+		if (m_registersByName[m_name].expired()) {
 			m_registersByName.erase(m_name);
 		}
 	}
@@ -45,7 +41,7 @@ namespace Harmony
 	void Object::setName(const std::string& name)
 	{
 		if (Object::m_registersByName.contains(name)) {
-			throw std::runtime_error("Object Not Find");
+			throw std::runtime_error("Name already in use");
 		}
 
 		if (Object::m_registersByName[name].lock().get() == this) {
@@ -54,7 +50,6 @@ namespace Harmony
 
 		m_registersByName[name] = weak_from_this();
 		m_name = name;
-		m_isFoundByNameEnable = true;
 	}
 
 	const std::string& Object::getName() const {

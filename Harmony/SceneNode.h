@@ -12,7 +12,7 @@ namespace Harmony
 	class SceneNode : public Object, public sf::Transformable, public sf::Drawable
 	{
 	public:
-		SceneNode(std::shared_ptr<Configuration> configuration);
+		SceneNode(std::shared_ptr<Configuration> configuration, const bool enableCreateChildren = false);
 
 		void draw(sf::RenderTarget& renderTarget, sf::RenderStates states) const override;
 		void update(const sf::Time& time, TaskQueue& taskQueue);

@@ -7,6 +7,9 @@
 #include <type_traits>
 #include <stdexcept>
 
+constexpr const char* INITIAL_OBJECT_NAME = "Unkow";
+
+
 namespace Harmony
 {
 	template<typename Type, typename... ARGS>
@@ -23,7 +26,7 @@ namespace Harmony
 	class Object : private sf::NonCopyable, public std::enable_shared_from_this<Object> 
 	{
 	public:
-		Object(const uint64_t& uniqueId);
+		Object(const uint64_t& uniqueId = 0, const std::string& name = INITIAL_OBJECT_NAME);
 		Object(std::shared_ptr<Configuration> configuration);
 		virtual ~Object();
 
@@ -48,8 +51,6 @@ namespace Harmony
 		std::string m_name;
 		const uint64_t m_uniqueId;
 
-		bool m_isFoundByNameEnable;
-
 	private:
 		static inline std::unordered_map<uint64_t, std::weak_ptr<Object>> m_registersById;
 		static inline std::unordered_map<std::string, std::weak_ptr<Object>> m_registersByName;
@@ -61,6 +62,9 @@ namespace Harmony
 		static_assert(std::is_base_of<Object, Type>::value, "Type must inherit from Object");
 
 		std::shared_ptr<Type> object = std::make_shared<Type>(args...);
+		
+		if(object->getName() != INITIAL_OBJECT_NAME)
+			object->setName(object->getName());
 
 		Object::m_registersById[object->m_uniqueId] = object;
 		return object;
