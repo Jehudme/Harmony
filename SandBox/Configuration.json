@@ -25,11 +25,12 @@
                   "Width": 100,
                   "Height": 100
                 },
+                "Script": "PlayerScript",
                 "OutlineThickness": 5,
                 "PositionVelocity": {
-                  "X": 100,
+                  "X": 0,
                   "Y": 0
-                } 
+                }
               }
             ]
           }

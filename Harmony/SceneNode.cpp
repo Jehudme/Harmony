@@ -16,7 +16,7 @@ namespace Harmony
         initialize(configuration);
         if (script)
         {
-            script->onEnter(shared_from_this());
+            script->onEnter(this);
         }
     }
 
@@ -24,7 +24,7 @@ namespace Harmony
     {
         if (script)
         {
-            script->onExit(shared_from_this());
+            script->onExit(this);
         }
     }
 

@@ -10,7 +10,7 @@
 namespace Harmony {
     class TaskQueue;
     class Scene;
-    class Script;
+    struct Script;
 
     class State : public Object, public sf::Drawable {
     public:

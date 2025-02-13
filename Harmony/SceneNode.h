@@ -8,7 +8,7 @@ namespace Harmony
 {
 	class TaskQueue;
 	class Scene;
-	class Script;
+	struct Script;
 
 	class SceneNode : public Object, public sf::Transformable, public sf::Drawable
 	{

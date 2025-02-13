@@ -21,6 +21,9 @@ namespace Harmony
 
 
 	public:
+		virtual void onEnter(Object* object);
+		virtual void onExit(Object* object);
+
 		virtual void onEnter(std::shared_ptr<Object> object);
 		virtual void onExit(std::shared_ptr<Object> object);
 
@@ -33,7 +36,7 @@ namespace Harmony
 	{
 		auto script = Harmony::create<Type>();
 		script->setName(name);
-		script->retainSelf();
+		script->retain();
 	}
 }
 

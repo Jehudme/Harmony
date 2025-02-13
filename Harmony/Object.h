@@ -1,4 +1,5 @@
 #pragma once
+
 #include <SFML/System/NonCopyable.hpp>
 #include <cstdint>
 #include <memory>
@@ -7,95 +8,84 @@
 #include <type_traits>
 #include <stdexcept>
 
-constexpr const char* INITIAL_OBJECT_NAME = "Unkow";
+namespace Harmony {
 
+    // Constants for default values and configuration keys
+    constexpr const char* DEFAULT_OBJECT_NAME = "Unknown";
+    constexpr const char* CONFIG_KEY_UNIQUE_ID = "UniqueId";
+    constexpr const char* CONFIG_KEY_NAME = "Name";
 
-namespace Harmony
-{
-	template<typename Type, typename... ARGS>
-	std::shared_ptr<Type> create(ARGS&& ...args);
+    class Configuration;
 
-	template<typename Type, typename... ARGS>
-	std::shared_ptr<Type> find(const uint64_t& uniqueId);
+    class Object : private sf::NonCopyable, public std::enable_shared_from_this<Object> {
+    public:
+        Object(uint64_t uniqueId = 0, const std::string& name = DEFAULT_OBJECT_NAME);
+        explicit Object(std::shared_ptr<Configuration> configuration);
+        virtual ~Object();
 
-	template<typename Type, typename... ARGS>
-	std::shared_ptr<Type> find(const std::string& name);
+        void retain();
+        void release();
 
-	class Configuration;
+        void setName(const std::string& name);
+        const std::string& getName() const;
 
-	class Object : private sf::NonCopyable, public std::enable_shared_from_this<Object> 
-	{
-	public:
-		Object(const uint64_t& uniqueId = 0, const std::string& name = INITIAL_OBJECT_NAME);
-		Object(std::shared_ptr<Configuration> configuration);
-		virtual ~Object();
+        uint64_t getUniqueId() const;
 
-		void retainSelf();
-		void releaseSelf();
+        template<typename Type, typename... Args>
+        friend std::shared_ptr<Type> create(Args&&... args);
 
-		void setName(const std::string& name);
-		const std::string& getName() const;
+        template<typename Type, typename... ARGS>
+        friend std::shared_ptr<Type> find(const uint64_t& uniqueId);
 
-		const uint64_t& getUniqueId() const;
+        template<typename Type, typename... ARGS>
+        friend std::shared_ptr<Type> find(const std::string& uniqueId);
 
-		template<typename Type, typename... ARGS>
-		friend std::shared_ptr<Type> Harmony::create(ARGS&& ...args);
+    private:
+        std::string name_;
+        const uint64_t uniqueId_;
 
-		template<typename Type, typename... ARGS>
-		friend std::shared_ptr<Type> Harmony::find(const uint64_t& uniqueId);
+        static inline std::unordered_map<uint64_t, std::weak_ptr<Object>> registeredById_;
+        static inline std::unordered_map<std::string, std::weak_ptr<Object>> registeredByName_;
+        static inline std::unordered_map<Object*, std::shared_ptr<Object>> retainedObjects_;
+    };
 
-		template<typename Type, typename... ARGS>
-		friend std::shared_ptr<Type> Harmony::find(const std::string& uniqueId);
+    template<typename Type, typename... Args>
+    std::shared_ptr<Type> create(Args&&... args) {
+        static_assert(std::is_base_of<Object, Type>::value, "Type must inherit from Object");
 
-	private:
-		std::string m_name;
-		const uint64_t m_uniqueId;
+        auto object = std::make_shared<Type>(std::forward<Args>(args)...);
 
-	private:
-		static inline std::unordered_map<uint64_t, std::weak_ptr<Object>> m_registersById;
-		static inline std::unordered_map<std::string, std::weak_ptr<Object>> m_registersByName;
-		static inline std::unordered_map<Object*, std::shared_ptr<Object>> m_retained;
-	};
+        if (object->getName() != DEFAULT_OBJECT_NAME) {
+            object->setName(object->getName());
+        }
 
-	template<typename Type, typename ...ARGS>
-	std::shared_ptr<Type> create(ARGS && ...args) {
-		static_assert(std::is_base_of<Object, Type>::value, "Type must inherit from Object");
+        Object::registeredById_[object->getUniqueId()] = object;
+        return object;
+    }
 
-		std::shared_ptr<Type> object = std::make_shared<Type>(args...);
-		
-		if(object->getName() != INITIAL_OBJECT_NAME)
-			object->setName(object->getName());
+    template<typename Type, typename... Args>
+    std::shared_ptr<Type> find(uint64_t uniqueId) {
+        static_assert(std::is_base_of<Object, Type>::value, "Type must inherit from Object");
 
-		Object::m_registersById[object->m_uniqueId] = object;
-		return object;
-	}
+        if (Object::registeredById_.contains(uniqueId)) {
+            if (auto object = std::dynamic_pointer_cast<Type>(Object::registeredById_[uniqueId].lock())) {
+                return object;
+            }
+            throw std::runtime_error("Dynamic pointer cast failed");
+        }
+        throw std::runtime_error("Object not found");
+    }
 
+    template<typename Type, typename... Args>
+    std::shared_ptr<Type> find(const std::string& name) {
+        static_assert(std::is_base_of<Object, Type>::value, "Type must inherit from Object");
 
-
-	template<typename Type, typename ...ARGS>
-	std::shared_ptr<Type> find(const uint64_t& uniqueId) {
-		static_assert(std::is_base_of<Object, Type>::value, "Type must inherit from Object");
-
-		if (Object::m_registersById.contains(uniqueId)) {
-			if (std::shared_ptr<Type> object = std::dynamic_pointer_cast<Type>(Object::m_registersById[uniqueId])) {
-				return object;
-			}
-			throw std::runtime_error("Dynamic Pointer Cast Failed");
-		}
-		throw std::runtime_error("Object Not Find");
-	}
-
-	template<typename Type, typename ...ARGS>
-	std::shared_ptr<Type> find(const std::string& name) {
-		static_assert(std::is_base_of<Object, Type>::value, "Type must inherit from Object");
-
-		if (Object::m_registersByName.contains(name)) {
-			if (std::shared_ptr<Type> object = std::dynamic_pointer_cast<Type>(Object::m_registersByName[name].lock())) {
-				return object;
-			}
-			throw std::runtime_error("Dynamic Pointer Cast Failed");
-		}
-		throw std::runtime_error("Object Not Find");
-	}
+        if (Object::registeredByName_.contains(name)) {
+            if (auto object = std::dynamic_pointer_cast<Type>(Object::registeredByName_[name].lock())) {
+                return object;
+            }
+            throw std::runtime_error("Dynamic pointer cast failed");
+        }
+        throw std::runtime_error("Object not found");
+    }
 }
-

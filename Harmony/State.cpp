@@ -58,7 +58,7 @@ namespace Harmony {
 
         if (m_script)
         {
-            m_script->onUpdate(shared_from_this());
+            m_script->onEnter(shared_from_this());
         }
     }
 
@@ -70,7 +70,7 @@ namespace Harmony {
 
         if (m_script)
         {
-            m_script->onUpdate(shared_from_this());
+            m_script->onExit(shared_from_this());
         }
     }
 

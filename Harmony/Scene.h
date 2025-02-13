@@ -22,7 +22,7 @@ namespace Harmony
     class Configuration;
     class TaskQueue;
     class Group;
-    class Script;
+    struct Script;
 
     class Scene : public Object, public sf::Drawable
     {

@@ -6,6 +6,14 @@ Harmony::Script::Script()
 {
 }
 
+void Harmony::Script::onEnter(Object* object)
+{
+}
+
+void Harmony::Script::onExit(Object* object)
+{
+}
+
 void Harmony::Script::onEnter(std::shared_ptr<Object> object)
 {
 }

@@ -1,61 +1,57 @@
 #include "pch.h"
 #include "Object.h"
-#include "Utilities.h"
 #include "Configuration.h"
 #include "Utilities.h"
 
-namespace Harmony
-{
-	Object::Object(const uint64_t& uniqueId, const std::string& name)
-		: m_uniqueId(uniqueId ? uniqueId : Utilities::generateRandomNumber<uint64_t>()), m_name(INITIAL_OBJECT_NAME) {
-	}
+namespace Harmony {
 
-	static inline uint64_t setUniqueId(std::shared_ptr<Configuration> configuration) {
-		return configuration->get<uint64_t>({ "UniqueId" }).value_or(Utilities::generateRandomNumber<uint64_t>());
-	}
+    Object::Object(uint64_t uniqueId, const std::string& name)
+        : uniqueId_(uniqueId ? uniqueId : Utilities::generateRandomNumber<uint64_t>()),
+        name_(DEFAULT_OBJECT_NAME) {
+    }
 
-	Object::Object(std::shared_ptr<Configuration> configuration)
-		: m_uniqueId(setUniqueId(configuration)), m_name(configuration->get<std::string>({ "Name" }).value_or(INITIAL_OBJECT_NAME)) {
-	}
+    Object::Object(std::shared_ptr<Configuration> configuration)
+        : uniqueId_(configuration->get<uint64_t>({ CONFIG_KEY_UNIQUE_ID }).value_or(Utilities::generateRandomNumber<uint64_t>())),
+        name_(configuration->get<std::string>({ CONFIG_KEY_NAME }).value_or(DEFAULT_OBJECT_NAME)) {
+    }
 
-	Object::~Object()
-	{
-		if (m_registersById[m_uniqueId].expired()) {
-			m_registersById.erase(m_uniqueId);
-		}
-		if (m_registersByName[m_name].expired()) {
-			m_registersByName.erase(m_name);
-		}
-	}
+    Object::~Object() {
+        if (registeredById_[uniqueId_].expired()) {
+            registeredById_.erase(uniqueId_);
+        }
+        if (registeredByName_[name_].expired()) {
+            registeredByName_.erase(name_);
+        }
+    }
 
-	void Object::retainSelf() {
-		m_retained[this] = shared_from_this();
-	}
+    void Object::retain() {
+        retainedObjects_[this] = shared_from_this();
+    }
 
-	void Object::releaseSelf() {
-		if (m_retained.contains(this)) {
-			m_retained.erase(this);
-		}
-	}
+    void Object::release() {
+        if (retainedObjects_.contains(this)) {
+            retainedObjects_.erase(this);
+        }
+    }
 
-	void Object::setName(const std::string& name)
-	{
-		if (Object::m_registersByName.contains(name)) {
-			throw std::runtime_error("Name already in use");
-		}
+    void Object::setName(const std::string& name) {
+        if (registeredByName_.contains(name)) {
+            throw std::runtime_error("Name already in use");
+        }
 
-		if (Object::m_registersByName[name].lock().get() == this) {
-			Object::m_registersByName.erase(name);
-		}
+        if (registeredByName_[name].lock().get() == this) {
+            registeredByName_.erase(name);
+        }
 
-		m_registersByName[name] = weak_from_this();
-		m_name = name;
-	}
+        registeredByName_[name] = weak_from_this();
+        name_ = name;
+    }
 
-	const std::string& Object::getName() const {
-		return m_name;
-	}
-	const uint64_t& Object::getUniqueId() const {
-		return m_uniqueId;
-	}
+    const std::string& Object::getName() const {
+        return name_;
+    }
+
+    uint64_t Object::getUniqueId() const {
+        return uniqueId_;
+    }
 }

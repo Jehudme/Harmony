@@ -3,11 +3,17 @@
 #include "Engine.h"
 #include "Rectangle.h"
 #include "Script.h"
+#include "TaskQueue.h"
+
 
 HARMONY_REGISTER_SCRIPT(PlayerScript);
 
 struct PlayerScript : Harmony::Script
 {
+	void onUpdate(std::shared_ptr<Object> target, const sf::Time& time, Harmony::TaskQueue& taskQueue) override {
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
+			std::static_pointer_cast<Harmony::SceneNode>(target)->rotate(20 * time.asSeconds());
+	}
 };
 
 int main()
@@ -20,8 +26,4 @@ int main()
 	std::shared_ptr<Harmony::Engine> engine = Harmony::create<Harmony::Engine>(configuration);
 
 	engine->run();
-
-	auto script = Harmony::find<Harmony::Script>("PlayerScript");
-
-	int a = 1 + 1;
 }
