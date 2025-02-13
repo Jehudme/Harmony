@@ -7,6 +7,8 @@ namespace Harmony
 {
 	class State;
 	class TaskQueue;
+	class Script;
+
 	class StateStack : public Object, public sf::Drawable
 	{
 	public:
@@ -36,6 +38,7 @@ namespace Harmony
 	private:
 		std::vector<std::shared_ptr<State>> m_states;
 		std::stack<std::shared_ptr<State>> m_buffer;
+		std::shared_ptr<Script> m_script;
 	};
 }
 

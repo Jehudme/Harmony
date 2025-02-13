@@ -3,6 +3,7 @@
 #include "TaskQueue.h"
 #include "Scene.h"
 #include "Configuration.h"
+#include "Script.h"
 
 namespace Harmony {
 
@@ -20,15 +21,30 @@ namespace Harmony {
                 m_initialBuffer.push_back(SceneName.get<std::string>());
             }
         }
+
+        if (const auto scriptName = configuration->get<std::string>({ "Script" }))
+        {
+            m_script = Harmony::find<Harmony::Script>(scriptName.value());
+        }
     }
 
     void State::draw(sf::RenderTarget& renderTarget, sf::RenderStates states) const {
+        if (m_script)
+        {
+            m_script->onDraw(shared_from_this(), renderTarget, states);
+        }
+        
         for (const auto& scene : m_scenes) {
             renderTarget.draw(*scene, states);
         }
     }
 
     void State::update(const sf::Time& time, TaskQueue& taskQueue) {
+        if (m_script)
+        {
+            m_script->onUpdate(shared_from_this(), time, taskQueue);
+        }
+
         for (const auto& scene : m_scenes) {
             scene->update(time, taskQueue);
         }
@@ -39,12 +55,22 @@ namespace Harmony {
         for (auto scene : m_scenes) {
             scene->onEnter();
         }
+
+        if (m_script)
+        {
+            m_script->onUpdate(shared_from_this());
+        }
     }
 
     void State::onExit() {
         clearSceneBuffer();
         for (auto scene : m_scenes) {
             scene->onExit();
+        }
+
+        if (m_script)
+        {
+            m_script->onUpdate(shared_from_this());
         }
     }
 

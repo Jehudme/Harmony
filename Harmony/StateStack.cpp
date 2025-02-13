@@ -2,6 +2,7 @@
 #include "State.h"
 #include "StateStack.h"
 #include "Configuration.h"
+#include "Script.h"
 
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/RenderStates.hpp>
@@ -21,18 +22,30 @@ namespace Harmony {
         if (const auto initialState = configuration->get<std::string>({ "InitialState" })) {
             push(initialState.value());
         }
+
+        if (const auto scriptName = configuration->get<std::string>({ "Script" }))
+        {
+            m_script = Harmony::find<Harmony::Script>(scriptName.value());
+        }
     }
 
     void StateStack::draw(sf::RenderTarget& renderTarget, sf::RenderStates states) const {
+        if (m_script)
+        {
+            m_script->onDraw(shared_from_this(), renderTarget, states);
+        }
         if (!m_buffer.empty()) {
             m_buffer.top()->draw(renderTarget, states);
         }
     }
 
     void StateStack::update(const sf::Time& time, TaskQueue& taskQueue) {
-        for (const auto& state : m_states) {
-            state->update(time, taskQueue);
+        if (m_script)
+        {
+            m_script->onUpdate(shared_from_this(), time, taskQueue);
         }
+
+        m_buffer.top()->update(time, taskQueue);
     }
 
     void StateStack::add(std::shared_ptr<State> state) {

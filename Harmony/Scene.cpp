@@ -2,6 +2,7 @@
 #include "Scene.h"
 #include "Group.h"
 #include "Configuration.h"
+#include "Script.h"
 
 namespace Harmony
 {
@@ -19,6 +20,11 @@ namespace Harmony
 
     void Scene::update(const sf::Time& time, TaskQueue& taskQueue)
     {
+        if (script)
+        {
+            script->onUpdate(shared_from_this(), time, taskQueue);
+        }
+
         if (sceneGraph) {
             sceneGraph->update(time, taskQueue);
         }
@@ -27,12 +33,18 @@ namespace Harmony
     void Scene::onEnter()
     {
         initialize(m_configuration);
+        if (script)
+        {
+            script->onEnter(shared_from_this());
+        }
     }
 
     void Scene::onExit()
     {
-        if (sceneGraph) {
-            sceneGraph->onExit();
+        sceneGraph.reset();
+        if (script)
+        {
+            script->onExit(shared_from_this());
         }
     }
 
@@ -45,6 +57,11 @@ namespace Harmony
         else
         {
             sceneGraph = create<Group>(create<Configuration>());
+        }
+
+        if (const auto scriptName = configuration->get<std::string>({ "Script" }))
+        {
+            script = Harmony::find<Harmony::Script>(scriptName.value());
         }
     }
 

@@ -8,11 +8,13 @@ namespace Harmony
 {
 	class TaskQueue;
 	class Scene;
+	class Script;
 
 	class SceneNode : public Object, public sf::Transformable, public sf::Drawable
 	{
 	public:
 		SceneNode(std::shared_ptr<Configuration> configuration, const bool enableCreateChildren = false);
+		~SceneNode();
 
 		void draw(sf::RenderTarget& renderTarget, sf::RenderStates states) const override;
 		void update(const sf::Time& time, TaskQueue& taskQueue);
@@ -24,9 +26,6 @@ namespace Harmony
 
 		std::vector<std::shared_ptr<SceneNode>> findChildrenByName(std::initializer_list<std::string> names);
 		std::vector<std::shared_ptr<SceneNode>> findChildrenByName(std::initializer_list<uint64_t> uniqueIds);
-
-		void onEnter();
-		void onExit();
 
 		virtual void initialize(std::shared_ptr<Configuration> configuration);
 
@@ -49,6 +48,7 @@ namespace Harmony
 		SceneNode* parent;
 		Scene* scene;
 
+		std::shared_ptr<Script> script;
 		std::shared_ptr<Configuration> configuration;
 	};
 

@@ -10,6 +10,7 @@
 namespace Harmony {
     class TaskQueue;
     class Scene;
+    class Script;
 
     class State : public Object, public sf::Drawable {
     public:
@@ -43,6 +44,7 @@ namespace Harmony {
         std::vector<std::variant<uint64_t, std::string>> m_initialBuffer;
         std::vector<std::shared_ptr<Scene>> m_sceneBuffer;
         std::vector<std::shared_ptr<Scene>> m_scenes;
+        std::shared_ptr<Script> m_script;
     };
 }
 

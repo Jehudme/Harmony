@@ -22,6 +22,7 @@ namespace Harmony
     class Configuration;
     class TaskQueue;
     class Group;
+    class Script;
 
     class Scene : public Object, public sf::Drawable
     {
@@ -45,5 +46,6 @@ namespace Harmony
     public:
         std::shared_ptr<Group> sceneGraph;
         sf::View view;
+        std::shared_ptr<Script> script;
     };
 }

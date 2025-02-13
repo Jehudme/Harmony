@@ -6,26 +6,18 @@ Harmony::Script::Script()
 {
 }
 
-void Harmony::Script::onCreate()
+void Harmony::Script::onEnter(std::shared_ptr<Object> object)
 {
 }
 
-void Harmony::Script::onDelete()
+void Harmony::Script::onExit(std::shared_ptr<Object> object)
 {
 }
 
-void Harmony::Script::onEnter()
+void Harmony::Script::onUpdate(std::shared_ptr<Object> object, const sf::Time& time, TaskQueue& taskQueue)
 {
 }
 
-void Harmony::Script::onExit()
-{
-}
-
-void Harmony::Script::onUpdate()
-{
-}
-
-void Harmony::Script::onDraw()
+void Harmony::Script::onDraw(std::shared_ptr<const Object> object, sf::RenderTarget& renderTarget, sf::RenderStates states)
 {
 }

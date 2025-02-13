@@ -6,18 +6,36 @@
 
 #include "Rectangle.h"
 #include "Group.h"
+#include "Script.h"
 
 namespace Harmony
 {
     SceneNode::SceneNode(std::shared_ptr<Configuration> configuration, const bool enableOnEnter)
         : Object(configuration), configuration(configuration), parent(nullptr), scene(nullptr)
     {
-        onEnter();
+        initialize(configuration);
+        if (script)
+        {
+            script->onEnter(shared_from_this());
+        }
+    }
+
+    SceneNode::~SceneNode()
+    {
+        if (script)
+        {
+            script->onExit(shared_from_this());
+        }
     }
 
     void SceneNode::draw(sf::RenderTarget& renderTarget, sf::RenderStates states) const
     {
         states.transform *= getTransform();
+
+        if (script)
+        {
+            script->onDraw(shared_from_this(), renderTarget, states);
+        }
 
         drawCurrent(renderTarget, states);
 
@@ -31,6 +49,11 @@ namespace Harmony
     {
         updateCurrrent(time, taskQueue);
         updateTransform(time, taskQueue);
+
+        if (script)
+        {
+            script->onUpdate(std::static_pointer_cast<SceneNode>(this->shared_from_this()), time, taskQueue);
+        }
 
         for (const auto& child : children)
         {
@@ -87,17 +110,6 @@ namespace Harmony
         }
 
         return sceneNodes;
-    }
-
-    void SceneNode::onEnter()
-    {
-        initialize(configuration);
-    }
-
-    void SceneNode::onExit()
-    {
-        for (const auto child : children)
-            child->onExit();
     }
 
     void SceneNode::initialize(std::shared_ptr<Configuration> configuration)
@@ -164,6 +176,11 @@ namespace Harmony
                 auto childConfiguration = create<Configuration>(childData);
                 attachChild(create<SceneNode>(std::move(childConfiguration)));
             }
+        }
+
+        if (const auto scriptName = configuration->get<std::string>({ "Script" }))
+        {
+            script = Harmony::find<Harmony::Script>(scriptName.value());
         }
     }
 
