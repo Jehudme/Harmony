@@ -1,44 +1,52 @@
 #pragma once
+
 #include "Object.h"
 #include <SFML/Graphics/Drawable.hpp>
 #include <SFML/System/Time.hpp>
 #include <stack>
-namespace Harmony
-{
-	class State;
-	class TaskQueue;
-	struct Script;
+#include <vector>
 
-	class StateStack : public Object, public sf::Drawable
-	{
-	public:
-		StateStack(std::shared_ptr<Configuration> configuration);
+namespace Harmony {
 
-		void draw(sf::RenderTarget& renderTarget, sf::RenderStates states) const override;
-		void update(const sf::Time& time, TaskQueue& taskQueue);
+    // Constants for configuration keys and error messages
+    constexpr const char* CONFIG_STATES = "States";
+    constexpr const char* CONFIG_INITIAL_STATE = "InitialState";
+    constexpr const char* CONFIG_SCRIPT = "Script";
 
-		void add(std::shared_ptr<State> state);
+    constexpr const char* ERROR_NO_STATES_FOUND = "No States Found";
+    constexpr const char* ERROR_STATE_NOT_FOUND = "State not found";
 
-		void remove(const uint64_t& uniqueId);
-		void remove(const std::string& name);
+    class State;
+    class TaskQueue;
+    struct Script;
 
-		void removeAll();
-		void clear();
+    class StateStack : public Object, public sf::Drawable {
+    public:
+        explicit StateStack(std::shared_ptr<Configuration> configuration);
 
-		void push(const std::string& stateName);
-		void push(const uint64_t& uniqueId);
+        void draw(sf::RenderTarget& renderTarget, sf::RenderStates states) const override;
+        void update(const sf::Time& time, TaskQueue& taskQueue);
 
-		void pop();
+        void add(std::shared_ptr<State> state);
 
-		std::shared_ptr<State> getCurrent();
+        void remove(uint64_t uniqueId);
+        void remove(const std::string& name);
 
-		std::shared_ptr<State> get(const uint64_t& uniqueId);
-		std::shared_ptr<State> get(const std::string& name);
+        void removeAll();
+        void clear();
 
-	private:
-		std::vector<std::shared_ptr<State>> m_states;
-		std::stack<std::shared_ptr<State>> m_buffer;
-		std::shared_ptr<Script> m_script;
-	};
+        void push(const std::string& stateName);
+        void push(uint64_t uniqueId);
+
+        void pop();
+
+        std::shared_ptr<State> getCurrent() const;
+        std::shared_ptr<State> get(uint64_t uniqueId) const;
+        std::shared_ptr<State> get(const std::string& name) const;
+
+    private:
+        std::vector<std::shared_ptr<State>> states_;
+        std::stack<std::shared_ptr<State>> buffer_;
+        std::shared_ptr<Script> script_;
+    };
 }
-

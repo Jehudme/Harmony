@@ -1,120 +1,123 @@
 #include "pch.h"
-#include "State.h"
 #include "StateStack.h"
+#include "State.h"
 #include "Configuration.h"
 #include "Script.h"
 
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/RenderStates.hpp>
+#include <algorithm>
 
 namespace Harmony {
 
     StateStack::StateStack(std::shared_ptr<Configuration> configuration)
         : Object(configuration) {
-        if (const auto states = configuration->get({ "States" })) {
-            for (const auto state : states.value()) {
+        if (const auto states = configuration->get({ CONFIG_STATES })) {
+            for (const auto& state : states.value()) {
                 add(create<State>(create<Configuration>(state)));
             }
-        } else {
-            throw std::runtime_error("No States Found");
+        }
+        else {
+            throw std::runtime_error(ERROR_NO_STATES_FOUND);
         }
 
-        if (const auto initialState = configuration->get<std::string>({ "InitialState" })) {
+        if (const auto initialState = configuration->get<std::string>({ CONFIG_INITIAL_STATE })) {
             push(initialState.value());
         }
 
-        if (const auto scriptName = configuration->get<std::string>({ "Script" }))
-        {
-            m_script = Harmony::find<Harmony::Script>(scriptName.value());
+        if (const auto scriptName = configuration->get<std::string>({ CONFIG_SCRIPT })) {
+            script_ = Harmony::find<Script>(scriptName.value());
         }
     }
 
     void StateStack::draw(sf::RenderTarget& renderTarget, sf::RenderStates states) const {
-        if (m_script)
-        {
-            m_script->onDraw(shared_from_this(), renderTarget, states);
+        if (script_) {
+            script_->onDraw(shared_from_this(), renderTarget, states);
         }
-        if (!m_buffer.empty()) {
-            m_buffer.top()->draw(renderTarget, states);
+        if (!buffer_.empty()) {
+            buffer_.top()->draw(renderTarget, states);
         }
     }
 
     void StateStack::update(const sf::Time& time, TaskQueue& taskQueue) {
-        if (m_script)
-        {
-            m_script->onUpdate(shared_from_this(), time, taskQueue);
+        if (script_) {
+            script_->onUpdate(shared_from_this(), time, taskQueue);
         }
 
-        m_buffer.top()->update(time, taskQueue);
+        if (!buffer_.empty()) {
+            buffer_.top()->update(time, taskQueue);
+        }
     }
 
     void StateStack::add(std::shared_ptr<State> state) {
-        m_states.push_back(state);
+        states_.push_back(state);
     }
 
-    void StateStack::remove(const uint64_t& uniqueId) {
-        auto it = std::remove_if(m_states.begin(), m_states.end(),
+    void StateStack::remove(uint64_t uniqueId) {
+        states_.erase(std::remove_if(states_.begin(), states_.end(),
             [uniqueId](const std::shared_ptr<State>& state) {
                 return state->getUniqueId() == uniqueId;
-            });
-        m_states.erase(it);
+            }), states_.end());
     }
 
     void StateStack::remove(const std::string& name) {
-        auto it = std::remove_if(m_states.begin(), m_states.end(),
+        states_.erase(std::remove_if(states_.begin(), states_.end(),
             [name](const std::shared_ptr<State>& state) {
                 return state->getName() == name;
-            });
-        m_states.erase(it);
+            }), states_.end());
     }
 
     void StateStack::removeAll() {
-        m_states.clear();
+        states_.clear();
     }
 
     void StateStack::clear() {
-        m_states.clear();
-        while (!m_buffer.empty()) {
-            m_buffer.pop();
+        states_.clear();
+        while (!buffer_.empty()) {
+            buffer_.pop();
         }
     }
 
     void StateStack::push(const std::string& stateName) {
         auto state = get(stateName);
         state->onEnter();
-        m_buffer.push(state);
+        buffer_.push(state);
     }
 
-    void StateStack::push(const uint64_t& uniqueId) {
+    void StateStack::push(uint64_t uniqueId) {
         auto state = get(uniqueId);
         state->onEnter();
-        m_buffer.push(state);
+        buffer_.push(state);
     }
 
     void StateStack::pop() {
-        m_buffer.pop();
+        if (!buffer_.empty()) {
+            buffer_.pop();
+        }
     }
 
-    std::shared_ptr<State> StateStack::getCurrent() {
-        return m_buffer.top();
+    std::shared_ptr<State> StateStack::getCurrent() const {
+        if (!buffer_.empty()) {
+            return buffer_.top();
+        }
+        throw std::runtime_error("No current state available");
     }
 
-    std::shared_ptr<State> StateStack::get(const uint64_t& uniqueId) {
-        for (const auto& state : m_states) {
+    std::shared_ptr<State> StateStack::get(uint64_t uniqueId) const {
+        for (const auto& state : states_) {
             if (state->getUniqueId() == uniqueId) {
                 return state;
             }
         }
-        throw std::runtime_error("State not found");
+        throw std::runtime_error(ERROR_STATE_NOT_FOUND);
     }
 
-    std::shared_ptr<State> StateStack::get(const std::string& name) {
-        for (const auto& state : m_states) {
+    std::shared_ptr<State> StateStack::get(const std::string& name) const {
+        for (const auto& state : states_) {
             if (state->getName() == name) {
                 return state;
             }
         }
-        throw std::runtime_error("State not found");
+        throw std::runtime_error(ERROR_STATE_NOT_FOUND);
     }
 }
-
