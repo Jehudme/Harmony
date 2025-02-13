@@ -5,65 +5,93 @@
 
 namespace Harmony {
 
+    // Constants for default values
+    constexpr const char* DEFAULT_WINDOW_TITLE = "Harmony Engine";
+    constexpr unsigned int DEFAULT_WINDOW_WIDTH = 600;
+    constexpr unsigned int DEFAULT_WINDOW_HEIGHT = 600;
+    constexpr bool DEFAULT_FULLSCREEN = false;
+    constexpr bool DEFAULT_VERTICAL_SYNC = true;
+    constexpr unsigned int DEFAULT_FPS = 60;
+
     Engine::Engine(std::shared_ptr<Configuration> configuration)
-        : Object(configuration), stateStack(create<StateStack>(configuration)) {
+        : Object(configuration), configuration_(configuration), stateStack_(create<StateStack>(configuration)) {
         initializeWindow(configuration);
     }
 
     void Engine::run() {
-        while (renderWindow.isOpen()) {
+        while (renderWindow_.isOpen()) {
             handleEvent();
             update();
             render();
         }
     }
 
-    void Engine::initializeWindow(std::shared_ptr<Configuration> configuration)
-    {
+    void Engine::initializeWindow(std::shared_ptr<Configuration> configuration) {
         // Extract title and size from configuration
-        const std::string title = configuration->get<std::string>({ "Window", "Title" }).value_or("Harmony Engine");
+        const std::string title = configuration->get<std::string>({ CONFIG_WINDOW_TITLE }).value_or(DEFAULT_WINDOW_TITLE);
         const sf::Vector2u size = {
-            configuration->get<unsigned int>({ "Window", "Size", "Width" }).value_or(600),
-            configuration->get<unsigned int>({ "Window", "Size", "Height" }).value_or(600)
+            configuration->get<unsigned int>({ CONFIG_WINDOW_SIZE_WIDTH }).value_or(DEFAULT_WINDOW_WIDTH),
+            configuration->get<unsigned int>({ CONFIG_WINDOW_SIZE_HEIGHT }).value_or(DEFAULT_WINDOW_HEIGHT)
         };
 
         // Extract fullscreen mode setting
-        const bool fullscreen = configuration->get<bool>({ "Window", "Fullscreen" }).value_or(false);
+        const bool fullscreen = configuration->get<bool>({ CONFIG_WINDOW_FULLSCREEN }).value_or(DEFAULT_FULLSCREEN);
 
         // Set up window style based on fullscreen mode
         sf::Uint32 style = fullscreen ? sf::Style::Fullscreen : sf::Style::Default;
 
         // Create the render window
-        renderWindow.create(sf::VideoMode(static_cast<unsigned int>(size.x), static_cast<unsigned int>(size.y)), title, style);
+        renderWindow_.create(sf::VideoMode(size.x, size.y), title, style);
 
         // Extract and apply vertical sync setting
-        const bool verticalSync = configuration->get<bool>({ "Window", "VerticalSync" }).value_or(true);
-        renderWindow.setVerticalSyncEnabled(verticalSync);
+        const bool verticalSync = configuration->get<bool>({ CONFIG_WINDOW_VERTICAL_SYNC }).value_or(DEFAULT_VERTICAL_SYNC);
+        renderWindow_.setVerticalSyncEnabled(verticalSync);
 
         // Extract and apply FPS limit setting
-        const unsigned int fps = configuration->get<unsigned int>({ "Window", "FPS" }).value_or(60);
-        renderWindow.setFramerateLimit(fps);
+        const unsigned int fps = configuration->get<unsigned int>({ CONFIG_WINDOW_FPS }).value_or(DEFAULT_FPS);
+        renderWindow_.setFramerateLimit(fps);
     }
 
     void Engine::handleEvent() {
         sf::Event event;
 
-        taskQueue.execute();
-        while (renderWindow.pollEvent(event)) {
+        taskQueue_.execute();
+        while (renderWindow_.pollEvent(event)) {
             if (event.type == sf::Event::Closed) {
-                renderWindow.close();
+                renderWindow_.close();
             }
         }
     }
 
     void Engine::update() {
-        stateStack->update(clock.restart(), taskQueue);
+        stateStack_->update(clock_.restart(), taskQueue_);
     }
 
     void Engine::render() {
-        renderWindow.clear();
-        renderWindow.draw(*stateStack);
-        renderWindow.display();
+        renderWindow_.clear();
+        renderWindow_.draw(*stateStack_);
+        renderWindow_.display();
     }
 
+    // Getters
+    const sf::RenderWindow& Engine::getRenderWindow() const {
+        return renderWindow_;
+    }
+
+    std::shared_ptr<StateStack> Engine::getStateStack() const {
+        return stateStack_;
+    }
+
+    std::shared_ptr<Configuration> Engine::getConfiguration() const {
+        return configuration_;
+    }
+
+    // Setters
+    void Engine::setConfiguration(std::shared_ptr<Configuration> configuration) {
+        if (!configuration) {
+            throw std::invalid_argument("Configuration cannot be null.");
+        }
+        configuration_ = configuration;
+        initializeWindow(configuration); // Reinitialize the window with the new configuration
+    }
 }
