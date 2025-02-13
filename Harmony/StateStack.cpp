@@ -12,21 +12,21 @@ namespace Harmony {
 
     StateStack::StateStack(std::shared_ptr<Configuration> configuration)
         : Object(configuration) {
-        if (const auto states = configuration->get({ CONFIG_STATES })) {
+        if (const auto states = configuration->get({ Config::STATES })) {
             for (const auto& state : states.value()) {
                 add(create<State>(create<Configuration>(state)));
             }
         }
         else {
-            throw std::runtime_error(ERROR_NO_STATES_FOUND);
+            throw std::runtime_error(Error::NO_STATES_FOUND);
         }
 
-        if (const auto initialState = configuration->get<std::string>({ CONFIG_INITIAL_STATE })) {
+        if (const auto initialState = configuration->get<std::string>({ Config::INITIAL_STATE })) {
             push(initialState.value());
         }
 
-        if (const auto scriptName = configuration->get<std::string>({ CONFIG_SCRIPT })) {
-            script_ = Harmony::find<Script>(scriptName.value());
+        if (const auto scriptName = configuration->get<std::string>({ Config::SCRIPT })) {
+            script_ = find<Script>(scriptName.value());
         }
     }
 
@@ -100,7 +100,7 @@ namespace Harmony {
         if (!buffer_.empty()) {
             return buffer_.top();
         }
-        throw std::runtime_error("No current state available");
+        throw std::runtime_error(Error::NO_CURRENT_STATE);
     }
 
     std::shared_ptr<State> StateStack::get(uint64_t uniqueId) const {
@@ -109,7 +109,7 @@ namespace Harmony {
                 return state;
             }
         }
-        throw std::runtime_error(ERROR_STATE_NOT_FOUND);
+        throw std::runtime_error(Error::STATE_NOT_FOUND);
     }
 
     std::shared_ptr<State> StateStack::get(const std::string& name) const {
@@ -118,6 +118,6 @@ namespace Harmony {
                 return state;
             }
         }
-        throw std::runtime_error(ERROR_STATE_NOT_FOUND);
+        throw std::runtime_error(Error::STATE_NOT_FOUND);
     }
 }

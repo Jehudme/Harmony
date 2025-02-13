@@ -1,23 +1,17 @@
 #pragma once
+
 #include "SceneNode.h"
 #include <SFML/Graphics/RectangleShape.hpp>
 
-namespace Harmony
-{
+namespace Harmony {
 
-	class Rectangle : public SceneNode
-	{
-	public:
-		Rectangle(std::shared_ptr<Configuration> configuration);
+    class Rectangle : public SceneNode {
+    public:
+        explicit Rectangle(std::shared_ptr<Configuration> configuration);
 
-	private:
-		virtual void drawCurrent(sf::RenderTarget& renderTarget, sf::RenderStates states) const override;
+    private:
+        void drawCurrent(sf::RenderTarget& renderTarget, sf::RenderStates states) const override;
 
-	public:
-		sf::RectangleShape sprite;
-	};
+        sf::RectangleShape sprite_;
+    };
 }
-
-class Rectangle
-{
-};

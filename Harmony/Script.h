@@ -11,6 +11,7 @@ namespace Harmony
 {
 	class SceneNode;
 	class TaskQueue;
+
 	struct Script : public Object
 	{
 	public:

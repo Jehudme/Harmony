@@ -8,14 +8,6 @@
 
 namespace Harmony {
 
-    // Constants for configuration keys and error messages
-    constexpr const char* CONFIG_STATES = "States";
-    constexpr const char* CONFIG_INITIAL_STATE = "InitialState";
-    constexpr const char* CONFIG_SCRIPT = "Script";
-
-    constexpr const char* ERROR_NO_STATES_FOUND = "No States Found";
-    constexpr const char* ERROR_STATE_NOT_FOUND = "State not found";
-
     class State;
     class TaskQueue;
     struct Script;

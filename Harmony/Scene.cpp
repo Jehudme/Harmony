@@ -3,6 +3,8 @@
 #include "Group.h"
 #include "Configuration.h"
 #include "Script.h"
+#include "Constants.h"
+#include <SFML/Graphics/RenderTarget.hpp>
 
 namespace Harmony {
 
@@ -44,14 +46,14 @@ namespace Harmony {
     void Scene::initialize(std::shared_ptr<Configuration> configuration) {
         configureView(configuration);
 
-        if (auto sceneGraphData = configuration->get({ CONFIG_SCENE_GRAPH })) {
+        if (auto sceneGraphData = configuration->get({ Config::SCENE_GRAPH })) {
             sceneGraph_ = create<Group>(create<Configuration>(sceneGraphData.value()));
         }
         else {
             sceneGraph_ = create<Group>(create<Configuration>());
         }
 
-        if (const auto scriptName = configuration->get<std::string>({ CONFIG_SCRIPT })) {
+        if (const auto scriptName = configuration->get<std::string>({ Config::SCRIPT })) {
             script_ = Harmony::find<Script>(scriptName.value());
         }
     }
@@ -59,35 +61,35 @@ namespace Harmony {
     void Scene::configureView(std::shared_ptr<Configuration> configuration) {
         view_ = sf::View();
 
-        if (auto viewConfig = configuration->get({ CONFIG_VIEW })) {
+        if (auto viewConfig = configuration->get({ Config::VIEW })) {
             // Set view center
-            if (auto center = viewConfig.value().find(CONFIG_VIEW_CENTER); center != viewConfig.value().end()) {
+            if (auto center = viewConfig.value().find(Config::VIEW_CENTER); center != viewConfig.value().end()) {
                 view_.setCenter(
-                    center->at(CONFIG_VIEW_X).get<float>(),
-                    center->at(CONFIG_VIEW_Y).get<float>()
+                    center->at(Config::VIEW_X).get<float>(),
+                    center->at(Config::VIEW_Y).get<float>()
                 );
             }
 
             // Set view size
-            if (auto size = viewConfig.value().find(CONFIG_VIEW_SIZE); size != viewConfig.value().end()) {
+            if (auto size = viewConfig.value().find(Config::VIEW_SIZE); size != viewConfig.value().end()) {
                 view_.setSize(
-                    size->at(CONFIG_VIEW_WIDTH).get<float>(),
-                    size->at(CONFIG_VIEW_HEIGHT).get<float>()
+                    size->at(Config::VIEW_WIDTH).get<float>(),
+                    size->at(Config::VIEW_HEIGHT).get<float>()
                 );
             }
 
             // Set view rotation
-            if (auto rotation = viewConfig.value().find(CONFIG_VIEW_ROTATION); rotation != viewConfig.value().end()) {
+            if (auto rotation = viewConfig.value().find(Config::VIEW_ROTATION); rotation != viewConfig.value().end()) {
                 view_.setRotation(rotation->get<float>());
             }
 
             // Set view viewport (optional)
-            if (auto viewport = viewConfig.value().find(CONFIG_VIEW_VIEWPORT); viewport != viewConfig.value().end()) {
+            if (auto viewport = viewConfig.value().find(Config::VIEW_VIEWPORT); viewport != viewConfig.value().end()) {
                 view_.setViewport(sf::FloatRect(
-                    viewport->at(CONFIG_VIEW_LEFT).get<float>(),
-                    viewport->at(CONFIG_VIEW_TOP).get<float>(),
-                    viewport->at(CONFIG_VIEW_WIDTH).get<float>(),
-                    viewport->at(CONFIG_VIEW_HEIGHT).get<float>()
+                    viewport->at(Config::VIEW_LEFT).get<float>(),
+                    viewport->at(Config::VIEW_TOP).get<float>(),
+                    viewport->at(Config::VIEW_WIDTH).get<float>(),
+                    viewport->at(Config::VIEW_HEIGHT).get<float>()
                 ));
             }
         }

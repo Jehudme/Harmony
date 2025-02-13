@@ -10,8 +10,6 @@
 
 namespace Harmony {
 
-    constexpr const char* CONFIG_SCRIPT = "Script";
-
     SceneNode::SceneNode(std::shared_ptr<Configuration> configuration, bool enableOnEnter)
         : Object(configuration), configuration_(configuration) {
         initialize(configuration_);
@@ -92,62 +90,62 @@ namespace Harmony {
     }
 
     void SceneNode::initialize(std::shared_ptr<Configuration> configuration) {
-        if (const auto position = configuration->get({ CONFIG_POSITION })) {
+        if (const auto position = configuration->get({ Config::POSITION })) {
             setPosition(
-                position.value()[CONFIG_VECTOR_X].get<float>(),
-                position.value()[CONFIG_VECTOR_Y].get<float>()
+                position.value()[Config::VECTOR_X].get<float>(),
+                position.value()[Config::VECTOR_Y].get<float>()
             );
         }
 
-        if (const auto scale = configuration->get({ CONFIG_SCALE })) {
+        if (const auto scale = configuration->get({ Config::SCALE })) {
             setScale(
-                scale.value()[CONFIG_VECTOR_X].get<float>(),
-                scale.value()[CONFIG_VECTOR_Y].get<float>()
+                scale.value()[Config::VECTOR_X].get<float>(),
+                scale.value()[Config::VECTOR_Y].get<float>()
             );
         }
 
-        if (const auto origin = configuration->get({ CONFIG_ORIGIN })) {
+        if (const auto origin = configuration->get({ Config::ORIGIN })) {
             setOrigin(
-                origin.value()[CONFIG_VECTOR_X].get<float>(),
-                origin.value()[CONFIG_VECTOR_Y].get<float>()
+                origin.value()[Config::VECTOR_X].get<float>(),
+                origin.value()[Config::VECTOR_Y].get<float>()
             );
         }
 
-        if (const auto rotation = configuration->get({ CONFIG_ROTATION })) {
+        if (const auto rotation = configuration->get({ Config::ROTATION })) {
             setRotation(rotation.value().get<float>());
         }
 
-        if (const auto positionVelocity = configuration->get({ CONFIG_POSITION_VELOCITY })) {
+        if (const auto positionVelocity = configuration->get({ Config::POSITION_VELOCITY })) {
             positionVelocity_ = {
-                positionVelocity.value()[CONFIG_VECTOR_X].get<float>(),
-                positionVelocity.value()[CONFIG_VECTOR_Y].get<float>()
+                positionVelocity.value()[Config::VECTOR_X].get<float>(),
+                positionVelocity.value()[Config::VECTOR_Y].get<float>()
             };
         }
 
-        if (const auto positionAcceleration = configuration->get({ CONFIG_POSITION_ACCELERATION })) {
+        if (const auto positionAcceleration = configuration->get({ Config::POSITION_ACCELERATION })) {
             positionAcceleration_ = {
-                positionAcceleration.value()[CONFIG_VECTOR_X].get<float>(),
-                positionAcceleration.value()[CONFIG_VECTOR_Y].get<float>()
+                positionAcceleration.value()[Config::VECTOR_X].get<float>(),
+                positionAcceleration.value()[Config::VECTOR_Y].get<float>()
             };
         }
 
-        if (const auto rotationVelocity = configuration->get({ CONFIG_ROTATION_VELOCITY })) {
+        if (const auto rotationVelocity = configuration->get({ Config::ROTATION_VELOCITY })) {
             rotationVelocity_ = rotationVelocity.value().get<float>();
         }
 
-        if (const auto rotationAcceleration = configuration->get({ CONFIG_ROTATION_ACCELERATION })) {
+        if (const auto rotationAcceleration = configuration->get({ Config::ROTATION_ACCELERATION })) {
             rotationAcceleration_ = rotationAcceleration.value().get<float>();
         }
 
-        if (const auto childrenData = configuration->get({ CONFIG_CHILDREN })) {
+        if (const auto childrenData = configuration->get({ Config::CHILDREN })) {
             for (const auto& childData : childrenData.value()) {
                 auto childConfiguration = create<Configuration>(childData);
                 attachChild(create<SceneNode>(std::move(childConfiguration)));
             }
         }
 
-        if (const auto scriptName = configuration->get<std::string>({ CONFIG_SCRIPT })) {
-            script_ = Harmony::find<Script>(scriptName.value());
+        if (const auto scriptName = configuration->get<std::string>({ Config::SCRIPT })) {
+            script_ = find<Script>(scriptName.value());
         }
     }
 
@@ -171,7 +169,7 @@ namespace Harmony {
 
     template<>
     std::shared_ptr<SceneNode> create<SceneNode, std::shared_ptr<Configuration>>(std::shared_ptr<Configuration>&& configuration) {
-        const std::string type = configuration->get<std::string>({ CONFIG_TYPE }).value_or("NONE");
+        const std::string type = configuration->get<std::string>({ Config::TYPE }).value_or("NONE");
 
         if (type == "Rectangle") {
             return create<Rectangle>(configuration);
@@ -180,7 +178,7 @@ namespace Harmony {
             return create<Group>(configuration);
         }
         else {
-            throw std::runtime_error(ERROR_UNKNOWN_TYPE + type);
+            throw std::runtime_error(Error::UNKNOWN_TYPE + type);
         }
     }
 }

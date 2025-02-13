@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "Configuration.h"
+#include "Constants.h"
 #include <stdexcept>
 #include <fstream>
 
@@ -11,12 +12,12 @@ namespace Harmony {
 
     void Configuration::load() {
         if (!filePath_) {
-            throw std::runtime_error(ERROR_FILE_PATH_NOT_SET);
+            throw std::runtime_error(Error::FILE_PATH_NOT_SET);
         }
 
         std::ifstream file(*filePath_);
         if (!file.is_open()) {
-            throw std::runtime_error(ERROR_FILE_OPEN_FAILED + *filePath_);
+            throw std::runtime_error(std::string(Error::FILE_OPEN_FAILED) + *filePath_);
         }
 
         file >> data_;
@@ -25,13 +26,13 @@ namespace Harmony {
 
     void Configuration::unload() {
         if (!filePath_) {
-            throw std::runtime_error(ERROR_FILE_PATH_NOT_SET);
+            throw std::runtime_error(Error::FILE_PATH_NOT_SET);
         }
 
         // Export the data to the file before clearing it
         std::ofstream file(*filePath_);
         if (!file.is_open()) {
-            throw std::runtime_error(ERROR_FILE_WRITE_FAILED + *filePath_);
+            throw std::runtime_error(std::string(Error::FILE_WRITE_FAILED) + *filePath_);
         }
 
         file << data_.dump(4); // Pretty-print with an indentation of 4 spaces
@@ -49,7 +50,7 @@ namespace Harmony {
         if (filePath_) {
             return *filePath_;
         }
-        throw std::runtime_error(ERROR_FILE_PATH_NOT_SET);
+        throw std::runtime_error(Error::FILE_PATH_NOT_SET);
     }
 
     void Configuration::set(const nlohmann::json& data, const std::initializer_list<const char*>& path) {

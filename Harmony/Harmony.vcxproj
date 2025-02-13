@@ -145,6 +145,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Configuration.cpp" />
+    <ClInclude Include="Constants.h" />
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="Group.cpp" />
     <ClCompile Include="main.cpp" />

@@ -11,22 +11,6 @@
 
 namespace Harmony {
 
-    // Constants for configuration keys
-    constexpr const char* CONFIG_POSITION = "Position";
-    constexpr const char* CONFIG_SCALE = "Scale";
-    constexpr const char* CONFIG_ORIGIN = "Origin";
-    constexpr const char* CONFIG_ROTATION = "Rotation";
-    constexpr const char* CONFIG_POSITION_VELOCITY = "PositionVelocity";
-    constexpr const char* CONFIG_POSITION_ACCELERATION = "PositionAcceleration";
-    constexpr const char* CONFIG_ROTATION_VELOCITY = "RotationVelocity";
-    constexpr const char* CONFIG_ROTATION_ACCELERATION = "RotationAcceleration";
-    constexpr const char* CONFIG_CHILDREN = "Children";
-    constexpr const char* CONFIG_TYPE = "Type";
-    constexpr const char* CONFIG_VECTOR_X = "X";
-    constexpr const char* CONFIG_VECTOR_Y = "Y";
-
-    constexpr const char* ERROR_UNKNOWN_TYPE = "Unknown type: ";
-
     class TaskQueue;
     class Scene;
     struct Script;

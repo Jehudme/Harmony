@@ -9,11 +9,6 @@
 
 namespace Harmony {
 
-    // Constants for error messages and default values
-    constexpr const char* ERROR_FILE_PATH_NOT_SET = "File path is not set.";
-    constexpr const char* ERROR_FILE_OPEN_FAILED = "Failed to open file: ";
-    constexpr const char* ERROR_FILE_WRITE_FAILED = "Failed to open file for writing: ";
-
     class Configuration : public Object {
     public:
         Configuration(const nlohmann::json& data = nlohmann::json(), uint64_t uniqueId = 0);
