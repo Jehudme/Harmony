@@ -1,59 +1,59 @@
 #include "pch.h"
 #include "Rectangle.h"
+#include "SFML/Graphics/RenderStates.hpp"
+#include "SFML/Graphics/RenderTarget.hpp"
 #include "Configuration.h"
-#include "Constants.h"
-#include <SFML/Graphics/RenderTarget.hpp>
 
-namespace Harmony {
-
-    Rectangle::Rectangle(std::shared_ptr<Configuration> configuration)
-        : SceneNode(configuration) {
-
-        // Set the size of the rectangle if provided in the configuration
-        if (const auto sizeData = configuration->get({ Config::SIZE })) {
-            const auto sizeConfiguration = create<Configuration>(sizeData.value());
-            sf::Vector2f size = {
-                sizeConfiguration->get<float>({ Config::WIDTH }).value_or(Default::RECTANGLE_WIDTH),
-                sizeConfiguration->get<float>({ Config::HEIGHT }).value_or(Default::RECTANGLE_HEIGHT)
-            };
-            sprite_.setSize(size);
-        }
-
-        // Set the fill color of the rectangle if provided in the configuration
-        if (const auto fillColorData = configuration->get({ Config::FILL_COLOR })) {
-            const auto colorConfiguration = create<Configuration>(fillColorData.value());
-            sf::Color fillColor = {
-                static_cast<sf::Uint8>(colorConfiguration->get<int>({ Config::R }).value_or(Default::COLOR_R)),
-                static_cast<sf::Uint8>(colorConfiguration->get<int>({ Config::G }).value_or(Default::COLOR_G)),
-                static_cast<sf::Uint8>(colorConfiguration->get<int>({ Config::B }).value_or(Default::COLOR_B)),
-                static_cast<sf::Uint8>(colorConfiguration->get<int>({ Config::A }).value_or(Default::COLOR_A))
-            };
-            sprite_.setFillColor(fillColor);
-        }
-
-        // Set the outline color of the rectangle if provided in the configuration
-        if (const auto outlineColorData = configuration->get({ Config::OUTLINE_COLOR })) {
-            const auto colorConfiguration = create<Configuration>(outlineColorData.value());
-            sf::Color outlineColor = {
-                static_cast<sf::Uint8>(colorConfiguration->get<int>({ Config::R }).value_or(Default::OUTLINE_COLOR_R)),
-                static_cast<sf::Uint8>(colorConfiguration->get<int>({ Config::G }).value_or(Default::OUTLINE_COLOR_G)),
-                static_cast<sf::Uint8>(colorConfiguration->get<int>({ Config::B }).value_or(Default::OUTLINE_COLOR_B)),
-                static_cast<sf::Uint8>(colorConfiguration->get<int>({ Config::A }).value_or(Default::OUTLINE_COLOR_A))
-            };
-            sprite_.setOutlineColor(outlineColor);
-        }
-
-        // Set the outline thickness of the rectangle if provided in the configuration
-        if (const auto outlineThicknessData = configuration->get({ Config::OUTLINE_THICKNESS })) {
-            float outlineThickness = outlineThicknessData.value().get<float>();
-            sprite_.setOutlineThickness(outlineThickness);
-        }
-        else {
-            sprite_.setOutlineThickness(Default::OUTLINE_THICKNESS);
-        }
+Harmony::Rectangle::Rectangle(std::shared_ptr<Configuration> configuration)
+    : SceneNode(configuration)
+{
+    // Set the size of the rectangle if provided in the configuration
+    if (const auto sizeData = configuration->get({ "Size" }))
+    {
+        const auto sizeConfiguration = create<Configuration>(sizeData.value());
+        sf::Vector2f size = {
+            sizeConfiguration->get<float>({ "Width" }).value_or(50),
+            sizeConfiguration->get<float>({ "Height" }).value_or(50)
+        };
+        sprite.setSize(size);
     }
 
-    void Rectangle::drawCurrent(sf::RenderTarget& renderTarget, sf::RenderStates states) const {
-        renderTarget.draw(sprite_, states);
+    // Set the fill color of the rectangle if provided in the configuration
+    if (const auto fillColorData = configuration->get({ "FillColor" }))
+    {
+        const auto colorConfiguration = create<Configuration>(fillColorData.value());
+        sf::Color fillColor = {
+            static_cast<sf::Uint8>(colorConfiguration->get<int>({ "R" }).value_or(255)),
+            static_cast<sf::Uint8>(colorConfiguration->get<int>({ "G" }).value_or(255)),
+            static_cast<sf::Uint8>(colorConfiguration->get<int>({ "B" }).value_or(255)),
+            static_cast<sf::Uint8>(colorConfiguration->get<int>({ "A" }).value_or(255))
+        };
+        sprite.setFillColor(fillColor);
     }
+
+    // Set the outline color of the rectangle if provided in the configuration
+    if (const auto outlineColorData = configuration->get({ "OutlineColor" }))
+    {
+        const auto colorConfiguration = create<Configuration>(outlineColorData.value());
+        sf::Color outlineColor = {
+            static_cast<sf::Uint8>(colorConfiguration->get<int>({ "R" }).value_or(0)),
+            static_cast<sf::Uint8>(colorConfiguration->get<int>({ "G" }).value_or(0)),
+            static_cast<sf::Uint8>(colorConfiguration->get<int>({ "B" }).value_or(0)),
+            static_cast<sf::Uint8>(colorConfiguration->get<int>({ "A" }).value_or(255))
+        };
+        sprite.setOutlineColor(outlineColor);
+    }
+
+    // Set the outline thickness of the rectangle if provided in the configuration
+    if (const auto outlineThicknessData = configuration->get({ "OutlineThickness" }))
+    {
+        float outlineThickness = outlineThicknessData.value().get<float>();
+        sprite.setOutlineThickness(outlineThickness);
+    }
+}
+
+
+void Harmony::Rectangle::drawCurrent(sf::RenderTarget& renderTarget, sf::RenderStates states) const
+{
+	renderTarget.draw(sprite, states);
 }

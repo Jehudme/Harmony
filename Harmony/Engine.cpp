@@ -1,10 +1,17 @@
 #include "pch.h"
 #include "Engine.h"
-#include "Constants.h"
 #include <SFML/Window/Event.hpp>
 #include "StateStack.h"
 
 namespace Harmony {
+
+    // Constants for default values
+    constexpr const char* DEFAULT_WINDOW_TITLE = "Harmony Engine";
+    constexpr unsigned int DEFAULT_WINDOW_WIDTH = 600;
+    constexpr unsigned int DEFAULT_WINDOW_HEIGHT = 600;
+    constexpr bool DEFAULT_FULLSCREEN = false;
+    constexpr bool DEFAULT_VERTICAL_SYNC = true;
+    constexpr unsigned int DEFAULT_FPS = 60;
 
     Engine::Engine(std::shared_ptr<Configuration> configuration)
         : Object(configuration), configuration_(configuration), stateStack_(create<StateStack>(configuration)) {
@@ -21,14 +28,14 @@ namespace Harmony {
 
     void Engine::initializeWindow(std::shared_ptr<Configuration> configuration) {
         // Extract title and size from configuration
-        const std::string title = configuration->get<std::string>({ Config::WINDOW_TITLE }).value_or(Default::WINDOW_TITLE);
+        const std::string title = configuration->get<std::string>({ CONFIG_WINDOW_TITLE }).value_or(DEFAULT_WINDOW_TITLE);
         const sf::Vector2u size = {
-            configuration->get<unsigned int>({ Config::WINDOW_SIZE_WIDTH }).value_or(Default::WINDOW_WIDTH),
-            configuration->get<unsigned int>({ Config::WINDOW_SIZE_HEIGHT }).value_or(Default::WINDOW_HEIGHT)
+            configuration->get<unsigned int>({ CONFIG_WINDOW_SIZE_WIDTH }).value_or(DEFAULT_WINDOW_WIDTH),
+            configuration->get<unsigned int>({ CONFIG_WINDOW_SIZE_HEIGHT }).value_or(DEFAULT_WINDOW_HEIGHT)
         };
 
         // Extract fullscreen mode setting
-        const bool fullscreen = configuration->get<bool>({ Config::WINDOW_FULLSCREEN }).value_or(Default::FULLSCREEN);
+        const bool fullscreen = configuration->get<bool>({ CONFIG_WINDOW_FULLSCREEN }).value_or(DEFAULT_FULLSCREEN);
 
         // Set up window style based on fullscreen mode
         sf::Uint32 style = fullscreen ? sf::Style::Fullscreen : sf::Style::Default;
@@ -37,11 +44,11 @@ namespace Harmony {
         renderWindow_.create(sf::VideoMode(size.x, size.y), title, style);
 
         // Extract and apply vertical sync setting
-        const bool verticalSync = configuration->get<bool>({ Config::WINDOW_VERTICAL_SYNC }).value_or(Default::VERTICAL_SYNC);
+        const bool verticalSync = configuration->get<bool>({ CONFIG_WINDOW_VERTICAL_SYNC }).value_or(DEFAULT_VERTICAL_SYNC);
         renderWindow_.setVerticalSyncEnabled(verticalSync);
 
         // Extract and apply FPS limit setting
-        const unsigned int fps = configuration->get<unsigned int>({ Config::WINDOW_FPS }).value_or(Default::FPS);
+        const unsigned int fps = configuration->get<unsigned int>({ CONFIG_WINDOW_FPS }).value_or(DEFAULT_FPS);
         renderWindow_.setFramerateLimit(fps);
     }
 
@@ -66,6 +73,7 @@ namespace Harmony {
         renderWindow_.display();
     }
 
+    // Getters
     const sf::RenderWindow& Engine::getRenderWindow() const {
         return renderWindow_;
     }
@@ -78,9 +86,10 @@ namespace Harmony {
         return configuration_;
     }
 
+    // Setters
     void Engine::setConfiguration(std::shared_ptr<Configuration> configuration) {
         if (!configuration) {
-            throw std::invalid_argument(Error::NULL_CONFIGURATION);
+            throw std::invalid_argument("Configuration cannot be null.");
         }
         configuration_ = configuration;
         initializeWindow(configuration); // Reinitialize the window with the new configuration

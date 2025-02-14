@@ -8,15 +8,18 @@
 #include <type_traits>
 #include <stdexcept>
 
-#include "Constants.h"
-
 namespace Harmony {
+
+    // Constants for default values and configuration keys
+    constexpr const char* DEFAULT_OBJECT_NAME = "Unknown";
+    constexpr const char* CONFIG_KEY_UNIQUE_ID = "UniqueId";
+    constexpr const char* CONFIG_KEY_NAME = "Name";
 
     class Configuration;
 
     class Object : private sf::NonCopyable, public std::enable_shared_from_this<Object> {
     public:
-        Object(uint64_t uniqueId = 0, const std::string& name = Default::NAME);
+        Object(uint64_t uniqueId = 0, const std::string& name = DEFAULT_OBJECT_NAME);
         explicit Object(std::shared_ptr<Configuration> configuration);
         virtual ~Object();
 
@@ -31,11 +34,11 @@ namespace Harmony {
         template<typename Type, typename... Args>
         friend std::shared_ptr<Type> create(Args&&... args);
 
-        template<typename Type, typename... Args>
-        friend std::shared_ptr<Type> find(uint64_t uniqueId);
+        template<typename Type, typename... ARGS>
+        friend std::shared_ptr<Type> find(const uint64_t& uniqueId);
 
-        template<typename Type, typename... Args>
-        friend std::shared_ptr<Type> find(const std::string& name);
+        template<typename Type, typename... ARGS>
+        friend std::shared_ptr<Type> find(const std::string& uniqueId);
 
     private:
         std::string name_;
@@ -52,7 +55,7 @@ namespace Harmony {
 
         auto object = std::make_shared<Type>(std::forward<Args>(args)...);
 
-        if (object->getName() != Default::NAME) {
+        if (object->getName() != DEFAULT_OBJECT_NAME) {
             object->setName(object->getName());
         }
 
@@ -68,9 +71,9 @@ namespace Harmony {
             if (auto object = std::dynamic_pointer_cast<Type>(Object::registeredById_[uniqueId].lock())) {
                 return object;
             }
-            throw std::runtime_error(Error::DYNAMIC_CAST_FAILED);
+            throw std::runtime_error("Dynamic pointer cast failed");
         }
-        throw std::runtime_error(Error::OBJECT_NOT_FOUND);
+        throw std::runtime_error("Object not found");
     }
 
     template<typename Type, typename... Args>
@@ -81,8 +84,8 @@ namespace Harmony {
             if (auto object = std::dynamic_pointer_cast<Type>(Object::registeredByName_[name].lock())) {
                 return object;
             }
-            throw std::runtime_error(Error::DYNAMIC_CAST_FAILED);
+            throw std::runtime_error("Dynamic pointer cast failed");
         }
-        throw std::runtime_error(Error::OBJECT_NOT_FOUND);
+        throw std::runtime_error("Object not found");
     }
 }

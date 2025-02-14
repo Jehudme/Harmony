@@ -11,23 +11,25 @@ namespace Harmony {
     State::State(std::shared_ptr<Configuration> configuration)
         : Object(configuration) {
 
+        constexpr const char* CONFIG_SCRIPT = "Script";
+
         // Load scenes from configuration
-        if (const auto scenesConfigurationsData = configuration->get({ Config::SCENES })) {
+        if (const auto scenesConfigurationsData = configuration->get({ CONFIG_SCENES })) {
             for (const auto& sceneConfigurations : scenesConfigurationsData.value()) {
                 addScene(create<Scene>(create<Configuration>(sceneConfigurations)));
             }
         }
 
         // Load initial scenes from configuration
-        if (const auto initialScenesData = configuration->get({ Config::INITIAL_SCENES })) {
+        if (const auto initialScenesData = configuration->get({ CONFIG_INITIAL_SCENES })) {
             for (const auto& sceneName : initialScenesData.value()) {
                 initialBuffer_.push_back(sceneName.get<std::string>());
             }
         }
 
         // Load script from configuration
-        if (const auto scriptName = configuration->get<std::string>({ Config::SCRIPT })) {
-            script_ = find<Script>(scriptName.value());
+        if (const auto scriptName = configuration->get<std::string>({ CONFIG_SCRIPT })) {
+            script_ = Harmony::find<Script>(scriptName.value());
         }
     }
 
@@ -82,7 +84,7 @@ namespace Harmony {
                 return scene;
             }
         }
-        throw std::runtime_error(Error::SCENE_NOT_FOUND + name);
+        throw std::runtime_error(ERROR_SCENE_NOT_FOUND + name);
     }
 
     // Overloaded function to get a scene by ID
@@ -92,12 +94,12 @@ namespace Harmony {
                 return scene;
             }
         }
-        throw std::runtime_error(Error::SCENE_NOT_FOUND + std::to_string(uniqueId));
+        throw std::runtime_error(ERROR_SCENE_NOT_FOUND + std::to_string(uniqueId));
     }
 
     void State::addScene(std::shared_ptr<Scene> scene) {
         if (!scene) {
-            throw std::invalid_argument(Error::NULL_SCENE);
+            throw std::invalid_argument(ERROR_NULL_SCENE);
         }
         scenes_.push_back(scene);
     }
@@ -126,7 +128,7 @@ namespace Harmony {
                 return;
             }
         }
-        throw std::runtime_error(Error::SCENE_NOT_FOUND + name);
+        throw std::runtime_error(ERROR_SCENE_NOT_FOUND + name);
     }
 
     // Overloaded function to queue a scene by ID
@@ -137,7 +139,7 @@ namespace Harmony {
                 return;
             }
         }
-        throw std::runtime_error(Error::SCENE_NOT_FOUND + std::to_string(uniqueId));
+        throw std::runtime_error(ERROR_SCENE_NOT_FOUND + std::to_string(uniqueId));
     }
 
     // Overloaded function to remove a queued scene by name
