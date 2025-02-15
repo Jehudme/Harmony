@@ -12,10 +12,10 @@
 
   "States": [
     {
-      "Name": "State1",
+      "Name": "Game",
       "Scenes": [
         {
-          "Name": "Main",
+          "Name": "Board",
           "SceneGraph": {
             "Children": [
               {
@@ -25,7 +25,6 @@
                   "Width": 100,
                   "Height": 100
                 },
-                "Script": "PlayerScript",
                 "OutlineThickness": 5,
                 "PositionVelocity": {
                   "X": 0,

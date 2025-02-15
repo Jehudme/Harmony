@@ -1,0 +1,61 @@
+#include "pch.h"
+#include "Circle.h"
+#include "SFML/Graphics/RenderStates.hpp"
+#include "SFML/Graphics/RenderTarget.hpp"
+#include "Configuration.h"
+
+Harmony::Circle::Circle(std::shared_ptr<Configuration> configuration)
+    : SceneNode(configuration)
+{
+    // Set the radius of the circle if provided in the configuration
+    if (const auto radiusData = configuration->get({ "Radius" }))
+    {
+        float radius = radiusData.value().get<float>();
+        sprite.setRadius(radius);
+    }
+
+    // Set the number of points (smoothness) of the circle if provided in the configuration
+    if (const auto pointCountData = configuration->get({ "PointCount" }))
+    {
+        unsigned int pointCount = pointCountData.value().get<unsigned int>();
+        sprite.setPointCount(pointCount);
+    }
+
+    // Set the fill color of the circle if provided in the configuration
+    if (const auto fillColorData = configuration->get({ "FillColor" }))
+    {
+        const auto colorConfiguration = create<Configuration>(fillColorData.value());
+        sf::Color fillColor = {
+            static_cast<sf::Uint8>(colorConfiguration->get<int>({ "R" }).value_or(255)),
+            static_cast<sf::Uint8>(colorConfiguration->get<int>({ "G" }).value_or(255)),
+            static_cast<sf::Uint8>(colorConfiguration->get<int>({ "B" }).value_or(255)),
+            static_cast<sf::Uint8>(colorConfiguration->get<int>({ "A" }).value_or(255))
+        };
+        sprite.setFillColor(fillColor);
+    }
+
+    // Set the outline color of the circle if provided in the configuration
+    if (const auto outlineColorData = configuration->get({ "OutlineColor" }))
+    {
+        const auto colorConfiguration = create<Configuration>(outlineColorData.value());
+        sf::Color outlineColor = {
+            static_cast<sf::Uint8>(colorConfiguration->get<int>({ "R" }).value_or(0)),
+            static_cast<sf::Uint8>(colorConfiguration->get<int>({ "G" }).value_or(0)),
+            static_cast<sf::Uint8>(colorConfiguration->get<int>({ "B" }).value_or(0)),
+            static_cast<sf::Uint8>(colorConfiguration->get<int>({ "A" }).value_or(255))
+        };
+        sprite.setOutlineColor(outlineColor);
+    }
+
+    // Set the outline thickness of the circle if provided in the configuration
+    if (const auto outlineThicknessData = configuration->get({ "OutlineThickness" }))
+    {
+        float outlineThickness = outlineThicknessData.value().get<float>();
+        sprite.setOutlineThickness(outlineThickness);
+    }
+}
+
+void Harmony::Circle::drawCurrent(sf::RenderTarget& renderTarget, sf::RenderStates states) const
+{
+    renderTarget.draw(sprite, states);
+}

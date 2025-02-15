@@ -4,6 +4,7 @@
 #include "Configuration.h"
 #include "Rectangle.h"
 #include "Group.h"
+#include "Circle.h"
 #include "Script.h"
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <algorithm>
@@ -175,6 +176,10 @@ namespace Harmony {
 
         if (type == "Rectangle") {
             return create<Rectangle>(configuration);
+        }
+
+        if (type == "Circle") {
+            return create<Circle>(configuration);
         }
         else if (type == "Group") {
             return create<Group>(configuration);

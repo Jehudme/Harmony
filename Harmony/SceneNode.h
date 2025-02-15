@@ -70,3 +70,7 @@ namespace Harmony {
     template<>
     std::shared_ptr<SceneNode> create<SceneNode, std::shared_ptr<Configuration>>(std::shared_ptr<Configuration>&& configuration);
 }
+
+class SceneNode
+{
+};
