@@ -26,6 +26,6 @@ void Harmony::Script::onUpdate(std::shared_ptr<Object> object, const sf::Time& t
 {
 }
 
-void Harmony::Script::onDraw(std::shared_ptr<const Object> object, sf::RenderTarget& renderTarget, sf::RenderStates states)
+void Harmony::Script::onDraw(std::shared_ptr<const Object> object, sf::RenderTarget& renderTarget, sf::RenderStates states) const
 {
 }

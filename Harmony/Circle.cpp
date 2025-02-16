@@ -3,6 +3,7 @@
 #include "SFML/Graphics/RenderStates.hpp"
 #include "SFML/Graphics/RenderTarget.hpp"
 #include "Configuration.h"
+#include "Resource.h"
 
 Harmony::Circle::Circle(std::shared_ptr<Configuration> configuration)
     : SceneNode(configuration)
@@ -53,6 +54,25 @@ Harmony::Circle::Circle(std::shared_ptr<Configuration> configuration)
         float outlineThickness = outlineThicknessData.value().get<float>();
         sprite.setOutlineThickness(outlineThickness);
     }
+
+    if (const auto textureData = configuration->get({ "Texture" })) 
+    {
+        const auto textureConfiguration = create<Configuration>(textureData.value());
+        texture = find<Texture>(textureConfiguration->get<std::string>({ "Name" }).value_or("UnknowTexture.jpg"));
+
+        const sf::Vector2u textureSize = texture->getResource().getSize();
+        const int width     = textureConfiguration->get<int>({ "Width" }).value_or(static_cast<int>(textureSize.x));
+        const int height    = textureConfiguration->get<int>({ "Height" }).value_or(static_cast<int>(textureSize.y));
+        const int left      = textureConfiguration->get<int>({ "left" }).value_or(0);
+        const int top       = textureConfiguration->get<int>({ "top" }).value_or(0);
+
+        sprite.setTexture(&texture->getResource());
+        sprite.setTextureRect(sf::IntRect(left, top, width, height));
+    }
+}
+
+sf::FloatRect Harmony::Circle::getGlobalBound() const {
+    return getGlobalTransform().transformRect(sprite.getGlobalBounds());
 }
 
 void Harmony::Circle::drawCurrent(sf::RenderTarget& renderTarget, sf::RenderStates states) const

@@ -18,7 +18,10 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Pong.cpp">
+    <ClCompile Include="Ball.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Bars.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -26,8 +29,11 @@
     <None Include="Configuration.json" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Pong.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
+    <Image Include="bkg.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="ka1.ttf" />
   </ItemGroup>
 </Project>

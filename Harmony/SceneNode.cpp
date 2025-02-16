@@ -6,6 +6,7 @@
 #include "Group.h"
 #include "Circle.h"
 #include "Script.h"
+#include "Text.h"
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <algorithm>
 
@@ -16,7 +17,7 @@ namespace Harmony {
     SceneNode::SceneNode(std::shared_ptr<Configuration> configuration, bool enableOnEnter)
         : Object(configuration), configuration_(configuration) {
         initialize(configuration_);
-        if (script_ && enableOnEnter) {
+        if (script_) {
             script_->onEnter(this);
         }
     }
@@ -36,7 +37,7 @@ namespace Harmony {
 
         drawCurrent(renderTarget, states);
 
-        for (const auto& child : children_) {
+        for (const auto& child : children) {
             child->draw(renderTarget, states);
         }
     }
@@ -49,14 +50,14 @@ namespace Harmony {
             script_->onUpdate(std::static_pointer_cast<SceneNode>(shared_from_this()), time, taskQueue);
         }
 
-        for (const auto& child : children_) {
+        for (const auto& child : children) {
             child->update(time, taskQueue);
         }
     }
 
     void SceneNode::attachChild(std::shared_ptr<SceneNode> child) {
         if (child) {
-            children_.push_back(child);
+            children.push_back(child);
             child->scene_ = scene_;
             child->parent_ = this;
         }
@@ -64,11 +65,16 @@ namespace Harmony {
 
     void SceneNode::detachChild(std::shared_ptr<SceneNode> child) {
         if (child) {
-            auto it = std::find(children_.begin(), children_.end(), child);
-            if (it != children_.end()) {
-                children_.erase(it);
+            auto it = std::find(children.begin(), children.end(), child);
+            if (it != children.end()) {
+                children.erase(it);
             }
         }
+    }
+
+    sf::FloatRect SceneNode::getGlobalBound() const
+    {
+        throw std::runtime_error("Do not have bounds");
     }
 
     sf::Vector2f SceneNode::getGlobalPosition() const {
@@ -76,16 +82,29 @@ namespace Harmony {
 
         SceneNode* current = parent_;
         while (current) {
-            globalPosition = current->getTransform().transformPoint(globalPosition);
+            globalPosition += current->getPosition();
             current = current->parent_;
         }
 
         return globalPosition;
     }
 
+    sf::Transform SceneNode::getGlobalTransform() const
+    {
+        sf::Transform globalTransfom = getTransform();
+
+        SceneNode* current = parent_;
+        while (current) {
+            globalTransfom *= current->getTransform();
+            current = current->parent_;
+        }
+
+        return globalTransfom;
+    }
+
     std::vector<std::shared_ptr<SceneNode>> SceneNode::findChildrenByName(std::initializer_list<std::string> names) {
         std::vector<std::shared_ptr<SceneNode>> result;
-        for (const auto& child : children_) {
+        for (const auto& child : children) {
             // Add logic to filter children by name if needed
             result.push_back(child);
         }
@@ -119,25 +138,25 @@ namespace Harmony {
         }
 
         if (const auto positionVelocity = configuration->get({ CONFIG_POSITION_VELOCITY })) {
-            positionVelocity_ = {
+            this->positionVelocity = {
                 positionVelocity.value()[CONFIG_VECTOR_X].get<float>(),
                 positionVelocity.value()[CONFIG_VECTOR_Y].get<float>()
             };
         }
 
         if (const auto positionAcceleration = configuration->get({ CONFIG_POSITION_ACCELERATION })) {
-            positionAcceleration_ = {
+            this->positionAcceleration = {
                 positionAcceleration.value()[CONFIG_VECTOR_X].get<float>(),
                 positionAcceleration.value()[CONFIG_VECTOR_Y].get<float>()
             };
         }
 
         if (const auto rotationVelocity = configuration->get({ CONFIG_ROTATION_VELOCITY })) {
-            rotationVelocity_ = rotationVelocity.value().get<float>();
+            this->rotationVelocity = rotationVelocity.value().get<float>();
         }
 
         if (const auto rotationAcceleration = configuration->get({ CONFIG_ROTATION_ACCELERATION })) {
-            rotationAcceleration_ = rotationAcceleration.value().get<float>();
+            this->rotationAcceleration = rotationAcceleration.value().get<float>();
         }
 
         if (const auto childrenData = configuration->get({ CONFIG_CHILDREN })) {
@@ -152,6 +171,11 @@ namespace Harmony {
         }
     }
 
+    bool SceneNode::intersect(std::shared_ptr<SceneNode> node1, std::shared_ptr<SceneNode> node2)
+    {
+        return node1->getGlobalBound().intersects(node2->getGlobalBound());
+    }
+
     void SceneNode::drawCurrent(sf::RenderTarget& renderTarget, sf::RenderStates states) const {
         // Default implementation does nothing
     }
@@ -163,11 +187,11 @@ namespace Harmony {
     void SceneNode::updateTransform(const sf::Time& time, TaskQueue& taskQueue) {
         float deltaTime = time.asSeconds();
 
-        positionVelocity_ += positionAcceleration_ * deltaTime;
-        move(positionVelocity_ * deltaTime);
+        positionVelocity += positionAcceleration * deltaTime;
+        move(positionVelocity * deltaTime);
 
-        rotationVelocity_ += rotationAcceleration_ * deltaTime;
-        rotate(rotationVelocity_ * deltaTime);
+        rotationVelocity += rotationAcceleration * deltaTime;
+        rotate(rotationVelocity * deltaTime);
     }
 
     template<>
@@ -181,6 +205,11 @@ namespace Harmony {
         if (type == "Circle") {
             return create<Circle>(configuration);
         }
+
+        if (type == "Text") {
+            return create<Text>(configuration);
+        }
+
         else if (type == "Group") {
             return create<Group>(configuration);
         }

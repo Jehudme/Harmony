@@ -42,25 +42,30 @@ namespace Harmony {
         void attachChild(std::shared_ptr<SceneNode> child);
         void detachChild(std::shared_ptr<SceneNode> child);
 
+        virtual sf::FloatRect getGlobalBound() const;
         sf::Vector2f getGlobalPosition() const;
+        sf::Transform getGlobalTransform() const;
 
         std::vector<std::shared_ptr<SceneNode>> findChildrenByName(std::initializer_list<std::string> names);
         std::vector<std::shared_ptr<SceneNode>> findChildrenByName(std::initializer_list<uint64_t> uniqueIds);
 
         virtual void initialize(std::shared_ptr<Configuration> configuration);
 
+        static bool intersect(std::shared_ptr<SceneNode> node1, std::shared_ptr<SceneNode> node2);
     private:
         virtual void drawCurrent(sf::RenderTarget& renderTarget, sf::RenderStates states) const;
         virtual void updateCurrent(const sf::Time& time, TaskQueue& taskQueue);
 
         void updateTransform(const sf::Time& time, TaskQueue& taskQueue);
 
-        std::vector<std::shared_ptr<SceneNode>> children_;
-        sf::Vector2f positionVelocity_;
-        sf::Vector2f positionAcceleration_;
-        float rotationVelocity_ = 0;
-        float rotationAcceleration_ = 0;
+    public:
+        std::vector<std::shared_ptr<SceneNode>> children;
+        sf::Vector2f positionVelocity;
+        sf::Vector2f positionAcceleration;
+        float rotationVelocity = 0;
+        float rotationAcceleration = 0;
 
+    protected:
         SceneNode* parent_ = nullptr;
         Scene* scene_ = nullptr;
         std::shared_ptr<Script> script_;

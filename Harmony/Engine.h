@@ -8,12 +8,14 @@
 namespace Harmony {
 
     // Constants for configuration keys
-    constexpr const char* CONFIG_WINDOW_TITLE           = "Window.Title";
-    constexpr const char* CONFIG_WINDOW_SIZE_WIDTH      = "Window.Size.Width";
-    constexpr const char* CONFIG_WINDOW_SIZE_HEIGHT     = "Window.Size.Height";
-    constexpr const char* CONFIG_WINDOW_FULLSCREEN      = "Window.Fullscreen";
-    constexpr const char* CONFIG_WINDOW_VERTICAL_SYNC   = "Window.VerticalSync";
-    constexpr const char* CONFIG_WINDOW_FPS             = "Window.FPS";
+    constexpr const char* CONFIG_WINDOW         = "Window";
+    constexpr const char* CONFIG_TITLE          = "Title";
+    constexpr const char* CONFIG_SIZE           = "Size";
+    constexpr const char* CONFIG_WIDTH          = "Width";
+    constexpr const char* CONFIG_HEIGHT         = "Height";
+    constexpr const char* CONFIG_FULLSCREEN     = "Fullscreen";
+    constexpr const char* CONFIG_VERTICAL_SYNC  = "VerticalSync";
+    constexpr const char* CONFIG_FPS            = "FPS";
 
     class StateStack;
     class Engine : public Object {

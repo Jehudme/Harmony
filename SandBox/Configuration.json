@@ -1,6 +1,6 @@
 {
   "Window": {
-    "Title": "Harmony Enhjklgine",
+    "Title": "Harmony Enhjk789657879lgine",
     "Size": {
       "Width": 600,
       "Height": 600
@@ -12,24 +12,168 @@
 
   "States": [
     {
-      "Name": "Game",
+      "Name": "GameState",
       "Scenes": [
         {
-          "Name": "Board",
+          "Name": "GameScene",
           "SceneGraph": {
             "Children": [
               {
-                "Name": "Rectangle",
+                "Name": "Board",
                 "Type": "Rectangle",
                 "Size": {
-                  "Width": 100,
-                  "Height": 100
+                  "Width": 1000,
+                  "Height": 400
+                },
+                "Position": {
+                  "X": 500,
+                  "Y": 500
+                },
+                "Origin": {
+                  "X": 500,
+                  "Y": 200
+                },
+                "FillColor": {
+                  "R": 255,
+                  "G": 255,
+                  "B": 255,
+                  "A": 255
+                },
+                "OutlineColor": {
+                  "R": 10,
+                  "G": 10,
+                  "B": 100,
+                  "A": 255
                 },
                 "OutlineThickness": 5,
-                "PositionVelocity": {
-                  "X": 0,
-                  "Y": 0
+                "Texture": {
+                  "Name": "bkg.png"
                 }
+              },
+
+              {
+                "Name": "Ball",
+                "Type": "Circle",
+                "Script": "BallScript",
+                "Radius": 10,
+                "PointCount": 10,
+                "Position": {
+                  "X": 500,
+                  "Y": 500
+                },
+                "Origin": {
+                  "X": 10,
+                  "Y": 10
+                },
+                "FillColor": {
+                  "R": 255,
+                  "G": 255,
+                  "B": 255,
+                  "A": 255
+                },
+                "OutlineColor": {
+                  "R": 10,
+                  "G": 10,
+                  "B": 100,
+                  "A": 255
+                },
+                "OutlineThickness": 0,
+                "Texture": {
+                  "Name": "bkg.png"
+                }
+              },
+
+              {
+                "Name": "LeftBar",
+                "Type": "Rectangle",
+                "Script": "RightBarScript",
+                "Size": {
+                  "Width": 10,
+                  "Height": 60
+                },
+                "Position": {
+                  "X": 20,
+                  "Y": 500
+                },
+                "Origin": {
+                  "X": 5,
+                  "Y": 30
+                },
+                "FillColor": {
+                  "R": 10,
+                  "G": 10,
+                  "B": 100,
+                  "A": 255
+                },
+                "OutlineColor": {
+                  "R": 10,
+                  "G": 10,
+                  "B": 100,
+                  "A": 255
+                },
+                "OutlineThickness": 0
+              },
+
+              {
+                "Name": "RightBar",
+                "Type": "Rectangle",
+                "Script": "LeftBarScript",
+                "Size": {
+                  "Width": 10,
+                  "Height": 60
+                },
+                "Position": {
+                  "X": 980,
+                  "Y": 500
+                },
+                "Origin": {
+                  "X": 5,
+                  "Y": 30
+                },
+                "FillColor": {
+                  "R": 10,
+                  "G": 10,
+                  "B": 100,
+                  "A": 255
+                },
+                "OutlineColor": {
+                  "R": 10,
+                  "G": 10,
+                  "B": 100,
+                  "A": 255
+                },
+                "OutlineThickness": 0
+              },
+              {
+                "Name": "FancyText",
+                "Type": "Text",
+                "String": "Fancy Text!",
+                "Position": {
+                  "X": 200,
+                  "Y": 100
+                },
+                "Origin": {
+                  "X": 0.5,
+                  "Y": 0.5
+                },
+                "Font": {
+                  "Name": "ka1.ttf"
+                },
+                "CharacterSize": 36,
+                "FillColor": {
+                  "R": 255,
+                  "G": 255,
+                  "B": 255,
+                  "A": 255
+                },
+                "OutlineColor": {
+                  "R": 255,
+                  "G": 0,
+                  "B": 0,
+                  "A": 255
+                },
+                "OutlineThickness": 3,
+                "Style": []
               }
             ]
           }
@@ -37,9 +181,9 @@
       ],
 
       "InitialScenes": [
-        "Main"
+        "GameScene"
       ]
     }
   ],
-  "InitialState": "State1"
+  "InitialState": "GameState"
 }

@@ -138,14 +138,18 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Ball.cpp" />
+    <ClCompile Include="Bars.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Pong.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Configuration.json" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Pong.h" />
+    <Image Include="bkg.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="ka1.ttf" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
