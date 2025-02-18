@@ -1,0 +1,2 @@
+#pragma code_page(65001)
+2 /* CREATEPROCESS_MANIFEST_RESOURCE_ID */ 24 /* RT_MANIFEST */ "C:/Users/jehud/source/repos/Harmony/vcpkg_installed/vcpkg/blds/sfml/x64-windows-dbg/src/SFML/Network/CMakeFiles/sfml-network.dir/embed.manifest"

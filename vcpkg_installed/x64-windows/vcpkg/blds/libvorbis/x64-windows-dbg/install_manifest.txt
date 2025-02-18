@@ -1,0 +1,16 @@
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows/vcpkg/pkgs/libvorbis_x64-windows/debug/lib/pkgconfig/vorbis.pc
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows/vcpkg/pkgs/libvorbis_x64-windows/debug/lib/pkgconfig/vorbisenc.pc
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows/vcpkg/pkgs/libvorbis_x64-windows/debug/lib/pkgconfig/vorbisfile.pc
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows/vcpkg/pkgs/libvorbis_x64-windows/debug/include/vorbis/codec.h
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows/vcpkg/pkgs/libvorbis_x64-windows/debug/include/vorbis/vorbisenc.h
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows/vcpkg/pkgs/libvorbis_x64-windows/debug/include/vorbis/vorbisfile.h
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows/vcpkg/pkgs/libvorbis_x64-windows/debug/lib/vorbis.lib
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows/vcpkg/pkgs/libvorbis_x64-windows/debug/bin/vorbis.dll
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows/vcpkg/pkgs/libvorbis_x64-windows/debug/lib/vorbisenc.lib
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows/vcpkg/pkgs/libvorbis_x64-windows/debug/bin/vorbisenc.dll
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows/vcpkg/pkgs/libvorbis_x64-windows/debug/lib/vorbisfile.lib
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows/vcpkg/pkgs/libvorbis_x64-windows/debug/bin/vorbisfile.dll
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows/vcpkg/pkgs/libvorbis_x64-windows/debug/lib/cmake/Vorbis/VorbisTargets.cmake
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows/vcpkg/pkgs/libvorbis_x64-windows/debug/lib/cmake/Vorbis/VorbisTargets-debug.cmake
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows/vcpkg/pkgs/libvorbis_x64-windows/debug/lib/cmake/Vorbis/VorbisConfig.cmake
+C:/Users/jehud/source/repos/Jehudme/Harmony/vcpkg_installed/x64-windows/vcpkg/pkgs/libvorbis_x64-windows/debug/lib/cmake/Vorbis/VorbisConfigVersion.cmake
