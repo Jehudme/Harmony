@@ -2,19 +2,25 @@
 #include "Font.h"
 #include "Configuration.h"
 
+namespace {
+    // Configuration keys
+    const std::string CONFIG_PATH = "Path";
+    const std::string CONFIG_SMOOTH = "Smooth";
+}
+
 namespace Harmony
 {
     Font::Font(std::shared_ptr<Configuration> configuration)
         : Object(configuration), isValid_(false)
     {
         // Load the font from a file if the path is provided
-        if (const auto fontPathData = configuration->get({ "Path" }))
+        if (const auto fontPathData = configuration->get({ CONFIG_PATH }))
         {
             std::string fontPath = fontPathData.value().get<std::string>();
             loadFromFile(fontPath);
         }
         // Set font properties
-        if (const auto smoothData = configuration->get({ "Smooth" }))
+        if (const auto smoothData = configuration->get({ CONFIG_SMOOTH }))
         {
             setSmooth(smoothData.value().get<bool>());
         }

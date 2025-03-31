@@ -35,6 +35,11 @@ namespace Pong {
                 const int newScore = std::stoi(stringScore) + 1;
 
                 scoreRight->sprite.setString(std::to_string(newScore));
+
+				if (newScore >= 1)
+				{
+					taskQueue.push(Harmony::create<Harmony::QueueSceneTask>("GameState", "EndGameScene"));
+				}
             }
             
 
@@ -44,6 +49,11 @@ namespace Pong {
                 const int newScore = std::stoi(stringScore) + 1;
 
                 scoreLeft->sprite.setString(std::to_string(newScore));
+
+                if (newScore >= 1)
+                {
+                    taskQueue.push(Harmony::create<Harmony::QueueSceneTask>("GameState", "EndGameScene"));
+                }
             }
 
             // Check for horizontal collisions with board boundaries

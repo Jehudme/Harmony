@@ -14,6 +14,14 @@ void Harmony::Script::onExit(std::shared_ptr<Object> object)
 {
 }
 
+void Harmony::Script::onEnter(Object* object)
+{
+}
+
+void Harmony::Script::onExit(Object* object)
+{
+}
+
 void Harmony::Script::onUpdate(std::shared_ptr<Object> object, const sf::Time& time, TaskQueue& taskQueue)
 {
 }

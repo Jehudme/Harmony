@@ -6,17 +6,6 @@
 #include "TaskQueue.h"
 
 namespace Harmony {
-
-    // Constants for configuration keys
-    constexpr const char* CONFIG_WINDOW         = "Window";
-    constexpr const char* CONFIG_TITLE          = "Title";
-    constexpr const char* CONFIG_SIZE           = "Size";
-    constexpr const char* CONFIG_WIDTH          = "Width";
-    constexpr const char* CONFIG_HEIGHT         = "Height";
-    constexpr const char* CONFIG_FULLSCREEN     = "Fullscreen";
-    constexpr const char* CONFIG_VERTICAL_SYNC  = "VerticalSync";
-    constexpr const char* CONFIG_FPS            = "FPS";
-
     class StateStack;
     class Engine : public Object {
     public:

@@ -10,9 +10,30 @@
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <algorithm>
 
-namespace Harmony {
+namespace Harmony
+{
+    namespace
+    {
+        // String constants for configuration keys
+        constexpr const char* CONFIG_SCRIPT = "Script";
+        constexpr const char* CONFIG_POSITION = "Position";
+        constexpr const char* CONFIG_SCALE = "Scale";
+        constexpr const char* CONFIG_ORIGIN = "Origin";
+        constexpr const char* CONFIG_ROTATION = "Rotation";
+        constexpr const char* CONFIG_POSITION_VELOCITY = "PositionVelocity";
+        constexpr const char* CONFIG_POSITION_ACCELERATION = "PositionAcceleration";
+        constexpr const char* CONFIG_ROTATION_VELOCITY = "RotationVelocity";
+        constexpr const char* CONFIG_ROTATION_ACCELERATION = "RotationAcceleration";
+        constexpr const char* CONFIG_CHILDREN = "Children";
+        constexpr const char* CONFIG_TYPE = "Type";
 
-    constexpr const char* CONFIG_SCRIPT = "Script";
+        // String constants for vector keys
+        constexpr const char* CONFIG_VECTOR_X = "X";
+        constexpr const char* CONFIG_VECTOR_Y = "Y";
+
+        // Error messages
+        constexpr const char* ERROR_UNKNOWN_TYPE = "Unknown type: ";
+    }
 
     SceneNode::SceneNode(std::shared_ptr<Configuration> configuration, bool enableOnEnter)
         : Object(configuration), configuration_(configuration) {
@@ -24,9 +45,8 @@ namespace Harmony {
             return;
         }
 
-        for (auto child : children) 
-        {
-            detachChild(child);
+        if (script_) {
+            script_->onExit(this);
         }
     }
 
@@ -35,7 +55,7 @@ namespace Harmony {
         {
             return;
         }
-        
+
         states.transform *= getTransform();
 
         if (script_) {
@@ -50,6 +70,10 @@ namespace Harmony {
     }
 
     void SceneNode::update(const sf::Time& time, TaskQueue& taskQueue) {
+		if (!isUpdateEnable_) {
+			return;
+		}
+
         updateCurrent(time, taskQueue);
         updateTransform(time, taskQueue);
 
@@ -98,7 +122,7 @@ namespace Harmony {
 
     void SceneNode::detach()
     {
-        if (parent) 
+        if (parent)
         {
             parent->detachChild(std::static_pointer_cast<SceneNode>(shared_from_this()));
         }
@@ -200,12 +224,17 @@ namespace Harmony {
         if (const auto childrenData = configuration_->get({ CONFIG_CHILDREN })) {
             for (const auto& childData : childrenData.value()) {
                 auto childConfiguration = create<Configuration>(childData);
-                attachChild(create<SceneNode>(std::move(childConfiguration)));
+                auto child = create<SceneNode>(std::move(childConfiguration));
+                attachChild(child);
             }
         }
 
         if (const auto scriptName = configuration_->get<std::string>({ CONFIG_SCRIPT })) {
             script_ = Harmony::find<Script>(scriptName.value());
+        }
+
+        if (script_) {
+			script_->onEnter(this);
         }
     }
 

@@ -19,6 +19,9 @@
     <Filter Include="Source Files\Game">
       <UniqueIdentifier>{171506fe-ad51-410d-a9a1-aae5712a9ed4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\RetryMenu">
+      <UniqueIdentifier>{4fef9592-ec34-4c56-a231-08eb7b42aaef}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -32,6 +35,9 @@
     </ClCompile>
     <ClCompile Include="PlayButton.cpp">
       <Filter>Source Files\Menu</Filter>
+    </ClCompile>
+    <ClCompile Include="RetryButton.cpp">
+      <Filter>Source Files\RetryMenu</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

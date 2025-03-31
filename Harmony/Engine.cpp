@@ -3,22 +3,34 @@
 #include <SFML/Window/Event.hpp>
 #include "StateStack.h"
 
-namespace Harmony {
+namespace {
+    // Configuration keys
+    const std::string CONFIG_WINDOW = "Window";
+    const std::string CONFIG_TITLE = "Title";
+    const std::string CONFIG_SIZE = "Size";
+    const std::string CONFIG_WIDTH = "Width";
+    const std::string CONFIG_HEIGHT = "Height";
+    const std::string CONFIG_FULLSCREEN = "Fullscreen";
+    const std::string CONFIG_VERTICAL_SYNC = "VerticalSync";
+    const std::string CONFIG_FPS = "FPS";
 
-    // Constants for default values
+    // Error messages
+    const std::string ERROR_NULL_CONFIGURATION = "Configuration cannot be null.";
+
+    // Default window settings
     constexpr const char* DEFAULT_WINDOW_TITLE = "Harmony Engine";
     constexpr unsigned int DEFAULT_WINDOW_WIDTH = 600;
     constexpr unsigned int DEFAULT_WINDOW_HEIGHT = 600;
     constexpr bool DEFAULT_FULLSCREEN = false;
     constexpr bool DEFAULT_VERTICAL_SYNC = true;
     constexpr unsigned int DEFAULT_FPS = 60;
+}
 
+namespace Harmony {
     Engine::Engine(std::shared_ptr<Configuration> configuration)
         : Object(configuration), configuration_(configuration), stateStack_(std::make_shared<StateStack>(configuration)) {
-
         if (const auto windowData = configuration->get({ CONFIG_WINDOW }))
             initializeWindow(create<Configuration>(windowData.value()));
-
         else
             initializeWindow(create<Configuration>());
     }
@@ -59,7 +71,6 @@ namespace Harmony {
 
     void Engine::handleEvent() {
         sf::Event event;
-
         taskQueue_.execute();
         while (renderWindow_.pollEvent(event)) {
             if (event.type == sf::Event::Closed) {
@@ -94,7 +105,7 @@ namespace Harmony {
     // Setters
     void Engine::setConfiguration(std::shared_ptr<Configuration> configuration) {
         if (!configuration) {
-            throw std::invalid_argument("Configuration cannot be null.");
+            throw std::invalid_argument(ERROR_NULL_CONFIGURATION);
         }
         configuration_ = configuration;
         initializeWindow(configuration); // Reinitialize the window with the new configuration

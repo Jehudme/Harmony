@@ -5,91 +5,127 @@
 #include "Configuration.h"
 #include "Texture.h"
 
-Harmony::Rectangle::Rectangle(std::shared_ptr<Configuration> configuration)
-    : SceneNode(configuration)
+namespace Harmony
 {
-    initialize();
-}
-
-sf::FloatRect Harmony::Rectangle::getGlobalBound() const {
-    return getGlobalTransform().transformRect(sprite.getLocalBounds());
-}
-
-
-void Harmony::Rectangle::initialize()
-{
-    if (isReseting_)
+    namespace
     {
-        SceneNode::initialize();
+        // Constants for default sizes, colors, thickness, and strings
+        constexpr float DEFAULT_RECTANGLE_WIDTH = 50.0f;
+        constexpr float DEFAULT_RECTANGLE_HEIGHT = 50.0f;
+
+        constexpr sf::Uint8 DEFAULT_FILL_COLOR_R = 255;
+        constexpr sf::Uint8 DEFAULT_FILL_COLOR_G = 255;
+        constexpr sf::Uint8 DEFAULT_FILL_COLOR_B = 255;
+        constexpr sf::Uint8 DEFAULT_FILL_COLOR_A = 255;
+
+        constexpr sf::Uint8 DEFAULT_OUTLINE_COLOR_R = 0;
+        constexpr sf::Uint8 DEFAULT_OUTLINE_COLOR_G = 0;
+        constexpr sf::Uint8 DEFAULT_OUTLINE_COLOR_B = 0;
+        constexpr sf::Uint8 DEFAULT_OUTLINE_COLOR_A = 255;
+
+        constexpr float DEFAULT_OUTLINE_THICKNESS = 0.0f;
+
+        constexpr const char* DEFAULT_TEXTURE_NAME = "UnknowTexture";
+        constexpr int DEFAULT_TEXTURE_LEFT = 0;
+        constexpr int DEFAULT_TEXTURE_TOP = 0;
+
+        // Constants for configuration keys
+        constexpr const char* CONFIG_KEY_SIZE = "Size";
+        constexpr const char* CONFIG_KEY_WIDTH = "Width";
+        constexpr const char* CONFIG_KEY_HEIGHT = "Height";
+        constexpr const char* CONFIG_KEY_FILL_COLOR = "FillColor";
+        constexpr const char* CONFIG_KEY_OUTLINE_COLOR = "OutlineColor";
+        constexpr const char* CONFIG_KEY_OUTLINE_THICKNESS = "OutlineThickness";
+        constexpr const char* CONFIG_KEY_TEXTURE = "Texture";
+        constexpr const char* CONFIG_KEY_R = "R";
+        constexpr const char* CONFIG_KEY_G = "G";
+        constexpr const char* CONFIG_KEY_B = "B";
+        constexpr const char* CONFIG_KEY_A = "A";
+        constexpr const char* CONFIG_KEY_LEFT = "left";
+        constexpr const char* CONFIG_KEY_TOP = "top";
     }
 
-    // Set the size of the rectangle if provided in the configuration
-    if (const auto sizeData = configuration_->get({ "Size" }))
+    Rectangle::Rectangle(std::shared_ptr<Configuration> configuration)
+        : SceneNode(configuration)
     {
-        const auto sizeConfiguration = create<Configuration>(sizeData.value());
-        sf::Vector2f size = {
-            sizeConfiguration->get<float>({ "Width" }).value_or(50),
-            sizeConfiguration->get<float>({ "Height" }).value_or(50)
-        };
-        sprite.setSize(size);
+        initialize();
     }
 
-    // Set the fill color of the rectangle if provided in the configuration
-    if (const auto fillColorData = configuration_->get({ "FillColor" }))
-    {
-        const auto colorConfiguration = create<Configuration>(fillColorData.value());
-        sf::Color fillColor = {
-            static_cast<sf::Uint8>(colorConfiguration->get<int>({ "R" }).value_or(255)),
-            static_cast<sf::Uint8>(colorConfiguration->get<int>({ "G" }).value_or(255)),
-            static_cast<sf::Uint8>(colorConfiguration->get<int>({ "B" }).value_or(255)),
-            static_cast<sf::Uint8>(colorConfiguration->get<int>({ "A" }).value_or(255))
-        };
-        sprite.setFillColor(fillColor);
+    sf::FloatRect Rectangle::getGlobalBound() const {
+        return getGlobalTransform().transformRect(sprite.getLocalBounds());
     }
 
-    // Set the outline color of the rectangle if provided in the configuration
-    if (const auto outlineColorData = configuration_->get({ "OutlineColor" }))
+    void Rectangle::initialize()
     {
-        const auto colorConfiguration = create<Configuration>(outlineColorData.value());
-        sf::Color outlineColor = {
-            static_cast<sf::Uint8>(colorConfiguration->get<int>({ "R" }).value_or(0)),
-            static_cast<sf::Uint8>(colorConfiguration->get<int>({ "G" }).value_or(0)),
-            static_cast<sf::Uint8>(colorConfiguration->get<int>({ "B" }).value_or(0)),
-            static_cast<sf::Uint8>(colorConfiguration->get<int>({ "A" }).value_or(255))
-        };
-        sprite.setOutlineColor(outlineColor);
-    }
-
-    // Set the outline thickness of the rectangle if provided in the configuration
-    if (const auto outlineThicknessData = configuration_->get({ "OutlineThickness" }))
-    {
-        float outlineThickness = outlineThicknessData.value().get<float>();
-        sprite.setOutlineThickness(outlineThickness);
-    }
-
-    if (const auto textureData = configuration_->get({ "Texture" }))
-    {
-        const auto textureConfiguration = create<Configuration>(textureData.value());
-        try
+        if (isReseting_)
         {
-            texture = find<Texture>(textureConfiguration->get<std::string>({ "Name" }).value_or("UnknowTexture"));
-        }
-        catch (const std::exception&)
-        {
-            texture = create<Texture>(textureConfiguration);
+            SceneNode::initialize();
         }
 
-        const sf::Vector2u textureSize = texture->getResource().getSize();
-        const int width = textureConfiguration->get<int>({ "Width" }).value_or(static_cast<int>(textureSize.x));
-        const int height = textureConfiguration->get<int>({ "Height" }).value_or(static_cast<int>(textureSize.y));
-        const int left = textureConfiguration->get<int>({ "left" }).value_or(0);
-        const int top = textureConfiguration->get<int>({ "top" }).value_or(0);
+        if (const auto sizeData = configuration_->get({ CONFIG_KEY_SIZE }))
+        {
+            const auto sizeConfiguration = create<Configuration>(sizeData.value());
+            sf::Vector2f size = {
+                sizeConfiguration->get<float>({ CONFIG_KEY_WIDTH }).value_or(DEFAULT_RECTANGLE_WIDTH),
+                sizeConfiguration->get<float>({ CONFIG_KEY_HEIGHT }).value_or(DEFAULT_RECTANGLE_HEIGHT)
+            };
+            sprite.setSize(size);
+        }
 
-        sprite.setTexture(&texture->getResource());
-        sprite.setTextureRect(sf::IntRect(left, top, width, height));
+        if (const auto fillColorData = configuration_->get({ CONFIG_KEY_FILL_COLOR }))
+        {
+            const auto colorConfiguration = create<Configuration>(fillColorData.value());
+            sf::Color fillColor = {
+                static_cast<sf::Uint8>(colorConfiguration->get<int>({ CONFIG_KEY_R }).value_or(DEFAULT_FILL_COLOR_R)),
+                static_cast<sf::Uint8>(colorConfiguration->get<int>({ CONFIG_KEY_G }).value_or(DEFAULT_FILL_COLOR_G)),
+                static_cast<sf::Uint8>(colorConfiguration->get<int>({ CONFIG_KEY_B }).value_or(DEFAULT_FILL_COLOR_B)),
+                static_cast<sf::Uint8>(colorConfiguration->get<int>({ CONFIG_KEY_A }).value_or(DEFAULT_FILL_COLOR_A))
+            };
+            sprite.setFillColor(fillColor);
+        }
+
+        if (const auto outlineColorData = configuration_->get({ CONFIG_KEY_OUTLINE_COLOR }))
+        {
+            const auto colorConfiguration = create<Configuration>(outlineColorData.value());
+            sf::Color outlineColor = {
+                static_cast<sf::Uint8>(colorConfiguration->get<int>({ CONFIG_KEY_R }).value_or(DEFAULT_OUTLINE_COLOR_R)),
+                static_cast<sf::Uint8>(colorConfiguration->get<int>({ CONFIG_KEY_G }).value_or(DEFAULT_OUTLINE_COLOR_G)),
+                static_cast<sf::Uint8>(colorConfiguration->get<int>({ CONFIG_KEY_B }).value_or(DEFAULT_OUTLINE_COLOR_B)),
+                static_cast<sf::Uint8>(colorConfiguration->get<int>({ CONFIG_KEY_A }).value_or(DEFAULT_OUTLINE_COLOR_A))
+            };
+            sprite.setOutlineColor(outlineColor);
+        }
+
+        if (const auto outlineThicknessData = configuration_->get({ CONFIG_KEY_OUTLINE_THICKNESS }))
+        {
+            float outlineThickness = outlineThicknessData.value().get<float>();
+            sprite.setOutlineThickness(outlineThickness);
+        }
+
+        if (const auto textureData = configuration_->get({ CONFIG_KEY_TEXTURE }))
+        {
+            const auto textureConfiguration = create<Configuration>(textureData.value());
+            try
+            {
+                texture = find<Texture>(textureConfiguration->get<std::string>({ CONFIG_KEY_NAME }).value_or(DEFAULT_TEXTURE_NAME));
+            }
+            catch (const std::exception&)
+            {
+                texture = create<Texture>(textureConfiguration);
+            }
+
+            const sf::Vector2u textureSize = texture->getResource().getSize();
+            const int width = textureConfiguration->get<int>({ CONFIG_KEY_WIDTH }).value_or(static_cast<int>(textureSize.x));
+            const int height = textureConfiguration->get<int>({ CONFIG_KEY_HEIGHT }).value_or(static_cast<int>(textureSize.y));
+            const int left = textureConfiguration->get<int>({ CONFIG_KEY_LEFT }).value_or(DEFAULT_TEXTURE_LEFT);
+            const int top = textureConfiguration->get<int>({ CONFIG_KEY_TOP }).value_or(DEFAULT_TEXTURE_TOP);
+
+            sprite.setTexture(&texture->getResource());
+            sprite.setTextureRect(sf::IntRect(left, top, width, height));
+        }
     }
-}
 
-void Harmony::Rectangle::drawCurrent(sf::RenderTarget& renderTarget, sf::RenderStates states) const {
-	renderTarget.draw(sprite, states);
+    void Rectangle::drawCurrent(sf::RenderTarget& renderTarget, sf::RenderStates states) const {
+        renderTarget.draw(sprite, states);
+    }
 }

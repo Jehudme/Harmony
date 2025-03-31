@@ -3,8 +3,19 @@
 #include "Configuration.h"
 #include "Utilities.h"
 
-namespace Harmony {
+namespace {
+    // Configuration keys
+    const std::string CONFIG_KEY_UNIQUE_ID = "UniqueId";
+    const std::string CONFIG_KEY_NAME = "Name";
 
+    // Default values
+    const std::string DEFAULT_OBJECT_NAME = "UnnamedObject";
+
+    // Error messages
+    const std::string ERROR_NAME_IN_USE = "Name already in use";
+}
+
+namespace Harmony {
     Object::Object(uint64_t uniqueId, const std::string& name)
         : uniqueId_(uniqueId ? uniqueId : Utilities::generateRandomNumber<uint64_t>()),
         name_(DEFAULT_OBJECT_NAME) {
@@ -36,11 +47,11 @@ namespace Harmony {
 
     void Object::setName(const std::string& name) {
         if (registeredByName_.contains(name)) {
-            throw std::runtime_error("Name already in use");
+            throw std::runtime_error(ERROR_NAME_IN_USE);
         }
 
-        if (registeredByName_[name].lock().get() == this) {
-            registeredByName_.erase(name);
+        if (registeredByName_[name_].lock().get() == this) {
+            registeredByName_.erase(name_);
         }
 
         registeredByName_[name] = weak_from_this();

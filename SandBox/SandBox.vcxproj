@@ -142,6 +142,7 @@
     <ClCompile Include="Bars.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="PlayButton.cpp" />
+    <ClCompile Include="RetryButton.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Configuration.json" />

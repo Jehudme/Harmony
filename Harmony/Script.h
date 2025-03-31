@@ -27,6 +27,9 @@ namespace Harmony
 		virtual void onEnter(std::shared_ptr<Object> object);
 		virtual void onExit(std::shared_ptr<Object> object);
 
+		virtual void onEnter(Object* object);
+		virtual void onExit(Object* object);
+
 		virtual void onUpdate(std::shared_ptr<Object> object, const sf::Time& time, TaskQueue& taskQueue);
 		virtual void onDraw(std::shared_ptr<const Object> object, sf::RenderTarget& renderTarget, sf::RenderStates states) const;
 	};

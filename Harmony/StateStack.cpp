@@ -8,7 +8,18 @@
 #include <SFML/Graphics/RenderStates.hpp>
 #include <algorithm>
 
-namespace Harmony {
+namespace Harmony
+{
+    namespace
+    {
+        // Configuration keys
+        constexpr const char* CONFIG_STATES = "States";
+        constexpr const char* CONFIG_INITIAL_STATE = "InitialState";
+
+        // Error messages
+        constexpr const char* ERROR_NO_STATES_FOUND = "No states found in the configuration.";
+        constexpr const char* ERROR_STATE_NOT_FOUND = "State not found: ";
+    }
 
     StateStack::StateStack(std::shared_ptr<Configuration> configuration) {
         if (const auto states = configuration->get({ CONFIG_STATES })) {
@@ -32,7 +43,6 @@ namespace Harmony {
     }
 
     void StateStack::update(const sf::Time& time, TaskQueue& taskQueue) {
-
         if (!buffer_.empty()) {
             buffer_.top()->update(time, taskQueue);
         }
@@ -90,7 +100,7 @@ namespace Harmony {
         if (!buffer_.empty()) {
             return buffer_.top();
         }
-        throw std::runtime_error("No current state available");
+        throw std::runtime_error(ERROR_NO_STATES_FOUND);
     }
 
     std::shared_ptr<State> StateStack::get(uint64_t uniqueId) const {

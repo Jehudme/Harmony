@@ -5,6 +5,32 @@
 
 namespace Harmony
 {
+    namespace
+    {
+        // Configuration keys
+        constexpr const char* CONFIG_STRING = "String";
+        constexpr const char* CONFIG_FONT = "Font";
+        constexpr const char* CONFIG_CHARACTER_SIZE = "CharacterSize";
+        constexpr const char* CONFIG_FILL_COLOR = "FillColor";
+        constexpr const char* CONFIG_OUTLINE_COLOR = "OutlineColor";
+        constexpr const char* CONFIG_OUTLINE_THICKNESS = "OutlineThickness";
+        constexpr const char* CONFIG_STYLE = "Style";
+        constexpr const char* CONFIG_ORIGIN = "Origin";
+
+        // Color keys
+        constexpr const char* CONFIG_COLOR_R = "R";
+        constexpr const char* CONFIG_COLOR_G = "G";
+        constexpr const char* CONFIG_COLOR_B = "B";
+        constexpr const char* CONFIG_COLOR_A = "A";
+
+        // Default values
+        constexpr const char* DEFAULT_FONT_NAME = "UnknownFont.ttf";
+        constexpr sf::Uint8 DEFAULT_COLOR_R = 255;
+        constexpr sf::Uint8 DEFAULT_COLOR_G = 255;
+        constexpr sf::Uint8 DEFAULT_COLOR_B = 255;
+        constexpr sf::Uint8 DEFAULT_COLOR_A = 255;
+    }
+
     Text::Text(std::shared_ptr<Configuration> configuration)
         : SceneNode(configuration)
     {
@@ -15,6 +41,7 @@ namespace Harmony
     {
         return getGlobalTransform().transformRect(sprite.getLocalBounds());
     }
+
     void Text::initialize()
     {
         if (isReseting_)
@@ -23,18 +50,18 @@ namespace Harmony
         }
 
         // Set the string (text content)
-        if (const auto stringData = configuration_->get({ "String" }))
+        if (const auto stringData = configuration_->get({ CONFIG_STRING }))
         {
             sprite.setString(stringData.value().get<std::string>());
         }
 
         // Set the font
-        if (const auto fontData = configuration_->get({ "Font" }))
+        if (const auto fontData = configuration_->get({ CONFIG_FONT }))
         {
             const auto fontConfiguration = create<Configuration>(fontData.value());
             try
             {
-                font = find<Font>(fontConfiguration->get<std::string>({ "Name" }).value_or("UnknownFont.ttf"));
+                font = find<Font>(fontConfiguration->get<std::string>({ CONFIG_STRING }).value_or(DEFAULT_FONT_NAME));
             }
             catch (const std::exception&)
             {
@@ -44,45 +71,45 @@ namespace Harmony
         }
 
         // Set the character size
-        if (const auto characterSizeData = configuration_->get({ "CharacterSize" }))
+        if (const auto characterSizeData = configuration_->get({ CONFIG_CHARACTER_SIZE }))
         {
             sprite.setCharacterSize(characterSizeData.value().get<unsigned int>());
         }
 
         // Set the fill color
-        if (const auto fillColorData = configuration_->get({ "FillColor" }))
+        if (const auto fillColorData = configuration_->get({ CONFIG_FILL_COLOR }))
         {
             const auto colorConfiguration = create<Configuration>(fillColorData.value());
             sf::Color fillColor = {
-                static_cast<sf::Uint8>(colorConfiguration->get<int>({ "R" }).value_or(255)),
-                static_cast<sf::Uint8>(colorConfiguration->get<int>({ "G" }).value_or(255)),
-                static_cast<sf::Uint8>(colorConfiguration->get<int>({ "B" }).value_or(255)),
-                static_cast<sf::Uint8>(colorConfiguration->get<int>({ "A" }).value_or(255))
+                static_cast<sf::Uint8>(colorConfiguration->get<int>({ CONFIG_COLOR_R }).value_or(DEFAULT_COLOR_R)),
+                static_cast<sf::Uint8>(colorConfiguration->get<int>({ CONFIG_COLOR_G }).value_or(DEFAULT_COLOR_G)),
+                static_cast<sf::Uint8>(colorConfiguration->get<int>({ CONFIG_COLOR_B }).value_or(DEFAULT_COLOR_B)),
+                static_cast<sf::Uint8>(colorConfiguration->get<int>({ CONFIG_COLOR_A }).value_or(DEFAULT_COLOR_A))
             };
             sprite.setFillColor(fillColor);
         }
 
         // Set the outline color
-        if (const auto outlineColorData = configuration_->get({ "OutlineColor" }))
+        if (const auto outlineColorData = configuration_->get({ CONFIG_OUTLINE_COLOR }))
         {
             const auto colorConfiguration = create<Configuration>(outlineColorData.value());
             sf::Color outlineColor = {
-                static_cast<sf::Uint8>(colorConfiguration->get<int>({ "R" }).value_or(0)),
-                static_cast<sf::Uint8>(colorConfiguration->get<int>({ "G" }).value_or(0)),
-                static_cast<sf::Uint8>(colorConfiguration->get<int>({ "B" }).value_or(0)),
-                static_cast<sf::Uint8>(colorConfiguration->get<int>({ "A" }).value_or(255))
+                static_cast<sf::Uint8>(colorConfiguration->get<int>({ CONFIG_COLOR_R }).value_or(0)),
+                static_cast<sf::Uint8>(colorConfiguration->get<int>({ CONFIG_COLOR_G }).value_or(0)),
+                static_cast<sf::Uint8>(colorConfiguration->get<int>({ CONFIG_COLOR_B }).value_or(0)),
+                static_cast<sf::Uint8>(colorConfiguration->get<int>({ CONFIG_COLOR_A }).value_or(DEFAULT_COLOR_A))
             };
             sprite.setOutlineColor(outlineColor);
         }
 
         // Set the outline thickness
-        if (const auto outlineThicknessData = configuration_->get({ "OutlineThickness" }))
+        if (const auto outlineThicknessData = configuration_->get({ CONFIG_OUTLINE_THICKNESS }))
         {
             sprite.setOutlineThickness(outlineThicknessData.value().get<float>());
         }
 
         // Set the style (e.g., bold, italic, underlined, etc.)
-        if (const auto styleData = configuration_->get({ "Style" }))
+        if (const auto styleData = configuration_->get({ CONFIG_STYLE }))
         {
             sf::Uint32 style = sf::Text::Regular; // Default style
 
@@ -106,11 +133,13 @@ namespace Harmony
             sprite.setStyle(style);
         }
 
-        if (configuration_->get({ "Origin" })) {
+        if (configuration_->get({ CONFIG_ORIGIN }))
+        {
             const auto bounds = sprite.getGlobalBounds();
             setOrigin(bounds.width / 2, bounds.height / 2);
         }
     }
+
     void Text::drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const
     {
         target.draw(sprite, states);

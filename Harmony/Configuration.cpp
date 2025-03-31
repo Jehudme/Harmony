@@ -3,8 +3,17 @@
 #include <stdexcept>
 #include <fstream>
 
-namespace Harmony {
+namespace {
+    // Error messages
+    const std::string ERROR_FILE_PATH_NOT_SET = "File path is not set.";
+    const std::string ERROR_FAILED_TO_OPEN_FILE = "Failed to open file: ";
+    const std::string ERROR_FAILED_TO_OPEN_FILE_FOR_WRITING = "Failed to open file for writing: ";
 
+    // JSON formatting
+    constexpr int JSON_INDENT_SIZE = 4;
+}
+
+namespace Harmony {
     Configuration::Configuration(const nlohmann::json& data, uint64_t uniqueId)
         : Object(uniqueId), data_(data) {
     }
@@ -16,7 +25,7 @@ namespace Harmony {
 
         std::ifstream file(*filePath_);
         if (!file.is_open()) {
-            throw std::runtime_error(ERROR_FILE_OPEN_FAILED + *filePath_);
+            throw std::runtime_error(ERROR_FAILED_TO_OPEN_FILE + *filePath_);
         }
 
         file >> data_;
@@ -31,10 +40,10 @@ namespace Harmony {
         // Export the data to the file before clearing it
         std::ofstream file(*filePath_);
         if (!file.is_open()) {
-            throw std::runtime_error(ERROR_FILE_WRITE_FAILED + *filePath_);
+            throw std::runtime_error(ERROR_FAILED_TO_OPEN_FILE_FOR_WRITING + *filePath_);
         }
 
-        file << data_.dump(4); // Pretty-print with an indentation of 4 spaces
+        file << data_.dump(JSON_INDENT_SIZE); // Pretty-print with an indentation of 4 spaces
         file.close();
 
         // Clear the data
@@ -61,6 +70,19 @@ namespace Harmony {
     }
 
     std::optional<nlohmann::json> Configuration::get(const std::initializer_list<const char*>& path) const {
+        const nlohmann::json* current = &data_;
+        for (const auto& key : path) {
+            if (current->contains(key)) {
+                current = &(*current)[key];
+            }
+            else {
+                return std::nullopt;
+            }
+        }
+        return std::make_optional<nlohmann::json>(*current);
+    }
+
+    std::optional<nlohmann::json> Configuration::get(const std::initializer_list<std::string>& path) const {
         const nlohmann::json* current = &data_;
         for (const auto& key : path) {
             if (current->contains(key)) {

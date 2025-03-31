@@ -37,4 +37,21 @@ namespace Harmony
 
 		std::shared_ptr<SceneNode> parent, child;
 	};
+
+	struct QueueSceneTask : public Task_t
+	{
+		QueueSceneTask(const std::string& state, const std::string& scene);
+		void execute() override;
+		std::string scene;
+		std::string state;
+	};
+
+	struct UnqueueSceneTask : public Task_t
+	{
+		UnqueueSceneTask(const std::string& state, const std::string& scene);
+		void execute() override;
+
+		std::string state;
+		std::string scene;
+	};
 }

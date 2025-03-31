@@ -10,12 +10,6 @@
 
 namespace Harmony {
 
-    // Constants for configuration keys and error messages
-    constexpr const char* CONFIG_SCENES = "Scenes";
-    constexpr const char* CONFIG_INITIAL_SCENES = "InitialScenes";
-    constexpr const char* ERROR_SCENE_NOT_FOUND = "Scene not found: ";
-    constexpr const char* ERROR_NULL_SCENE = "Scene cannot be null.";
-
     class TaskQueue;
     class Scene;
     struct Script;

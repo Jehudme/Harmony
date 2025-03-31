@@ -27,6 +27,24 @@
     <Filter Include="Source Files\Resources">
       <UniqueIdentifier>{4f89b3e1-3265-4f8b-beee-6056109db528}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Core">
+      <UniqueIdentifier>{bcefbb37-81c0-419f-ae18-9404125cbbe2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Entities">
+      <UniqueIdentifier>{8ab30d09-cd06-4ee9-9478-d47ac8c36f6d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Utilities">
+      <UniqueIdentifier>{7f08f076-b797-46ee-83ce-5a16bdabc6b8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Resources">
+      <UniqueIdentifier>{59136c69-d33f-461a-80bb-e126e616fa24}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Scenes">
+      <UniqueIdentifier>{6b783a90-63fe-4ae6-8863-41f9da1ba95f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Tasks">
+      <UniqueIdentifier>{88de3218-29bd-47bd-adab-6eb3e9ef54d5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -88,62 +106,59 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Configuration.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Script.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Constants.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Object.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="pch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SceneNode.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Circle.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Entities</Filter>
     </ClInclude>
-    <ClInclude Include="Group.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Rectangle.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Scene.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="State.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="StateStack.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Task.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="TaskQueue.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Utilities.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Text.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Configuration.h">
+      <Filter>Header Files\Core</Filter>
     </ClInclude>
     <ClInclude Include="Font.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Group.h">
+      <Filter>Header Files\Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="Object.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Rectangle.h">
+      <Filter>Header Files\Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>Header Files\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine.h">
+      <Filter>Header Files\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneNode.h">
+      <Filter>Header Files\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="Script.h">
+      <Filter>Header Files\Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="State.h">
+      <Filter>Header Files\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="StateStack.h">
+      <Filter>Header Files\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="TaskQueue.h">
+      <Filter>Header Files\Tasks</Filter>
+    </ClInclude>
+    <ClInclude Include="Task.h">
+      <Filter>Header Files\Tasks</Filter>
+    </ClInclude>
+    <ClInclude Include="Text.h">
+      <Filter>Header Files\Entities</Filter>
     </ClInclude>
     <ClInclude Include="Texture.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Utilities.h">
+      <Filter>Header Files\Utilities</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

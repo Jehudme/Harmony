@@ -6,12 +6,22 @@
 #include "Script.h"
 #include <stdexcept>
 
-namespace Harmony {
+namespace Harmony
+{
+    namespace
+    {
+        // Configuration keys
+        constexpr const char* CONFIG_SCENES = "Scenes";
+        constexpr const char* CONFIG_INITIAL_SCENES = "InitialScenes";
+        constexpr const char* CONFIG_SCRIPT = "Script";
+
+        // Error messages
+        constexpr const char* ERROR_SCENE_NOT_FOUND = "Scene not found: ";
+        constexpr const char* ERROR_NULL_SCENE = "Scene is null and cannot be added.";
+    }
 
     State::State(std::shared_ptr<Configuration> configuration)
         : Object(configuration) {
-
-        constexpr const char* CONFIG_SCRIPT = "Script";
 
         // Load scenes from configuration
         if (const auto scenesConfigurationsData = configuration->get({ CONFIG_SCENES })) {
@@ -77,7 +87,6 @@ namespace Harmony {
         clearSceneBuffer();
     }
 
-    // Overloaded function to get a scene by name
     std::shared_ptr<Scene> State::getScene(const std::string& name) const {
         for (const auto& scene : scenes_) {
             if (scene->getName() == name) {
@@ -87,7 +96,6 @@ namespace Harmony {
         throw std::runtime_error(ERROR_SCENE_NOT_FOUND + name);
     }
 
-    // Overloaded function to get a scene by ID
     std::shared_ptr<Scene> State::getScene(uint64_t uniqueId) const {
         for (const auto& scene : scenes_) {
             if (scene->getUniqueId() == uniqueId) {
@@ -104,7 +112,6 @@ namespace Harmony {
         scenes_.push_back(scene);
     }
 
-    // Overloaded function to remove a scene by name
     void State::removeScene(const std::string& name) {
         scenes_.erase(std::remove_if(scenes_.begin(), scenes_.end(),
             [&name](const std::shared_ptr<Scene>& scene) {
@@ -112,7 +119,6 @@ namespace Harmony {
             }), scenes_.end());
     }
 
-    // Overloaded function to remove a scene by ID
     void State::removeScene(uint64_t uniqueId) {
         scenes_.erase(std::remove_if(scenes_.begin(), scenes_.end(),
             [uniqueId](const std::shared_ptr<Scene>& scene) {
@@ -120,7 +126,6 @@ namespace Harmony {
             }), scenes_.end());
     }
 
-    // Overloaded function to queue a scene by name
     void State::queueScene(const std::string& name) {
         for (const auto& scene : scenes_) {
             if (scene->getName() == name) {
@@ -131,7 +136,6 @@ namespace Harmony {
         throw std::runtime_error(ERROR_SCENE_NOT_FOUND + name);
     }
 
-    // Overloaded function to queue a scene by ID
     void State::queueScene(uint64_t uniqueId) {
         for (const auto& scene : scenes_) {
             if (scene->getUniqueId() == uniqueId) {
@@ -142,7 +146,6 @@ namespace Harmony {
         throw std::runtime_error(ERROR_SCENE_NOT_FOUND + std::to_string(uniqueId));
     }
 
-    // Overloaded function to remove a queued scene by name
     void State::removeQueuedScene(const std::string& name) {
         sceneBuffer_.erase(std::remove_if(sceneBuffer_.begin(), sceneBuffer_.end(),
             [&name](const std::shared_ptr<Scene>& scene) {
@@ -150,7 +153,6 @@ namespace Harmony {
             }), sceneBuffer_.end());
     }
 
-    // Overloaded function to remove a queued scene by ID
     void State::removeQueuedScene(uint64_t uniqueId) {
         sceneBuffer_.erase(std::remove_if(sceneBuffer_.begin(), sceneBuffer_.end(),
             [uniqueId](const std::shared_ptr<Scene>& scene) {

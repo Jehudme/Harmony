@@ -179,7 +179,6 @@
                   "Y": 0.5
                 },
                 "Font": {
-                  "Name": "ScoreFont",
                   "Path": "ka1.ttf",
                   "Smooth": true
                 },
@@ -204,7 +203,6 @@
                   "Y": 0.5
                 },
                 "Font": {
-                  "Name": "ScoreFont",
                   "Path": "ka1.ttf",
                   "Smooth": true
                 },
@@ -433,7 +431,6 @@
                       "Y": 0.5
                     },
                     "Font": {
-                      "Name": "ScoreFont",
                       "Path": "ka1.ttf"
                     },
                     "CharacterSize": 36,
@@ -446,6 +443,7 @@
                   },
                   {
                     "Name": "RetryButton",
+                    "Script": "RetryButtonScript",
                     "Type": "Rectangle",
                     "Size": {
                       "Width": 200,
