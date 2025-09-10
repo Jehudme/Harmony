@@ -224,7 +224,7 @@ namespace Harmony
         if (const auto childrenData = configuration_->get({ CONFIG_CHILDREN })) {
             for (const auto& childData : childrenData.value()) {
                 auto childConfiguration = create<Configuration>(childData);
-                auto child = create<SceneNode>(std::move(childConfiguration));
+                auto child = create<SceneNode>(childConfiguration);
                 attachChild(child);
             }
         }
@@ -270,7 +270,7 @@ namespace Harmony
     }
 
     template<>
-    std::shared_ptr<SceneNode> create<SceneNode, std::shared_ptr<Configuration>>(std::shared_ptr<Configuration>&& configuration) {
+    std::shared_ptr<SceneNode> create<SceneNode, std::shared_ptr<Configuration>&>(std::shared_ptr<Configuration>& configuration) {
         const std::string type = configuration->get<std::string>({ CONFIG_TYPE }).value_or("NONE");
 
         if (type == "Rectangle") {
