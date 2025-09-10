@@ -30,16 +30,20 @@ namespace Harmony
     }
 
     Texture::Texture(std::shared_ptr<Configuration> configuration)
-        : Object(configuration), isValid_(false)
+        : Resource(configuration) {
+		reload();
+    }
+
+    void Texture::reload()
     {
         // Load the texture from a file if the path is provided
-        if (const auto texturePathData = configuration->get({ CONFIG_PATH }))
+        if (const auto texturePathData = configuration_->get({ CONFIG_PATH }))
         {
             std::string texturePath = texturePathData.value().get<std::string>();
             loadFromFile(texturePath);
         }
         // Load the texture from an image if image data is provided
-        else if (const auto textureImageData = configuration->get({ CONFIG_IMAGE }))
+        else if (const auto textureImageData = configuration_->get({ CONFIG_IMAGE }))
         {
             const auto imageConfig = create<Configuration>(textureImageData.value());
             sf::Image image;
@@ -55,7 +59,7 @@ namespace Harmony
             }
         }
         // Create a texture from a solid color if color and size are provided
-        else if (const auto textureColorData = configuration->get({ CONFIG_COLOR }))
+        else if (const auto textureColorData = configuration_->get({ CONFIG_COLOR }))
         {
             const auto colorConfig = create<Configuration>(textureColorData.value());
             sf::Color color = {
@@ -74,12 +78,12 @@ namespace Harmony
         }
 
         // Set texture properties
-        if (const auto smoothData = configuration->get({ CONFIG_SMOOTH }))
+        if (const auto smoothData = configuration_->get({ CONFIG_SMOOTH }))
         {
             setSmooth(smoothData.value().get<bool>());
         }
 
-        if (const auto repeatedData = configuration->get({ CONFIG_REPEATED }))
+        if (const auto repeatedData = configuration_->get({ CONFIG_REPEATED }))
         {
             setRepeated(repeatedData.value().get<bool>());
         }
@@ -120,10 +124,5 @@ namespace Harmony
     sf::Texture& Texture::getResource()
     {
         return resource_;
-    }
-
-    bool Texture::isValid() const
-    {
-        return isValid_;
     }
 }

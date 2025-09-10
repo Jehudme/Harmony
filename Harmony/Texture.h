@@ -1,24 +1,24 @@
 #pragma once
-#include "Object.h"
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/Image.hpp>
 #include <SFML/Graphics/Color.hpp>
 #include <memory>
-#include "Configuration.h"
+
+#include "Resource.h"
 
 namespace Harmony
 {
-    class Texture : public Object
+    class Configuration;
+
+    class Texture : public Resource
     {
     public:
         // Constructor that takes a configuration
         explicit Texture(std::shared_ptr<Configuration> configuration);
+		void reload() override;
 
         // Get the underlying SFML texture resource
         sf::Texture& getResource();
-
-        // Check if the texture is valid (loaded successfully)
-        bool isValid() const;
 
     private:
         // Helper methods to configure the texture
@@ -32,6 +32,5 @@ namespace Harmony
         void setRepeated(bool repeated);
 
         sf::Texture resource_; // The SFML texture resource
-        bool isValid_;         // Flag to indicate if the texture is valid
     };
 }
