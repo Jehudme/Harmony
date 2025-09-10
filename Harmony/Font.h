@@ -1,22 +1,23 @@
 #pragma once
-#include "Object.h"
 #include <SFML/Graphics/Font.hpp>
 #include <memory>
-#include "Configuration.h"
+
+#include "Resource.h"
+
 
 namespace Harmony
 {
-    class Font : public Object
+	class Configuration;
+
+    class Font : public Resource
     {
     public:
         // Constructor that takes a configuration
         explicit Font(std::shared_ptr<Configuration> configuration);
+		void reload() override;
 
         // Get the underlying SFML font resource
         sf::Font& getResource();
-
-        // Check if the font is valid (loaded successfully)
-        bool isValid() const;
 
     private:
         // Helper methods to configure the font
@@ -27,6 +28,5 @@ namespace Harmony
         void setSmooth(bool smooth);
 
         sf::Font resource_; // The SFML font resource
-        bool isValid_;      // Flag to indicate if the font is valid
     };
 }

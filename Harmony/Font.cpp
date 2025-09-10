@@ -11,19 +11,8 @@ namespace {
 namespace Harmony
 {
     Font::Font(std::shared_ptr<Configuration> configuration)
-        : Object(configuration), isValid_(false)
-    {
-        // Load the font from a file if the path is provided
-        if (const auto fontPathData = configuration->get({ CONFIG_PATH }))
-        {
-            std::string fontPath = fontPathData.value().get<std::string>();
-            loadFromFile(fontPath);
-        }
-        // Set font properties
-        if (const auto smoothData = configuration->get({ CONFIG_SMOOTH }))
-        {
-            setSmooth(smoothData.value().get<bool>());
-        }
+        : Resource(configuration) {
+		reload();
     }
 
     void Font::loadFromFile(const std::string& path)
@@ -41,13 +30,23 @@ namespace Harmony
         resource_.setSmooth(smooth);
     }
 
+    void Harmony::Font::reload()
+    {
+        // Load the font from a file if the path is provided
+        if (const auto fontPathData = configuration_->get({ CONFIG_PATH }))
+        {
+            std::string fontPath = fontPathData.value().get<std::string>();
+            loadFromFile(fontPath);
+        }
+        // Set font properties
+        if (const auto smoothData = configuration_->get({ CONFIG_SMOOTH }))
+        {
+            setSmooth(smoothData.value().get<bool>());
+        }
+    }
+
     sf::Font& Font::getResource()
     {
         return resource_;
-    }
-
-    bool Font::isValid() const
-    {
-        return isValid_;
     }
 }

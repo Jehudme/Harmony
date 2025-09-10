@@ -158,6 +158,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Rectangle.cpp" />
+    <ClCompile Include="Resource.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="SceneNode.cpp" />
@@ -178,6 +179,7 @@
     <ClInclude Include="Object.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Rectangle.h" />
+    <ClInclude Include="Resource.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneNode.h" />
