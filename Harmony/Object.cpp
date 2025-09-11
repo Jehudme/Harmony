@@ -27,10 +27,11 @@ namespace Harmony {
     }
 
     Object::~Object() {
-        if (registeredById_[uniqueId_].expired()) {
+        if (!registeredById_.empty() && registeredById_[uniqueId_].expired()) {
             registeredById_.erase(uniqueId_);
         }
-        if (registeredByName_[name_].expired()) {
+
+        if (!registeredByName_.empty() && registeredByName_[name_].expired()) {
             registeredByName_.erase(name_);
         }
     }

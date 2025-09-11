@@ -5,13 +5,6 @@
 #include "Configuration.h"
 #include "Texture.h"
 
-#include "pch.h"
-#include "Circle.h"
-#include "SFML/Graphics/RenderStates.hpp"
-#include "SFML/Graphics/RenderTarget.hpp"
-#include "Configuration.h"
-#include "Texture.h"
-
 namespace {
     // Default color values
     constexpr sf::Uint8 DEFAULT_COLOR_MAX = 255;
@@ -119,14 +112,8 @@ void Harmony::Circle::initialize()
     if (const auto textureData = configuration_->get({ KEY_TEXTURE }))
     {
         const auto textureConfiguration = create<Configuration>(textureData.value());
-        try
-        {
-            texture = find<Texture>(textureConfiguration->get<std::string>({ KEY_NAME }).value_or(DEFAULT_TEXTURE_NAME));
-        }
-        catch (const std::exception&)
-        {
-            texture = create<Texture>(textureConfiguration);
-        }
+        texture = Resource::find<Texture>(textureConfiguration, DEFAULT_TEXTURE_NAME);
+
 
         const sf::Vector2u textureSize = texture->getResource().getSize();
         const int width = textureConfiguration->get<int>({ KEY_WIDTH }).value_or(static_cast<int>(textureSize.x));

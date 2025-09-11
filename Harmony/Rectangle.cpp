@@ -105,14 +105,7 @@ namespace Harmony
         if (const auto textureData = configuration_->get({ CONFIG_KEY_TEXTURE }))
         {
             const auto textureConfiguration = create<Configuration>(textureData.value());
-            try
-            {
-                texture = find<Texture>(textureConfiguration->get<std::string>({ CONFIG_KEY_NAME }).value_or(DEFAULT_TEXTURE_NAME));
-            }
-            catch (const std::exception&)
-            {
-                texture = create<Texture>(textureConfiguration);
-            }
+            texture = Resource::find<Texture>(textureConfiguration, DEFAULT_TEXTURE_NAME);
 
             const sf::Vector2u textureSize = texture->getResource().getSize();
             const int width = textureConfiguration->get<int>({ CONFIG_KEY_WIDTH }).value_or(static_cast<int>(textureSize.x));

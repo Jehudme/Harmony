@@ -59,14 +59,8 @@ namespace Harmony
         if (const auto fontData = configuration_->get({ CONFIG_FONT }))
         {
             const auto fontConfiguration = create<Configuration>(fontData.value());
-            try
-            {
-                font = find<Font>(fontConfiguration->get<std::string>({ CONFIG_STRING }).value_or(DEFAULT_FONT_NAME));
-            }
-            catch (const std::exception&)
-            {
-                font = create<Font>(fontConfiguration);
-            }
+            font = Resource::find<Font>(fontConfiguration, DEFAULT_FONT_NAME);
+
             sprite.setFont(font->getResource());
         }
 
