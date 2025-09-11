@@ -13,9 +13,8 @@ namespace Harmony {
     public:
         Configuration(const nlohmann::json& data = nlohmann::json(), uint64_t uniqueId = 0);
 
-        void set(const nlohmann::json& data, const std::initializer_list<const char*>& path = {});
-        std::optional<nlohmann::json> get(const std::initializer_list<const char*>& path = {}) const;
-        std::optional<nlohmann::json> get(const std::initializer_list<std::string>& path = {}) const;
+        void set(const nlohmann::json& data, const std::vector<std::string>& path = {});
+        std::optional<nlohmann::json> get(const std::vector<std::string>& path = {}) const;
 
         void load();
         void unload();
@@ -24,22 +23,14 @@ namespace Harmony {
         std::string getFilePath() const;
 
         template<typename Type>
-        void set(const Type& data, const std::initializer_list<const char*>& path = {}) {
+        void set(const Type& data, const std::initializer_list<const char*>& path = {}) 
+        {
             set(nlohmann::json(data), path);
         }
 
-
-
         template<typename Type>
-        std::optional<Type> get(const std::initializer_list<const char*>& path = {}) const {
-            if (auto data = get(path)) {
-                return std::make_optional<Type>(data.value().get<Type>());
-            }
-            return std::nullopt;
-        }
-
-        template<typename Type>
-        std::optional<Type> get(const std::initializer_list<std::string>& path = {}) const {
+        std::optional<Type> get(const std::vector<std::string>& path = {}) const
+        {
             if (auto data = get(path)) {
                 return std::make_optional<Type>(data.value().get<Type>());
             }

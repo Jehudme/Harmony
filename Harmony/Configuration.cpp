@@ -61,7 +61,7 @@ namespace Harmony {
         throw std::runtime_error(ERROR_FILE_PATH_NOT_SET);
     }
 
-    void Configuration::set(const nlohmann::json& data, const std::initializer_list<const char*>& path) {
+    void Configuration::set(const nlohmann::json& data, const std::vector<std::string>& path) {
         nlohmann::json* current = &data_;
         for (const auto& key : path) {
             current = &(*current)[key];
@@ -69,20 +69,7 @@ namespace Harmony {
         *current = data;
     }
 
-    std::optional<nlohmann::json> Configuration::get(const std::initializer_list<const char*>& path) const {
-        const nlohmann::json* current = &data_;
-        for (const auto& key : path) {
-            if (current->contains(key)) {
-                current = &(*current)[key];
-            }
-            else {
-                return std::nullopt;
-            }
-        }
-        return std::make_optional<nlohmann::json>(*current);
-    }
-
-    std::optional<nlohmann::json> Configuration::get(const std::initializer_list<std::string>& path) const {
+    std::optional<nlohmann::json> Configuration::get(const std::vector<std::string>& path) const {
         const nlohmann::json* current = &data_;
         for (const auto& key : path) {
             if (current->contains(key)) {
