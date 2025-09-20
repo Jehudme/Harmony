@@ -1,119 +1,106 @@
 #include "pch.h"
 #include "Configuration.h"
+
 #include <fstream>
 #include <variant>
 #include <stdexcept>
+#include <filesystem>
 #include <nlohmann/json.hpp>
 
-namespace Harmony
-{
+namespace Harmony {
 
     struct Configuration::Dataset {
         nlohmann::json data;
     };
 
-    Configuration::Configuration() :
-        dataset_(std::make_unique<Dataset>())
-    {
+    Configuration::Configuration()
+        : dataset_(std::make_unique<Dataset>()) {
     }
 
-    void Configuration::merge(const Configuration& configuration)
-    {
+    void Configuration::merge(const Configuration& configuration) {
         dataset_->data.merge_patch(configuration.dataset_->data);
     }
 
-    void Configuration::save(const std::string& filePath)
-    {
+    void Configuration::save(const std::filesystem::path& filePath) {
         std::ofstream file(filePath);
-        if (!file.is_open())
-        {
-            throw std::runtime_error("Failed to open configuration file for writing: " + filePath);
+        if (!file) {
+            throw std::runtime_error("Failed to open configuration file: " + filePath.string());
         }
-
         file << dataset_->data.dump(4);
-        file.close();
     }
 
-    void Configuration::load(const std::string& filePath)
-    {
+    void Configuration::load(const std::filesystem::path& filePath) {
         std::ifstream file(filePath);
-        if (!file.is_open())
-        {
-            throw std::runtime_error("Failed to open configuration file for reading: " + filePath);
+        if (!file) {
+            throw std::runtime_error("Failed to open configuration file: " + filePath.string());
         }
 
-        try
-        {
+        try {
             file >> dataset_->data;
         }
-        catch (const nlohmann::json::parse_error& e)
-        {
+        catch (const nlohmann::json::parse_error& e) {
             throw std::runtime_error("Failed to parse configuration file: " + std::string(e.what()));
         }
-
-        file.close();
     }
 
-    inline const nlohmann::json* findNode(const nlohmann::json& root, const std::vector<std::string>& keys)
-    {
-        const nlohmann::json* node = &root;
-        for (const auto& key : keys)
-        {
-            if (!node->contains(key)) return nullptr;
-            node = &(*node)[key];
+    namespace {
+        const nlohmann::json* findNode(const nlohmann::json& root, const std::vector<std::string>& keys) {
+            const nlohmann::json* node = &root;
+            for (const auto& key : keys) {
+                if (!node->contains(key)) return nullptr;
+                node = &(*node)[key];
+            }
+            return node;
         }
-        return node;
-    }
 
-    inline nlohmann::json* findOrCreateNode(nlohmann::json& root, const std::vector<std::string>& keys)
-    {
-        nlohmann::json* node = &root;
-        for (const auto& key : keys)
-        {
-            node = &(*node)[key];
+        nlohmann::json* findOrCreateNode(nlohmann::json& root, const std::vector<std::string>& keys) {
+            nlohmann::json* node = &root;
+            for (const auto& key : keys) {
+                node = &(*node)[key];
+            }
+            return node;
         }
-        return node;
     }
 
-    std::optional<Configuration::Value> Configuration::get(const std::vector<std::string>& keys) const
-    {
+    template<typename Type>
+    std::optional<Type> Configuration::get(const std::vector<std::string>& keys) const {
         const auto* node = findNode(dataset_->data, keys);
         if (!node) return std::nullopt;
-
-        if (node->is_number_integer())      return Value(node->get<int>());
-        if (node->is_number_float())        return Value(node->get<float>());
-        if (node->is_boolean())             return Value(node->get<bool>());
-        if (node->is_string())              return Value(node->get<std::string>());
-
-        return std::nullopt;
+        return node->get<Type>();
     }
 
-    void Configuration::set(const std::vector<std::string>& keys, const Value& value)
-    {
+    template<typename Type>
+    void Configuration::set(const std::vector<std::string>& keys, const Type& value) {
         auto* node = findOrCreateNode(dataset_->data, keys);
-
-        if (value.is<int>())                *node = value.as<int>();
-        else if (value.is<float>())         *node = value.as<float>();
-        else if (value.is<bool>())          *node = value.as<bool>();
-        else if (value.is<std::string>())   *node = value.as<std::string>();
-        else throw std::runtime_error("Unsupported value type in Configuration::set");
+        *node = value;
     }
 
-    Configuration Configuration::subsection(const std::vector<std::string>& keys) const
-    {
+    Configuration Configuration::subsection(const std::vector<std::string>& keys) const {
         Configuration subsection;
-
-        // Find the JSON node at the given path
         const auto* node = findNode(dataset_->data, keys);
-        if (!node)
-        {
-            // Return an empty config if the path doesn't exist
-            return subsection;
+        if (node) {
+            subsection.dataset_->data = *node;
         }
-
-        // Copy the subtree into the new Configuration's dataset
-        subsection.dataset_->data = *node;
-
         return subsection;
     }
-}
+
+    template std::optional<int> Configuration::get<int>(const std::vector<std::string>&) const;
+    template std::optional<unsigned int> Configuration::get<unsigned int>(const std::vector<std::string>&) const;
+    template std::optional<int64_t> Configuration::get<int64_t>(const std::vector<std::string>&) const;
+    template std::optional<uint64_t> Configuration::get<uint64_t>(const std::vector<std::string>&) const;
+    template std::optional<float> Configuration::get<float>(const std::vector<std::string>&) const;
+    template std::optional<double> Configuration::get<double>(const std::vector<std::string>&) const;
+    template std::optional<bool> Configuration::get<bool>(const std::vector<std::string>&) const;
+    template std::optional<std::string> Configuration::get<std::string>(const std::vector<std::string>&) const;
+
+    template void Configuration::set<int>(const std::vector<std::string>&, const int&);
+    template void Configuration::set<unsigned int>(const std::vector<std::string>&, const unsigned int&);
+    template void Configuration::set<int64_t>(const std::vector<std::string>&, const int64_t&);
+    template void Configuration::set<uint64_t>(const std::vector<std::string>&, const uint64_t&);
+    template void Configuration::set<float>(const std::vector<std::string>&, const float&);
+    template void Configuration::set<double>(const std::vector<std::string>&, const double&);
+    template void Configuration::set<bool>(const std::vector<std::string>&, const bool&);
+    template void Configuration::set<std::string>(const std::vector<std::string>&, const std::string&);
+
+
+} // namespace Harmony
