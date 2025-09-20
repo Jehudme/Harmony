@@ -20,7 +20,7 @@ namespace Harmony {
 		void set(const std::vector<std::string>& keys, const Type& value);
 
 	private:
-		struct Dataset;
-		std::unique_ptr<Dataset> dataset_;
+		struct Internal;
+		std::unique_ptr<Internal> internal_;
 	};
 }
