@@ -1,6 +1,5 @@
 #include "pch.h"
 #include "Engine.h"
-#include "Engine.h"
 #include "Configuration.h"
 #include "TaskManagement.h"
 
@@ -8,7 +7,7 @@
 #include <thread>
 #include <iostream>
 
-namespace Harmony {
+namespace Harmony::Internals {
 
     // Internal state hidden from the header
     struct Engine::Internal {
@@ -17,8 +16,7 @@ namespace Harmony {
 
     Engine::Engine(Configuration& configuration)
         : configuration_(configuration),
-        taskManager_(std::make_unique<TaskManagement>()),
-        internal_(std::make_unique<Internal>())
+        taskManager_(std::make_unique<TaskManagement>())
     {
         // Load window settings from configuration
         auto titleOpt = configuration_.get<std::string>({ "window", "title" });
@@ -31,51 +29,38 @@ namespace Harmony {
         unsigned int height = heightOpt.value_or(600);
         targetFPS_ = fpsOpt.value_or(0); // 0 = uncapped
 
-        internal_->window.create(sf::VideoMode(width, height), title);
+        window_.create(sf::VideoMode(width, height), title);
         if (targetFPS_ > 0) {
-            internal_->window.setFramerateLimit(targetFPS_);
+            window_.setFramerateLimit(targetFPS_);
         }
-
-        lastFrameTime_ = std::chrono::steady_clock::now();
     }
 
     void Engine::start() {
+        clock_.restart();
         running_ = true;
         paused_ = false;
 
-        while (running_ && internal_->window.isOpen()) {
-            // Calculate delta time
-            TimePoint currentFrameTime = std::chrono::steady_clock::now();
-            deltaTime_ = std::chrono::duration_cast<Duration>(currentFrameTime - lastFrameTime_).count();
-            lastFrameTime_ = currentFrameTime;
+        while (running_ && window_.isOpen()) {
+            deltaTime_ = clock_.restart();
 
             // Main loop stages
             handleTasks();
             handleEvents();
 
             if (!paused_) {
-                if (preUpdateCallback_) preUpdateCallback_(deltaTime_);
+                if (preUpdateCallback_) preUpdateCallback_(deltaTime_.asSeconds());
                 handleUpdates();
-                if (postUpdateCallback_) postUpdateCallback_(deltaTime_);
+                if (postUpdateCallback_) postUpdateCallback_(deltaTime_.asSeconds());
             }
 
             handleRendering();
-
-            // Optional FPS limiting (if not using SFML's setFramerateLimit)
-            if (targetFPS_ > 0) {
-                float frameDuration = 1.0f / static_cast<float>(targetFPS_);
-                if (deltaTime_ < frameDuration) {
-                    auto sleepTime = std::chrono::duration<float>(frameDuration - deltaTime_);
-                    std::this_thread::sleep_for(sleepTime);
-                }
-            }
         }
     }
 
     void Engine::stop() {
         running_ = false;
-        if (internal_->window.isOpen()) {
-            internal_->window.close();
+        if (window_.isOpen()) {
+            window_.close();
         }
     }
 
@@ -85,7 +70,7 @@ namespace Harmony {
 
     void Engine::resume() {
         paused_ = false;
-        lastFrameTime_ = std::chrono::steady_clock::now(); // reset delta time
+		clock_.restart();
     }
 
     bool Engine::isRunning() const noexcept {
@@ -99,10 +84,10 @@ namespace Harmony {
     void Engine::setTargetFPS(unsigned int fps) {
         targetFPS_ = fps;
         if (targetFPS_ > 0) {
-            internal_->window.setFramerateLimit(targetFPS_);
+            window_.setFramerateLimit(targetFPS_);
         }
         else {
-            internal_->window.setFramerateLimit(0); // uncapped
+            window_.setFramerateLimit(0); // uncapped
         }
     }
 
@@ -110,7 +95,7 @@ namespace Harmony {
         return targetFPS_;
     }
 
-    float Engine::getDeltaTime() const noexcept {
+    sf::Time Engine::getDeltaTime() const noexcept {
         return deltaTime_;
     }
 
@@ -132,23 +117,20 @@ namespace Harmony {
 
     void Engine::handleEvents() {
         sf::Event event;
-        while (internal_->window.pollEvent(event)) {
+        while (window_.pollEvent(event)) {
             if (event.type == sf::Event::Closed) {
                 stop();
             }
-            // You can expand this to handle keyboard/mouse/etc.
         }
     }
 
     void Engine::handleUpdates() {
-        // Game logic updates go here
-        // Example: std::cout << "Updating game logic...\n";
     }
 
     void Engine::handleRendering() {
-        internal_->window.clear(sf::Color::Black);
+        window_.clear(sf::Color::Black);
 
-        internal_->window.display();
+        window_.display();
     }
 
 } // namespace Harmony

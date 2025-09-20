@@ -7,9 +7,12 @@
 #include <atomic>
 
 namespace Harmony {
-
-    class Configuration;
     class TaskManagement;
+
+}
+
+namespace Harmony::Internals {
+    class Configuration;
 
     /**
      * @brief Core engine class responsible for managing the main loop,
@@ -70,7 +73,7 @@ namespace Harmony {
         /**
          * @brief Get the time elapsed between the last two frames (delta time).
          */
-        float getDeltaTime() const noexcept;
+        sf::Time getDeltaTime() const noexcept;
 
         /**
          * @brief Register a callback to be executed before each frame update.
@@ -96,7 +99,7 @@ namespace Harmony {
 
         // Internal state
         struct Internal;
-        std::unique_ptr<Internal> internal_;
+        sf::RenderWindow window_;
 
         Configuration& configuration_;
         std::unique_ptr<TaskManagement> taskManager_;
@@ -105,9 +108,8 @@ namespace Harmony {
         std::atomic<bool> paused_{ false };
 
         unsigned int targetFPS_{ 0 }; // 0 = uncapped
-        float deltaTime_{ 0.0f };
-
-        TimePoint lastFrameTime_{};
+        sf::Time deltaTime_;
+		sf::Clock clock_;
 
         std::function<void(float)> preUpdateCallback_;
         std::function<void(float)> postUpdateCallback_;

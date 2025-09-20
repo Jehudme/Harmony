@@ -3,7 +3,7 @@
 
 #include <nlohmann/json.hpp>
 
-namespace Harmony {
+namespace Harmony::Internals {
 
     // Internal data holder for the Configuration class.
     // Encapsulates the JSON object used for storing configuration values.
