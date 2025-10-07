@@ -7,7 +7,7 @@
 #include <atomic>
 
 namespace Harmony::Internals {
-    class TaskManagement;
+    class TaskQueue;
     class Configuration;
 
     /**
@@ -84,7 +84,7 @@ namespace Harmony::Internals {
         /**
          * @brief Access the engine's task manager.
          */
-        TaskManagement& getTaskManager();
+        TaskQueue& getTaskManager();
 
     private:
         // Internal loop stages
@@ -97,7 +97,7 @@ namespace Harmony::Internals {
         sf::RenderWindow window_;
 
         Configuration& configuration_;
-        std::unique_ptr<TaskManagement> taskManager_;
+        std::unique_ptr<TaskQueue> taskManager_;
 
         std::atomic<bool> running_{ false };
         std::atomic<bool> paused_{ false };

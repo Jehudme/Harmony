@@ -13,8 +13,11 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Header Files\Internal">
+    <Filter Include="Header Files\Internals">
       <UniqueIdentifier>{9c397518-e4e7-4a47-935e-cbe8cb56033e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Internals\Tasks">
+      <UniqueIdentifier>{d02e044a-922b-449d-93b7-8b433e6b48dc}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -22,13 +25,16 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Configuration.h">
-      <Filter>Header Files\Internal</Filter>
+      <Filter>Header Files\Internals</Filter>
     </ClInclude>
     <ClInclude Include="pch.h">
-      <Filter>Header Files\Internal</Filter>
+      <Filter>Header Files\Internals</Filter>
     </ClInclude>
-    <ClInclude Include="TaskManagement.h">
-      <Filter>Header Files\Internal</Filter>
+    <ClInclude Include="TaskQueue.h">
+      <Filter>Header Files\Internals\Tasks</Filter>
+    </ClInclude>
+    <ClInclude Include="Task.h">
+      <Filter>Header Files\Internals\Tasks</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

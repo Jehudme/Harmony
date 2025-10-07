@@ -1,13 +1,12 @@
 #include "pch.h"
-#include "pch.h"
-#include "TaskManagement.h"
+#include "TaskQueue.h"
 
 namespace Harmony::Internals {
 
     // Comparator for the priority queue:
     // - Higher priority value executes first
     // - If priorities are equal, earlier start time executes first
-    bool TaskManagement::Compare::operator()(const TaskPtr& leftTask, const TaskPtr& rightTask) const {
+    bool TaskQueue::Compare::operator()(const std::unique_ptr<Task>& leftTask, const std::unique_ptr<Task>& rightTask) const {
         if (leftTask->priority() != rightTask->priority()) {
             return leftTask->priority() < rightTask->priority(); // Higher priority first
         }
@@ -15,20 +14,20 @@ namespace Harmony::Internals {
     }
 
     // Add a new task to the queue
-    void TaskManagement::push(TaskPtr newTask) {
+    void TaskQueue::push(std::unique_ptr<Task> newTask) {
         std::unique_lock<std::mutex> queueLock(taskQueueMutex_);
         taskQueue_.push(std::move(newTask));
     }
 
     // Cancel a task by its unique ID before it runs
-    bool TaskManagement::cancel(std::size_t taskIdToRemove) {
+    bool TaskQueue::cancel(std::size_t taskIdToRemove) {
         std::unique_lock<std::mutex> queueLock(taskQueueMutex_);
         bool wasRemoved = false;
-        std::vector<TaskPtr> remainingTasks;
+        std::vector<std::unique_ptr<Task>> remainingTasks;
 
         // Move all tasks out, skipping the one to remove
         while (!taskQueue_.empty()) {
-            TaskPtr currentTask = std::move(const_cast<TaskPtr&>(taskQueue_.top()));
+            std::unique_ptr<Task> currentTask = std::move(const_cast<std::unique_ptr<Task>&>(taskQueue_.top()));
             taskQueue_.pop();
 
             if (currentTask->id() != taskIdToRemove) {
@@ -48,7 +47,7 @@ namespace Harmony::Internals {
     }
 
     // Run only tasks whose scheduled start time has arrived
-    void TaskManagement::run_ready() {
+    void TaskQueue::run_ready() {
         std::unique_lock<std::mutex> queueLock(taskQueueMutex_);
         const auto currentTime = std::chrono::steady_clock::now();
 
@@ -61,7 +60,7 @@ namespace Harmony::Internals {
             }
 
             // Take ownership of the task
-            TaskPtr taskToExecute = std::move(const_cast<TaskPtr&>(taskQueue_.top()));
+            std::unique_ptr<Task> taskToExecute = std::move(const_cast<std::unique_ptr<Task>&>(taskQueue_.top()));
             taskQueue_.pop();
 
             // Unlock while executing to allow concurrent push/cancel
@@ -72,11 +71,11 @@ namespace Harmony::Internals {
     }
 
     // Run all tasks regardless of their scheduled time
-    void TaskManagement::run_all() {
+    void TaskQueue::run_all() {
         std::unique_lock<std::mutex> queueLock(taskQueueMutex_);
 
         while (!taskQueue_.empty()) {
-            TaskPtr taskToExecute = std::move(const_cast<TaskPtr&>(taskQueue_.top()));
+            std::unique_ptr<Task> taskToExecute = std::move(const_cast<std::unique_ptr<Task>&>(taskQueue_.top()));
             taskQueue_.pop();
 
             queueLock.unlock();
@@ -86,7 +85,7 @@ namespace Harmony::Internals {
     }
 
     // Check if the task queue is empty
-    bool TaskManagement::empty() const {
+    bool TaskQueue::empty() const {
         std::unique_lock<std::mutex> queueLock(taskQueueMutex_);
         return taskQueue_.empty();
     }

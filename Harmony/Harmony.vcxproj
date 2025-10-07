@@ -142,7 +142,8 @@
     <ClInclude Include="Configuration.h" />
     <ClInclude Include="Engine.h" />
     <ClInclude Include="pch.h" />
-    <ClInclude Include="TaskManagement.h" />
+    <ClInclude Include="Task.h" />
+    <ClInclude Include="TaskQueue.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Configuration.cpp" />

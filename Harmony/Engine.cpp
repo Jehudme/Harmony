@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "Engine.h"
 #include "Configuration.h"
-#include "TaskManagement.h"
+#include "TaskQueue.h"
 
 #include <SFML/Graphics.hpp>
 #include <thread>
@@ -11,7 +11,7 @@ namespace Harmony::Internals {
 
     Engine::Engine(Configuration& configuration)
         : configuration_(configuration),
-        taskManager_(std::make_unique<TaskManagement>())
+        taskManager_(std::make_unique<TaskQueue>())
     {
         // Load window settings from configuration
         auto titleOpt = configuration_.get<std::string>({ "window", "title" });
@@ -102,7 +102,7 @@ namespace Harmony::Internals {
         postUpdateCallback_ = std::move(callback);
     }
 
-    TaskManagement& Engine::getTaskManager() {
+    TaskQueue& Engine::getTaskManager() {
         return *taskManager_;
     }
 
