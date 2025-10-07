@@ -2,7 +2,7 @@
 #include "pch.h"
 #include "TaskManagement.h"
 
-namespace Harmony {
+namespace Harmony::Internals {
 
     // Comparator for the priority queue:
     // - Higher priority value executes first

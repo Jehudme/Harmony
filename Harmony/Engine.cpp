@@ -9,11 +9,6 @@
 
 namespace Harmony::Internals {
 
-    // Internal state hidden from the header
-    struct Engine::Internal {
-        sf::RenderWindow window;
-    };
-
     Engine::Engine(Configuration& configuration)
         : configuration_(configuration),
         taskManager_(std::make_unique<TaskManagement>())

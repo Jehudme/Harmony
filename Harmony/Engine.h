@@ -6,12 +6,8 @@
 #include <string>
 #include <atomic>
 
-namespace Harmony {
-    class TaskManagement;
-
-}
-
 namespace Harmony::Internals {
+    class TaskManagement;
     class Configuration;
 
     /**
@@ -98,7 +94,6 @@ namespace Harmony::Internals {
         void handleRendering();
 
         // Internal state
-        struct Internal;
         sf::RenderWindow window_;
 
         Configuration& configuration_;

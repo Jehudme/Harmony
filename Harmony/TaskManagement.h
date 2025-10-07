@@ -6,7 +6,7 @@
 #include <chrono>
 #include <vector>
 
-namespace Harmony {
+namespace Harmony::Internals {
 
     /**
      * @brief Abstract base class representing a unit of work to be executed.
