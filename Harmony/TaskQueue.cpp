@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "TaskQueue.h"
+#include "StateQueue.h"
 
 namespace Harmony::Internals {
 

@@ -16,25 +16,28 @@
     <Filter Include="Header Files\Internals">
       <UniqueIdentifier>{9c397518-e4e7-4a47-935e-cbe8cb56033e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Internals\Tasks">
-      <UniqueIdentifier>{d02e044a-922b-449d-93b7-8b433e6b48dc}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Engine.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Configuration.h">
       <Filter>Header Files\Internals</Filter>
     </ClInclude>
     <ClInclude Include="pch.h">
       <Filter>Header Files\Internals</Filter>
     </ClInclude>
-    <ClInclude Include="TaskQueue.h">
-      <Filter>Header Files\Internals\Tasks</Filter>
+    <ClInclude Include="State.h">
+      <Filter>Header Files\Internals</Filter>
+    </ClInclude>
+    <ClInclude Include="StateQueue.h">
+      <Filter>Header Files\Internals</Filter>
     </ClInclude>
     <ClInclude Include="Task.h">
-      <Filter>Header Files\Internals\Tasks</Filter>
+      <Filter>Header Files\Internals</Filter>
+    </ClInclude>
+    <ClInclude Include="TaskQueue.h">
+      <Filter>Header Files\Internals</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine.h">
+      <Filter>Header Files\Internals</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -47,7 +50,7 @@
     <ClCompile Include="Engine.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TaskManagement.cpp">
+    <ClCompile Include="TaskQueue.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
