@@ -1,6 +1,6 @@
 #include "pch.h"
-#include "TaskQueue.h"
-#include "StateQueue.h"
+#include "TaskManagement.h"
+#include "StateManagement.h"
 
 namespace Harmony::Internals {
 
@@ -15,10 +15,11 @@ namespace Harmony::Internals {
     }
 
     // Add a new task to the queue
-    void TaskQueue::push(std::unique_ptr<Task> newTask) {
+    void TaskQueue::push(TaskPtr newTask) {
         std::unique_lock<std::mutex> queueLock(taskQueueMutex_);
         taskQueue_.push(std::move(newTask));
     }
+
 
     // Cancel a task by its unique ID before it runs
     bool TaskQueue::cancel(std::size_t taskIdToRemove) {
@@ -28,7 +29,7 @@ namespace Harmony::Internals {
 
         // Move all tasks out, skipping the one to remove
         while (!taskQueue_.empty()) {
-            std::unique_ptr<Task> currentTask = std::move(const_cast<std::unique_ptr<Task>&>(taskQueue_.top()));
+            TaskPtr currentTask = std::move(const_cast<std::unique_ptr<Task>&>(taskQueue_.top()));
             taskQueue_.pop();
 
             if (currentTask->id() != taskIdToRemove) {
@@ -76,7 +77,7 @@ namespace Harmony::Internals {
         std::unique_lock<std::mutex> queueLock(taskQueueMutex_);
 
         while (!taskQueue_.empty()) {
-            std::unique_ptr<Task> taskToExecute = std::move(const_cast<std::unique_ptr<Task>&>(taskQueue_.top()));
+            TaskPtr taskToExecute = std::move(const_cast<TaskPtr&>(taskQueue_.top()));
             taskQueue_.pop();
 
             queueLock.unlock();

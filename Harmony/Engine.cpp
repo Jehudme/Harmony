@@ -1,11 +1,13 @@
 #include "pch.h"
-#include "Engine.h"
-#include "Configuration.h"
-#include "TaskQueue.h"
 
 #include <SFML/Graphics.hpp>
 #include <thread>
 #include <iostream>
+
+#include "Engine.h"
+#include "Configuration.h"
+#include "TaskManagement.h"
+#include "StateManagement.h"
 
 namespace Harmony::Internals {
 
