@@ -12,7 +12,7 @@ namespace Harmony::Internals {
 
 	class State : public sf::Drawable {
 	public:
-		State(Configuration& configuration);
+		State(const Configuration& configuration);
 
 		void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 		void update(const sf::Time deltaTime, TaskQueue& taskManagement);

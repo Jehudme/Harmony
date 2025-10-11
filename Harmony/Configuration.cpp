@@ -97,6 +97,24 @@ namespace Harmony::Internals {
         return subsection;
     }
 
+    // Extracts all top-level keys in the configuration.
+    std::vector<std::string> Configuration::extractKeys(const std::vector<std::string>& keys) const
+    {
+        const auto* node = findNode(internal_->data, keys);
+        if (!node || !node->is_object()) {
+            return {}; // empty vector
+        }
+
+        std::vector<std::string> rKeys;
+        rKeys.reserve(node->size()); // avoid reallocations
+
+        for (const auto& [key, _] : node->items()) {
+            rKeys.push_back(key);
+        }
+
+        return rKeys;
+    }
+
     // Explicit template instantiations for supported types.
     // These ensure the compiler generates code for these types.
     template std::optional<int> Configuration::get<int>(const std::vector<std::string>&) const;

@@ -15,17 +15,15 @@ namespace Harmony::Internals {
 		StateManagement(Configuration& configuration);
 
 		void  push(std::uint64_t stateId);
-		void  push(const std::string& name);
 		void  swap(std::uint64_t stateId);
-		void  swap(const std::string& name);
 
 		void  pop();
 
-		std::optional<std::uint64_t> getStateId(const std::string& name) const;
+		std::optional<std::uint64_t> getId(const std::string& name) const;
 	
 	private:
 		void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
-		void update(const sf::Time deltaTime, TaskQueue& taskManagement);
+		void update(const sf::Time deltaTime, TaskQueue& taskQueue);
 
 	private:
 		const Configuration& configuration_;

@@ -67,6 +67,13 @@ namespace Harmony::Internals {
         Configuration subsection(const std::vector<std::string>& keys) const;
 
         /**
+         * @brief Extract all top-level keys in the configuration.
+         *
+         * @return A vector of strings representing the top-level keys.
+		 */
+        std::vector<std::string> extractKeys(const std::vector<std::string>& keys) const;
+
+        /**
          * @brief Retrieve a typed value from the configuration.
          *
          * @tparam Type The expected type of the value (e.g., int, std::string, bool).

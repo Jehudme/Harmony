@@ -19,6 +19,12 @@
     <Filter Include="Header Files\Internals\Management">
       <UniqueIdentifier>{2a0aea8f-63bc-476a-b91a-6ea2fa881edd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Internals">
+      <UniqueIdentifier>{5d22b725-f5b4-4dff-b05d-9ddec505ae53}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Internals\Management">
+      <UniqueIdentifier>{85ee2848-9d3e-47a0-96b9-04feadf49d04}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Configuration.h">
@@ -50,20 +56,26 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="pch.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Configuration.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Internals</Filter>
     </ClCompile>
     <ClCompile Include="Engine.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Internals</Filter>
+    </ClCompile>
+    <ClCompile Include="pch.cpp">
+      <Filter>Source Files\Internals</Filter>
     </ClCompile>
     <ClCompile Include="TaskQueue.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Internals</Filter>
     </ClCompile>
     <ClCompile Include="SceneManagement.cpp">
+      <Filter>Source Files\Internals\Management</Filter>
+    </ClCompile>
+    <ClCompile Include="State.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="StateManagement.cpp">
+      <Filter>Source Files\Internals\Management</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

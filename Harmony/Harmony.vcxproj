@@ -159,6 +159,8 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="SceneManagement.cpp" />
+    <ClCompile Include="State.cpp" />
+    <ClCompile Include="StateManagement.cpp" />
     <ClCompile Include="TaskQueue.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
