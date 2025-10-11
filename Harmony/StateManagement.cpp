@@ -7,6 +7,7 @@ namespace Harmony::Internals {
 	StateManagement::StateManagement(Configuration& configuration) :
 		configuration_(configuration) {
 
+			
 	}
 
 	void StateManagement::push(std::uint64_t stateId) {
@@ -28,6 +29,15 @@ namespace Harmony::Internals {
 
 	std::optional<std::uint64_t> StateManagement::getId(const std::string& name) const
 	{
+		const auto keys = configuration_.extractKeys({});
+		
+		for (const std::string key : keys) {
+			const std::optional<std::string> name = configuration_.get<std::string>({ key, "name" });
+			if(name.has_value() && name.value() == name)
+				return  std::optional<std::uint64_t>(std::stoull(key));
+		}
+
 		return std::nullopt;
+
 	}
 }
