@@ -141,6 +141,7 @@
   <ItemGroup>
     <ClInclude Include="Configuration.h" />
     <ClInclude Include="Engine.h" />
+    <ClInclude Include="Harmony.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneManagement.h" />

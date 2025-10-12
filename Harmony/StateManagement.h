@@ -8,19 +8,12 @@
 #include "State.h"
 
 namespace Harmony::Internals {
-	class Engine;
-	class State;
-	
 	class StateManagement : public sf::Drawable {
 	public:
 		StateManagement(Engine& engine);
 
 		void  push(std::uint64_t stateId);
-		void  swap(std::uint64_t stateId);
-
 		void  pop();
-
-		std::optional<std::uint64_t> getId(const std::string& name) const;
 	
 	private:
 		void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
@@ -28,8 +21,7 @@ namespace Harmony::Internals {
 
 	private:
 		Engine& engine_;
-		const Configuration& configuration_;
-		std::queue<std::shared_ptr<State>> states_;
+		std::queue<std::unique_ptr<State>> states_;
 	};
 }
 

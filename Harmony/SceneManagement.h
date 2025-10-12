@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Configuration.h"
+#include "Scene.h"
 
 namespace Harmony::Internals {
 	class Engine;
@@ -10,11 +11,15 @@ namespace Harmony::Internals {
 	public:
 		SceneManagement(Engine& engine);
 
-		std::shared_ptr<Scene> load(const std::uint64_t sceneId);
-		std::optional<std::uint64_t> getId(const std::string& name) const;
+		void create(const Utilities::UUID sceneId);
+		void destroy(const Utilities::UUID sceneId);
 
+		std::optional<std::reference_wrapper<Scene>> get(const Utilities::UUID sceneId) const;
+	
 	private:
-		const Configuration& configuration_;
 		Engine& engine_;
+		const Configuration& configuration_;
+
+		std::unordered_map<std::uint64_t, Scene> scenes_;
 	};
 }

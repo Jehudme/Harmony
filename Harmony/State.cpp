@@ -6,26 +6,37 @@
 #include "TaskManagement.h"
 #include "SceneManagement.h"
 
-namespace Harmony::Internals{
+namespace Harmony::Internals {
 
 	State::State(const Configuration& configuration, Engine& engine) :
 		engine_(engine) {
-		std::vector<std::uint64_t> scenesIds = configuration.get<std::vector<std::uint64_t>>({ "scenes" }).value_or({});
-		for (const auto& sceneId : scenesIds) {
-			auto scene = engine.sceneManagement->load(sceneId);
-			if (scene) { scenes_.emplace_back(scene); }
+		const auto scenesIds_ = configuration.get<Utilities::UUIDList>({ "scenes" }).value_or(Utilities::UUIDList());
+		
+		for (const auto& sceneId : scenesIds_) {
+			engine.sceneManagement->create(sceneId);
+
+			if (std::optional<Scene> scene = engine.sceneManagement->get(sceneId)) {
+				scenes_.insert({ sceneId, std::ref(scene.value()) });
+			}
+		}
+	}
+
+
+	State::~State() {
+		for (const auto& scene : scenes_) {
+			engine_.sceneManagement->destroy(scene.first);
 		}
 	}
 
 	void State::draw(sf::RenderTarget& target, sf::RenderStates states) const {
-		for (const auto& scene : scenes_) {
-			scene->draw(target, states);
+		for (auto& scene : scenes_) {
+			scene.second.get().draw(target, states);
 		}
 	}
 
 	void State::update(const sf::Time deltaTime, TaskManagement& taskManagement) {
-		for (const auto& scene : scenes_) {
-			scene->update(deltaTime, taskManagement);
+		for (auto& scene : scenes_) {
+			scene.second.get().update(deltaTime, taskManagement);
 		}
 	}
 }

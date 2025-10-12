@@ -16,9 +16,18 @@
 #include <optional>
 #include <fstream>
 #include <variant>
+#include <unordered_map>
+#include <vector>
+#include <queue>
+#include <mutex>
+#include <atomic>
+#include <functional>
+#include <chrono>
 #include <filesystem>
 
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
 //#include <spdlog/spdlog.h>
+
+#include "Harmony.h"
 #endif //PCH_H

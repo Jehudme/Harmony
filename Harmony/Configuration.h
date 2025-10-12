@@ -78,6 +78,8 @@ namespace Harmony::Internals {
 		 */
         std::vector<std::string> extractKeys(const std::vector<std::string>& keys) const;
 
+        const std::string extractKey() const;
+
         /**
          * @brief Retrieve a typed value from the configuration.
          *
