@@ -12,7 +12,8 @@ namespace Harmony::Internals {
 
 	
 	class StateManagement : public sf::Drawable {
-		StateManagement(Configuration& configuration);
+	public:
+		StateManagement(const Configuration& configuration);
 
 		void  push(std::uint64_t stateId);
 		void  swap(std::uint64_t stateId);

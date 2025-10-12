@@ -1,8 +1,6 @@
 #include "pch.h"
 
 #include <SFML/Graphics.hpp>
-#include <thread>
-#include <iostream>
 
 #include "Engine.h"
 #include "Configuration.h"
@@ -12,9 +10,11 @@
 
 namespace Harmony::Internals {
 
-    Engine::Engine(Configuration& configuration)
-        : configuration_(configuration),
-        taskManager_(std::make_unique<TaskManagement>())
+    Engine::Engine(Configuration& configuration): 
+        configuration_(configuration),
+        taskManager_(std::make_unique<TaskManagement>()),
+        stateManager_(std::make_unique<StateManagement>(configuration.subsection({ "states-management" }).value_or(Configuration()))),
+		sceneManager_(std::make_unique<SceneManagement>(configuration.subsection({ "scenes-management" }).value_or(Configuration())))
     {
         // Load window settings from configuration
         std::string title   = configuration_.get<std::string>   ({ "window", "title" }) .value_or("Harmony Engine");

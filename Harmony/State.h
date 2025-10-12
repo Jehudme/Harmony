@@ -8,7 +8,7 @@
 #include "TaskManagement.h"
 
 namespace Harmony::Internals {
-	struct Scene;
+	class Scene;
 
 	class State : public sf::Drawable {
 	public:

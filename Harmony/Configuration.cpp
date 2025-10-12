@@ -104,16 +104,17 @@ namespace Harmony::Internals {
         *node = value;
     }
 
-    // Extracts a subsection of the configuration as a new Configuration object.
-    // If the path doesn't exist, returns an empty Configuration.
-    Configuration Configuration::subsection(const std::vector<std::string>& keys) const {
-        Configuration configuration;
+	// Extracts a subsection of the configuration based on the provided keys.
+	// Returns an optional Configuration object containing the subsection if found.
+    std::optional<Configuration> Configuration::subsection(const std::vector<std::string>& keys) const {
         const auto* node = findNode(internal_->data, keys);
         if (node) {
+            Configuration configuration;
             configuration.internal_->data = *node;
+			return configuration;
         }
 
-        return configuration;
+		return std::nullopt;
     }
 
     // Extracts all top-level keys in the configuration.
@@ -154,4 +155,21 @@ namespace Harmony::Internals {
     template void Configuration::set<bool>(const std::vector<std::string>&, const bool&);
     template void Configuration::set<std::string>(const std::vector<std::string>&, const std::string&);
 
+    // --- get<T> for vector<T> ---
+    template std::optional<std::vector<int>> Configuration::get<std::vector<int>>(const std::vector<std::string>&) const;
+    template std::optional<std::vector<unsigned int>> Configuration::get<std::vector<unsigned int>>(const std::vector<std::string>&) const;
+    template std::optional<std::vector<int64_t>> Configuration::get<std::vector<int64_t>>(const std::vector<std::string>&) const;
+    template std::optional<std::vector<uint64_t>> Configuration::get<std::vector<uint64_t>>(const std::vector<std::string>&) const;
+    template std::optional<std::vector<float>> Configuration::get<std::vector<float>>(const std::vector<std::string>&) const;
+    template std::optional<std::vector<double>>  Configuration::get<std::vector<double>>(const std::vector<std::string>&) const;
+    template std::optional<std::vector<bool>> Configuration::get<std::vector<bool>>(const std::vector<std::string>&) const;
+    template std::optional<std::vector<std::string>> Configuration::get<std::vector<std::string>>(const std::vector<std::string>&) const;
+    template void Configuration::set<std::vector<int>>(const std::vector<std::string>&, const std::vector<int>&);
+    template void Configuration::set<std::vector<unsigned int>>(const std::vector<std::string>&, const std::vector<unsigned int>&);
+    template void Configuration::set<std::vector<int64_t>>(const std::vector<std::string>&, const std::vector<int64_t>&);
+    template void Configuration::set<std::vector<uint64_t>>(const std::vector<std::string>&, const std::vector<uint64_t>&);
+    template void Configuration::set<std::vector<float>>(const std::vector<std::string>&, const std::vector<float>&);
+    template void Configuration::set<std::vector<double>>(const std::vector<std::string>&, const std::vector<double>&);
+    template void Configuration::set<std::vector<bool>>(const std::vector<std::string>&, const std::vector<bool>&);
+    template void Configuration::set<std::vector<std::string>>(const std::vector<std::string>&, const std::vector<std::string>&);
 } // namespace Harmony

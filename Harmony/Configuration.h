@@ -69,7 +69,7 @@ namespace Harmony::Internals {
          * @param keys A vector of keys representing the path to the subsection.
          * @return A new Configuration object containing only the specified subsection.
          */
-        Configuration subsection(const std::vector<std::string>& keys) const;
+        std::optional<Configuration> subsection(const std::vector<std::string>& keys) const;
 
         /**
          * @brief Extract all top-level keys in the configuration.

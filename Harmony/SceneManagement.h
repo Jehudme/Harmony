@@ -7,12 +7,10 @@ namespace Harmony::Internals {
 
 	class SceneManagement {
 	public:
-		SceneManagement(Configuration& configuration);
+		SceneManagement(const Configuration& configuration);
 
 		std::shared_ptr<Scene> load(const std::uint64_t sceneId);
-		std::shared_ptr<Scene> load(const std::string& name);
-
-		std::optional<std::uint64_t> getSceneId(const std::string& name) const;
+		std::optional<std::uint64_t> getId(const std::string& name) const;
 
 	private:
 		const Configuration& configuration_;
