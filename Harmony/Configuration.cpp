@@ -16,6 +16,24 @@ namespace Harmony::Internals {
         : internal_(std::make_unique<Internal>()) {
     }
 
+
+    Configuration::~Configuration() = default;
+
+	// Copy constructor: creates a deep copy of another Configuration's data.
+    Configuration::Configuration(const Configuration& other) {
+        internal_ = std::make_unique<Internal>();
+		internal_->data = other.internal_->data;
+    }
+
+	// Copy assignment operator: assigns another Configuration's data to this one.
+    Configuration& Configuration::operator=(const Configuration& other) {
+        if (this != &other) {
+            internal_ = std::make_unique<Internal>();
+            internal_->data = other.internal_->data;
+        }
+		return *this;
+    }
+
     // Merges another Configuration's data into this one using JSON merge_patch.
     // This performs a shallow merge: keys in the source override those in the target.
     void Configuration::merge(const Configuration& configuration) {
@@ -89,12 +107,13 @@ namespace Harmony::Internals {
     // Extracts a subsection of the configuration as a new Configuration object.
     // If the path doesn't exist, returns an empty Configuration.
     Configuration Configuration::subsection(const std::vector<std::string>& keys) const {
-        Configuration subsection;
+        Configuration configuration;
         const auto* node = findNode(internal_->data, keys);
         if (node) {
-            subsection.internal_->data = *node;
+            configuration.internal_->data = *node;
         }
-        return subsection;
+
+        return configuration;
     }
 
     // Extracts all top-level keys in the configuration.

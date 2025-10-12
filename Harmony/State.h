@@ -15,7 +15,7 @@ namespace Harmony::Internals {
 		State(const Configuration& configuration);
 
 		void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
-		void update(const sf::Time deltaTime, TaskQueue& taskManagement);
+		void update(const sf::Time deltaTime, TaskManagement& taskManagement);
 
 	private:
 		std::vector<std::shared_ptr<Scene>> scenes_;

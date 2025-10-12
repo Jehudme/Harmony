@@ -7,7 +7,7 @@
 
 namespace Harmony::Internals
 {
-	class Scene : public sf::Drawable {
+	class cene : public sf::Drawable {
 	public:
 		Scene(const Configuration& configuration);
 

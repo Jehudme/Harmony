@@ -23,7 +23,7 @@ namespace Harmony::Internals {
 	
 	private:
 		void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
-		void update(const sf::Time deltaTime, TaskQueue& taskQueue);
+		void update(const sf::Time deltaTime, TaskManagement& taskQueue);
 
 	private:
 		const Configuration& configuration_;

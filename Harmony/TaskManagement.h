@@ -9,7 +9,7 @@
 #include "Task.h"
 
 namespace Harmony::Internals {
-    class TaskQueue {
+    class TaskManagement {
     public:
         using TaskPtr = std::unique_ptr<Task>;
 

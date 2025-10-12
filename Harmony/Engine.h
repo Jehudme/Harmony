@@ -7,7 +7,9 @@
 #include <atomic>
 
 namespace Harmony::Internals {
-    class TaskQueue;
+    class TaskManagement;
+	class StateManagement;
+	class SceneManagement;
     class Configuration;
 
     /**
@@ -24,6 +26,7 @@ namespace Harmony::Internals {
          * @param configuration Reference to the engine configuration object.
          */
         explicit Engine(Configuration& configuration);
+		~Engine();
 
         /**
          * @brief Start the engine main loop.
@@ -71,21 +74,6 @@ namespace Harmony::Internals {
          */
         sf::Time getDeltaTime() const noexcept;
 
-        /**
-         * @brief Register a callback to be executed before each frame update.
-         */
-        void setPreUpdateCallback(std::function<void(float)> callback);
-
-        /**
-         * @brief Register a callback to be executed after each frame update.
-         */
-        void setPostUpdateCallback(std::function<void(float)> callback);
-
-        /**
-         * @brief Access the engine's task manager.
-         */
-        TaskQueue& getTaskManager();
-
     private:
         // Internal loop stages
         void handleTasks();
@@ -97,7 +85,9 @@ namespace Harmony::Internals {
         sf::RenderWindow window_;
 
         Configuration& configuration_;
-        std::unique_ptr<TaskQueue> taskManager_;
+        std::unique_ptr<TaskManagement> taskManager_;
+		std::unique_ptr<StateManagement> stateManager_;
+		std::unique_ptr<SceneManagement> sceneManager_;
 
         std::atomic<bool> running_{ false };
         std::atomic<bool> paused_{ false };
@@ -105,9 +95,6 @@ namespace Harmony::Internals {
         unsigned int targetFPS_{ 0 }; // 0 = uncapped
         sf::Time deltaTime_;
 		sf::Clock clock_;
-
-        std::function<void(float)> preUpdateCallback_;
-        std::function<void(float)> postUpdateCallback_;
     };
 
 } // namespace Harmony

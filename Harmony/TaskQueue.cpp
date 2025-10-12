@@ -7,7 +7,7 @@ namespace Harmony::Internals {
     // Comparator for the priority queue:
     // - Higher priority value executes first
     // - If priorities are equal, earlier start time executes first
-    bool TaskQueue::Compare::operator()(const std::unique_ptr<Task>& leftTask, const std::unique_ptr<Task>& rightTask) const {
+    bool TaskManagement::Compare::operator()(const std::unique_ptr<Task>& leftTask, const std::unique_ptr<Task>& rightTask) const {
         if (leftTask->priority() != rightTask->priority()) {
             return leftTask->priority() < rightTask->priority(); // Higher priority first
         }
@@ -15,14 +15,14 @@ namespace Harmony::Internals {
     }
 
     // Add a new task to the queue
-    void TaskQueue::push(TaskPtr newTask) {
+    void TaskManagement::push(TaskPtr newTask) {
         std::unique_lock<std::mutex> queueLock(taskQueueMutex_);
         taskQueue_.push(std::move(newTask));
     }
 
 
     // Cancel a task by its unique ID before it runs
-    bool TaskQueue::cancel(std::size_t taskIdToRemove) {
+    bool TaskManagement::cancel(std::size_t taskIdToRemove) {
         std::unique_lock<std::mutex> queueLock(taskQueueMutex_);
         bool wasRemoved = false;
         std::vector<std::unique_ptr<Task>> remainingTasks;
@@ -49,7 +49,7 @@ namespace Harmony::Internals {
     }
 
     // Run only tasks whose scheduled start time has arrived
-    void TaskQueue::run_ready() {
+    void TaskManagement::run_ready() {
         std::unique_lock<std::mutex> queueLock(taskQueueMutex_);
         const auto currentTime = std::chrono::steady_clock::now();
 
@@ -73,7 +73,7 @@ namespace Harmony::Internals {
     }
 
     // Run all tasks regardless of their scheduled time
-    void TaskQueue::run_all() {
+    void TaskManagement::run_all() {
         std::unique_lock<std::mutex> queueLock(taskQueueMutex_);
 
         while (!taskQueue_.empty()) {
@@ -87,7 +87,7 @@ namespace Harmony::Internals {
     }
 
     // Check if the task queue is empty
-    bool TaskQueue::empty() const {
+    bool TaskManagement::empty() const {
         std::unique_lock<std::mutex> queueLock(taskQueueMutex_);
         return taskQueue_.empty();
     }

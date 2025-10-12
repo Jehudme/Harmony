@@ -31,6 +31,11 @@ namespace Harmony::Internals {
          * @brief Constructs an empty configuration object.
          */
         Configuration();
+		~Configuration();
+
+
+        Configuration(const Configuration& other);
+        Configuration& operator=(const Configuration& other);
 
         /**
          * @brief Merge another configuration into this one.

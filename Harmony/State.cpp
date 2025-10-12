@@ -1,6 +1,5 @@
 #include "pch.h"
 #include "State.h"
-#include "Scene.h"
 
 namespace Harmony::Internals{
 	Harmony::Internals::State::State(const Configuration& configuration)
@@ -12,7 +11,7 @@ namespace Harmony::Internals{
 
 	}
 
-	void State::update(const sf::Time deltaTime, TaskQueue& taskManagement)
+	void State::update(const sf::Time deltaTime, TaskManagement& taskManagement)
 	{
 
 	}

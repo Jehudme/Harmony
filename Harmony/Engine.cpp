@@ -8,29 +8,25 @@
 #include "Configuration.h"
 #include "TaskManagement.h"
 #include "StateManagement.h"
+#include "SceneManagement.h"
 
 namespace Harmony::Internals {
 
     Engine::Engine(Configuration& configuration)
         : configuration_(configuration),
-        taskManager_(std::make_unique<TaskQueue>())
+        taskManager_(std::make_unique<TaskManagement>())
     {
         // Load window settings from configuration
-        auto titleOpt = configuration_.get<std::string>({ "window", "title" });
-        auto widthOpt = configuration_.get<unsigned int>({ "window", "width" });
-        auto heightOpt = configuration_.get<unsigned int>({ "window", "height" });
-        auto fpsOpt = configuration_.get<unsigned int>({ "window", "fps" });
-
-        std::string title = titleOpt.value_or("Harmony Engine");
-        unsigned int width = widthOpt.value_or(800);
-        unsigned int height = heightOpt.value_or(600);
-        targetFPS_ = fpsOpt.value_or(0); // 0 = uncapped
+        std::string title   = configuration_.get<std::string>   ({ "window", "title" }) .value_or("Harmony Engine");
+        unsigned int width  = configuration_.get<unsigned int>  ({ "window", "width" }) .value_or(800);
+        unsigned int height = configuration_.get<unsigned int>  ({ "window", "height" }).value_or(600);
+        targetFPS_          = configuration_.get<unsigned int>  ({ "window", "fps" })   .value_or(0);
 
         window_.create(sf::VideoMode(width, height), title);
-        if (targetFPS_ > 0) {
-            window_.setFramerateLimit(targetFPS_);
-        }
+        window_.setFramerateLimit(targetFPS_);
     }
+
+    Internals::Engine::~Engine() = default;
 
     void Engine::start() {
         clock_.restart();
@@ -43,13 +39,7 @@ namespace Harmony::Internals {
             // Main loop stages
             handleTasks();
             handleEvents();
-
-            if (!paused_) {
-                if (preUpdateCallback_) preUpdateCallback_(deltaTime_.asSeconds());
-                handleUpdates();
-                if (postUpdateCallback_) postUpdateCallback_(deltaTime_.asSeconds());
-            }
-
+            handleUpdates();
             handleRendering();
         }
     }
@@ -94,18 +84,6 @@ namespace Harmony::Internals {
 
     sf::Time Engine::getDeltaTime() const noexcept {
         return deltaTime_;
-    }
-
-    void Engine::setPreUpdateCallback(std::function<void(float)> callback) {
-        preUpdateCallback_ = std::move(callback);
-    }
-
-    void Engine::setPostUpdateCallback(std::function<void(float)> callback) {
-        postUpdateCallback_ = std::move(callback);
-    }
-
-    TaskQueue& Engine::getTaskManager() {
-        return *taskManager_;
     }
 
     void Engine::handleTasks() {

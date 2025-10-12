@@ -48,11 +48,11 @@
     <ClInclude Include="TaskManagement.h">
       <Filter>Header Files\Internals\Management</Filter>
     </ClInclude>
-    <ClInclude Include="Scene.h">
-      <Filter>Header Files\Internals</Filter>
-    </ClInclude>
     <ClInclude Include="SceneManagement.h">
       <Filter>Header Files\Internals\Management</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -76,6 +76,9 @@
     </ClCompile>
     <ClCompile Include="StateManagement.cpp">
       <Filter>Source Files\Internals\Management</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
