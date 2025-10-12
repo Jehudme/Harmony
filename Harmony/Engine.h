@@ -74,6 +74,13 @@ namespace Harmony::Internals {
          */
         sf::Time getDeltaTime() const noexcept;
 
+    public:
+        Configuration& configuration;
+
+        std::unique_ptr<TaskManagement> taskManagement;
+        std::unique_ptr<SceneManagement> sceneManagement;
+        std::unique_ptr<StateManagement> stateManagement;
+
     private:
         // Internal loop stages
         void handleTasks();
@@ -81,13 +88,9 @@ namespace Harmony::Internals {
         void handleUpdates();
         void handleRendering();
 
+    private:
         // Internal state
         sf::RenderWindow window_;
-
-        Configuration& configuration_;
-        std::unique_ptr<TaskManagement> taskManager_;
-		std::unique_ptr<StateManagement> stateManager_;
-		std::unique_ptr<SceneManagement> sceneManager_;
 
         std::atomic<bool> running_{ false };
         std::atomic<bool> paused_{ false };

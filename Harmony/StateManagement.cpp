@@ -1,13 +1,16 @@
 #include "pch.h"
 
-#include "pch.h"
 #include "StateManagement.h"
+#include "Engine.h"
+#include "Configuration.h"
 
 namespace Harmony::Internals {
 
-    StateManagement::StateManagement(const Configuration& configuration)
-        : configuration_(configuration)
-    {
+    StateManagement::StateManagement(Engine& engine) :
+        configuration_(engine.configuration.subsection({ "scenes-management" }).value_or(Configuration())),
+        engine_(engine) {
+
+		// Load initial states from configuration
         auto startupStates = configuration_.get<std::vector<std::uint64_t>>({ "startup-states" }).value_or({});
         for (auto stateId : startupStates) {
             push(stateId);
@@ -19,7 +22,7 @@ namespace Harmony::Internals {
         auto configuration = configuration_.subsection({ stateKey });
 
         if (configuration) {
-            states_.emplace(std::make_shared<State>(*configuration));
+            states_.emplace(std::make_shared<State>(*configuration, engine_));
         }
     }
 
@@ -28,7 +31,7 @@ namespace Harmony::Internals {
         auto configuration = configuration_.subsection({ stateKey });
 
         if (configuration && !states_.empty()) {
-            states_.front() = std::make_shared<State>(*configuration);
+            states_.front() = std::make_shared<State>(*configuration, engine_);
         }
     }
 

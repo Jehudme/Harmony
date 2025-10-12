@@ -5,15 +5,15 @@
 #include <memory>
 
 #include "Configuration.h"
-#include "TaskManagement.h"
 #include "State.h"
 
 namespace Harmony::Internals {
-
+	class Engine;
+	class State;
 	
 	class StateManagement : public sf::Drawable {
 	public:
-		StateManagement(const Configuration& configuration);
+		StateManagement(Engine& engine);
 
 		void  push(std::uint64_t stateId);
 		void  swap(std::uint64_t stateId);
@@ -27,6 +27,7 @@ namespace Harmony::Internals {
 		void update(const sf::Time deltaTime, TaskManagement& taskQueue);
 
 	private:
+		Engine& engine_;
 		const Configuration& configuration_;
 		std::queue<std::shared_ptr<State>> states_;
 	};

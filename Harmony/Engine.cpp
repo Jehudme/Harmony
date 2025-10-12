@@ -11,16 +11,16 @@
 namespace Harmony::Internals {
 
     Engine::Engine(Configuration& configuration): 
-        configuration_(configuration),
-        taskManager_(std::make_unique<TaskManagement>()),
-        stateManager_(std::make_unique<StateManagement>(configuration.subsection({ "states-management" }).value_or(Configuration()))),
-		sceneManager_(std::make_unique<SceneManagement>(configuration.subsection({ "scenes-management" }).value_or(Configuration())))
-    {
+        configuration(configuration),
+        taskManagement(std::make_unique<TaskManagement>(*this)),
+		sceneManagement(std::make_unique<SceneManagement>(*this)),
+        stateManagement(std::make_unique<StateManagement>(*this)) {
+        
         // Load window settings from configuration
-        std::string title   = configuration_.get<std::string>   ({ "window", "title" }) .value_or("Harmony Engine");
-        unsigned int width  = configuration_.get<unsigned int>  ({ "window", "width" }) .value_or(800);
-        unsigned int height = configuration_.get<unsigned int>  ({ "window", "height" }).value_or(600);
-        targetFPS_          = configuration_.get<unsigned int>  ({ "window", "fps" })   .value_or(0);
+        std::string title   = configuration.get<std::string>   ({ "window", "title" }) .value_or("Harmony Engine");
+        unsigned int width  = configuration.get<unsigned int>  ({ "window", "width" }) .value_or(800);
+        unsigned int height = configuration.get<unsigned int>  ({ "window", "height" }).value_or(600);
+        targetFPS_          = configuration.get<unsigned int>  ({ "window", "fps" })   .value_or(0);
 
         window_.create(sf::VideoMode(width, height), title);
         window_.setFramerateLimit(targetFPS_);
@@ -87,7 +87,7 @@ namespace Harmony::Internals {
     }
 
     void Engine::handleTasks() {
-        taskManager_->run_ready();
+        taskManagement->run_ready();
     }
 
     void Engine::handleEvents() {

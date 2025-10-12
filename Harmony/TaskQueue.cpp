@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "TaskManagement.h"
-#include "StateManagement.h"
+#include "Engine.h"
+#include "Task.h"
 
 namespace Harmony::Internals {
 
@@ -13,6 +14,12 @@ namespace Harmony::Internals {
         }
         return leftTask->start_time() > rightTask->start_time(); // Earlier time first
     }
+
+    TaskManagement::TaskManagement(Engine& engine) :
+		engine_(engine) {
+    }
+
+    TaskManagement::~TaskManagement() = default;
 
     // Add a new task to the queue
     void TaskManagement::push(TaskPtr newTask) {

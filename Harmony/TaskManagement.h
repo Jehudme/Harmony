@@ -6,12 +6,16 @@
 #include <chrono>
 #include <vector>
 
-#include "Task.h"
-
 namespace Harmony::Internals {
+    class Engine;
+    class Task;
+
     class TaskManagement {
     public:
         using TaskPtr = std::unique_ptr<Task>;
+
+		TaskManagement(Engine& engine);
+		~TaskManagement();
 
         /**
          * @brief Add a new task to the queue.
@@ -51,8 +55,9 @@ namespace Harmony::Internals {
             bool operator()(const TaskPtr& leftTask, const TaskPtr& rightTask) const;
         };
 
+		Engine& engine_;
         mutable std::mutex taskQueueMutex_; ///< Mutex to protect task queue access.
-        std::priority_queue<TaskPtr, std::vector<TaskPtr>, Compare> taskQueue_; ///< Priority-based task queue.
+        std::priority_queue<TaskPtr, std::vector<TaskPtr>, Compare> taskQueue_; ///< Priority-based task queue
     };
 
 } // namespace Harmony

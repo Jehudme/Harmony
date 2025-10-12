@@ -2,16 +2,15 @@
 #include <SFML/Graphics/Drawable.hpp>
 #include <SFML/System/Time.hpp>
 
-#include "Configuration.h"
-#include "TaskManagement.h"
+namespace Harmony::Internals {
+	class Configuration;
+	class TaskManagement;
 
-namespace Harmony::Internals
-{
-	class cene : public sf::Drawable {
+	class Scene : public sf::Drawable {
 	public:
 		Scene(const Configuration& configuration);
 
 		void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
-		void update(const sf::Time deltaTime, TaskQueue& taskManagement);
+		void update(const sf::Time deltaTime, TaskManagement& taskManagement);
 	};
 }
