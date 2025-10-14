@@ -7,55 +7,26 @@
 #include <vector>
 
 namespace Harmony::Internals {
-    class TaskManagement {
-    public:
-        using TaskPtr = std::unique_ptr<Task>;
 
+    class TaskManagement {
+		friend class Engine;
+
+    public:
 		TaskManagement(Engine& engine);
 		~TaskManagement();
 
-        /**
-         * @brief Add a new task to the queue.
-         * @param newTask Unique pointer to the task.
-         */
-        void push(TaskPtr newTask);
+		void submit(std::unique_ptr<Task> task);
 
-        /**
-         * @brief Cancel a task by its unique ID before it executes.
-         * @param taskIdToRemove ID of the task to cancel.
-         * @return true if a task was removed, false otherwise.
-         */
-        bool cancel(std::size_t taskIdToRemove);
+	private:
+		void handleTasks();
 
-        /**
-         * @brief Run all tasks whose scheduled start time has arrived.
-         */
-        void run_ready();
+		struct Compare {
+			bool operator()(const std::unique_ptr<Task>& leftTask, const std::unique_ptr<Task>& rightTask) const;
+		};
 
-        /**
-         * @brief Run all tasks regardless of their scheduled time.
-         */
-        void run_all();
-
-        /**
-         * @brief Check if the task queue is empty.
-         * @return true if no tasks are queued, false otherwise.
-         */
-        bool empty() const;
-
-    private:
-        /**
-         * @brief Comparator for ordering tasks in the priority queue.
-         *        Higher priority first, then earlier start time.
-         */
-        struct Compare {
-            bool operator()(const TaskPtr& leftTask, const TaskPtr& rightTask) const;
-        };
-
+	private:
 		Engine& engine_;
-        mutable std::mutex taskQueueMutex_; ///< Mutex to protect task queue access.
-        std::priority_queue<TaskPtr, std::vector<TaskPtr>, Compare> taskQueue_; ///< Priority-based task queue
+		std::priority_queue<std::unique_ptr<Task>, std::vector<std::unique_ptr<Task>>, Compare> tasks_;
     };
 
 } // namespace Harmony
-

@@ -89,5 +89,8 @@
     <ClCompile Include="State.cpp">
       <Filter>Source Files\Internals</Filter>
     </ClCompile>
+    <ClCompile Include="Task.cpp">
+      <Filter>Source Files\Internals\Management</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

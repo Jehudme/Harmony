@@ -87,7 +87,6 @@ namespace Harmony::Internals {
     }
 
     void Engine::handleTasks() {
-        taskManagement->run_ready();
     }
 
     void Engine::handleEvents() {

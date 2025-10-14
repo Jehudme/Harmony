@@ -22,6 +22,8 @@
 #include <functional>
 #include <chrono>
 #include <filesystem>
+#include <thread>
+#include <future>
 
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
