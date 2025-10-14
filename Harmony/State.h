@@ -10,9 +10,11 @@ namespace Harmony::Internals
 
 		void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 		void update(const sf::Time deltaTime, TaskManagement& taskManagement);
+	
+	public:
+		Engine& engine;
 
 	private:
 		std::map<Utilities::UUID, std::shared_ptr<Scene>> scenes_;
-		Engine& engine;
 	};
 }

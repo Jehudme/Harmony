@@ -90,7 +90,7 @@
       <Filter>Source Files\Internals</Filter>
     </ClCompile>
     <ClCompile Include="Task.cpp">
-      <Filter>Source Files\Internals\Management</Filter>
+      <Filter>Source Files\Internals</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
