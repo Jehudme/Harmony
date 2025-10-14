@@ -7,42 +7,48 @@
 #include "State.h"
 
 
-namespace Harmony::Internals {
+namespace Harmony::Internals 
+{
     StateManagement::StateManagement(Engine& engine) :
-        engine(engine) {
-
-        if (auto statesStartupQueue = engine.configuration.get<Utilities::UUIDList>({ "startupStatesIds" })) {
-            for (auto stateId : statesStartupQueue.value()) {
+        engine(engine) 
+    {
+        const auto startupQueueIds = engine.configuration.get<Utilities::UUIDList>({ "startupStatesIds" });
+        
+        if (startupQueueIds.has_value()) 
+            for (Utilities::UUID stateId : startupQueueIds.value())
                 push(stateId);
-            }
-        } 
     }
 
-    void StateManagement::push(std::uint64_t stateId) {
+    StateManagement::~StateManagement() = default;
+
+    void StateManagement::push(std::uint64_t stateId) 
+    {
         const std::string stateKey = std::to_string(stateId);
         const std::optional<Configuration> configuration = engine.configuration.subsection({ "states", stateKey });
 
-        if (configuration) {
-            states_.emplace(std::make_shared<State>(configuration.value(), engine));
+        if (configuration.has_value()) 
+        {
+			std::shared_ptr<State> state = std::make_shared<State>(configuration.value(), engine);
+			states_.push(state);
         }
     }
 
-    void StateManagement::pop() {
-        if (!states_.empty()) {
+    void StateManagement::pop() 
+    {
+        if (!states_.empty()) 
             states_.pop();
-        }
     }
 
-    void StateManagement::draw(sf::RenderTarget& target, sf::RenderStates states) const {
-        if (!states_.empty()) {
+    void StateManagement::draw(sf::RenderTarget& target, sf::RenderStates states) const 
+    {
+        if (!states_.empty())
             states_.front()->draw(target, states);
-        }
     }
 
-    void StateManagement::update(sf::Time deltaTime, TaskManagement& taskManagement) {
-        if (!states_.empty()) {
+    void StateManagement::update(sf::Time deltaTime, TaskManagement& taskManagement) 
+    {
+        if (!states_.empty())
             states_.front()->update(deltaTime, taskManagement);
-        }
     }
 
 }

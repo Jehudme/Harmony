@@ -1,9 +1,12 @@
 #pragma once
 
-namespace Harmony::Internals {
-	class StateManagement : public sf::Drawable {
+namespace Harmony::Internals 
+{
+	class StateManagement : public sf::Drawable 
+	{
 	public:
 		StateManagement(Engine& engine);
+		~StateManagement();
 
 		void  push(std::uint64_t stateId);
 		void  pop();

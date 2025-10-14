@@ -1,7 +1,9 @@
 #pragma once
 
-namespace Harmony::Internals {
-	class State : public sf::Drawable, public std::enable_shared_from_this<State>  {
+namespace Harmony::Internals 
+{
+	class State : public sf::Drawable, public std::enable_shared_from_this<State>  
+	{
 	public:
 		State(const Configuration& configuration, Engine& engine);
 		~State();
