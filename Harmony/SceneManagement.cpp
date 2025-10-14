@@ -6,26 +6,36 @@
 
 namespace Harmony::Internals {
 	SceneManagement::SceneManagement(Engine& engine) :
-		engine_(engine) {
-	}
+		engine(engine) {}
+
+	SceneManagement::~SceneManagement() = default;
 
 	std::shared_ptr<Scene> SceneManagement::create(const Utilities::UUID sceneId) {
 		const std::string sceneKey = std::to_string(sceneId);
-		
-		if (const std::optional<Configuration> configuration = engine_.configuration.subsection({ "scenes", sceneKey })) {
-			std::shared_ptr<Scene> scene = std::make_shared<Scene>(configuration.value(), engine_);
-			scenes_.emplace(sceneId, scene);
+		const std::optional<Configuration> configuration = engine.configuration.subsection({ "scenes", sceneKey });
+
+		if (configuration.has_value()) 
+		{
+			std::shared_ptr<Scene> scene = std::make_shared<Scene>(configuration.value(), sceneId, engine);
+			scenes_[sceneId] = scene;
+
 			return scene;
 		}
 
-		return std::shared_ptr<Scene>(nullptr);
+		return nullptr;
 	}
 
-	void SceneManagement::destroy(const Utilities::UUID sceneId) {
-		scenes_.erase(sceneId);
+	void SceneManagement::destroy(const Utilities::UUID sceneId) 
+	{
+		if (scenes_.contains(sceneId)) 
+			scenes_.erase(sceneId);
 	}
 
-	std::shared_ptr<Scene> SceneManagement::get(const Utilities::UUID sceneId) const {
-		return scenes_.contains(sceneId) ? scenes_.at(sceneId).lock() : std::shared_ptr<Scene>();
+	std::shared_ptr<Scene> SceneManagement::get(const Utilities::UUID sceneId) const 
+	{
+		if (scenes_.contains(sceneId))
+			return scenes_.at(sceneId);
+
+		return nullptr;
 	}
 }

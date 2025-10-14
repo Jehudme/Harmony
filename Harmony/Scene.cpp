@@ -1,18 +1,25 @@
 #include "pch.h"
 #include "Scene.h"
+#include "Engine.h"
+#include "SceneManagement.h"
 
 namespace Harmony::Internals {
-	Scene::Scene(const Configuration& configuration, Engine& engine) : 
+	Scene::Scene(const Configuration& configuration, const Utilities::UUID sceneId, Engine& engine) :
 		configuration_(configuration),
-		engine_(engine) {
+		sceneId(sceneId),
+		engine(engine) 
+	{
 	}
 
-	void Scene::draw(sf::RenderTarget& target, sf::RenderStates states) const {
-		if (onPreDrawFunction_) { onPreDrawFunction_(*const_cast<Scene*>(this), target, states); }
-		if (onPostDrawFunction_) { onPostDrawFunction_(*const_cast<Scene*>(this), target, states); }
+	Scene::~Scene()
+	{
 	}
-	void Scene::update(const sf::Time deltaTime, TaskManagement& taskManagement) {
-		if (onPreUpdateFunction_) { onPreUpdateFunction_(*this, deltaTime, taskManagement); }
-		if (onPostUpdateFunction_) { onPostUpdateFunction_(*this, deltaTime, taskManagement); }
+
+	void Scene::draw(sf::RenderTarget& target, sf::RenderStates states) const 
+	{
+	}
+
+	void Scene::update(const sf::Time deltaTime, TaskManagement& taskManagement) 
+	{
 	}
 }

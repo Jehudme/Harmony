@@ -1,18 +1,24 @@
 #pragma once
 #include "Scene.h"
 
-namespace Harmony::Internals {
-	class SceneManagement {
+namespace Harmony::Internals 
+{
+	class SceneManagement 
+	{
 	public:
+		friend class Scene;
+		friend class State;
+
 		SceneManagement(Engine& engine);
+		~SceneManagement();
 
 		std::shared_ptr<Scene> create(const Utilities::UUID sceneId);
+		std::shared_ptr<Scene> get(const Utilities::UUID sceneId) const;
+
 		void destroy(const Utilities::UUID sceneId);
 
-		std::shared_ptr<Scene> get(const Utilities::UUID sceneId) const;
-	
 	private:
-		Engine& engine_;
-		std::unordered_map<std::uint64_t, std::weak_ptr<Scene>> scenes_;
+		Engine& engine;
+		std::unordered_map<std::uint64_t, std::shared_ptr<Scene>> scenes_;
 	};
 }

@@ -6,18 +6,17 @@
 namespace Harmony::Internals {
 	class Scene : public sf::Drawable, public std::enable_shared_from_this<Scene> {
 	public:
-		Scene(const Configuration& configuration, Engine& engine);
+		Scene(const Configuration& configuration, const Utilities::UUID sceneId, Engine& engine);
+		~Scene();
 
 		void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 		void update(const sf::Time deltaTime, TaskManagement& taskManagement);
 
-	private:
-		std::function<void(Scene& scene, sf::RenderTarget& target, sf::RenderStates states)> onPreDrawFunction_;
-		std::function<void(Scene& scene, sf::RenderTarget& target, sf::RenderStates states)> onPostDrawFunction_;
-		std::function<void(Scene& scene, const sf::Time deltaTime, TaskManagement& taskManagement)> onPreUpdateFunction_;
-		std::function<void(Scene& scene, const sf::Time deltaTime, TaskManagement& taskManagement)> onPostUpdateFunction_;
+	public:
+		Engine& engine;
+		const Utilities::UUID sceneId;
 
-		Engine& engine_;
+	private:
 		const Configuration& configuration_;
 	};
 }

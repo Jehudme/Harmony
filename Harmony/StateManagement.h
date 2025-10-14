@@ -13,7 +13,7 @@ namespace Harmony::Internals {
 		void update(const sf::Time deltaTime, TaskManagement& taskQueue);
 
 	private:
-		Engine& engine_;
+		Engine& engine;
 		std::queue<std::shared_ptr<State>> states_;
 	};
 }

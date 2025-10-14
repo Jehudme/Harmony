@@ -11,6 +11,6 @@ namespace Harmony::Internals {
 
 	private:
 		std::map<Utilities::UUID, std::shared_ptr<Scene>> scenes_;
-		Engine& engine_;
+		Engine& engine;
 	};
 }

@@ -25,7 +25,7 @@ namespace Harmony::Internals {
 		};
 
 	private:
-		Engine& engine_;
+		Engine& engine;
 		std::priority_queue<std::unique_ptr<Task>, std::vector<std::unique_ptr<Task>>, Compare> tasks_;
     };
 

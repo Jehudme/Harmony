@@ -9,7 +9,7 @@
 namespace Harmony::Internals {
 
 	State::State(const Configuration& configuration, Engine& engine) :
-		engine_(engine) 
+		engine(engine) 
 	{
 		const Utilities::UUIDList scenesIds = configuration.get<Utilities::UUIDList>({ "scenes" }).value_or(Utilities::UUIDList());
 		
@@ -25,7 +25,7 @@ namespace Harmony::Internals {
 
 	State::~State() {
 		for (const auto& scene : scenes_) {
-			engine_.sceneManagement->destroy(scene.first);
+			engine.sceneManagement->destroy(scene.first);
 		}
 	}
 

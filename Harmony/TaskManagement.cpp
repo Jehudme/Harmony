@@ -5,7 +5,7 @@
 
 namespace Harmony::Internals {
 	TaskManagement::TaskManagement(Engine& engine) :
-		engine_(engine) {
+		engine(engine) {
 	}
 	TaskManagement::~TaskManagement() = default;
 	void TaskManagement::submit(std::unique_ptr<Task> task) {
