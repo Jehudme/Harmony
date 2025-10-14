@@ -13,6 +13,7 @@ namespace Harmony::Internals {
 
 	Scene::~Scene()
 	{
+		engine.sceneManagement->remove(sceneId);
 	}
 
 	void Scene::draw(sf::RenderTarget& target, sf::RenderStates states) const 

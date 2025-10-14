@@ -21,7 +21,7 @@ namespace Harmony::Internals
 	State::~State() 
 	{
 		for (const auto& scene : scenes_)
-			engine.sceneManagement->destroy(scene.first);
+			engine.sceneManagement->remove(scene.first);
 	}
 
 	void State::draw(sf::RenderTarget& target, sf::RenderStates states) const

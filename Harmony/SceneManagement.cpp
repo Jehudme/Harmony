@@ -10,14 +10,15 @@ namespace Harmony::Internals {
 
 	SceneManagement::~SceneManagement() = default;
 
-	std::shared_ptr<Scene> SceneManagement::create(const Utilities::UUID sceneId) {
+	std::shared_ptr<Scene> SceneManagement::create(const Utilities::UUID sceneId) 
+	{
 		const std::string sceneKey = std::to_string(sceneId);
 		const std::optional<Configuration> configuration = engine.configuration.subsection({ "scenes", sceneKey });
 
-		if (configuration.has_value()) 
+		if (configuration.has_value() && scenes_.contains(sceneId)) 
 		{
 			std::shared_ptr<Scene> scene = std::make_shared<Scene>(configuration.value(), sceneId, engine);
-			scenes_[sceneId] = scene;
+			scenes_[sceneId] = scene->weak_from_this();
 
 			return scene;
 		}
@@ -25,7 +26,7 @@ namespace Harmony::Internals {
 		return nullptr;
 	}
 
-	void SceneManagement::destroy(const Utilities::UUID sceneId) 
+	void SceneManagement::remove(const Utilities::UUID sceneId) 
 	{
 		if (scenes_.contains(sceneId)) 
 			scenes_.erase(sceneId);
@@ -34,7 +35,7 @@ namespace Harmony::Internals {
 	std::shared_ptr<Scene> SceneManagement::get(const Utilities::UUID sceneId) const 
 	{
 		if (scenes_.contains(sceneId))
-			return scenes_.at(sceneId);
+			return scenes_.at(sceneId).lock();
 
 		return nullptr;
 	}
