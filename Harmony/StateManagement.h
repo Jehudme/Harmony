@@ -1,11 +1,4 @@
 #pragma once
-#include <SFML/Graphics/Drawable.hpp>
-#include <SFML/System/Time.hpp>
-#include <queue>
-#include <memory>
-
-#include "Configuration.h"
-#include "State.h"
 
 namespace Harmony::Internals {
 	class StateManagement : public sf::Drawable {
@@ -21,7 +14,7 @@ namespace Harmony::Internals {
 
 	private:
 		Engine& engine_;
-		std::queue<std::unique_ptr<State>> states_;
+		std::queue<std::shared_ptr<State>> states_;
 	};
 }
 

@@ -4,11 +4,7 @@
 #include <functional>
 
 namespace Harmony::Internals {
-	class Configuration;
-	class TaskManagement;
-	class Engine;
-
-	class Scene : public sf::Drawable {
+	class Scene : public sf::Drawable, public std::enable_shared_from_this<Scene> {
 	public:
 		Scene(const Configuration& configuration, Engine& engine);
 

@@ -1,17 +1,7 @@
 #pragma once
-#include <SFML/Graphics/Drawable.hpp>
-#include <SFML/System/Time.hpp>
-#include <functional>
-#include <vector>
 
 namespace Harmony::Internals {
-	class SceneManagement;
-	class TaskManagement;
-	class Configuration;
-	class Scene;
-	class Engine;
-
-	class State : public sf::Drawable {
+	class State : public sf::Drawable, public std::enable_shared_from_this<State>  {
 	public:
 		State(const Configuration& configuration, Engine& engine);
 		~State();
@@ -20,7 +10,7 @@ namespace Harmony::Internals {
 		void update(const sf::Time deltaTime, TaskManagement& taskManagement);
 
 	private:
-		std::map<Utilities::UUID, std::reference_wrapper<Scene>> scenes_;
+		std::map<Utilities::UUID, std::shared_ptr<Scene>> scenes_;
 		Engine& engine_;
 	};
 }

@@ -1,17 +1,6 @@
 #pragma once
 
-#include <memory>
-#include <functional>
-#include <chrono>
-#include <string>
-#include <atomic>
-
 namespace Harmony::Internals {
-    class TaskManagement;
-	class StateManagement;
-	class SceneManagement;
-    class Configuration;
-
     /**
      * @brief Core engine class responsible for managing the main loop,
      *        tasks, events, updates, and rendering.

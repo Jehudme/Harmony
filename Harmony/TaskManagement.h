@@ -7,9 +7,6 @@
 #include <vector>
 
 namespace Harmony::Internals {
-    class Engine;
-    class Task;
-
     class TaskManagement {
     public:
         using TaskPtr = std::unique_ptr<Task>;

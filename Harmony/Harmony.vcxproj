@@ -164,7 +164,7 @@
     <ClCompile Include="SceneManagement.cpp" />
     <ClCompile Include="State.cpp" />
     <ClCompile Include="StateManagement.cpp" />
-    <ClCompile Include="TaskQueue.cpp" />
+    <ClCompile Include="TaskManagement.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

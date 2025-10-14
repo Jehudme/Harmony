@@ -1,22 +1,23 @@
 #include "pch.h"
-#include "Configuration.h"
 #include "State.h"
 #include "Scene.h"
 #include "Engine.h"
+#include "Configuration.h"
 #include "TaskManagement.h"
 #include "SceneManagement.h"
 
 namespace Harmony::Internals {
 
 	State::State(const Configuration& configuration, Engine& engine) :
-		engine_(engine) {
-		const auto scenesIds_ = configuration.get<Utilities::UUIDList>({ "scenes" }).value_or(Utilities::UUIDList());
+		engine_(engine) 
+	{
+		const Utilities::UUIDList scenesIds = configuration.get<Utilities::UUIDList>({ "scenes" }).value_or(Utilities::UUIDList());
 		
-		for (const auto& sceneId : scenesIds_) {
+		for (const auto& sceneId : scenesIds) {
 			engine.sceneManagement->create(sceneId);
 
-			if (std::optional<Scene> scene = engine.sceneManagement->get(sceneId)) {
-				scenes_.insert({ sceneId, std::ref(scene.value()) });
+			if (std::shared_ptr<Scene> scene = engine.sceneManagement->get(sceneId)) {
+				scenes_.insert({ sceneId, engine.sceneManagement->get(sceneId) });
 			}
 		}
 	}
@@ -30,13 +31,13 @@ namespace Harmony::Internals {
 
 	void State::draw(sf::RenderTarget& target, sf::RenderStates states) const {
 		for (auto& scene : scenes_) {
-			scene.second.get().draw(target, states);
+			scene.second->draw(target, states);
 		}
 	}
 
 	void State::update(const sf::Time deltaTime, TaskManagement& taskManagement) {
 		for (auto& scene : scenes_) {
-			scene.second.get().update(deltaTime, taskManagement);
+			scene.second->update(deltaTime, taskManagement);
 		}
 	}
 }

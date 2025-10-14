@@ -9,7 +9,7 @@ namespace Harmony::Internals {
 	class SceneManagement;
 	class State;
 	class Scene;
-	class Task;
+	struct Task;
 }
 
 namespace Harmony::Utilities {

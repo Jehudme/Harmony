@@ -1,12 +1,5 @@
 #pragma once
 
-#pragma once
-#include <filesystem>
-#include <memory>
-#include <optional>
-#include <string>
-#include <vector>
-
 namespace Harmony::Internals {
 
     /**
@@ -77,8 +70,6 @@ namespace Harmony::Internals {
          * @return A vector of strings representing the top-level keys.
 		 */
         std::vector<std::string> extractKeys(const std::vector<std::string>& keys) const;
-
-        const std::string extractKey() const;
 
         /**
          * @brief Retrieve a typed value from the configuration.
