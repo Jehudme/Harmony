@@ -22,10 +22,10 @@ namespace Harmony::Internals
 		std::mutex mutex_;
 		std::condition_variable condition_;
 
-		bool running_ = false;
+		bool running_ = true;
 
-		std::vector<Worker> workers_;
 		std::queue<std::unique_ptr<Task>> tasks_;
+		std::vector<std::unique_ptr<Worker>> workers_;
 	};
 
 	struct TaskManagement::WorkerPool::Worker {
@@ -51,11 +51,11 @@ namespace Harmony::Internals
 		std::queue<std::unique_ptr<Task>>& tasks_;
 		std::unique_ptr<Task> currentTask_;
 
-		std::thread thread_;
-		bool& running_;
-
 		std::mutex& mutex_;
 		std::condition_variable& condition_;
+
+		bool& running_;
+		std::thread thread_;
 	};
 
 	/////////////////////////////////////////////////////////////////
@@ -65,7 +65,10 @@ namespace Harmony::Internals
 	TaskManagement::WorkerPool::WorkerPool()
 	{
 		for (unsigned int workerIndex = 0; workerIndex < std::thread::hardware_concurrency() + 2; workerIndex++)
-			workers_.emplace_back(tasks_, running_, mutex_, condition_);
+		{
+			std::unique_ptr<Worker> worker = std::make_unique<Worker>(tasks_, running_, mutex_, condition_);
+			workers_.emplace_back(std::move(worker));
+		}
 	}
 
 	TaskManagement::WorkerPool::~WorkerPool()
@@ -75,13 +78,20 @@ namespace Harmony::Internals
 	}
 
 	TaskManagement::WorkerPool::Worker::Worker(std::queue<std::unique_ptr<Task>>& tasks, bool& running_, std::mutex& mutex, std::condition_variable& condition) :
-		tasks_(tasks), running_(running_), mutex_(mutex), condition_(condition), thread_(run, std::ref(*this))
+		tasks_(tasks), 
+		running_(running_), 
+		mutex_(mutex), 
+		condition_(condition), 
+		thread_(run, std::ref(*this))
 	{
 	}
 
-	void TaskManagement::WorkerPool::submit(std::unique_ptr<Task> task) {
-		std::lock_guard<std::mutex> lock(mutex_);
-		tasks_.emplace(std::move(task));
+	void TaskManagement::WorkerPool::submit(std::unique_ptr<Task> task) 
+	{
+		{
+			std::lock_guard<std::mutex> lock(mutex_);
+			tasks_.emplace(std::move(task));
+		}
 		condition_.notify_one();
 	}
 
@@ -115,6 +125,8 @@ namespace Harmony::Internals
 
 	void TaskManagement::submit(std::unique_ptr<Task> task)
 	{
+		task->engine = std::make_optional<std::reference_wrapper<Engine>>(engine);
+
 		if (task->priority == 0)
 		{
 			handleTask(std::move(task));

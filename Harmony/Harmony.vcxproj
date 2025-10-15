@@ -141,18 +141,22 @@
   <ItemGroup>
     <ClInclude Include="Configuration.h" />
     <ClInclude Include="Engine.h" />
+    <ClInclude Include="EngineTask.h" />
     <ClInclude Include="Harmony.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneManagement.h" />
+    <ClInclude Include="SceneTask.h" />
     <ClInclude Include="State.h" />
     <ClInclude Include="StateManagement.h" />
+    <ClInclude Include="StateTask.h" />
     <ClInclude Include="Task.h" />
     <ClInclude Include="TaskManagement.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Configuration.cpp" />
     <ClCompile Include="Engine.cpp" />
+    <ClCompile Include="EngineTask.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -162,8 +166,10 @@
     </ClCompile>
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="SceneManagement.cpp" />
+    <ClCompile Include="SceneTask.cpp" />
     <ClCompile Include="State.cpp" />
     <ClCompile Include="StateManagement.cpp" />
+    <ClCompile Include="StateTask.cpp" />
     <ClCompile Include="Task.cpp" />
     <ClCompile Include="TaskManagement.cpp" />
   </ItemGroup>

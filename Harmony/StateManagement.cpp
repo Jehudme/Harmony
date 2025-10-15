@@ -28,6 +28,7 @@ namespace Harmony::Internals
 
         if (configuration.has_value()) 
         {
+            std::lock_guard<std::mutex> lock(mutex_);
 			std::shared_ptr<State> state = std::make_shared<State>(configuration.value(), engine);
 			states_.push(state);
         }
@@ -35,12 +36,14 @@ namespace Harmony::Internals
 
     void StateManagement::pop() 
     {
+        std::lock_guard<std::mutex> lock(mutex_);
         if (!states_.empty()) 
             states_.pop();
     }
 
     void StateManagement::draw(sf::RenderTarget& target, sf::RenderStates states) const 
     {
+        std::lock_guard<std::mutex> lock(mutex_);
         if (!states_.empty())
             states_.front()->draw(target, states);
     }

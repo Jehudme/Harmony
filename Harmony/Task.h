@@ -23,10 +23,12 @@ namespace Harmony::Internals
         virtual void run() = 0;
 
     public:
-
         const int priority;
         const bool multiThreaded;
         const std::chrono::milliseconds delay;
+
+    protected:
+        std::optional<std::reference_wrapper<Engine>> engine;
     };
 
 } // namespace Harmony::Internals

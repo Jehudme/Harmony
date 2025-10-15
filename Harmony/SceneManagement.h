@@ -20,6 +20,7 @@ namespace Harmony::Internals
 
 	private:
 		Engine& engine;
+		mutable std::mutex mutex_;
 		std::unordered_map<std::uint64_t, std::weak_ptr<Scene>> scenes_;
 	};
 }
