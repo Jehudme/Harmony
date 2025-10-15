@@ -5,23 +5,28 @@
 #include <mutex>
 #include <chrono>
 #include <vector>
+#include <future>
+#include <thread>
 
-namespace Harmony::Internals {
-
-    struct Task 
-	{
-		friend class TaskManagement;
+namespace Harmony::Internals
+{
+    struct Task
+    {
+        friend class TaskManagement;
 
     public:
-		Task(int priority = 0, std::chrono::milliseconds delay = std::chrono::milliseconds(0));
-		~Task();
+        Task(int priority = 0, bool multithreaded = true, std::chrono::milliseconds delay = std::chrono::milliseconds(0));
+        virtual ~Task();
 
     private:
-		virtual void start() = 0;
+        void start();
         virtual void run() = 0;
 
-	public:
-		const int priority;
-		const std::chrono::milliseconds delay;
+    public:
+
+        const int priority;
+        const bool multiThreaded;
+        const std::chrono::milliseconds delay;
     };
-}
+
+} // namespace Harmony::Internals
