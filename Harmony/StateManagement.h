@@ -5,6 +5,7 @@ namespace Harmony::Internals
 	class StateManagement : public sf::Drawable 
 	{
 	public:
+		friend class Engine;
 		StateManagement(Engine& engine);
 		~StateManagement();
 
@@ -17,6 +18,7 @@ namespace Harmony::Internals
 
 	private:
 		Engine& engine;
+		mutable std::mutex mutex_;
 		std::queue<std::shared_ptr<State>> states_;
 	};
 }

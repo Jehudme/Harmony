@@ -45,9 +45,6 @@
     <ClInclude Include="StateManagement.h">
       <Filter>Header Files\Internals\Management</Filter>
     </ClInclude>
-    <ClInclude Include="TaskManagement.h">
-      <Filter>Header Files\Internals\Management</Filter>
-    </ClInclude>
     <ClInclude Include="SceneManagement.h">
       <Filter>Header Files\Internals\Management</Filter>
     </ClInclude>
@@ -58,6 +55,18 @@
       <Filter>Header Files\Internals</Filter>
     </ClInclude>
     <ClInclude Include="Task.h">
+      <Filter>Header Files\Tasks</Filter>
+    </ClInclude>
+    <ClInclude Include="TaskManagement.h">
+      <Filter>Header Files\Internals\Management</Filter>
+    </ClInclude>
+    <ClInclude Include="StateTask.h">
+      <Filter>Header Files\Tasks</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneTask.h">
+      <Filter>Header Files\Tasks</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineTask.h">
       <Filter>Header Files\Tasks</Filter>
     </ClInclude>
   </ItemGroup>
@@ -91,6 +100,15 @@
     </ClCompile>
     <ClCompile Include="Task.cpp">
       <Filter>Source Files\Internals</Filter>
+    </ClCompile>
+    <ClCompile Include="StateTask.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneTask.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineTask.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

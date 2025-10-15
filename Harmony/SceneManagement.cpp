@@ -14,6 +14,7 @@ namespace Harmony::Internals {
 	{
 		const std::string sceneKey = std::to_string(sceneId);
 		const std::optional<Configuration> configuration = engine.configuration.subsection({ "scenes", sceneKey });
+		std::lock_guard<std::mutex> lock(mutex_);
 
 		if (configuration.has_value() && scenes_.contains(sceneId)) 
 		{
@@ -28,12 +29,18 @@ namespace Harmony::Internals {
 
 	void SceneManagement::remove(const Utilities::UUID sceneId) 
 	{
+		std::lock_guard<std::mutex> lock(mutex_);
+
 		if (scenes_.contains(sceneId)) 
+		{
 			scenes_.erase(sceneId);
+		}
 	}
 
-	std::shared_ptr<Scene> SceneManagement::get(const Utilities::UUID sceneId) const 
+	std::shared_ptr<Scene> SceneManagement::get(const Utilities::UUID sceneId) const
 	{
+		std::lock_guard<std::mutex> lock(mutex_);
+
 		if (scenes_.contains(sceneId))
 			return scenes_.at(sceneId).lock();
 
