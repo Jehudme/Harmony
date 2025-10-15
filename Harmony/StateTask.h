@@ -16,8 +16,7 @@ namespace Harmony::Tasks
 
 	};
 
-	class PopState : public Internals::Task
-	{
+	class PopState : public Internals::Task {
 	public:
 		PopState();
 

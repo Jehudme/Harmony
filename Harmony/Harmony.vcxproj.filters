@@ -28,6 +28,9 @@
     <Filter Include="Header Files\Tasks">
       <UniqueIdentifier>{635d7ffd-b741-48f1-9b33-659fb9720d90}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Tasks">
+      <UniqueIdentifier>{9a366021-c292-400d-bad1-b06c25dab228}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Configuration.h">
@@ -101,14 +104,14 @@
     <ClCompile Include="Task.cpp">
       <Filter>Source Files\Internals</Filter>
     </ClCompile>
-    <ClCompile Include="StateTask.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="EngineTask.cpp">
+      <Filter>Source Files\Tasks</Filter>
     </ClCompile>
     <ClCompile Include="SceneTask.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Tasks</Filter>
     </ClCompile>
-    <ClCompile Include="EngineTask.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="StateTask.cpp">
+      <Filter>Source Files\Tasks</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
