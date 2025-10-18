@@ -13,12 +13,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Header Files\Internals">
-      <UniqueIdentifier>{9c397518-e4e7-4a47-935e-cbe8cb56033e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Internals\Management">
-      <UniqueIdentifier>{2a0aea8f-63bc-476a-b91a-6ea2fa881edd}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Internals">
       <UniqueIdentifier>{5d22b725-f5b4-4dff-b05d-9ddec505ae53}</UniqueIdentifier>
     </Filter>
@@ -28,8 +22,11 @@
     <Filter Include="Header Files\Tasks">
       <UniqueIdentifier>{635d7ffd-b741-48f1-9b33-659fb9720d90}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Tasks">
-      <UniqueIdentifier>{9a366021-c292-400d-bad1-b06c25dab228}</UniqueIdentifier>
+    <Filter Include="Header Files\Internals">
+      <UniqueIdentifier>{9c397518-e4e7-4a47-935e-cbe8cb56033e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Internals\Management">
+      <UniqueIdentifier>{2a0aea8f-63bc-476a-b91a-6ea2fa881edd}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -72,6 +69,9 @@
     <ClInclude Include="EngineTask.h">
       <Filter>Header Files\Tasks</Filter>
     </ClInclude>
+    <ClInclude Include="Logger.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Configuration.cpp">
@@ -104,14 +104,17 @@
     <ClCompile Include="Task.cpp">
       <Filter>Source Files\Internals</Filter>
     </ClCompile>
-    <ClCompile Include="EngineTask.cpp">
-      <Filter>Source Files\Tasks</Filter>
+    <ClCompile Include="StateTask.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SceneTask.cpp">
-      <Filter>Source Files\Tasks</Filter>
+      <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="StateTask.cpp">
-      <Filter>Source Files\Tasks</Filter>
+    <ClCompile Include="EngineTask.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Logger.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
