@@ -10,56 +10,55 @@
 
 #include <mutex>
 
-namespace Harmony::Log {
+namespace Harmony::Internals 
+{
 
-    namespace {
-        // Internal state
-        std::once_flag initFlag;
-        std::shared_ptr<spdlog::logger> globalLogger;
-    }
+	 // Internal state
+	 std::once_flag initFlag;
+	 std::shared_ptr<spdlog::logger> globalLogger;
 
-    void Logger::initialize(std::string_view logFile,
-        size_t maxFileSize,
-        size_t maxFiles,
-        size_t queueSize,
-        size_t workerThreads)
-    {
-        std::call_once(initFlag, [&] {
-            // Create async thread pool
-            spdlog::init_thread_pool(queueSize, workerThreads);
+	void Logger::initialize(std::string_view logFile,
+		size_t maxFileSize,
+		size_t maxFiles,
+		size_t queueSize,
+		size_t workerThreads)
+	{
+		std::call_once(initFlag, [&] {
+			// Create async thread pool
+			spdlog::init_thread_pool(queueSize, workerThreads);
 
-            // Console sink
-            auto console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
-            console_sink->set_pattern("[%H:%M:%S.%e] [%^%l%$] %v");
+			// Console sink
+			auto console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
+			console_sink->set_pattern("[%H:%M:%S.%e] [%^%l%$] %v");
 
-            // Rotating file sink
-            auto file_sink = std::make_shared<spdlog::sinks::rotating_file_sink_mt>(
-                std::string{ logFile }, maxFileSize, maxFiles);
+			// Rotating file sink
+			auto file_sink = std::make_shared<spdlog::sinks::rotating_file_sink_mt>(
+				std::string{ logFile }, maxFileSize, maxFiles);
 
-            std::vector<spdlog::sink_ptr> sinks{ console_sink, file_sink };
+			std::vector<spdlog::sink_ptr> sinks{ console_sink, file_sink };
 
-            // Create async logger
-            globalLogger = std::make_shared<spdlog::async_logger>(
-                "Harmony",
-                sinks.begin(), sinks.end(),
-                spdlog::thread_pool(),
-                spdlog::async_overflow_policy::block);
+			// Create async logger
+			globalLogger = std::make_shared<spdlog::async_logger>(
+				"Harmony",
+				sinks.begin(), sinks.end(),
+				spdlog::thread_pool(),
+				spdlog::async_overflow_policy::block);
 
-            spdlog::register_logger(globalLogger);
-            spdlog::set_default_logger(globalLogger);
+			spdlog::register_logger(globalLogger);
+			spdlog::set_default_logger(globalLogger);
 
-            // Default levels
-            spdlog::set_level(spdlog::level::trace);   // log everything
-            spdlog::flush_on(spdlog::level::warn);     // flush on warnings or higher
-            });
-    }
+			// Default levels
+			spdlog::set_level(spdlog::level::trace);   // log everything
+			spdlog::flush_on(spdlog::level::warn);     // flush on warnings or higher
+			});
+	}
 
-    spdlog::logger& Logger::get() noexcept {
-        return *globalLogger;
-    }
+	spdlog::logger& Logger::get() noexcept {
+		return *globalLogger;
+	}
 
-    void Logger::shutdown() {
-        spdlog::shutdown();
-    }
+	void Logger::shutdown() {
+		spdlog::shutdown();
+	}
 
-} // namespace Harmony::Log
+}
