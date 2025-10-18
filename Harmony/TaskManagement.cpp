@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "TaskManagement.h"
+#include "Logger.h"
 #include "Engine.h"
 #include "Task.h"
 
@@ -63,123 +64,129 @@ namespace Harmony::Management
 	// Implementation                                              //
 	/////////////////////////////////////////////////////////////////
 
-	TaskManagemer::WorkerPool::WorkerPool()
-	{
-		for (unsigned int workerIndex = 0; workerIndex < std::thread::hardware_concurrency() + 2; workerIndex++)
-		{
-			std::unique_ptr<Worker> worker = std::make_unique<Worker>(tasks_, running_, mutex_, condition_);
-			workers_.emplace_back(std::move(worker));
-		}
-	}
+    class TaskManagerError : public std::runtime_error {
+    public:
+        explicit TaskManagerError(const std::string& msg)
+            : std::runtime_error("TaskManager error: " + msg) {}
+    };
 
-	TaskManagemer::WorkerPool::~WorkerPool()
-	{
-		running_ = false;
-		condition_.notify_all();
-	}
+    TaskManagemer::WorkerPool::WorkerPool()
+    {
+        unsigned int workerCount = std::thread::hardware_concurrency();
+        if (workerCount == 0) workerCount = 2; // fallback
 
-	TaskManagemer::WorkerPool::Worker::Worker(std::queue<std::unique_ptr<Tasks::Task>>& tasks, bool& running_, std::mutex& mutex, std::condition_variable& condition) :
-		tasks_(tasks), 
-		running_(running_), 
-		mutex_(mutex), 
-		condition_(condition), 
-		thread_(run, std::ref(*this))
-	{
-	}
+        HARMONY_INFO("WorkerPool starting with {} workers", workerCount + 2);
 
-	void TaskManagemer::WorkerPool::submit(std::unique_ptr<Tasks::Task> task)
-	{
-		{
-			std::lock_guard<std::mutex> lock(mutex_);
-			tasks_.emplace(std::move(task));
-		}
-		condition_.notify_one();
-	}
+        for (unsigned int workerIndex = 0; workerIndex < workerCount + 2; workerIndex++) {
+            auto worker = std::make_unique<Worker>(tasks_, running_, mutex_, condition_);
+            workers_.emplace_back(std::move(worker));
+        }
+    }
 
-	Harmony::Management::TaskManagemer::WorkerPool::Worker::~Worker()
-	{
-		if (thread_.joinable())
-			thread_.join();
-	}
+    TaskManagemer::WorkerPool::~WorkerPool()
+    {
+        HARMONY_INFO("WorkerPool shutting down ({} workers)", workers_.size());
+        running_ = false;
+        condition_.notify_all();
+    }
 
-	void TaskManagemer::WorkerPool::Worker::run(Worker& worker)
-	{
-		while (true)
-		{
-			std::unique_lock<std::mutex> lock(worker.mutex_);
-			worker.condition_.wait(lock, [&worker] { return !worker.running_ || !worker.tasks_.empty(); });
+    TaskManagemer::WorkerPool::Worker::Worker(
+        std::queue<std::unique_ptr<Tasks::Task>>& tasks,
+        bool& running_,
+        std::mutex& mutex,
+        std::condition_variable& condition)
+        : tasks_(tasks),
+        running_(running_),
+        mutex_(mutex),
+        condition_(condition),
+        thread_(run, std::ref(*this))
+    {
+        HARMONY_DEBUG("Worker thread created");
+    }
 
-			if (!worker.running_ && worker.tasks_.empty())
-				return;
+    TaskManagemer::WorkerPool::Worker::~Worker()
+    {
+        if (thread_.joinable()) {
+            thread_.join();
+            HARMONY_DEBUG("Worker thread joined");
+        }
+    }
 
-			worker.currentTask_ = std::move(worker.tasks_.front());
-			worker.tasks_.pop();
-			lock.unlock();
-			
-			switch (worker.currentTask_->mode)
-			{
-			case Tasks::Task::FastMultiThreaded:
-				runTask(std::move(worker.currentTask_)); break;
+    void TaskManagemer::WorkerPool::submit(std::unique_ptr<Tasks::Task> task)
+    {
+        if (!task) {
+            HARMONY_ERROR("Attempted to submit null task");
+            throw TaskManagerError("Null task submitted to WorkerPool");
+        }
 
-			case Tasks::Task::SlowMultiThreaded:
-				std::thread(Worker::runTask, std::move(worker.currentTask_)).detach(); break;
-			}
-		}
-	}
+        {
+            std::lock_guard<std::mutex> lock(mutex_);
+            tasks_.emplace(std::move(task));
+            HARMONY_DEBUG("Task submitted (queue size = {})", tasks_.size());
+        }
+        condition_.notify_one();
+    }
 
-	void TaskManagemer::WorkerPool::Worker::runTask(std::unique_ptr<Tasks::Task> task)
-	{
-		task->start();
-	}
+    void TaskManagemer::WorkerPool::Worker::run(Worker& worker)
+    {
+        HARMONY_DEBUG("Worker thread running");
 
-	TaskManagemer::TaskManagemer(Engine& engine) :
-		engine(engine), workerPool_(std::make_unique<WorkerPool>()) {}
+        while (true) {
+            std::unique_lock<std::mutex> lock(worker.mutex_);
+            worker.condition_.wait(lock, [&worker] { return !worker.running_ || !worker.tasks_.empty(); });
 
-	TaskManagemer::~TaskManagemer() = default;
+            if (!worker.running_ && worker.tasks_.empty()) {
+                HARMONY_INFO("Worker shutting down");
+                return;
+            }
 
-	void TaskManagemer::submit(std::unique_ptr<Tasks::Task> task)
-	{
-		task->engine = std::make_optional<std::reference_wrapper<Engine>>(engine);
+            worker.currentTask_ = std::move(worker.tasks_.front());
+            worker.tasks_.pop();
+            lock.unlock();
 
-		if (task->priority == 0)
-		{
-			handleTask(std::move(task));
-			return;
-		}
+            if (!worker.currentTask_) {
+                HARMONY_ERROR("Worker encountered null task");
+                continue;
+            }
 
-		tasks_.emplace(std::move(task));
-	}
+            HARMONY_DEBUG("Worker executing task (mode = {})", static_cast<int>(worker.currentTask_->mode));
 
-	void TaskManagemer::handleTasks() 
-	{
-		while (!tasks_.empty())
-		{
-			std::unique_ptr<Tasks::Task> task;
-			{
-				std::lock_guard<std::mutex> lock(mutex_);
-				task = std::move(const_cast<std::unique_ptr<Tasks::Task>&>(tasks_.top()));
-				tasks_.pop();
-			}
+            try {
+                switch (worker.currentTask_->mode) {
+                case Tasks::Task::FastMultiThreaded:
+                    runTask(std::move(worker.currentTask_));
+                    break;
 
-			handleTask(std::move(task));
-		}
-	}
+                case Tasks::Task::SlowMultiThreaded:
+                    std::thread(Worker::runTask, std::move(worker.currentTask_)).detach();
+                    break;
 
-	inline void TaskManagemer::handleTask(std::unique_ptr<Tasks::Task> task)
-	{
-		switch (task->mode)
-		{
-			case Tasks::Task::SingleThreaded:
-				task->start();
-				break;
+                default:
+                    HARMONY_WARN("Worker encountered task with unknown mode");
+                    break;
+                }
+            }
+            catch (const std::exception& e) {
+                HARMONY_ERROR("Task execution failed: {}", e.what());
+            }
+        }
+    }
 
-			case Tasks::Task::FastMultiThreaded || Tasks::Task::SlowMultiThreaded:
-				workerPool_->submit(std::move(task));
-				break;
+    void TaskManagemer::WorkerPool::Worker::runTask(std::unique_ptr<Tasks::Task> task)
+    {
+        if (!task) {
+            HARMONY_ERROR("runTask received null task");
+            throw TaskManagerError("Null task in runTask");
+        }
 
-		default:
-			break;
-		}
-	}
+        try {
+            task->start();
+            HARMONY_DEBUG("Task executed successfully");
+        }
+        catch (const std::exception& e) {
+            HARMONY_ERROR("Task threw exception: {}", e.what());
+            throw;
+        }
+    }
+
 }
-

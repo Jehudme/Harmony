@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "Engine.h"
 #include "EngineTask.h"
+#include "Logger.h"
 
 namespace Harmony::Tasks
 {

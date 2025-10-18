@@ -1,6 +1,14 @@
 #pragma once
 #include "Scene.h"
 
+namespace Harmony::Errors {
+	/// Exception type for scene management errors
+	class SceneManagerError : public std::runtime_error {
+	public:
+		explicit SceneManagerError(const std::string& msg);
+	};
+}
+
 namespace Harmony::Management 
 {
 	class SceneManager 

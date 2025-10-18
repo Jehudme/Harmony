@@ -1,5 +1,14 @@
 #pragma once
 
+namespace Harmony::Errors 
+{
+	class StateManagerError : public std::runtime_error 
+	{
+	public:
+		explicit StateManagerError(const std::string& msg);
+	};
+}
+
 namespace Harmony::Management
 {
 	class StateManager : public sf::Drawable 
