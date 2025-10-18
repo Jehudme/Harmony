@@ -1,0 +1,33 @@
+{
+  "window": {
+    "title": "Harmony Engine Demo",
+    "width": 1280,
+    "height": 720,
+    "fps": 60
+  },
+  "startupStatesIds": [ 1 ],
+  "states": {
+    "1": {
+      "scenes": [ 1001, 1002 ]
+    }
+  },
+
+  "scenes": {
+    "1001": {
+      "name": "MainMenuScene",
+      "type": "UI",
+      "assets": {
+        "background": "assets/images/menu_bg.png",
+        "music": "assets/audio/menu_theme.ogg"
+      }
+    },
+    "1002": {
+      "name": "GameScene",
+      "type": "Gameplay",
+      "assets": {
+        "map": "assets/maps/level1.json",
+        "player": "assets/sprites/player.png"
+      }
+    }
+  }
+}

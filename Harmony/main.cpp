@@ -5,7 +5,7 @@
 
 int main() {
 	Harmony::Utilities::Configuration configuration;
-	configuration.set<std::string>({ "window", "title" }, "Harmony Engine 2");
+	configuration.load("configuration.json");
 
 	Harmony::Engine engine(configuration);
 

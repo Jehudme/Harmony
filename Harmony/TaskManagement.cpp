@@ -1,8 +1,8 @@
 #include "pch.h"
 #include "TaskManagement.h"
-#include "Logger.h"
 #include "Engine.h"
 #include "Task.h"
+#include "Logger.h"
 
 namespace Harmony::Management
 {
@@ -90,6 +90,21 @@ namespace Harmony::Management
         condition_.notify_all();
     }
 
+    void TaskManagemer::WorkerPool::submit(std::unique_ptr<Tasks::Task> task)
+    {
+        if (!task) {
+            HARMONY_ERROR("Attempted to submit null task");
+            throw TaskManagerError("Null task submitted to WorkerPool");
+        }
+
+        {
+            std::lock_guard<std::mutex> lock(mutex_);
+            tasks_.emplace(std::move(task));
+            HARMONY_DEBUG("Task submitted (queue size = {})", tasks_.size());
+        }
+        condition_.notify_one();
+    }
+
     TaskManagemer::WorkerPool::Worker::Worker(
         std::queue<std::unique_ptr<Tasks::Task>>& tasks,
         bool& running_,
@@ -110,21 +125,6 @@ namespace Harmony::Management
             thread_.join();
             HARMONY_DEBUG("Worker thread joined");
         }
-    }
-
-    void TaskManagemer::WorkerPool::submit(std::unique_ptr<Tasks::Task> task)
-    {
-        if (!task) {
-            HARMONY_ERROR("Attempted to submit null task");
-            throw TaskManagerError("Null task submitted to WorkerPool");
-        }
-
-        {
-            std::lock_guard<std::mutex> lock(mutex_);
-            tasks_.emplace(std::move(task));
-            HARMONY_DEBUG("Task submitted (queue size = {})", tasks_.size());
-        }
-        condition_.notify_one();
     }
 
     void TaskManagemer::WorkerPool::Worker::run(Worker& worker)
@@ -189,4 +189,78 @@ namespace Harmony::Management
         }
     }
 
+    TaskManagemer::TaskManagemer(Engine& engine)
+        : engine(engine), workerPool_(std::make_unique<WorkerPool>())
+    {
+        HARMONY_INFO("TaskManager created");
+    }
+
+    TaskManagemer::~TaskManagemer()
+    {
+        HARMONY_INFO("TaskManager destroyed, {} pending tasks", tasks_.size());
+    }
+
+    void TaskManagemer::submit(std::unique_ptr<Tasks::Task> task)
+    {
+        if (!task) {
+            HARMONY_ERROR("Attempted to submit null task");
+            throw TaskManagerError("Null task submitted to TaskManager");
+        }
+
+        task->engine = std::make_optional<std::reference_wrapper<Engine>>(engine);
+
+        if (task->priority == 0) {
+            HARMONY_DEBUG("Executing priority=0 task immediately");
+            handleTask(std::move(task));
+            return;
+        }
+
+        tasks_.emplace(std::move(task));
+        HARMONY_INFO("Task queued (priority > 0). Queue size = {}", tasks_.size());
+    }
+
+    void TaskManagemer::handleTasks()
+    {
+        while (!tasks_.empty()) {
+            std::unique_ptr<Tasks::Task> task;
+            {
+                std::lock_guard<std::mutex> lock(mutex_);
+                task = std::move(const_cast<std::unique_ptr<Tasks::Task>&>(tasks_.top()));
+                tasks_.pop();
+            }
+
+            if (!task) {
+                HARMONY_ERROR("Encountered null task in queue");
+                continue;
+            }
+
+            HARMONY_DEBUG("Handling queued task (mode = {})", static_cast<int>(task->mode));
+            handleTask(std::move(task));
+        }
+    }
+
+    void TaskManagemer::handleTask(std::unique_ptr<Tasks::Task> task)
+    {
+        if (!task) {
+            HARMONY_ERROR("handleTask received null task");
+            throw TaskManagerError("Null task in handleTask");
+        }
+
+        switch (task->mode) {
+        case Tasks::Task::SingleThreaded:
+            HARMONY_DEBUG("Executing SingleThreaded task");
+            task->start();
+            break;
+
+        case Tasks::Task::FastMultiThreaded:
+        case Tasks::Task::SlowMultiThreaded:
+            HARMONY_DEBUG("Submitting MultiThreaded task to WorkerPool");
+            workerPool_->submit(std::move(task));
+            break;
+
+        default:
+            HARMONY_WARN("Task has unknown execution mode");
+            break;
+        }
+    }
 }

@@ -32,7 +32,8 @@ namespace Harmony::Management
             }
         }
         else {
-            HARMONY_WARN("No startupStatesIds found in configuration");
+            HARMONY_CRITICAL("No startupStatesIds found in configuration");
+			throw Errors::StateManagerError("No startupStatesIds in configuration");
         }
     }
 
@@ -79,7 +80,8 @@ namespace Harmony::Management
             states_.front()->draw(target, states);
         }
         else {
-            HARMONY_WARN("No states to draw");
+            HARMONY_ERROR("No states to draw");
+			throw Errors::StateManagerError("No states in stack to draw");
         }
     }
 
@@ -91,7 +93,8 @@ namespace Harmony::Management
             states_.front()->update(deltaTime);
         }
         else {
-            HARMONY_WARN("No states to update");
+            HARMONY_ERROR("No states to update");
+			throw Errors::StateManagerError("No states in stack to update");
         }
     }
 }
