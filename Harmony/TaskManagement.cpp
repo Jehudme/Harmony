@@ -46,6 +46,7 @@ namespace Harmony::Internals
 
 	private:
 		static void run(Worker& worker);
+		static void runTask(std::unique_ptr<Task> task);
 
 	private:
 		std::queue<std::unique_ptr<Task>>& tasks_;
@@ -114,9 +115,21 @@ namespace Harmony::Internals
 			worker.currentTask_ = std::move(worker.tasks_.front());
 			worker.tasks_.pop();
 			lock.unlock();
+			
+			switch (worker.currentTask_->mode)
+			{
+			case Task::FastMultiThreaded:
+				runTask(std::move(worker.currentTask_)); break;
 
-			worker.currentTask_->start();
+			case Task::SlowMultiThreaded:
+				std::thread(Worker::runTask, std::move(worker.currentTask_)).detach(); break;
+			}
 		}
+	}
+
+	void TaskManagement::WorkerPool::Worker::runTask(std::unique_ptr<Task> task)
+	{
+		task->start();
 	}
 
 	TaskManagement::TaskManagement(Engine& engine_) :
@@ -160,26 +173,13 @@ namespace Harmony::Internals
 				task->start();
 				break;
 
-			case Task::FastMultiThreaded:
+			case Task::FastMultiThreaded || Task::SlowMultiThreaded:
 				workerPool_->submit(std::move(task));
 				break;
 
-			case Task::SlowMultiThreaded:
-				std::async(std::launch::async, [task = std::move(task)]() mutable {
-					task->start();
-					});
-				break;
 		default:
 			break;
 		}
-
-		if (task->mode)
-		{
-			workerPool_->submit(std::move(task));
-			return;
-		}
-
-		task->start();
 	}
 }
 
