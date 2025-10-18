@@ -19,10 +19,6 @@
 #include <thread>
 #include <future>
 
-#include <SFML/Graphics.hpp>
-#include <SFML/System.hpp>
-#include <spdlog/spdlog.h>
-
 namespace Harmony {
 	inline constexpr const char* VERSION = "1.0.0";
 	

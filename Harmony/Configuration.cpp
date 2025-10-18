@@ -1,169 +1,127 @@
 #include "pch.h"
 #include "Configuration.h"
+#include "Logger.h"
 
-#include <nlohmann/json.hpp>
+namespace Harmony::Errors {
+    class ConfigurationError;
+    ConfigurationError::ConfigurationError(const std::string& msg)
+        : std::runtime_error("Configuration error: " + msg) {}
+}
 
-namespace Harmony::Utilities
-{
-    // Internal data holder for the Configuration class.
-    // Encapsulates the JSON object used for storing configuration values.
-    struct Configuration::Internal
-    {
+namespace Harmony::Utilities {
+
+    struct Configuration::Internal {
         nlohmann::json data;
     };
 
-    // Constructor: initializes the internal dataset.
     Configuration::Configuration()
-        : internal_(std::make_unique<Internal>()) {}
-
+        : internal_(std::make_unique<Internal>()) {
+    }
 
     Configuration::~Configuration() = default;
 
-	// Copy constructor: creates a deep copy of another Configuration's data.
-    Configuration::Configuration(const Configuration& other) 
-    {
+    Configuration::Configuration(const Configuration& other) {
         internal_ = std::make_unique<Internal>();
-		internal_->data = other.internal_->data;
+        internal_->data = other.internal_->data;
     }
 
-	// Copy assignment operator: assigns another Configuration's data to this one.
-    Configuration& Configuration::operator=(const Configuration& other) 
-    {
-        if (this != &other) 
-        {
+    Configuration& Configuration::operator=(const Configuration& other) {
+        if (this != &other) {
             internal_ = std::make_unique<Internal>();
             internal_->data = other.internal_->data;
         }
-
-		return *this;
+        return *this;
     }
 
-    // Merges another Configuration's data into this one using JSON merge_patch.
-    // This performs a shallow merge: keys in the source override those in the target.
-    void Configuration::merge(const Configuration& configuration) 
-    {
-        std::lock_guard<std::mutex> lock(mutex_);
-
+    void Configuration::merge(const Configuration& configuration) {
+        std::lock_guard lock(mutex_);
         internal_->data.merge_patch(configuration.internal_->data);
     }
 
-    // Saves the current configuration to a file in pretty-printed JSON format.
-    void Configuration::save(const std::filesystem::path& filePath) 
-    {
-        std::lock_guard<std::mutex> lock(mutex_);
-
+    void Configuration::save(const std::filesystem::path& filePath) {
+        std::lock_guard lock(mutex_);
         std::ofstream file(filePath);
-        if (!file)
-            throw std::runtime_error("Failed to open configuration file: " + filePath.string());
-
-        file << internal_->data.dump(4); // Indent with 4 spaces for readability.
+        if (!file) {
+            HARMONY_ERROR("Failed to open configuration file for saving: {}", filePath.string());
+            throw Errors::ConfigurationError("Failed to open file: " + filePath.string());
+        }
+        file << internal_->data.dump(4);
+        HARMONY_INFO("Configuration saved to {}", filePath.string());
     }
 
-    // Loads configuration from a file, parsing its JSON content.
     void Configuration::load(const std::filesystem::path& filePath) {
-        std::lock_guard<std::mutex> lock(mutex_);
-
+        std::lock_guard lock(mutex_);
         std::ifstream file(filePath);
-        if (!file)
-            throw std::runtime_error("Failed to open configuration file: " + filePath.string());
-
-        try 
-        {
-            file >> internal_->data;
+        if (!file) {
+            HARMONY_ERROR("Failed to open configuration file for loading: {}", filePath.string());
+            throw Errors::ConfigurationError("Failed to open file: " + filePath.string());
         }
-        catch (const nlohmann::json::parse_error& e) 
-        {
-            throw std::runtime_error("Failed to parse configuration file: " + std::string(e.what()));
+        try {
+            file >> internal_->data;
+            HARMONY_INFO("Configuration loaded from {}", filePath.string());
+        }
+        catch (const nlohmann::json::parse_error& e) {
+            HARMONY_ERROR("Failed to parse configuration file {}: {}", filePath.string(), e.what());
+            throw Errors::ConfigurationError("Parse error: " + std::string(e.what()));
         }
     }
 
+    // Helpers
     namespace {
-        // Traverses the JSON tree using a vector of keys.
-        // Returns a pointer to the node if found, or nullptr otherwise.
-        const nlohmann::json* findNode(const nlohmann::json& root, const std::vector<std::string>& keys) 
-        {
+        const nlohmann::json* findNode(const nlohmann::json& root, const std::vector<std::string>& keys) {
             const nlohmann::json* node = &root;
-            for (const auto& key : keys) 
-            {
+            for (const auto& key : keys) {
                 if (!node->contains(key)) return nullptr;
                 node = &(*node)[key];
             }
-
             return node;
         }
 
-        // Traverses or creates the JSON path specified by keys.
-        // Returns a pointer to the final node, creating intermediate objects as needed.
-        nlohmann::json* findOrCreateNode(nlohmann::json& root, const std::vector<std::string>& keys) 
-        {
+        nlohmann::json* findOrCreateNode(nlohmann::json& root, const std::vector<std::string>& keys) {
             nlohmann::json* node = &root;
             for (const auto& key : keys)
                 node = &(*node)[key];
-
             return node;
         }
     }
 
-    // Retrieves a value of the specified type from the configuration.
-    // Returns std::nullopt if the path doesn't exist.
     template<typename Type>
-    std::optional<Type> Configuration::get(const std::vector<std::string>& keys) const 
-    {
-        std::lock_guard<std::mutex> lock(mutex_);
-
+    std::optional<Type> Configuration::get(const std::vector<std::string>& keys) const {
+        std::lock_guard lock(mutex_);
         const auto* node = findNode(internal_->data, keys);
         if (!node) return std::nullopt;
         return node->get<Type>();
     }
 
-    // Sets a value at the specified path in the configuration.
-    // Intermediate nodes are created if they don't exist.
     template<typename Type>
-    void Configuration::set(const std::vector<std::string>& keys, const Type& value) 
-    {
-        std::lock_guard<std::mutex> lock(mutex_);
-
+    void Configuration::set(const std::vector<std::string>& keys, const Type& value) {
+        std::lock_guard lock(mutex_);
         auto* node = findOrCreateNode(internal_->data, keys);
         *node = value;
     }
 
-	// Extracts a subsection of the configuration based on the provided keys.
-	// Returns an optional Configuration object containing the subsection if found.
-    std::optional<Configuration> Configuration::subsection(const std::vector<std::string>& keys) const 
-    {
-        std::lock_guard<std::mutex> lock(mutex_);
-
+    std::optional<Configuration> Configuration::subsection(const std::vector<std::string>& keys) const {
+        std::lock_guard lock(mutex_);
         const auto* node = findNode(internal_->data, keys);
-        if (node) 
-        {
+        if (node) {
             Configuration configuration;
             configuration.internal_->data = *node;
-			return configuration;
+            return configuration;
         }
-
-		return std::nullopt;
+        return std::nullopt;
     }
 
-    // Extracts all top-level keys in the configuration.
-    std::vector<std::string> Configuration::extractKeys(const std::vector<std::string>& keys) const
-    {
-        std::lock_guard<std::mutex> lock(mutex_);
-
+    std::vector<std::string> Configuration::extractKeys(const std::vector<std::string>& keys) const {
+        std::lock_guard lock(mutex_);
         const auto* node = findNode(internal_->data, keys);
         if (!node || !node->is_object())
-            return {}; // empty vector
-
+            return {};
         std::vector<std::string> rKeys;
-        rKeys.reserve(node->size()); // avoid reallocations
-
+        rKeys.reserve(node->size());
         for (const auto& [key, _] : node->items())
             rKeys.push_back(key);
-
         return rKeys;
     }
-
-    // Explicit template instantiations for supported types.
-    // These ensure the compiler generates code for these types.
 
     template std::optional<int> Configuration::get<int>(const std::vector<std::string>&) const;
     template std::optional<unsigned int> Configuration::get<unsigned int>(const std::vector<std::string>&) const;
@@ -191,7 +149,7 @@ namespace Harmony::Utilities
     template std::optional<std::vector<double>>  Configuration::get<std::vector<double>>(const std::vector<std::string>&) const;
     template std::optional<std::vector<bool>> Configuration::get<std::vector<bool>>(const std::vector<std::string>&) const;
     template std::optional<std::vector<std::string>> Configuration::get<std::vector<std::string>>(const std::vector<std::string>&) const;
-    
+
     template void Configuration::set<std::vector<int>>(const std::vector<std::string>&, const std::vector<int>&);
     template void Configuration::set<std::vector<unsigned int>>(const std::vector<std::string>&, const std::vector<unsigned int>&);
     template void Configuration::set<std::vector<int64_t>>(const std::vector<std::string>&, const std::vector<int64_t>&);
@@ -201,4 +159,4 @@ namespace Harmony::Utilities
     template void Configuration::set<std::vector<bool>>(const std::vector<std::string>&, const std::vector<bool>&);
     template void Configuration::set<std::vector<std::string>>(const std::vector<std::string>&, const std::vector<std::string>&);
 
-} // namespace Harmony
+} // namespace Harmony::Utilities

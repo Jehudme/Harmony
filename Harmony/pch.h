@@ -9,4 +9,8 @@
 
 #include "Harmony.h"
 
+#include <nlohmann/json.hpp>
+#include <spdlog/spdlog.h>
+#include <SFML/Graphics.hpp>
+
 #endif //PCH_H

@@ -1,5 +1,13 @@
 #pragma once
 
+namespace Harmony::Errors {
+    class ConfigurationError : public std::runtime_error {
+    public:
+        explicit ConfigurationError(const std::string& msg);
+    };
+
+}
+
 namespace Harmony::Utilities 
 {
     class Configuration 
