@@ -12,5 +12,8 @@
 #include <nlohmann/json.hpp>
 #include <spdlog/spdlog.h>
 #include <SFML/Graphics.hpp>
+#include <fmt/Core.h>
+#include <fmt/ranges.h>
+#include <fmt/format.h>
 
 #endif //PCH_H

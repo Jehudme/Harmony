@@ -89,15 +89,39 @@ namespace Harmony::Utilities {
     std::optional<Type> Configuration::get(const std::vector<std::string>& keys) const {
         std::lock_guard lock(mutex_);
         const auto* node = findNode(internal_->data, keys);
-        if (!node) return std::nullopt;
-        return node->get<Type>();
+        if (!node) {
+            HARMONY_WARN("Configuration::get - Key path not found: [{}]",
+                         fmt::join(keys, "."));
+            return std::nullopt;
+        }
+
+        try {
+            auto value = node->get<Type>();
+            HARMONY_DEBUG("Configuration::get - Retrieved [{}] = {}", 
+                          fmt::join(keys, "."), value);
+            return value;
+        } catch (const nlohmann::json::type_error& e) {
+            HARMONY_ERROR("Configuration::get - Type mismatch at [{}]: {}",
+                          fmt::join(keys, "."), e.what());
+            return std::nullopt;
+        }
     }
 
     template<typename Type>
     void Configuration::set(const std::vector<std::string>& keys, const Type& value) {
         std::lock_guard lock(mutex_);
         auto* node = findOrCreateNode(internal_->data, keys);
+
+        bool existed = !node->is_null();
         *node = value;
+
+        if (existed) {
+            HARMONY_INFO("Configuration::set - Overriding [{}] with new value: {}",
+                         fmt::join(keys, "."), value);
+        } else {
+            HARMONY_INFO("Configuration::set - Created [{}] = {}",
+                         fmt::join(keys, "."), value);
+        }
     }
 
     std::optional<Configuration> Configuration::subsection(const std::vector<std::string>& keys) const {
@@ -106,20 +130,33 @@ namespace Harmony::Utilities {
         if (node) {
             Configuration configuration;
             configuration.internal_->data = *node;
+            HARMONY_DEBUG("Configuration::subsection - Extracted subsection [{}]",
+                          fmt::join(keys, "."));
             return configuration;
         }
+        HARMONY_WARN("Configuration::subsection - Subsection not found: [{}]", fmt::join(keys, "."));
         return std::nullopt;
     }
 
     std::vector<std::string> Configuration::extractKeys(const std::vector<std::string>& keys) const {
         std::lock_guard lock(mutex_);
         const auto* node = findNode(internal_->data, keys);
-        if (!node || !node->is_object())
+        if (!node) {
+            HARMONY_WARN("Configuration::extractKeys - Node not found: [{}]", fmt::join(keys, "."));
             return {};
+        }
+        if (!node->is_object()) {
+            HARMONY_WARN("Configuration::extractKeys - Node at [{}] is not an object", fmt::join(keys, "."));
+            return {};
+        }
+
         std::vector<std::string> rKeys;
         rKeys.reserve(node->size());
         for (const auto& [key, _] : node->items())
             rKeys.push_back(key);
+
+        HARMONY_INFO("Configuration::extractKeys - Extracted {} keys from [{}]",
+                     rKeys.size(), fmt::join(keys, "."));
         return rKeys;
     }
 
