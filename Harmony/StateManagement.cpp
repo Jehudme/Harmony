@@ -9,10 +9,10 @@
 
 namespace Harmony::Internals 
 {
-    StateManagement::StateManagement(Engine& engine) :
-        engine(engine) 
+    StateManagement::StateManagement(Engine& engine_) :
+        engine_(engine_) 
     {
-        const auto startupQueueIds = engine.configuration.get<Utilities::UUIDList>({ "startupStatesIds" });
+        const auto startupQueueIds = engine_.configuration.get<Utilities::UUIDList>({ "startupStatesIds" });
         
         if (startupQueueIds.has_value()) 
             for (Utilities::UUID stateId : startupQueueIds.value())
@@ -24,12 +24,12 @@ namespace Harmony::Internals
     void StateManagement::push(std::uint64_t stateId) 
     {
         const std::string stateKey = std::to_string(stateId);
-        const std::optional<Configuration> configuration = engine.configuration.subsection({ "states", stateKey });
+        const std::optional<Configuration> configuration = engine_.configuration.subsection({ "states", stateKey });
 
         if (configuration.has_value()) 
         {
             std::lock_guard<std::mutex> lock(mutex_);
-			std::shared_ptr<State> state = std::make_shared<State>(configuration.value(), engine);
+			std::shared_ptr<State> state = std::make_shared<State>(configuration.value(), engine_);
 			states_.push(state);
         }
     }

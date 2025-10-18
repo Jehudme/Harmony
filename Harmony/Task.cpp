@@ -3,12 +3,17 @@
 
 namespace Harmony::Internals 
 {
-	Task::Task(int priority, bool multiThreaded, std::chrono::milliseconds delay) :
-		priority(priority), delay(delay), multiThreaded(multiThreaded)
-	{
-	}
+	Task::Task(int priority, Mode mode, std::chrono::milliseconds delay) :
+		priority(priority), delay(delay), mode(mode) {}
 
 	Task::~Task() = default;
+
+	Engine& Task::getEngine()
+	{
+		if (!engine_.has_value())
+			throw std::runtime_error("Task is not associated with an Engine.");
+		return engine_->get();
+	}
 
 	void Task::start()
 	{

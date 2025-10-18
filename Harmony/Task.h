@@ -13,22 +13,31 @@ namespace Harmony::Internals
     struct Task
     {
         friend class TaskManagement;
+        enum Mode
+        {
+            SingleThreaded,
+            FastMultiThreaded,
+			SlowMultiThreaded,
+		};
 
     public:
-        Task(int priority = 0, bool multithreaded = true, std::chrono::milliseconds delay = std::chrono::milliseconds(0));
+        Task(int priority = 0, Mode mode = SingleThreaded, std::chrono::milliseconds delay = std::chrono::milliseconds(0));
         virtual ~Task();
+
+    protected:
+        Engine& getEngine();
 
     private:
         void start();
         virtual void run() = 0;
 
     public:
+        const Mode mode;
         const int priority;
-        const bool multiThreaded;
         const std::chrono::milliseconds delay;
 
-    protected:
-        std::optional<std::reference_wrapper<Engine>> engine;
+    private:
+        std::optional<std::reference_wrapper<Engine>> engine_;
     };
 
 } // namespace Harmony::Internals

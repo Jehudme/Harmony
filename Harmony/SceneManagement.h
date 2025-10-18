@@ -9,7 +9,7 @@ namespace Harmony::Internals
 		friend class Scene;
 		friend class State;
 
-		SceneManagement(Engine& engine);
+		SceneManagement(Engine& engine_);
 		~SceneManagement();
 
 		std::shared_ptr<Scene> create(const Utilities::UUID sceneId);
@@ -19,7 +19,7 @@ namespace Harmony::Internals
 		void remove(const Utilities::UUID sceneId);
 
 	private:
-		Engine& engine;
+		Engine& engine_;
 		mutable std::mutex mutex_;
 		std::unordered_map<std::uint64_t, std::weak_ptr<Scene>> scenes_;
 	};

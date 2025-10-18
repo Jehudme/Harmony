@@ -5,10 +5,12 @@
 namespace Harmony::Tasks
 {
 	SetFPS::SetFPS(const unsigned int targetFPS) :
-		Task(0, true), targetFPS_(targetFPS) {}
+		Task(0, FastMultiThreaded), targetFPS_(targetFPS) {}
 
-	GetFPS::GetFPS() :
-		Task(0, true)
-	{}
+	void SetFPS::run()
+	{
+		getEngine().setTargetFPS(targetFPS_);
+	}
+
 
 }

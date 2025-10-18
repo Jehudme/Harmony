@@ -119,14 +119,14 @@ namespace Harmony::Internals
 		}
 	}
 
-	TaskManagement::TaskManagement(Engine& engine) :
-		engine(engine), workerPool_(std::make_unique<WorkerPool>()) {}
+	TaskManagement::TaskManagement(Engine& engine_) :
+		engine_(engine_), workerPool_(std::make_unique<WorkerPool>()) {}
 
 	TaskManagement::~TaskManagement() = default;
 
 	void TaskManagement::submit(std::unique_ptr<Task> task)
 	{
-		task->engine = std::make_optional<std::reference_wrapper<Engine>>(engine);
+		task->engine_ = std::make_optional<std::reference_wrapper<Engine>>(engine_);
 
 		if (task->priority == 0)
 		{
@@ -154,7 +154,26 @@ namespace Harmony::Internals
 
 	inline void TaskManagement::handleTask(std::unique_ptr<Task> task)
 	{
-		if (task->multiThreaded)
+		switch (task->mode)
+		{
+			case Task::SingleThreaded:
+				task->start();
+				break;
+
+			case Task::FastMultiThreaded:
+				workerPool_->submit(std::move(task));
+				break;
+
+			case Task::SlowMultiThreaded:
+				std::async(std::launch::async, [task = std::move(task)]() mutable {
+					task->start();
+					});
+				break;
+		default:
+			break;
+		}
+
+		if (task->mode)
 		{
 			workerPool_->submit(std::move(task));
 			return;

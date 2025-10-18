@@ -6,7 +6,7 @@ namespace Harmony::Internals
 	{
 	public:
 		friend class Engine;
-		StateManagement(Engine& engine);
+		StateManagement(Engine& engine_);
 		~StateManagement();
 
 		void  push(std::uint64_t stateId);
@@ -17,7 +17,7 @@ namespace Harmony::Internals
 		void update(const sf::Time deltaTime, TaskManagement& taskQueue);
 
 	private:
-		Engine& engine;
+		Engine& engine_;
 		mutable std::mutex mutex_;
 		std::queue<std::shared_ptr<State>> states_;
 	};

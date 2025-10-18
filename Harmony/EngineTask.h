@@ -7,18 +7,10 @@ namespace Harmony::Tasks
 	{
 	public:
 		SetFPS(const unsigned int targetFPS);
+		void run() override;
 
 	private:
 		const unsigned int targetFPS_;
-	};
-
-	class GetFPS : public Internals::Task
-	{
-	public:
-		GetFPS();
-
-	public:
-		std::shared_ptr<std::promise<unsigned int>> value;
 	};
 }
 

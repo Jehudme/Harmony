@@ -8,20 +8,20 @@
 
 namespace Harmony::Internals 
 {
-	State::State(const Configuration& configuration, Engine& engine) :
-		engine(engine) 
+	State::State(const Configuration& configuration, Engine& engine_) :
+		engine_(engine_) 
 	{
 		const Utilities::UUIDList scenesIds = configuration.get<Utilities::UUIDList>({ "scenes" }).value_or(Utilities::UUIDList());
 		
 		for (const auto& sceneId : scenesIds) 
-			if (std::shared_ptr<Scene> scene = engine.sceneManagement->create(sceneId))
+			if (std::shared_ptr<Scene> scene = engine_.sceneManagement->create(sceneId))
 				scenes_.insert({ sceneId, scene });
 	}
 
 	State::~State() 
 	{
 		for (const auto& scene : scenes_)
-			engine.sceneManagement->remove(scene.first);
+			engine_.sceneManagement->remove(scene.first);
 	}
 
 	void State::draw(sf::RenderTarget& target, sf::RenderStates states) const

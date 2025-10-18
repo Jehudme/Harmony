@@ -15,7 +15,7 @@ namespace Harmony::Internals
     public:
 		friend class Engine;
 
-		TaskManagement(Engine& engine);
+		TaskManagement(Engine& engine_);
 		~TaskManagement();
 
 		void submit(std::unique_ptr<Task> task);
@@ -37,7 +37,7 @@ namespace Harmony::Internals
 		void handleTask(std::unique_ptr<Task> task);
 
 	private:
-		Engine& engine;
+		Engine& engine_;
 		std::mutex mutex_;
 		std::unique_ptr<WorkerPool> workerPool_;
 		std::priority_queue<std::unique_ptr<Task>, std::vector<std::unique_ptr<Task>>, Compare> tasks_;
