@@ -3,7 +3,7 @@
 
 namespace Harmony::Tasks
 {
-	class PushState : public Internals::Task
+	class PushState : public Tasks::Task
 	{
 	public:
 		PushState(const Utilities::UUID stateId);
@@ -16,7 +16,7 @@ namespace Harmony::Tasks
 
 	};
 
-	class PopState : public Internals::Task {
+	class PopState : public Tasks::Task {
 	public:
 		PopState();
 

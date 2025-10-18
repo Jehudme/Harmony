@@ -3,24 +3,25 @@
 #include "Engine.h"
 #include "SceneManagement.h"
 
-namespace Harmony::Internals {
-	Scene::Scene(const Configuration& configuration, const Utilities::UUID sceneId, Engine& engine_) :
+namespace Harmony::Scenes 
+{
+	Scene::Scene(const Utilities::Configuration& configuration, const Utilities::UUID sceneId, Engine& engine) :
 		configuration_(configuration),
 		sceneId(sceneId),
-		engine_(engine_) 
+		engine(engine) 
 	{
 	}
 
 	Scene::~Scene()
 	{
-		engine_.sceneManagement->remove(sceneId);
+		engine.sceneManagement->remove(sceneId);
 	}
 
 	void Scene::draw(sf::RenderTarget& target, sf::RenderStates states) const 
 	{
 	}
 
-	void Scene::update(const sf::Time deltaTime, TaskManagement& taskManagement) 
+	void Scene::update(const sf::Time deltaTime) 
 	{
 	}
 }

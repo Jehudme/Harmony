@@ -1,11 +1,11 @@
 #pragma once
 
-namespace Harmony::Internals 
+namespace Harmony
 {
     class Engine 
     {
     public:
-        Engine(Configuration& configuration);
+        Engine(Utilities::Configuration& configuration);
 		~Engine();
 
         void start();
@@ -18,11 +18,11 @@ namespace Harmony::Internals
         sf::Time getDeltaTime() const noexcept;
 
     public:
-        Configuration& configuration;
+        Utilities::Configuration& configuration;
 
-        std::unique_ptr<TaskManagement> taskManagement;
-        std::unique_ptr<SceneManagement> sceneManagement;
-        std::unique_ptr<StateManagement> stateManagement;
+        std::unique_ptr<Management::TaskManagemer> taskManagement;
+        std::unique_ptr<Management::SceneManager> sceneManagement;
+        std::unique_ptr<Management::StateManager> stateManagement;
 
     private:
         void handleTasks();

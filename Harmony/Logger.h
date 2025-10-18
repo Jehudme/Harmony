@@ -4,7 +4,7 @@
 #include <memory>
 #include <string_view>
 
-namespace Harmony::Internals {
+namespace Harmony::Utilities {
 
     /// Central async logger for the engine.
     /// Wraps spdlog and provides a single global logging facility.

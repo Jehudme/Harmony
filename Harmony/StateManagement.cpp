@@ -7,51 +7,51 @@
 #include "State.h"
 
 
-namespace Harmony::Internals 
+namespace Harmony::Management
 {
-    StateManagement::StateManagement(Engine& engine_) :
-        engine_(engine_) 
+    StateManager::StateManager(Engine& engine) :
+        engine(engine) 
     {
-        const auto startupQueueIds = engine_.configuration.get<Utilities::UUIDList>({ "startupStatesIds" });
+        const auto startupQueueIds = engine.configuration.get<Utilities::UUIDList>({ "startupStatesIds" });
         
         if (startupQueueIds.has_value()) 
             for (Utilities::UUID stateId : startupQueueIds.value())
                 push(stateId);
     }
 
-    StateManagement::~StateManagement() = default;
+    StateManager::~StateManager() = default;
 
-    void StateManagement::push(std::uint64_t stateId) 
+    void StateManager::push(std::uint64_t stateId) 
     {
         const std::string stateKey = std::to_string(stateId);
-        const std::optional<Configuration> configuration = engine_.configuration.subsection({ "states", stateKey });
+        const std::optional<Utilities::Configuration> configuration = engine.configuration.subsection({ "states", stateKey });
 
         if (configuration.has_value()) 
         {
             std::lock_guard<std::mutex> lock(mutex_);
-			std::shared_ptr<State> state = std::make_shared<State>(configuration.value(), engine_);
+			std::shared_ptr<Scenes::State> state = std::make_shared<Scenes::State>(configuration.value(), engine);
 			states_.push(state);
         }
     }
 
-    void StateManagement::pop() 
+    void StateManager::pop() 
     {
         std::lock_guard<std::mutex> lock(mutex_);
         if (!states_.empty()) 
             states_.pop();
     }
 
-    void StateManagement::draw(sf::RenderTarget& target, sf::RenderStates states) const 
+    void StateManager::draw(sf::RenderTarget& target, sf::RenderStates states) const 
     {
         std::lock_guard<std::mutex> lock(mutex_);
         if (!states_.empty())
             states_.front()->draw(target, states);
     }
 
-    void StateManagement::update(sf::Time deltaTime, TaskManagement& taskManagement) 
+    void StateManager::update(sf::Time deltaTime) 
     {
         if (!states_.empty())
-            states_.front()->update(deltaTime, taskManagement);
+            states_.front()->update(deltaTime);
     }
 
 }

@@ -7,27 +7,6 @@
 #ifndef PCH_H
 #define PCH_H
 
-#include <string>
-#include <memory>
-#include <stdexcept>
-#include <cstdint>
-#include <optional>
-#include <fstream>
-#include <variant>
-#include <unordered_map>
-#include <vector>
-#include <queue>
-#include <mutex>
-#include <atomic>
-#include <functional>
-#include <chrono>
-#include <filesystem>
-#include <thread>
-#include <future>
-
-#include <SFML/Graphics.hpp>
-#include <SFML/System.hpp>
-//#include <spdlog/spdlog.h>
-
 #include "Harmony.h"
+
 #endif //PCH_H

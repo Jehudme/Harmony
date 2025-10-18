@@ -1,8 +1,6 @@
 #include "pch.h"
 #include "Logger.h"
 
-#include "HarmonyLogger.h"
-
 #include <spdlog/spdlog.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include <spdlog/sinks/rotating_file_sink.h>
@@ -10,7 +8,7 @@
 
 #include <mutex>
 
-namespace Harmony::Internals 
+namespace Harmony::Utilities 
 {
 
 	 // Internal state

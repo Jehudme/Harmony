@@ -1,25 +1,25 @@
 #pragma once
 
-namespace Harmony::Internals 
+namespace Harmony::Management
 {
-	class StateManagement : public sf::Drawable 
+	class StateManager : public sf::Drawable 
 	{
 	public:
 		friend class Engine;
-		StateManagement(Engine& engine_);
-		~StateManagement();
+		StateManager(Engine& engine);
+		~StateManager();
 
 		void  push(std::uint64_t stateId);
 		void  pop();
 	
 	private:
 		void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
-		void update(const sf::Time deltaTime, TaskManagement& taskQueue);
+		void update(const sf::Time deltaTime);
 
 	private:
-		Engine& engine_;
+		Engine& engine;
 		mutable std::mutex mutex_;
-		std::queue<std::shared_ptr<State>> states_;
+		std::queue<std::shared_ptr<Scenes::State>> states_;
 	};
 }
 

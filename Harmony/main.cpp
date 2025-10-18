@@ -4,10 +4,10 @@
 #include "Configuration.h"
 
 int main() {
-	Harmony::Internals::Configuration configuration;
+	Harmony::Utilities::Configuration configuration;
 	configuration.set<std::string>({ "window", "title" }, "Harmony Engine 2");
 
-	Harmony::Internals::Engine engine_(configuration);
+	Harmony::Engine engine(configuration);
 
-	engine_.start();
+	engine.start();
 }

@@ -3,7 +3,7 @@
 
 namespace Harmony::Tasks
 {
-	class SetFPS : public Internals::Task
+	class SetFPS : public Tasks::Task
 	{
 	public:
 		SetFPS(const unsigned int targetFPS);

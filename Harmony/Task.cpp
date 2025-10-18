@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "Task.h"
 
-namespace Harmony::Internals 
+namespace Harmony::Tasks
 {
 	Task::Task(int priority, Mode mode, std::chrono::milliseconds delay) :
 		priority(priority), delay(delay), mode(mode) {}
@@ -10,9 +10,9 @@ namespace Harmony::Internals
 
 	Engine& Task::getEngine()
 	{
-		if (!engine_.has_value())
+		if (!engine.has_value())
 			throw std::runtime_error("Task is not associated with an Engine.");
-		return engine_->get();
+		return engine->get();
 	}
 
 	void Task::start()

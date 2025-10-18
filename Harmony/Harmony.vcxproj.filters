@@ -13,52 +13,49 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Source Files\Internals">
-      <UniqueIdentifier>{5d22b725-f5b4-4dff-b05d-9ddec505ae53}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Internals\Management">
-      <UniqueIdentifier>{85ee2848-9d3e-47a0-96b9-04feadf49d04}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Tasks">
       <UniqueIdentifier>{635d7ffd-b741-48f1-9b33-659fb9720d90}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Internals">
+    <Filter Include="Header Files\Management">
+      <UniqueIdentifier>{2a0aea8f-63bc-476a-b91a-6ea2fa881edd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Utilites">
       <UniqueIdentifier>{9c397518-e4e7-4a47-935e-cbe8cb56033e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Internals\Management">
-      <UniqueIdentifier>{2a0aea8f-63bc-476a-b91a-6ea2fa881edd}</UniqueIdentifier>
+    <Filter Include="Header Files\Scenes">
+      <UniqueIdentifier>{2b1c5198-0964-4a1b-9ed9-fe2e10b9c687}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Scenes">
+      <UniqueIdentifier>{2f5c9c58-3ecd-45e2-911a-7052c46e0280}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Management">
+      <UniqueIdentifier>{85ee2848-9d3e-47a0-96b9-04feadf49d04}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Tasks">
+      <UniqueIdentifier>{2096d02f-6ad7-4a95-9021-6cbb4ed41ffd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Utilities">
+      <UniqueIdentifier>{5d22b725-f5b4-4dff-b05d-9ddec505ae53}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Configuration.h">
-      <Filter>Header Files\Internals</Filter>
-    </ClInclude>
-    <ClInclude Include="pch.h">
-      <Filter>Header Files\Internals</Filter>
-    </ClInclude>
-    <ClInclude Include="State.h">
-      <Filter>Header Files\Internals</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine.h">
-      <Filter>Header Files\Internals</Filter>
+      <Filter>Header Files\Utilites</Filter>
     </ClInclude>
     <ClInclude Include="StateManagement.h">
-      <Filter>Header Files\Internals\Management</Filter>
+      <Filter>Header Files\Management</Filter>
     </ClInclude>
     <ClInclude Include="SceneManagement.h">
-      <Filter>Header Files\Internals\Management</Filter>
+      <Filter>Header Files\Management</Filter>
     </ClInclude>
     <ClInclude Include="Harmony.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Scene.h">
-      <Filter>Header Files\Internals</Filter>
     </ClInclude>
     <ClInclude Include="Task.h">
       <Filter>Header Files\Tasks</Filter>
     </ClInclude>
     <ClInclude Include="TaskManagement.h">
-      <Filter>Header Files\Internals\Management</Filter>
+      <Filter>Header Files\Management</Filter>
     </ClInclude>
     <ClInclude Include="StateTask.h">
       <Filter>Header Files\Tasks</Filter>
@@ -70,51 +67,63 @@
       <Filter>Header Files\Tasks</Filter>
     </ClInclude>
     <ClInclude Include="Logger.h">
+      <Filter>Header Files\Utilites</Filter>
+    </ClInclude>
+    <ClInclude Include="pch.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>Header Files\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="State.h">
+      <Filter>Header Files\Scenes</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Configuration.cpp">
-      <Filter>Source Files\Internals</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine.cpp">
-      <Filter>Source Files\Internals</Filter>
-    </ClCompile>
-    <ClCompile Include="pch.cpp">
-      <Filter>Source Files\Internals</Filter>
+      <Filter>Source Files\Utilities</Filter>
     </ClCompile>
     <ClCompile Include="SceneManagement.cpp">
-      <Filter>Source Files\Internals\Management</Filter>
+      <Filter>Source Files\Management</Filter>
     </ClCompile>
     <ClCompile Include="StateManagement.cpp">
-      <Filter>Source Files\Internals\Management</Filter>
+      <Filter>Source Files\Management</Filter>
     </ClCompile>
     <ClCompile Include="TaskManagement.cpp">
-      <Filter>Source Files\Internals\Management</Filter>
+      <Filter>Source Files\Management</Filter>
     </ClCompile>
-    <ClCompile Include="main.cpp">
-      <Filter>Source Files\Internals</Filter>
-    </ClCompile>
-    <ClCompile Include="Scene.cpp">
-      <Filter>Source Files\Internals</Filter>
-    </ClCompile>
-    <ClCompile Include="State.cpp">
-      <Filter>Source Files\Internals</Filter>
+    <ClCompile Include="Logger.cpp">
+      <Filter>Source Files\Utilities</Filter>
     </ClCompile>
     <ClCompile Include="Task.cpp">
-      <Filter>Source Files\Internals</Filter>
+      <Filter>Source Files\Tasks</Filter>
     </ClCompile>
-    <ClCompile Include="StateTask.cpp">
+    <ClCompile Include="State.cpp">
+      <Filter>Source Files\Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="pch.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>Source Files\Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SceneTask.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Tasks</Filter>
+    </ClCompile>
+    <ClCompile Include="StateTask.cpp">
+      <Filter>Source Files\Tasks</Filter>
     </ClCompile>
     <ClCompile Include="EngineTask.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Logger.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Tasks</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

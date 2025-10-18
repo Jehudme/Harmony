@@ -11,6 +11,4 @@ namespace Harmony::Tasks
 	{
 		getEngine().setTargetFPS(targetFPS_);
 	}
-
-
 }

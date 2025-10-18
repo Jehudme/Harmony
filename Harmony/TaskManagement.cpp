@@ -3,18 +3,18 @@
 #include "Engine.h"
 #include "Task.h"
 
-namespace Harmony::Internals 
+namespace Harmony::Management
 {
 	////////////////////////////////////////////////////////////////
 	// Definition                                                 //
 	////////////////////////////////////////////////////////////////
 
-	struct TaskManagement::WorkerPool {
+	struct TaskManagemer::WorkerPool {
 	public:
 		WorkerPool();
 		~WorkerPool();
 
-		void submit(std::unique_ptr<Task> task);
+		void submit(std::unique_ptr<Tasks::Task> task);
 
 	private:
 		struct Worker;
@@ -24,15 +24,15 @@ namespace Harmony::Internals
 
 		bool running_ = true;
 
-		std::queue<std::unique_ptr<Task>> tasks_;
+		std::queue<std::unique_ptr<Tasks::Task>> tasks_;
 		std::vector<std::unique_ptr<Worker>> workers_;
 	};
 
-	struct TaskManagement::WorkerPool::Worker {
+	struct TaskManagemer::WorkerPool::Worker {
 	public:
 		friend struct WorkerPool;
 
-		Worker(std::queue<std::unique_ptr<Task>>& tasks, bool& running_, std::mutex& mutex, std::condition_variable& condition);
+		Worker(std::queue<std::unique_ptr<Tasks::Task>>& tasks, bool& running_, std::mutex& mutex, std::condition_variable& condition);
 		~Worker();
 
 		// Prevent copying
@@ -46,11 +46,11 @@ namespace Harmony::Internals
 
 	private:
 		static void run(Worker& worker);
-		static void runTask(std::unique_ptr<Task> task);
+		static void runTask(std::unique_ptr<Tasks::Task> task);
 
 	private:
-		std::queue<std::unique_ptr<Task>>& tasks_;
-		std::unique_ptr<Task> currentTask_;
+		std::queue<std::unique_ptr<Tasks::Task>>& tasks_;
+		std::unique_ptr<Tasks::Task> currentTask_;
 
 		std::mutex& mutex_;
 		std::condition_variable& condition_;
@@ -63,7 +63,7 @@ namespace Harmony::Internals
 	// Implementation                                              //
 	/////////////////////////////////////////////////////////////////
 
-	TaskManagement::WorkerPool::WorkerPool()
+	TaskManagemer::WorkerPool::WorkerPool()
 	{
 		for (unsigned int workerIndex = 0; workerIndex < std::thread::hardware_concurrency() + 2; workerIndex++)
 		{
@@ -72,13 +72,13 @@ namespace Harmony::Internals
 		}
 	}
 
-	TaskManagement::WorkerPool::~WorkerPool()
+	TaskManagemer::WorkerPool::~WorkerPool()
 	{
 		running_ = false;
 		condition_.notify_all();
 	}
 
-	TaskManagement::WorkerPool::Worker::Worker(std::queue<std::unique_ptr<Task>>& tasks, bool& running_, std::mutex& mutex, std::condition_variable& condition) :
+	TaskManagemer::WorkerPool::Worker::Worker(std::queue<std::unique_ptr<Tasks::Task>>& tasks, bool& running_, std::mutex& mutex, std::condition_variable& condition) :
 		tasks_(tasks), 
 		running_(running_), 
 		mutex_(mutex), 
@@ -87,7 +87,7 @@ namespace Harmony::Internals
 	{
 	}
 
-	void TaskManagement::WorkerPool::submit(std::unique_ptr<Task> task) 
+	void TaskManagemer::WorkerPool::submit(std::unique_ptr<Tasks::Task> task)
 	{
 		{
 			std::lock_guard<std::mutex> lock(mutex_);
@@ -96,13 +96,13 @@ namespace Harmony::Internals
 		condition_.notify_one();
 	}
 
-	Harmony::Internals::TaskManagement::WorkerPool::Worker::~Worker()
+	Harmony::Management::TaskManagemer::WorkerPool::Worker::~Worker()
 	{
 		if (thread_.joinable())
 			thread_.join();
 	}
 
-	void TaskManagement::WorkerPool::Worker::run(Worker& worker)
+	void TaskManagemer::WorkerPool::Worker::run(Worker& worker)
 	{
 		while (true)
 		{
@@ -118,28 +118,28 @@ namespace Harmony::Internals
 			
 			switch (worker.currentTask_->mode)
 			{
-			case Task::FastMultiThreaded:
+			case Tasks::Task::FastMultiThreaded:
 				runTask(std::move(worker.currentTask_)); break;
 
-			case Task::SlowMultiThreaded:
+			case Tasks::Task::SlowMultiThreaded:
 				std::thread(Worker::runTask, std::move(worker.currentTask_)).detach(); break;
 			}
 		}
 	}
 
-	void TaskManagement::WorkerPool::Worker::runTask(std::unique_ptr<Task> task)
+	void TaskManagemer::WorkerPool::Worker::runTask(std::unique_ptr<Tasks::Task> task)
 	{
 		task->start();
 	}
 
-	TaskManagement::TaskManagement(Engine& engine_) :
-		engine_(engine_), workerPool_(std::make_unique<WorkerPool>()) {}
+	TaskManagemer::TaskManagemer(Engine& engine) :
+		engine(engine), workerPool_(std::make_unique<WorkerPool>()) {}
 
-	TaskManagement::~TaskManagement() = default;
+	TaskManagemer::~TaskManagemer() = default;
 
-	void TaskManagement::submit(std::unique_ptr<Task> task)
+	void TaskManagemer::submit(std::unique_ptr<Tasks::Task> task)
 	{
-		task->engine_ = std::make_optional<std::reference_wrapper<Engine>>(engine_);
+		task->engine = std::make_optional<std::reference_wrapper<Engine>>(engine);
 
 		if (task->priority == 0)
 		{
@@ -150,14 +150,14 @@ namespace Harmony::Internals
 		tasks_.emplace(std::move(task));
 	}
 
-	void TaskManagement::handleTasks() 
+	void TaskManagemer::handleTasks() 
 	{
 		while (!tasks_.empty())
 		{
-			std::unique_ptr<Task> task;
+			std::unique_ptr<Tasks::Task> task;
 			{
 				std::lock_guard<std::mutex> lock(mutex_);
-				task = std::move(const_cast<std::unique_ptr<Task>&>(tasks_.top()));
+				task = std::move(const_cast<std::unique_ptr<Tasks::Task>&>(tasks_.top()));
 				tasks_.pop();
 			}
 
@@ -165,15 +165,15 @@ namespace Harmony::Internals
 		}
 	}
 
-	inline void TaskManagement::handleTask(std::unique_ptr<Task> task)
+	inline void TaskManagemer::handleTask(std::unique_ptr<Tasks::Task> task)
 	{
 		switch (task->mode)
 		{
-			case Task::SingleThreaded:
+			case Tasks::Task::SingleThreaded:
 				task->start();
 				break;
 
-			case Task::FastMultiThreaded || Task::SlowMultiThreaded:
+			case Tasks::Task::FastMultiThreaded || Tasks::Task::SlowMultiThreaded:
 				workerPool_->submit(std::move(task));
 				break;
 

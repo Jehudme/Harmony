@@ -4,21 +4,22 @@
 #include "Engine.h"
 #include "Scene.h"
 
-namespace Harmony::Internals {
-	SceneManagement::SceneManagement(Engine& engine_) :
-		engine_(engine_) {}
+namespace Harmony::Management
+{
+	SceneManager::SceneManager(Engine& engine) :
+		engine(engine) {}
 
-	SceneManagement::~SceneManagement() = default;
+	SceneManager::~SceneManager() = default;
 
-	std::shared_ptr<Scene> SceneManagement::create(const Utilities::UUID sceneId) 
+	std::shared_ptr<Scenes::Scene> SceneManager::create(const Utilities::UUID sceneId) 
 	{
 		const std::string sceneKey = std::to_string(sceneId);
-		const std::optional<Configuration> configuration = engine_.configuration.subsection({ "scenes", sceneKey });
+		const std::optional<Utilities::Configuration> configuration = engine.configuration.subsection({ "scenes", sceneKey });
 		std::lock_guard<std::mutex> lock(mutex_);
 
 		if (configuration.has_value() && scenes_.contains(sceneId)) 
 		{
-			std::shared_ptr<Scene> scene = std::make_shared<Scene>(configuration.value(), sceneId, engine_);
+			std::shared_ptr<Scenes::Scene> scene = std::make_shared<Scenes::Scene>(configuration.value(), sceneId, engine);
 			scenes_[sceneId] = scene->weak_from_this();
 
 			return scene;
@@ -27,7 +28,7 @@ namespace Harmony::Internals {
 		return nullptr;
 	}
 
-	void SceneManagement::remove(const Utilities::UUID sceneId) 
+	void SceneManager::remove(const Utilities::UUID sceneId) 
 	{
 		std::lock_guard<std::mutex> lock(mutex_);
 
@@ -37,7 +38,7 @@ namespace Harmony::Internals {
 		}
 	}
 
-	std::shared_ptr<Scene> SceneManagement::get(const Utilities::UUID sceneId) const
+	std::shared_ptr<Scenes::Scene> SceneManager::get(const Utilities::UUID sceneId) const
 	{
 		std::lock_guard<std::mutex> lock(mutex_);
 

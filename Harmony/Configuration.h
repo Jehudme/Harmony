@@ -1,6 +1,6 @@
 #pragma once
 
-namespace Harmony::Internals 
+namespace Harmony::Utilities 
 {
     class Configuration 
     {
