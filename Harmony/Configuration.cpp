@@ -2,7 +2,7 @@
 #include "Configuration.h"
 #include "Logger.h"
 
-namespace Harmony::Errors {
+namespace Harmony::Exceptions {
     class ConfigurationError;
     ConfigurationError::ConfigurationError(const std::string& msg)
         : std::runtime_error("Configuration error: " + msg) {}
@@ -43,7 +43,7 @@ namespace Harmony::Utilities {
         std::ofstream file(filePath);
         if (!file) {
             HARMONY_ERROR("Failed to open configuration file for saving: {}", filePath.string());
-            throw Errors::ConfigurationError("Failed to open file: " + filePath.string());
+            throw Exceptions::ConfigurationError("Failed to open file: " + filePath.string());
         }
         file << internal_->data.dump(4);
         HARMONY_INFO("Configuration saved to {}", filePath.string());
@@ -54,7 +54,7 @@ namespace Harmony::Utilities {
         std::ifstream file(filePath);
         if (!file) {
             HARMONY_ERROR("Failed to open configuration file for loading: {}", filePath.string());
-            throw Errors::ConfigurationError("Failed to open file: " + filePath.string());
+            throw Exceptions::ConfigurationError("Failed to open file: " + filePath.string());
         }
         try {
             file >> internal_->data;
@@ -62,7 +62,7 @@ namespace Harmony::Utilities {
         }
         catch (const nlohmann::json::parse_error& e) {
             HARMONY_ERROR("Failed to parse configuration file {}: {}", filePath.string(), e.what());
-            throw Errors::ConfigurationError("Parse error: " + std::string(e.what()));
+            throw Exceptions::ConfigurationError("Parse error: " + std::string(e.what()));
         }
     }
 

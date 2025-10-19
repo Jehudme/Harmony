@@ -1,13 +1,4 @@
 #pragma once
-#include "Scene.h"
-
-namespace Harmony::Errors {
-	/// Exception type for scene management errors
-	class SceneManagerError : public std::runtime_error {
-	public:
-		explicit SceneManagerError(const std::string& msg);
-	};
-}
 
 namespace Harmony::Management 
 {
@@ -21,14 +12,25 @@ namespace Harmony::Management
 		~SceneManager();
 
 		std::shared_ptr<Scenes::Scene> create(const Utilities::UUID sceneId);
-		std::shared_ptr<Scenes::Scene> get(const Utilities::UUID sceneId) const;
+		std::shared_ptr<Scenes::Scene> find(const Utilities::UUID sceneId) const;
 
 	private:
 		void remove(const Utilities::UUID sceneId);
 
 	private:
 		Engine& engine;
-		mutable std::mutex mutex_;
+		mutable std::shared_mutex mutex_;
 		std::unordered_map<std::uint64_t, std::weak_ptr<Scenes::Scene>> scenes_;
+	};
+}
+
+namespace Harmony::Exceptions
+{
+	struct SceneConfigurationNotFoundError : std::runtime_error {
+		explicit SceneConfigurationNotFoundError(const std::string& sceneKey);
+	};
+
+	struct ExpiredSceneError : std::runtime_error {
+		explicit ExpiredSceneError(const Utilities::UUID sceneId);
 	};
 }

@@ -1,6 +1,6 @@
 #pragma once
 
-namespace Harmony::Errors 
+namespace Harmony::Exceptions 
 {
 	class StateManagerError : public std::runtime_error 
 	{

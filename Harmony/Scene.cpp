@@ -69,7 +69,7 @@ namespace Harmony::Scenes
 		const entt::entity entity = registry_.create();
 
 		for (const std::string& componentName : configuration.extractKeys({ "components" }))
-			Management::ComponentManager::create(componentName, configuration.subsection({ "components", componentName}).value(), entity, *this);
+			Management::ComponentManager::createComponent(componentName, configuration.subsection({ "components", componentName}).value(), entity, *this);
 	
 		auto registeredEntities = registry_.view<entt::entity>();
 

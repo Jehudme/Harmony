@@ -16,5 +16,8 @@
 #include <fmt/ranges.h>
 #include <fmt/format.h>
 #include <Entt/entt.hpp>
+#include <shared_mutex>
+
+#include "Logger.h"
 
 #endif //PCH_H

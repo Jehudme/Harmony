@@ -20,7 +20,6 @@ namespace Harmony
     public:
         Utilities::Configuration& configuration;
 
-		std::unique_ptr<Management::ComponentManager> componentManagement;
         std::unique_ptr<Management::TaskManagemer> taskManagement;
         std::unique_ptr<Management::SceneManager> sceneManagement;
         std::unique_ptr<Management::StateManager> stateManagement;

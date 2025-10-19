@@ -7,7 +7,7 @@
 #include "State.h"
 #include "Logger.h"
 
-namespace Harmony::Errors {
+namespace Harmony::Exceptions {
     StateManagerError::StateManagerError(const std::string& msg)
             : std::runtime_error("StateManager error: " + msg) {}
 }
@@ -26,14 +26,14 @@ namespace Harmony::Management
                 try {
                     push(stateId);
                 }
-                catch (const Errors::StateManagerError& e) {
+                catch (const Exceptions::StateManagerError& e) {
                     HARMONY_ERROR("Failed to push startup state [{}]: {}", stateId, e.what());
                 }
             }
         }
         else {
             HARMONY_CRITICAL("No startupStatesIds found in configuration");
-			throw Errors::StateManagerError("No startupStatesIds in configuration");
+			throw Exceptions::StateManagerError("No startupStatesIds in configuration");
         }
     }
 
@@ -48,7 +48,7 @@ namespace Harmony::Management
 
         if (!configuration.has_value()) {
             HARMONY_ERROR("Failed to push state [{}]: no configuration found", stateKey);
-            throw Errors::StateManagerError("Missing configuration for state " + stateKey);
+            throw Exceptions::StateManagerError("Missing configuration for state " + stateKey);
         }
 
         std::lock_guard<std::mutex> lock(mutex_);
@@ -81,7 +81,7 @@ namespace Harmony::Management
         }
         else {
             HARMONY_ERROR("No states to draw");
-			throw Errors::StateManagerError("No states in stack to draw");
+			throw Exceptions::StateManagerError("No states in stack to draw");
         }
     }
 
@@ -94,7 +94,7 @@ namespace Harmony::Management
         }
         else {
             HARMONY_ERROR("No states to update");
-			throw Errors::StateManagerError("No states in stack to update");
+			throw Exceptions::StateManagerError("No states in stack to update");
         }
     }
 }

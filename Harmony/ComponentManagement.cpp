@@ -1,28 +1,25 @@
 #include "pch.h"
+#include "Scene.h"
 #include "Configuration.h"
 #include "ComponentManagement.h"
 #include "Logger.h"
 
 namespace Harmony::Management
 {
-	ComponentManager::ComponentManager(Engine& engine)
-		: engine_(engine) {}
-
-	ComponentManager::~ComponentManager() = default;
-
-	void ComponentManager::create(const std::string& name, const Utilities::Configuration& configuation, const entt::entity entityId, Scenes::Scene& scene)
+	void ComponentManager::createComponent(const std::string& name, const Utilities::Configuration& configuation, const entt::entity entityId, Scenes::Scene& scene)
 	{
+		std::shared_lock lock(mutex_);
+
 		if (!componentFactories_.contains(name))
-		{
-			HARMONY_CRITICAL("Component type '{}' not registered.", name);
-			throw Errors::ComponentError("Component type '" + name + "' not registered.");
-		}
+			throw Exceptions::ComponentNotRegistered(name);
 	
 		componentFactories_[name](configuation, entityId, scene);
-		HARMONY_DEBUG("Component '{}' created for entity {}", name, static_cast<std::uint32_t>(entityId));
+		HARMONY_TRACE("Component '{}' created for entity {}", name, static_cast<std::uint32_t>(entityId));
 	}
 }
 
-Harmony::Errors::ComponentError::ComponentError(const std::string& msg)
-	: std::runtime_error("Component error: " + msg) {}
-
+namespace Harmony::Exceptions 
+{
+	ComponentNotRegistered::ComponentNotRegistered(const std::string& componentName)
+		: std::runtime_error("Component not registered: " + componentName) { HARMONY_ERROR(what()); }
+}

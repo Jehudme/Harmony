@@ -23,8 +23,7 @@ namespace Harmony
 		: configuration(configuration),
 		taskManagement(std::make_unique<Management::TaskManagemer>(*this)),
 		sceneManagement(std::make_unique<Management::SceneManager>(*this)),
-		stateManagement(std::make_unique<Management::StateManager>(*this)),
-		componentManagement(std::make_unique<Management::ComponentManager>(*this))
+		stateManagement(std::make_unique<Management::StateManager>(*this))
 	{
 		HARMONY_INFO("Engine initializing...");
 
