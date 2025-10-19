@@ -8,25 +8,33 @@
   "startupStatesIds": [ 1 ],
   "states": {
     "1": {
-      "scenes": [ 1001, 1002 ]
+      "scenes": [ 1002 ]
     }
   },
-
   "scenes": {
-    "1001": {
-      "name": "MainMenuScene",
-      "type": "UI",
-      "assets": {
-        "background": "assets/images/menu_bg.png",
-        "music": "assets/audio/menu_theme.ogg"
-      }
-    },
-    "1002": {
-      "name": "GameScene",
-      "type": "Gameplay",
-      "assets": {
-        "map": "assets/maps/level1.json",
-        "player": "assets/sprites/player.png"
+    "1002" : {
+      "entities": [2001]
+    }
+  },
+  "entities": {
+    "2001": {
+      "name": "Player",
+      "components": {
+        "Transform": {
+          "position": {
+            "x": 100,
+            "y": 150
+          },
+          "rotation": 0,
+          "scale": {
+            "x": 1,
+            "y": 1
+          }
+        },
+        "Rectangle": {
+          "width": 50,
+          "height": 75
+        }
       }
     }
   }

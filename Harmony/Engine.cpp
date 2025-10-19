@@ -7,6 +7,7 @@
 #include "TaskManagement.h"
 #include "StateManagement.h"
 #include "SceneManagement.h"
+#include "ComponentManagement.h"
 #include "Logger.h" // for HARMONY_* macros
 
 namespace Harmony
@@ -22,7 +23,8 @@ namespace Harmony
 		: configuration(configuration),
 		taskManagement(std::make_unique<Management::TaskManagemer>(*this)),
 		sceneManagement(std::make_unique<Management::SceneManager>(*this)),
-		stateManagement(std::make_unique<Management::StateManager>(*this))
+		stateManagement(std::make_unique<Management::StateManager>(*this)),
+		componentManagement(std::make_unique<Management::ComponentManager>(*this))
 	{
 		HARMONY_INFO("Engine initializing...");
 

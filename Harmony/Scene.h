@@ -7,8 +7,10 @@
 
 namespace Harmony::Scenes
 {
-	class Scene : public sf::Drawable, public std::enable_shared_from_this<Scene> {
+	class Scene : public sf::Drawable, public std::enable_shared_from_this<Scene> 
+	{
 	public:
+		friend class Management::ComponentManager;
 		Scene(const Utilities::Configuration& configuration, const Utilities::UUID sceneId, Engine& engine);
 		~Scene();
 
@@ -19,7 +21,11 @@ namespace Harmony::Scenes
 		Engine& engine;
 		const Utilities::UUID sceneId;
 
+		entt::entity createEntity(const Utilities::Configuration& configuration);
+		void destroyEntity(const entt::entity entityId);
+
 	private:
+		entt::registry registry_;
 		const Utilities::Configuration& configuration_;
 	};
 }

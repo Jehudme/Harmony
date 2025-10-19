@@ -2,8 +2,13 @@
 
 #include "Engine.h"
 #include "Configuration.h"
+#include "Logger.h"
 
 int main() {
+	// Initialize the logger
+	Harmony::Utilities::Logger::initialize("Harmony.log");
+
+
 	Harmony::Utilities::Configuration configuration;
 	configuration.load("configuration.json");
 

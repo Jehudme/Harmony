@@ -15,5 +15,6 @@
 #include <fmt/Core.h>
 #include <fmt/ranges.h>
 #include <fmt/format.h>
+#include <Entt/entt.hpp>
 
 #endif //PCH_H

@@ -25,6 +25,12 @@ namespace Harmony {
 	class Engine;
 }
 
+namespace Harmony::Components {
+	class Component;
+	class Transform;
+	class Drawable;
+}
+
 namespace Harmony::Scenes {
 	class State;
 	class Scene;
@@ -35,6 +41,7 @@ namespace Harmony::Tasks {
 }
 
 namespace Harmony::Management {
+	class ComponentManager;
 	class TaskManagemer;
 	class StateManager;
 	class SceneManager;
