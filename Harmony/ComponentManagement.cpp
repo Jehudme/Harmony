@@ -9,10 +9,10 @@ namespace Harmony::Management
 	void ComponentManager::createComponent(const std::string& name, const Utilities::Configuration& configuation, const entt::entity entityId, Scenes::Scene& scene)
 	{
 		std::shared_lock lock(mutex_);
-
 		if (!componentFactories_.contains(name))
 			throw Exceptions::ComponentNotRegistered(name);
-	
+		lock.unlock();
+
 		componentFactories_[name](configuation, entityId, scene);
 		HARMONY_TRACE("Component '{}' created for entity {}", name, static_cast<std::uint32_t>(entityId));
 	}

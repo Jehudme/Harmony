@@ -54,3 +54,4 @@ namespace Harmony::Utilities {
 	class Configuration;
 	class Logger;
 }
+

@@ -17,6 +17,7 @@
 #include <fmt/format.h>
 #include <Entt/entt.hpp>
 #include <shared_mutex>
+#include <format>
 
 #include "Logger.h"
 

@@ -21,8 +21,9 @@ namespace Harmony::Management
 
 		componentFactories_[name] = [](const Utilities::Configuration& configuration, entt::entity entityId, Scenes::Scene& scene) 
 		{
-			std::lock_guard<std::shared_mutex> lock(mutex_);
 			std::unique_ptr<Base> component = std::make_unique<Type>(configuration);
+
+			std::lock_guard<std::shared_mutex> lock(mutex_);
 			scene.registry_.emplace<std::unique_ptr<Base>>(entityId, std::move(component));
 		};
 	}

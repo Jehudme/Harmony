@@ -1,13 +1,5 @@
 #pragma once
 
-namespace Harmony::Exceptions 
-{
-	class StateManagerError : public std::runtime_error 
-	{
-	public:
-		explicit StateManagerError(const std::string& msg);
-	};
-}
 
 namespace Harmony::Management
 {
@@ -27,8 +19,26 @@ namespace Harmony::Management
 
 	private:
 		Engine& engine;
-		mutable std::mutex mutex_;
+		mutable std::shared_mutex mutex_;
 		std::queue<std::shared_ptr<Scenes::State>> states_;
 	};
 }
 
+namespace Harmony::Exceptions 
+{
+	struct StateStackEmptyError : std::runtime_error {
+		explicit StateStackEmptyError();
+	};
+
+	struct StartupStatesNotDefined : std::runtime_error {
+		explicit StartupStatesNotDefined();
+	};
+
+	struct StateConfigurationNotFound : std::runtime_error {
+		explicit StateConfigurationNotFound(const std::string& stateKey);
+	};
+
+	struct StateStackPushFailed : std::runtime_error { 
+		explicit StateStackPushFailed(const std::string& reason);
+	};
+}

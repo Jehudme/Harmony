@@ -7,34 +7,16 @@
 #include "State.h"
 #include "Logger.h"
 
-namespace Harmony::Exceptions {
-    StateManagerError::StateManagerError(const std::string& msg)
-            : std::runtime_error("StateManager error: " + msg) {}
-}
-
 namespace Harmony::Management
 {
     StateManager::StateManager(Engine& engine)
         : engine(engine)
     {
-        HARMONY_INFO("StateManager created");
 
         const auto startupQueueIds = engine.configuration.get<Utilities::UUIDList>({ "startupStatesIds" });
-        if (startupQueueIds.has_value()) {
-            HARMONY_INFO("Loading {} startup states", startupQueueIds->size());
-            for (Utilities::UUID stateId : startupQueueIds.value()) {
-                try {
-                    push(stateId);
-                }
-                catch (const Exceptions::StateManagerError& e) {
-                    HARMONY_ERROR("Failed to push startup state [{}]: {}", stateId, e.what());
-                }
-            }
-        }
-        else {
-            HARMONY_CRITICAL("No startupStatesIds found in configuration");
-			throw Exceptions::StateManagerError("No startupStatesIds in configuration");
-        }
+        if (startupQueueIds.has_value())
+            for (Utilities::UUID stateId : startupQueueIds.value()) push(stateId);
+		else throw Exceptions::StartupStatesNotDefined();
     }
 
     StateManager::~StateManager() {
@@ -46,55 +28,59 @@ namespace Harmony::Management
         const std::string stateKey = std::to_string(stateId);
         const auto configuration = engine.configuration.subsection({ "states", stateKey });
 
-        if (!configuration.has_value()) {
-            HARMONY_ERROR("Failed to push state [{}]: no configuration found", stateKey);
-            throw Exceptions::StateManagerError("Missing configuration for state " + stateKey);
-        }
+        if (!configuration.has_value()) throw Exceptions::StateConfigurationNotFound(stateKey);
 
-        std::lock_guard<std::mutex> lock(mutex_);
-        auto state = std::make_shared<Scenes::State>(configuration.value(), engine);
-        states_.push(state);
+        std::lock_guard<std::shared_mutex> lock(mutex_);
+        states_.emplace(std::make_shared<Scenes::State>(configuration.value(), engine));
 
         HARMONY_INFO("State [{}] pushed onto stack (stack size = {})", stateKey, states_.size());
     }
 
     void StateManager::pop()
     {
-        std::lock_guard<std::mutex> lock(mutex_);
-        if (!states_.empty()) {
-            HARMONY_INFO("State [{}] popped from stack (stack size = {})",
-                reinterpret_cast<std::uintptr_t>(states_.front().get()), // or track IDs inside State
-                states_.size() - 1);
-            states_.pop();
-        }
-        else {
-            HARMONY_WARN("Attempted to pop from empty state stack");
-        }
+        std::lock_guard<std::shared_mutex> lock(mutex_);
+        if (!states_.empty()) states_.pop();
+        else HARMONY_WARN("Attempted to pop from empty state stack");
+
+        HARMONY_INFO("State [{}] popped from stack (stack size = {})",
+            reinterpret_cast<std::uintptr_t>(states_.front().get()),
+            states_.size());
     }
 
     void StateManager::draw(sf::RenderTarget& target, sf::RenderStates states) const
     {
-        std::lock_guard<std::mutex> lock(mutex_);
         if (!states_.empty()) {
-            HARMONY_DEBUG("Drawing top state");
-            states_.front()->draw(target, states);
+            std::shared_lock<std::shared_mutex> lock(mutex_);
+			const std::shared_ptr<Scenes::State>& currentState = states_.front();
+			lock.unlock();
+            currentState->draw(target, states);
         }
-        else {
-            HARMONY_ERROR("No states to draw");
-			throw Exceptions::StateManagerError("No states in stack to draw");
-        }
+        else throw Exceptions::StateStackEmptyError();
     }
+
 
     void StateManager::update(sf::Time deltaTime)
     {
-        std::lock_guard<std::mutex> lock(mutex_);
         if (!states_.empty()) {
-            HARMONY_DEBUG("Updating top state with deltaTime = {} ms", deltaTime.asMilliseconds());
-            states_.front()->update(deltaTime);
+			std::shared_lock<std::shared_mutex> lock(mutex_);
+			const std::shared_ptr<Scenes::State>& currentState = states_.front();
+            lock.unlock();
+            currentState->update(deltaTime);
         }
-        else {
-            HARMONY_ERROR("No states to update");
-			throw Exceptions::StateManagerError("No states in stack to update");
-        }
+		else throw Exceptions::StateStackEmptyError();
     }
+}
+namespace Harmony::Exceptions
+{
+    StateStackEmptyError::StateStackEmptyError()
+		: std::runtime_error("State stack is empty") { HARMONY_ERROR(what()); }
+
+	StartupStatesNotDefined::StartupStatesNotDefined()
+		: std::runtime_error("Startup states not defined in configuration") { HARMONY_ERROR(what()); }
+
+	StateConfigurationNotFound::StateConfigurationNotFound(const std::string& stateKey)
+		: std::runtime_error("Missing state configuration: " + stateKey) { HARMONY_ERROR(what()); }
+
+	StateStackPushFailed::StateStackPushFailed(const std::string& reason)
+		: std::runtime_error("Failed to push state onto stack: " + reason) { HARMONY_ERROR(what()); }
 }
