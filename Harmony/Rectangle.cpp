@@ -4,7 +4,7 @@
 #include "ComponentManagement.h"
 #include "Logger.h"
 
-HARMONY_REGISTER_COMPONENT_FULL(sf::Drawable, Harmony::Components::Rectangle, Rectangle)
+HARMONY_REGISTER_COMPONENT_FULL(Harmony::Components::Drawable, Harmony::Components::Rectangle, Rectangle)
 
 namespace Harmony::Components
 {

@@ -2,6 +2,7 @@
 
 #include "Scene.h"
 #include "entt/entt.hpp"
+#include "Logger.h"
 
 namespace Harmony::Errors 
 {
@@ -35,20 +36,22 @@ namespace Harmony::Management
 			[](const Utilities::Configuration& configuration,
 				entt::entity entityId,
 				Scenes::Scene& scene) {
-					scene.registry_.emplace<Type>(entityId, Type(configuration));
+					std::unique_ptr<Base> component = std::make_unique<Type>(configuration);
+					scene.registry_.emplace<std::unique_ptr<Base>>(entityId, std::move(component));
 			};
 	}
 }
 
 // Full form: allows different base/type/name
-#define HARMONY_REGISTER_COMPONENT_FULL(ComponentBase, ComponentType, ComponentName) \
-namespace Harmony::Components::Registrations {                                      \
-    struct ComponentName##Registration {                                            \
-        ComponentName##Registration() {                                             \
+#define HARMONY_REGISTER_COMPONENT_FULL(ComponentBase, ComponentType, ComponentName)								\
+namespace Harmony::Components::Registrations {																		\
+    struct ComponentName##Registration {																			\
+        ComponentName##Registration() {																				\
+			HARMONY_INFO("Registering component: {}", #ComponentName);												\
             Harmony::Management::ComponentManager::registerComponent<ComponentBase, ComponentType>(#ComponentName); \
-        }                                                                           \
-    };                                                                              \
-    static ComponentName##Registration _autoRegister##ComponentName;                \
+        }																											\
+    };																												\
+    static ComponentName##Registration _autoRegister##ComponentName;												\
 }
 
 // Shorthand: base == type

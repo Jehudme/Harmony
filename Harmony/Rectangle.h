@@ -1,9 +1,8 @@
 #pragma once
-#include <SFML/Graphics.hpp>
-
+#include "Drawable.h"
 namespace Harmony::Components
 {
-	class Rectangle : public sf::Drawable
+	class Rectangle : public Harmony::Components::Drawable
 	{
 	public:
 		Rectangle(const Utilities::Configuration& configuration);

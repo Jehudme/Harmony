@@ -4,6 +4,8 @@
 #include "SceneManagement.h"
 #include "ComponentManagement.h"
 #include "Logger.h"
+#include "Transform.h"
+#include "Drawable.h"
 
 namespace Harmony::Scenes 
 {
@@ -40,9 +42,21 @@ namespace Harmony::Scenes
 		HARMONY_INFO("Scene {} destroyed", sceneId);
 	}
 
-	void Scene::draw(sf::RenderTarget& target, sf::RenderStates states) const 
+	void Scene::draw(sf::RenderTarget& target, sf::RenderStates states) const
 	{
+		// Iterate all entities that have a Drawable
+		auto view = registry_.view<std::unique_ptr<Components::Drawable>>();
 
+		for (auto entity : view) {
+			const Components::Drawable& drawable = getComponent<Components::Drawable>(entity);
+			sf::RenderStates entityStates = states;
+
+			if (const auto* transform = registry_.try_get<Components::Transform>(entity)) {
+				entityStates.transform *= transform->getTransform();
+			}
+
+			target.draw(drawable, entityStates);
+		}
 	}
 
 	void Scene::update(const sf::Time deltaTime) 
@@ -57,6 +71,8 @@ namespace Harmony::Scenes
 		for (const std::string& componentName : configuration.extractKeys({ "components" }))
 			Management::ComponentManager::create(componentName, configuration.subsection({ "components", componentName}).value(), entity, *this);
 	
+		auto registeredEntities = registry_.view<entt::entity>();
+
 		HARMONY_DEBUG("Entity {} created", static_cast<std::uint32_t>(entity));
 		return entity;
 	}
