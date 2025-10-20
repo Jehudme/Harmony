@@ -1,0 +1,5 @@
+// Hint files help the Visual Studio IDE interpret Visual C++ identifiers
+// such as names of functions and macros.
+// For more information see https://go.microsoft.com/fwlink/?linkid=865984
+#define HARMONY_REGISTER_COMPONENT(ComponentType, ComponentName) HARMONY_REGISTER_COMPONENT(ComponentType, ComponentType, ComponentName)REGISTER_COMPONENT_FULL(ComponentType, ComponentType, ComponentName)
+#define HARMONY_REGISTER_COMPONENT(ComponentType, ComponentName) HARMONY_REGISTER_COMPONENT_FULL(ComponentType, ComponentType, ComponentName)

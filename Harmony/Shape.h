@@ -11,46 +11,31 @@ namespace Harmony::Components
 	template<typename Type>
 	inline Shape<Type>::Shape(const Utilities::Configuration& configuration)
 	{
-		std::optional<unsigned int> fillR;
-		if (fillR = configuration.get<unsigned int>({ "fill_color", "r" }); !fillR.has_value())
-			HARMONY_WARN("Rectangle component missing fill color R configuration");
-		std::optional<unsigned int> fillG;
-		if (fillG = configuration.get<unsigned int>({ "fill_color", "g" }); !fillG.has_value())
-			HARMONY_WARN("Rectangle component missing fill color G configuration");
-		std::optional<unsigned int> fillB;
-		if (fillB = configuration.get<unsigned int>({ "fill_color", "b" }); !fillB.has_value())
-			HARMONY_WARN("Rectangle component missing fill color B configuration");
-		std::optional<unsigned int> fillA;
-		if (fillA = configuration.get<unsigned int>({ "fill_color", "a" }); !fillA.has_value())
-			HARMONY_WARN("Rectangle component missing fill color A configuration");
-
-		std::optional<unsigned int> outlineR;
-		if (outlineR = configuration.get<unsigned int>({ "outline_color", "r" }); !outlineR.has_value())
-			HARMONY_WARN("Rectangle component missing outline color R configuration");
-		std::optional<unsigned int> outlineG;
-		if (outlineG = configuration.get<unsigned int>({ "outline_color", "g" }); !outlineG.has_value())
-			HARMONY_WARN("Rectangle component missing outline color G configuration");
-		std::optional<unsigned int> outlineB;
-		if (outlineB = configuration.get<unsigned int>({ "outline_color", "b" }); !outlineB.has_value())
-			HARMONY_WARN("Rectangle component missing outline color B configuration");
-		std::optional<unsigned int> outlineA;
-		if (outlineA = configuration.get<unsigned int>({ "outline_color", "a" }); !outlineA.has_value())
-			HARMONY_WARN("Rectangle component missing outline color A configuration");
-
-		this->setFillColor(sf::Color(
-			fillA.value_or(255),
-			fillR.value_or(255),
-			fillG.value_or(255),
-			fillB.value_or(255)));
-
-		this->setOutlineColor(sf::Color(
-			outlineA.value_or(255),
-			outlineR.value_or(255),
-			outlineG.value_or(255),
-			outlineB.value_or(255)));
-
 		if (std::optional<unsigned int> outlineThickness = configuration.get<unsigned int>({ "outline_thickness" }))
 			this->setOutlineThickness(static_cast<float>(outlineThickness.value()));
 		else HARMONY_WARN("Rectangle component missing outline thickness configuration");
+
+		std::optional<unsigned int> fillR = configuration.get<unsigned int>({ "fill_color", "r" });
+		std::optional<unsigned int> fillG = configuration.get<unsigned int>({ "fill_color", "g" });
+		std::optional<unsigned int> fillB = configuration.get<unsigned int>({ "fill_color", "b" });
+		std::optional<unsigned int> fillA = configuration.get<unsigned int>({ "fill_color", "a" });
+
+		std::optional<unsigned int> outlineR = configuration.get<unsigned int>({ "outline_color", "r" });
+		std::optional<unsigned int> outlineG = configuration.get<unsigned int>({ "outline_color", "g" });
+		std::optional<unsigned int> outlineB = configuration.get<unsigned int>({ "outline_color", "b" });
+		std::optional<unsigned int> outlineA = configuration.get<unsigned int>({ "outline_color", "a" });
+
+		if (!fillR.has_value())     HARMONY_WARN("Shape component missing fill color red configuration");
+		if (!fillG.has_value())     HARMONY_WARN("Shape component missing fill color green configuration");
+		if (!fillB.has_value())     HARMONY_WARN("Shape component missing fill color blue configuration");
+		if (!fillA.has_value())     HARMONY_WARN("Shape component missing fill color alpha configuration");
+		
+		if (!outlineR.has_value())  HARMONY_WARN("Shape component missing outline color red configuration");
+		if (!outlineG.has_value())  HARMONY_WARN("Shape component missing outline color green configuration");
+		if (!outlineB.has_value())  HARMONY_WARN("Shape component missing outline color blue configuration");
+		if (!outlineA.has_value())  HARMONY_WARN("Shape component missing outline color alpha configuration");
+
+		this->setFillColor(sf::Color(fillA.value_or(255), fillR.value_or(255), fillG.value_or(255), fillB.value_or(255)));
+		this->setOutlineColor(sf::Color(outlineA.value_or(255), outlineR.value_or(255), outlineG.value_or(255), outlineB.value_or(255)));
 	}
 }

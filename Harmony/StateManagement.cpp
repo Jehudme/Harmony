@@ -12,16 +12,13 @@ namespace Harmony::Management
     StateManager::StateManager(Engine& engine)
         : engine(engine)
     {
-
         const auto startupQueueIds = engine.configuration.get<Utilities::UUIDList>({ "startupStatesIds" });
         if (startupQueueIds.has_value())
             for (Utilities::UUID stateId : startupQueueIds.value()) push(stateId);
 		else throw Exceptions::StartupStatesNotDefined();
     }
 
-    StateManager::~StateManager() {
-        HARMONY_INFO("StateManager destroyed, {} states remaining in stack", states_.size());
-    }
+    StateManager::~StateManager() { HARMONY_INFO("StateManager destroyed, {} states remaining in stack", states_.size()); }
 
     void StateManager::push(std::uint64_t stateId)
     {
@@ -53,18 +50,20 @@ namespace Harmony::Management
             std::shared_lock<std::shared_mutex> lock(mutex_);
 			const std::shared_ptr<Scenes::State>& currentState = states_.front();
 			lock.unlock();
+
             currentState->draw(target, states);
         }
         else throw Exceptions::StateStackEmptyError();
     }
 
-
     void StateManager::update(sf::Time deltaTime)
     {
-        if (!states_.empty()) {
+        if (!states_.empty()) 
+        {
 			std::shared_lock<std::shared_mutex> lock(mutex_);
 			const std::shared_ptr<Scenes::State>& currentState = states_.front();
             lock.unlock();
+
             currentState->update(deltaTime);
         }
 		else throw Exceptions::StateStackEmptyError();
@@ -72,15 +71,8 @@ namespace Harmony::Management
 }
 namespace Harmony::Exceptions
 {
-    StateStackEmptyError::StateStackEmptyError()
-		: std::runtime_error("State stack is empty") { HARMONY_ERROR(what()); }
-
-	StartupStatesNotDefined::StartupStatesNotDefined()
-		: std::runtime_error("Startup states not defined in configuration") { HARMONY_ERROR(what()); }
-
-	StateConfigurationNotFound::StateConfigurationNotFound(const std::string& stateKey)
-		: std::runtime_error("Missing state configuration: " + stateKey) { HARMONY_ERROR(what()); }
-
-	StateStackPushFailed::StateStackPushFailed(const std::string& reason)
-		: std::runtime_error("Failed to push state onto stack: " + reason) { HARMONY_ERROR(what()); }
+    StateStackEmptyError::StateStackEmptyError()                                        : std::runtime_error("State stack is empty") { HARMONY_ERROR(what()); }
+	StateConfigurationNotFound::StateConfigurationNotFound(const std::string& stateKey) : std::runtime_error("Missing state configuration: " + stateKey) { HARMONY_ERROR(what()); }
+	StateStackPushFailed::StateStackPushFailed(const std::string& reason)               : std::runtime_error("Failed to push state onto stack: " + reason) { HARMONY_ERROR(what()); }
+    StartupStatesNotDefined::StartupStatesNotDefined()                                  : std::runtime_error("Startup states not defined in configuration") { HARMONY_ERROR(what()); }
 }

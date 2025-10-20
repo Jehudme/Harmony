@@ -10,8 +10,8 @@ namespace Harmony::Management
 		StateManager(Engine& engine);
 		~StateManager();
 
-		void  push(std::uint64_t stateId);
-		void  pop();
+		void push(std::uint64_t stateId);
+		void pop();
 	
 	private:
 		void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
@@ -26,19 +26,8 @@ namespace Harmony::Management
 
 namespace Harmony::Exceptions 
 {
-	struct StateStackEmptyError : std::runtime_error {
-		explicit StateStackEmptyError();
-	};
-
-	struct StartupStatesNotDefined : std::runtime_error {
-		explicit StartupStatesNotDefined();
-	};
-
-	struct StateConfigurationNotFound : std::runtime_error {
-		explicit StateConfigurationNotFound(const std::string& stateKey);
-	};
-
-	struct StateStackPushFailed : std::runtime_error { 
-		explicit StateStackPushFailed(const std::string& reason);
-	};
+	struct StateStackPushFailed : std::runtime_error		{ explicit StateStackPushFailed(const std::string& reason); };
+	struct StateStackEmptyError : std::runtime_error		{ explicit StateStackEmptyError(); };
+	struct StartupStatesNotDefined : std::runtime_error		{ explicit StartupStatesNotDefined(); };
+	struct StateConfigurationNotFound : std::runtime_error	{ explicit StateConfigurationNotFound(const std::string& stateKey); };
 }

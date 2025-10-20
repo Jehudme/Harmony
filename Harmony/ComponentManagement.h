@@ -22,7 +22,6 @@ namespace Harmony::Management
 		componentFactories_[name] = [](const Utilities::Configuration& configuration, entt::entity entityId, Scenes::Scene& scene) 
 		{
 			std::unique_ptr<Base> component = std::make_unique<Type>(configuration);
-
 			std::lock_guard<std::shared_mutex> lock(mutex_);
 			scene.registry_.emplace<std::unique_ptr<Base>>(entityId, std::move(component));
 		};
@@ -36,18 +35,17 @@ namespace Harmony::Exceptions
 	};
 }
 
-// Automatic component registration macro
-#define HARMONY_REGISTER_COMPONENT_FULL(ComponentBase, ComponentType, ComponentName)								\
-namespace Harmony::Components::Registrations {																		\
+#define HARMONY_REGISTER_COMPONENT_WITH_BASE(ComponentBase, ComponentType, ComponentName)							\
+namespace Harmony::Components::Registrations::detail {																\
     struct ComponentName##Registration {																			\
         ComponentName##Registration() {																				\
-			HARMONY_INFO("Registering component: {}", #ComponentName);												\
+            HARMONY_INFO("Registering component: {}", #ComponentName);												\
             Harmony::Management::ComponentManager::registerComponent<ComponentBase, ComponentType>(#ComponentName); \
         }																											\
     };																												\
-    static ComponentName##Registration _autoRegister##ComponentName;												\
+    inline ComponentName##Registration _autoRegister##ComponentName{};												\
 }
 
 // Simplified automatic component registration macro
 #define HARMONY_REGISTER_COMPONENT(ComponentType, ComponentName)													\
-    HARMONY_REGISTER_COMPONENT_FULL(ComponentType, ComponentType, ComponentName)
+    HARMONY_REGISTER_COMPONENT_WITH_BASE(ComponentType, ComponentType, ComponentName)
