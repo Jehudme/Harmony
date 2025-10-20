@@ -142,9 +142,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Circle.h" />
     <ClInclude Include="ComponentManagement.h" />
     <ClInclude Include="Configuration.h" />
-    <ClInclude Include="Drawable.h" />
     <ClInclude Include="Engine.h" />
     <ClInclude Include="EngineTask.h" />
     <ClInclude Include="Harmony.h" />
@@ -154,6 +154,7 @@
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneManagement.h" />
     <ClInclude Include="SceneTask.h" />
+    <ClInclude Include="Shape.h" />
     <ClInclude Include="State.h" />
     <ClInclude Include="StateManagement.h" />
     <ClInclude Include="StateTask.h" />
@@ -162,9 +163,9 @@
     <ClInclude Include="Transform.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Circle.cpp" />
     <ClCompile Include="ComponentManagement.cpp" />
     <ClCompile Include="Configuration.cpp" />
-    <ClCompile Include="Drawable.cpp" />
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="EngineTask.cpp" />
     <ClCompile Include="Logger.cpp" />
