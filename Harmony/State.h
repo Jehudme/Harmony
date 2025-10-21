@@ -3,6 +3,18 @@
 #include <memory>
 #include <map>
 
+// Forward declarations to avoid including headers
+namespace Harmony {
+	class Engine;
+	namespace Utilities {
+		class Configuration;
+		using UUID = std::uint64_t;
+	}
+	namespace Scenes {
+		class Scene;
+	}
+}
+
 namespace Harmony::Scenes
 {
 	class State : public std::enable_shared_from_this<State>  

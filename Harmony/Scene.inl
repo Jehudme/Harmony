@@ -5,6 +5,7 @@
 #pragma once
 
 #include <Entt/entt.hpp>
+#include "Exceptions.h"
 
 namespace Harmony::Scenes
 {

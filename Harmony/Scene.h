@@ -2,9 +2,16 @@
 
 #include <memory>
 
-#include "Configuration.h"
-#include "Logger.h"
-#include "Exceptions.h"
+// Forward declare to avoid including Configuration.h
+namespace Harmony::Utilities {
+	class Configuration;
+	using UUID = std::uint64_t;
+}
+
+// Forward declare Engine
+namespace Harmony {
+	class Engine;
+}
 
 // Forward declare entt types - hide entt header from users
 namespace entt {
