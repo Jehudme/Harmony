@@ -39,7 +39,6 @@ namespace Harmony::Exceptions
 namespace Harmony::Components::Registrations::detail {																\
     struct ComponentName##Registration {																			\
         ComponentName##Registration() {																				\
-            HARMONY_INFO("Registering component: {}", #ComponentName);												\
             Harmony::Management::ComponentManager::registerComponent<ComponentBase, ComponentType>(#ComponentName); \
         }																											\
     };																												\

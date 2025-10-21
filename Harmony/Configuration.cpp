@@ -1,12 +1,8 @@
 #include "pch.h"
 #include "Configuration.h"
 #include "Logger.h"
+#include "Exceptions.h"
 
-namespace Harmony::Exceptions {
-    class ConfigurationError;
-    ConfigurationError::ConfigurationError(const std::string& msg)
-        : std::runtime_error("Configuration error: " + msg) {}
-}
 
 namespace Harmony::Utilities {
 
@@ -41,10 +37,9 @@ namespace Harmony::Utilities {
     void Configuration::save(const std::filesystem::path& filePath) {
         std::lock_guard lock(mutex_);
         std::ofstream file(filePath);
-        if (!file) {
-            HARMONY_ERROR("Failed to open configuration file for saving: {}", filePath.string());
-            throw Exceptions::ConfigurationError("Failed to open file: " + filePath.string());
-        }
+
+		if (!file) throw Exceptions::OpenConfigurationFileException(filePath.string());
+
         file << internal_->data.dump(4);
         HARMONY_INFO("Configuration saved to {}", filePath.string());
     }
@@ -52,17 +47,15 @@ namespace Harmony::Utilities {
     void Configuration::load(const std::filesystem::path& filePath) {
         std::lock_guard lock(mutex_);
         std::ifstream file(filePath);
-        if (!file) {
-            HARMONY_ERROR("Failed to open configuration file for loading: {}", filePath.string());
-            throw Exceptions::ConfigurationError("Failed to open file: " + filePath.string());
-        }
+
+        if (!file) throw Exceptions::OpenConfigurationFileException(filePath.string());
+
         try {
             file >> internal_->data;
             HARMONY_INFO("Configuration loaded from {}", filePath.string());
         }
         catch (const nlohmann::json::parse_error& e) {
-            HARMONY_ERROR("Failed to parse configuration file {}: {}", filePath.string(), e.what());
-            throw Exceptions::ConfigurationError("Parse error: " + std::string(e.what()));
+			throw Exceptions::ParseConfigurationFileException(filePath.string(), e.what());
         }
     }
 
@@ -90,19 +83,19 @@ namespace Harmony::Utilities {
         std::lock_guard lock(mutex_);
         const auto* node = findNode(internal_->data, keys);
         if (!node) {
-            HARMONY_WARN("Configuration::get - Key path not found: [{}]",
-                         fmt::join(keys, "."));
+            HARMONY_WARN("Configuration::get - Key path not found: {}",
+                fmt::format("[{}]", fmt::join(keys, ".")));
             return std::nullopt;
         }
 
         try {
             auto value = node->get<Type>();
-            HARMONY_DEBUG("Configuration::get - Retrieved [{}] = {}", 
-                          fmt::join(keys, "."), value);
+            HARMONY_DEBUG("Configuration::get - Retrieved {} = {}", 
+                fmt::format("[{}]", fmt::join(keys, ".")), value);
             return value;
         } catch (const nlohmann::json::type_error& e) {
-            HARMONY_ERROR("Configuration::get - Type mismatch at [{}]: {}",
-                          fmt::join(keys, "."), e.what());
+            HARMONY_ERROR("Configuration::get - Type mismatch at {}: {}",
+                fmt::format("[{}]", fmt::join(keys, ".")), e.what());
             return std::nullopt;
         }
     }
@@ -116,11 +109,11 @@ namespace Harmony::Utilities {
         *node = value;
 
         if (existed) {
-            HARMONY_INFO("Configuration::set - Overriding [{}] with new value: {}",
-                         fmt::join(keys, "."), value);
+            HARMONY_INFO("Configuration::set - Overriding {} with new value: {}",
+                fmt::format("[{}]", fmt::join(keys, ".")), value);
         } else {
-            HARMONY_INFO("Configuration::set - Created [{}] = {}",
-                         fmt::join(keys, "."), value);
+            HARMONY_INFO("Configuration::set - Created {} = {}",
+                fmt::format("[{}]", fmt::join(keys, ".")), value);
         }
     }
 
@@ -130,11 +123,10 @@ namespace Harmony::Utilities {
         if (node) {
             Configuration configuration;
             configuration.internal_->data = *node;
-            HARMONY_DEBUG("Configuration::subsection - Extracted subsection [{}]",
-                          fmt::join(keys, "."));
+            HARMONY_DEBUG("Configuration::subsection - Extracted subsection {}", fmt::format("[{}]", fmt::join(keys, ".")));
             return configuration;
         }
-        HARMONY_WARN("Configuration::subsection - Subsection not found: [{}]", fmt::join(keys, "."));
+        HARMONY_WARN("Configuration::subsection - Subsection not found: {}", fmt::format("[{}]", fmt::join(keys, ".")));
         return std::nullopt;
     }
 
@@ -142,11 +134,11 @@ namespace Harmony::Utilities {
         std::lock_guard lock(mutex_);
         const auto* node = findNode(internal_->data, keys);
         if (!node) {
-            HARMONY_WARN("Configuration::extractKeys - Node not found: [{}]", fmt::join(keys, "."));
+            HARMONY_WARN("Configuration::extractKeys - Node not found: {}", fmt::format("[{}]", fmt::join(keys, ".")));
             return {};
         }
         if (!node->is_object()) {
-            HARMONY_WARN("Configuration::extractKeys - Node at [{}] is not an object", fmt::join(keys, "."));
+            HARMONY_WARN("Configuration::extractKeys - Node at {} is not an object", fmt::format("[{}]", fmt::join(keys, ".")));
             return {};
         }
 
@@ -155,8 +147,8 @@ namespace Harmony::Utilities {
         for (const auto& [key, _] : node->items())
             rKeys.push_back(key);
 
-        HARMONY_INFO("Configuration::extractKeys - Extracted {} keys from [{}]",
-                     rKeys.size(), fmt::join(keys, "."));
+        HARMONY_INFO("Configuration::extractKeys - Extracted {} keys from {}",
+                     rKeys.size(), fmt::format("[{}]", fmt::join(keys, ".")));
         return rKeys;
     }
 

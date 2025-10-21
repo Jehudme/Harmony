@@ -18,6 +18,9 @@
 #include <Entt/entt.hpp>
 #include <shared_mutex>
 #include <format>
+#include <string>
+#include <string_view>
+#include <cstddef>
 
 #include "Logger.h"
 

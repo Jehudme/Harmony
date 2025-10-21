@@ -10,12 +10,11 @@
 
 namespace Harmony::Utilities 
 {
-
 	 // Internal state
 	 std::once_flag initFlag;
 	 std::shared_ptr<spdlog::logger> globalLogger;
 
-	void Logger::initialize(std::string_view logFile,
+	void Logger::initialize(const std::string& logFile,
 		size_t maxFileSize,
 		size_t maxFiles,
 		size_t queueSize,
@@ -51,8 +50,28 @@ namespace Harmony::Utilities
 			});
 	}
 
-	spdlog::logger& Logger::get() noexcept {
-		return *globalLogger;
+	void Logger::trace(std::string_view message) {
+		globalLogger->trace(message);
+	}
+
+	void Logger::debug(std::string_view message) {
+		globalLogger->debug(message);
+	}
+
+	void Logger::info(std::string_view message) {
+		globalLogger->info(message);
+	}
+
+	void Logger::warn(std::string_view message) {
+		globalLogger->warn(message);
+	}
+
+	void Logger::error(std::string_view message) {
+		globalLogger->error(message);
+	}
+
+	void Logger::critical(std::string_view message) {
+		globalLogger->critical(message);
 	}
 
 	void Logger::shutdown() {

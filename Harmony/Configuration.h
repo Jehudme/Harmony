@@ -1,17 +1,7 @@
 #pragma once
 
-namespace Harmony::Exceptions {
-    class ConfigurationError : public std::runtime_error {
-    public:
-        explicit ConfigurationError(const std::string& msg);
-    };
-
-}
-
-namespace Harmony::Utilities 
-{
-    class Configuration 
-    {
+namespace Harmony::Utilities {
+    class Configuration {
     public:
         Configuration();
 		~Configuration();
