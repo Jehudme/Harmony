@@ -155,7 +155,7 @@
     <ClCompile Include="EngineTask.cpp">
       <Filter>Source Files\Tasks</Filter>
     </ClCompile>
-    <ClCompile Include="Transforme.cpp">
+    <ClCompile Include="Transform.cpp">
       <Filter>Source Files\Components</Filter>
     </ClCompile>
     <ClCompile Include="ComponentManagement.cpp">

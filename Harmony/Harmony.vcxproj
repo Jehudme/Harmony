@@ -190,7 +190,7 @@
     <ClCompile Include="StateTask.cpp" />
     <ClCompile Include="Task.cpp" />
     <ClCompile Include="TaskManagement.cpp" />
-    <ClCompile Include="Transforme.cpp" />
+    <ClCompile Include="Transform.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="cpp.hint" />

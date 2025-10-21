@@ -21,7 +21,7 @@ namespace Harmony
 
 	Engine::Engine(Utilities::Configuration& configuration)
 		: configuration(configuration),
-		taskManagement(std::make_unique<Management::TaskManagemer>(*this)),
+		taskManagement(std::make_unique<Management::TaskManager>(*this)),
 		sceneManagement(std::make_unique<Management::SceneManager>(*this)),
 		stateManagement(std::make_unique<Management::StateManager>(*this))
 	{

@@ -42,7 +42,7 @@ namespace Harmony::Tasks {
 
 namespace Harmony::Management {
 	class ComponentManager;
-	class TaskManagemer;
+	class TaskManager;
 	class StateManager;
 	class SceneManager;
 }

@@ -6,7 +6,7 @@
 
 namespace Harmony::Management
 {
-	struct TaskManagemer::WorkerPool {
+	struct TaskManager::WorkerPool {
 	public:
 		WorkerPool();
 		~WorkerPool();
@@ -25,7 +25,7 @@ namespace Harmony::Management
 		std::vector<std::unique_ptr<Worker>> workers_;
 	};
 
-	struct TaskManagemer::WorkerPool::Worker {
+	struct TaskManager::WorkerPool::Worker {
 	public:
 		friend struct WorkerPool;
 
@@ -56,7 +56,7 @@ namespace Harmony::Management
 		std::thread thread_;
 	};
 
-    TaskManagemer::WorkerPool::WorkerPool()
+    TaskManager::WorkerPool::WorkerPool()
     {
         unsigned int workerCount = std::thread::hardware_concurrency();
         if (workerCount == 0) workerCount = 4; // fallback
@@ -69,14 +69,14 @@ namespace Harmony::Management
         }
     }
 
-    TaskManagemer::WorkerPool::~WorkerPool()
+    TaskManager::WorkerPool::~WorkerPool()
     {
         HARMONY_INFO("WorkerPool shutting down ({} workers)", workers_.size());
         running_ = false;
         condition_.notify_all();
     }
 
-    void TaskManagemer::WorkerPool::submit(std::unique_ptr<Tasks::Task> task)
+    void TaskManager::WorkerPool::submit(std::unique_ptr<Tasks::Task> task)
     {
         if (!task) throw Exceptions::NullTaskException("Null task submitted to WorkerPool");
         {
@@ -87,7 +87,7 @@ namespace Harmony::Management
         condition_.notify_one();
     }
 
-    TaskManagemer::WorkerPool::Worker::Worker(
+    TaskManager::WorkerPool::Worker::Worker(
         std::queue<std::unique_ptr<Tasks::Task>>& tasks,
         bool& running_,
         std::mutex& mutex,
@@ -98,14 +98,14 @@ namespace Harmony::Management
         condition_(condition),
         thread_(run, std::ref(*this)) {}
 
-    TaskManagemer::WorkerPool::Worker::~Worker()
+    TaskManager::WorkerPool::Worker::~Worker()
     {
         if (thread_.joinable()) {
             thread_.join();
         }
     }
 
-    void TaskManagemer::WorkerPool::Worker::run(Worker& worker)
+    void TaskManager::WorkerPool::Worker::run(Worker& worker)
     {
         while (true) 
         {
@@ -144,7 +144,7 @@ namespace Harmony::Management
         }
     }
 
-    void TaskManagemer::WorkerPool::Worker::runTask(std::unique_ptr<Tasks::Task> task)
+    void TaskManager::WorkerPool::Worker::runTask(std::unique_ptr<Tasks::Task> task)
     {
         if (!task) throw Exceptions::NullTaskException("Null task in runTask");
         
@@ -152,16 +152,16 @@ namespace Harmony::Management
         catch (const std::exception& e) { HARMONY_ERROR("Task execution failed: {}", e.what()); }
     }
 
-    TaskManagemer::TaskManagemer(Engine& engine)
+    TaskManager::TaskManager(Engine& engine)
         : engine(engine), workerPool_(std::make_unique<WorkerPool>()) {
         HARMONY_INFO("TaskManager created");
     }
 
-    TaskManagemer::~TaskManagemer() {
+    TaskManager::~TaskManager() {
         HARMONY_INFO("TaskManager destroyed, {} pending tasks", tasks_.size());
     }
 
-    void TaskManagemer::submit(std::unique_ptr<Tasks::Task> task)
+    void TaskManager::submit(std::unique_ptr<Tasks::Task> task)
     {
         if (!task) throw Exceptions::NullTaskException("Attempted to submit null task");
 
@@ -176,7 +176,7 @@ namespace Harmony::Management
         tasks_.emplace(std::move(task));
     }
 
-    void TaskManagemer::handleTasks()
+    void TaskManager::handleTasks()
     {
         while (!tasks_.empty()) {
             std::unique_ptr<Tasks::Task> task;
@@ -196,7 +196,7 @@ namespace Harmony::Management
         }
     }
 
-    void TaskManagemer::handleTask(std::unique_ptr<Tasks::Task> task)
+    void TaskManager::handleTask(std::unique_ptr<Tasks::Task> task)
     {
         if (!task) {
             HARMONY_ERROR("handleTask received null task");

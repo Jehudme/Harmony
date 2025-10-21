@@ -10,14 +10,14 @@
 
 namespace Harmony::Management
 {
-    class TaskManagemer
+    class TaskManager
 	{
     public:
 		friend class Engine;
 		friend struct WorkerPool;
 
-		TaskManagemer(Engine& engine);
-		~TaskManagemer();
+		TaskManager(Engine& engine);
+		~TaskManager();
 
 		void submit(std::unique_ptr<Tasks::Task> task);
 
