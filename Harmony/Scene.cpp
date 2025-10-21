@@ -85,8 +85,12 @@ namespace Harmony::Scenes
 			const sf::Drawable& drawable = componentReference<sf::Drawable>(static_cast<EntityID>(entity));
 
 			sf::RenderStates entityStates = states;
-			if (const auto* transform = impl_->registry.try_get<Components::Transform>(entity)) {
-				entityStates.transform *= transform->getTransform();
+			if (auto* transform = impl_->registry.try_get<std::unique_ptr<Components::Transform>>(entity)) {
+				// Get internal SFML transformable for rendering
+				const sf::Transformable* sfTransform = static_cast<const sf::Transformable*>((*transform)->getInternalTransform());
+				if (sfTransform) {
+					entityStates.transform *= sfTransform->getTransform();
+				}
 			}
 
 			target.draw(drawable, entityStates);
