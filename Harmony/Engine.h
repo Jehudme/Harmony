@@ -1,12 +1,32 @@
 #pragma once
 
+#include <memory>
+#include <atomic>
+
+// Forward declarations - no external library headers
+namespace Harmony {
+    namespace Utilities {
+        class Configuration;
+    }
+    namespace Management {
+        class TaskManager;
+        class SceneManager;
+        class StateManager;
+    }
+}
+
 namespace Harmony
 {
+    /// @brief Main engine class with hidden implementation details
     class Engine 
     {
     public:
         Engine(Utilities::Configuration& configuration);
 		~Engine();
+
+        // Prevent copying
+        Engine(const Engine&) = delete;
+        Engine& operator=(const Engine&) = delete;
 
         void start();
         void stop();
@@ -15,7 +35,9 @@ namespace Harmony
 
         void setTargetFPS(unsigned int fps);
         unsigned int getTargetFPS() const noexcept;
-        sf::Time getDeltaTime() const noexcept;
+        
+        /// @brief Get delta time in seconds
+        float getDeltaTime() const noexcept;
 
     public:
         Utilities::Configuration& configuration;
@@ -31,14 +53,13 @@ namespace Harmony
         void handleRendering();
 
     private:
-        sf::RenderWindow window_;
+        // PImpl idiom - hide SFML window, clock, and time implementation
+        struct EngineImpl;
+        std::unique_ptr<EngineImpl> impl_;
 
         std::atomic<bool> running_{ false };
         std::atomic<bool> paused_{ false };
-
         unsigned int targetFPS_{ 0 };
-        sf::Time deltaTime_;
-		sf::Clock clock_;
     };
 
 }

@@ -13,8 +13,16 @@
 
 namespace Harmony
 {
+	// PImpl struct to hide SFML types from header
+	struct Engine::EngineImpl {
+		sf::RenderWindow window;
+		sf::Clock clock;
+		sf::Time deltaTime;
+	};
+
 	Engine::Engine(Utilities::Configuration& configuration)
 		: configuration(configuration),
+		impl_(std::make_unique<EngineImpl>()),
 		taskManagement(std::make_unique<Management::TaskManager>(*this)),
 		sceneManagement(std::make_unique<Management::SceneManager>(*this)),
 		stateManagement(std::make_unique<Management::StateManager>(*this))
@@ -57,13 +65,13 @@ namespace Harmony
 			throw Exceptions::EngineError("Window dimensions must be greater than zero");
 		}
 
-		window_.create(sf::VideoMode(width.value(), height.value()), title.value());
-		if (!window_.isOpen()) {
+		impl_->window.create(sf::VideoMode(width.value(), height.value()), title.value());
+		if (!impl_->window.isOpen()) {
 			HARMONY_ERROR("Failed to create SFML window");
 			throw Exceptions::EngineError("Window creation failed");
 		}
 
-		window_.setFramerateLimit(targetFPS_);
+		impl_->window.setFramerateLimit(targetFPS_);
 		HARMONY_INFO("Window created: '{}' ({}x{}, targetFPS={})", title.value(), width.value(), height.value(), targetFPS_);
 	}
 
@@ -74,12 +82,12 @@ namespace Harmony
 	void Engine::start()
 	{
 		HARMONY_INFO("Engine starting main loop");
-		clock_.restart();
+		impl_->clock.restart();
 		running_ = true;
 		paused_ = false;
 
-		while (running_ && window_.isOpen()) {
-			deltaTime_ = clock_.restart();
+		while (running_ && impl_->window.isOpen()) {
+			impl_->deltaTime = impl_->clock.restart();
 
 			try {
 				handleTasks();
@@ -100,8 +108,8 @@ namespace Harmony
 	{
 		HARMONY_WARN("Engine stopping...");
 		running_ = false;
-		if (window_.isOpen()) {
-			window_.close();
+		if (impl_->window.isOpen()) {
+			impl_->window.close();
 			HARMONY_INFO("Window closed");
 		}
 	}
@@ -115,11 +123,11 @@ namespace Harmony
 	{
 		targetFPS_ = fps;
 		if (targetFPS_ > 0) {
-			window_.setFramerateLimit(targetFPS_);
+			impl_->window.setFramerateLimit(targetFPS_);
 			HARMONY_INFO("Target FPS set to {}", targetFPS_);
 		}
 		else {
-			window_.setFramerateLimit(0);
+			impl_->window.setFramerateLimit(0);
 			HARMONY_WARN("Target FPS uncapped");
 		}
 	}
@@ -129,9 +137,9 @@ namespace Harmony
 		return targetFPS_;
 	}
 
-	sf::Time Engine::getDeltaTime() const noexcept
+	float Engine::getDeltaTime() const noexcept
 	{
-		return deltaTime_;
+		return impl_->deltaTime.asSeconds();
 	}
 
 	void Engine::handleTasks() {
@@ -141,7 +149,7 @@ namespace Harmony
 	void Engine::handleEvents()
 	{
 		sf::Event event;
-		while (window_.pollEvent(event)) {
+		while (impl_->window.pollEvent(event)) {
 			if (event.type == sf::Event::Closed) {
 				HARMONY_INFO("Window close event received");
 				stop();
@@ -150,14 +158,14 @@ namespace Harmony
 	}
 
 	void Engine::handleUpdates() {
-		stateManagement->update(clock_.restart());
+		stateManagement->update(impl_->clock.restart());
 	}
 
 	void Engine::handleRendering()
 	{
-		window_.clear(sf::Color::Black);
-		window_.draw(*stateManagement.get());
-		window_.display();
+		impl_->window.clear(sf::Color::Black);
+		impl_->window.draw(*stateManagement.get());
+		impl_->window.display();
 	}
 
 } // namespace Harmony
