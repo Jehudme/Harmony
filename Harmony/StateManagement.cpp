@@ -69,10 +69,3 @@ namespace Harmony::Management
 		else throw Exceptions::StateStackEmptyError();
     }
 }
-namespace Harmony::Exceptions
-{
-    StateStackEmptyError::StateStackEmptyError()                                        : std::runtime_error("State stack is empty") { HARMONY_ERROR(what()); }
-	StateConfigurationNotFound::StateConfigurationNotFound(const std::string& stateKey) : std::runtime_error("Missing state configuration: " + stateKey) { HARMONY_ERROR(what()); }
-	StateStackPushFailed::StateStackPushFailed(const std::string& reason)               : std::runtime_error("Failed to push state onto stack: " + reason) { HARMONY_ERROR(what()); }
-    StartupStatesNotDefined::StartupStatesNotDefined()                                  : std::runtime_error("Startup states not defined in configuration") { HARMONY_ERROR(what()); }
-}

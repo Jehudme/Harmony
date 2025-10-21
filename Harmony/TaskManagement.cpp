@@ -221,9 +221,3 @@ namespace Harmony::Management
         }
     }
 }
-
-namespace Harmony::Exceptions
-{
-    NullTaskException::NullTaskException(const std::string& message) : std::runtime_error(message) { HARMONY_ERROR(what()); }
-	FailedTaskExecutionException::FailedTaskExecutionException(const std::string& message) : std::runtime_error(message) { HARMONY_ERROR(what()); }
-}

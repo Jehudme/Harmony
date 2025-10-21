@@ -7,6 +7,7 @@
 #include <vector>
 
 #include "Task.h"
+#include "Exceptions.h"
 
 namespace Harmony::Management
 {
@@ -44,10 +45,4 @@ namespace Harmony::Management
 		std::priority_queue<std::unique_ptr<Tasks::Task>, std::vector<std::unique_ptr<Tasks::Task>>, Compare> tasks_;
     };
 
-}
-
-namespace Harmony::Exceptions
-{
-	struct NullTaskException : std::runtime_error { explicit NullTaskException(const std::string& message); };
-	struct FailedTaskExecutionException : std::runtime_error { explicit FailedTaskExecutionException(const std::string& message); };
 }

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Exceptions.h"
 
 namespace Harmony::Management
 {
@@ -22,12 +23,4 @@ namespace Harmony::Management
 		mutable std::shared_mutex mutex_;
 		std::queue<std::shared_ptr<Scenes::State>> states_;
 	};
-}
-
-namespace Harmony::Exceptions 
-{
-	struct StateStackPushFailed : std::runtime_error		{ explicit StateStackPushFailed(const std::string& reason); };
-	struct StateStackEmptyError : std::runtime_error		{ explicit StateStackEmptyError(); };
-	struct StartupStatesNotDefined : std::runtime_error		{ explicit StartupStatesNotDefined(); };
-	struct StateConfigurationNotFound : std::runtime_error	{ explicit StateConfigurationNotFound(const std::string& stateKey); };
 }

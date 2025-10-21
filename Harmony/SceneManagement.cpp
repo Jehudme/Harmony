@@ -58,12 +58,3 @@ namespace Harmony::Management
         return nullptr;
     }
 }
-
-namespace Harmony::Exceptions
-{
-    SceneConfigurationNotFoundError::SceneConfigurationNotFoundError(const std::string& sceneKey)
-        : std::runtime_error("Missing scene configuration: " + sceneKey) { HARMONY_ERROR(what()); }
-    
-    ExpiredSceneError::ExpiredSceneError(const Utilities::UUID sceneId)
-		: std::runtime_error("Scene expired: " + std::to_string(sceneId)) { HARMONY_ERROR(what()); }
-}

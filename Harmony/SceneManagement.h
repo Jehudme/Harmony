@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Exceptions.h"
+
 namespace Harmony::Management 
 {
 	class SceneManager 
@@ -21,16 +23,5 @@ namespace Harmony::Management
 		Engine& engine;
 		mutable std::shared_mutex mutex_;
 		std::unordered_map<std::uint64_t, std::weak_ptr<Scenes::Scene>> scenes_;
-	};
-}
-
-namespace Harmony::Exceptions
-{
-	struct SceneConfigurationNotFoundError : std::runtime_error {
-		explicit SceneConfigurationNotFoundError(const std::string& sceneKey);
-	};
-
-	struct ExpiredSceneError : std::runtime_error {
-		explicit ExpiredSceneError(const Utilities::UUID sceneId);
 	};
 }
