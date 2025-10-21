@@ -140,9 +140,7 @@ namespace Harmony
 		return deltaTime_;
 	}
 
-	void Engine::handleTasks()
-	{
-		HARMONY_DEBUG("Handling tasks");
+	void Engine::handleTasks() {
 		taskManagement->handleTasks();
 	}
 
@@ -157,15 +155,12 @@ namespace Harmony
 		}
 	}
 
-	void Engine::handleUpdates()
-	{
-		HARMONY_DEBUG("Updating states");
+	void Engine::handleUpdates() {
 		stateManagement->update(clock_.restart());
 	}
 
 	void Engine::handleRendering()
 	{
-		HARMONY_DEBUG("Rendering frame");
 		window_.clear(sf::Color::Black);
 		window_.draw(*stateManagement.get());
 		window_.display();

@@ -99,8 +99,14 @@
     <ClInclude Include="Shape.h">
       <Filter>Header Files\Components</Filter>
     </ClInclude>
+    <ClInclude Include="RandomValue.h">
+      <Filter>Header Files\Utilites</Filter>
+    </ClInclude>
     <ClInclude Include="Circle.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Script.h">
+      <Filter>Header Files\Components</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -158,5 +164,11 @@
     <ClCompile Include="Circle.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Script.cpp">
+      <Filter>Source Files\Components</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="cpp.hint" />
   </ItemGroup>
 </Project>

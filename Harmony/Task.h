@@ -26,6 +26,7 @@ namespace Harmony::Tasks
     public:
         const Mode mode;
         const int priority;
+        const Utilities::UUID id;
         const std::chrono::milliseconds delay;
         std::optional<std::reference_wrapper<Engine>> engine;
     };

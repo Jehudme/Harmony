@@ -21,7 +21,7 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{f5b5e977-d113-406f-b29b-b0f56687f454}</ProjectGuid>
+    <ProjectGuid>{F5B5E977-D113-406F-B29B-B0F56687F454}</ProjectGuid>
     <RootNamespace>Harmony</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
@@ -150,10 +150,12 @@
     <ClInclude Include="Harmony.h" />
     <ClInclude Include="Logger.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="RandomValue.h" />
     <ClInclude Include="Rectangle.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneManagement.h" />
     <ClInclude Include="SceneTask.h" />
+    <ClInclude Include="Script.h" />
     <ClInclude Include="Shape.h" />
     <ClInclude Include="State.h" />
     <ClInclude Include="StateManagement.h" />
@@ -180,6 +182,7 @@
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="SceneManagement.cpp" />
     <ClCompile Include="SceneTask.cpp" />
+    <ClCompile Include="Script.cpp" />
     <ClCompile Include="State.cpp" />
     <ClCompile Include="StateManagement.cpp" />
     <ClCompile Include="StateTask.cpp" />

@@ -1,4 +1,6 @@
 #pragma once
+
+#include <SFML/Graphics/CircleShape.hpp>
 #include "Shape.h"
 
 namespace Harmony::Components

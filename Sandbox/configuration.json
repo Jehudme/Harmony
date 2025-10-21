@@ -13,12 +13,13 @@
   },
   "scenes": {
     "1002" : {
-      "entities": [2001]
+      "entities": [2001, 2001, 2001]
     }
   },
   "entities": {
     "2001": {
       "name": "Player",
+      "script": "BasicScript",
       "components": {
         "Transform": {
           "position": {
