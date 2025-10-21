@@ -6,6 +6,7 @@
 #include "Engine.h"
 #include "State.h"
 #include "Logger.h"
+#include <SFML/Graphics.hpp>
 
 namespace Harmony::Management
 {
@@ -44,19 +45,21 @@ namespace Harmony::Management
             states_.size());
     }
 
-    void StateManager::draw(sf::RenderTarget& target, sf::RenderStates states) const
+    void StateManager::internalDraw(void* renderTarget) const
     {
+        if (!renderTarget) return;
+        
         if (!states_.empty()) {
             std::shared_lock<std::shared_mutex> lock(mutex_);
 			const std::shared_ptr<Scenes::State>& currentState = states_.front();
 			lock.unlock();
 
-            currentState->draw(target, states);
+            currentState->internalDraw(renderTarget);
         }
         else throw Exceptions::StateStackEmptyError();
     }
 
-    void StateManager::update(sf::Time deltaTime)
+    void StateManager::update(float deltaTime)
     {
         if (!states_.empty()) 
         {

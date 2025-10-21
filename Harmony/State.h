@@ -1,15 +1,21 @@
 #pragma once
 
+#include <memory>
+#include <map>
+
 namespace Harmony::Scenes
 {
-	class State : public sf::Drawable, public std::enable_shared_from_this<State>  
+	class State : public std::enable_shared_from_this<State>  
 	{
 	public:
 		State(const Utilities::Configuration& configuration, Engine& engine);
 		~State();
 
-		void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
-		void update(const sf::Time deltaTime);
+		// Hide SFML drawing implementation
+		void internalDraw(void* renderTarget) const;
+		
+		/// @param deltaTime - time since last frame in seconds
+		void update(float deltaTime);
 	
 	public:
 		Engine& engine;

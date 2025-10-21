@@ -6,16 +6,34 @@
 #include "Logger.h"
 #include "Transform.h"
 #include "Script.h"
+#include <SFML/Graphics.hpp>
+#include <Entt/entt.hpp>
 
 namespace Harmony::Scenes 
 {
+	// PImpl struct to hide entt::registry
+	struct Scene::SceneImpl {
+		entt::registry registry;
+	};
+
+	// Helper functions for template access to registry
+	entt::registry& getRegistryFromScene(Scene& scene) {
+		return scene.impl_->registry;
+	}
+
+	const entt::registry& getRegistryFromScene(const Scene& scene) {
+		return scene.impl_->registry;
+	}
+
 	void on_create_entity(entt::registry& registry, const entt::entity entity);
 	void on_destroy_entity(entt::registry& registry, const entt::entity entity);
+
 
 	Scene::Scene(const Utilities::Configuration& configuration, const Utilities::UUID sceneId, Engine& engine) :
 		configuration_(configuration),
 		sceneId(sceneId),
-		engine(engine) 
+		engine(engine),
+		impl_(std::make_unique<SceneImpl>())
 	{
 		if (std::optional<Utilities::UUIDList> entitiesKeys = configuration_.get<Utilities::UUIDList>({"entities"})) {
 			for (const Utilities::UUID entityKey : entitiesKeys.value()) {
@@ -47,23 +65,27 @@ namespace Harmony::Scenes
 	}
 
 	Scene::~Scene() {
-		for (auto entity : registry_.view<entt::entity>()) {
-			destroyEntity(entity);
+		for (auto entity : impl_->registry.view<entt::entity>()) {
+			destroyEntity(static_cast<EntityID>(entity));
 		}
 
 		engine.sceneManagement->remove(sceneId);
 		HARMONY_INFO("Scene {} destroyed", sceneId);
 	}
 
-	void Scene::draw(sf::RenderTarget& target, sf::RenderStates states) const
+	void Scene::internalDraw(void* renderTarget) const
 	{
-		auto entitiesView = registry_.view<std::unique_ptr<sf::Drawable>>();
+		if (!renderTarget) return;
+		sf::RenderTarget& target = *static_cast<sf::RenderTarget*>(renderTarget);
+		sf::RenderStates states;
+
+		auto entitiesView = impl_->registry.view<std::unique_ptr<sf::Drawable>>();
 
 		for (const entt::entity entity : entitiesView) {
-			const sf::Drawable& drawable = componentReference<sf::Drawable>(entity);
+			const sf::Drawable& drawable = componentReference<sf::Drawable>(static_cast<EntityID>(entity));
 
 			sf::RenderStates entityStates = states;
-			if (const auto* transform = registry_.try_get<Components::Transform>(entity)) {
+			if (const auto* transform = impl_->registry.try_get<Components::Transform>(entity)) {
 				entityStates.transform *= transform->getTransform();
 			}
 
@@ -71,46 +93,48 @@ namespace Harmony::Scenes
 		}
 	}
 
-	void Scene::update(const sf::Time deltaTime) 
+	void Scene::update(float deltaTime) 
 	{
-		auto entitiesView = registry_.view<std::unique_ptr<Components::Script>>();
+		auto entitiesView = impl_->registry.view<std::unique_ptr<Components::Script>>();
 
 		for (const entt::entity entity : entitiesView) {
-			Components::Script& scriptComponent = componentReference<Components::Script>(entity);
+			Components::Script& scriptComponent = componentReference<Components::Script>(static_cast<EntityID>(entity));
 			scriptComponent.onPreUpdate();
 		}
 
 		for (const entt::entity entity : entitiesView) {
-			Components::Script& scriptComponent = componentReference<Components::Script>(entity);
+			Components::Script& scriptComponent = componentReference<Components::Script>(static_cast<EntityID>(entity));
 			scriptComponent.onPostUpdate();
 		}
 	}
 
-	entt::entity Scene::createEntity(const Utilities::Configuration& configuration) 
+	EntityID Scene::createEntity(const Utilities::Configuration& configuration) 
 	{
-		const entt::entity entity = registry_.create();
+		const entt::entity entity = impl_->registry.create();
 
 		for (const std::string& componentName : configuration.extractKeys({ "components" }))
 			Management::ComponentManager::createComponent(componentName, configuration.subsection({ "components", componentName}).value(), entity, *this);
 
 		if (std::optional<std::string> scriptName = configuration.get<std::string>({ "script" })) {
 			Management::ComponentManager::createComponent(scriptName.value(), configuration.subsection({ "script" }).value(), entity, *this);
-			Components::Script& script = componentReference<Components::Script>(entity);
+			Components::Script& script = componentReference<Components::Script>(static_cast<EntityID>(entity));
 			script.scene_ = *this;
 			script.onCreate();
 		}
 
 		HARMONY_DEBUG("Entity {} created", static_cast<std::uint32_t>(entity));
-		return entity;
+		return static_cast<EntityID>(entity);
 	}
 
-	void Scene::destroyEntity(const entt::entity entityId)
+	void Scene::destroyEntity(EntityID entityId)
 	{
-		if (registry_.try_get<Components::Script>(entityId))
+		entt::entity entity = static_cast<entt::entity>(entityId);
+		
+		if (impl_->registry.try_get<Components::Script>(entity))
 			componentReference<Components::Script>(entityId).onDestroy();
 
-		registry_.destroy(entityId);
+		impl_->registry.destroy(entity);
 
-		HARMONY_DEBUG("Entity {} destroyed", static_cast<std::uint32_t>(entityId));
+		HARMONY_DEBUG("Entity {} destroyed", entityId);
 	}
 }

@@ -2,6 +2,7 @@
 
 #include "Scene.h"
 #include "Exceptions.h"
+#include <Entt/entt.hpp>
 
 namespace Harmony::Management
 {
@@ -10,12 +11,15 @@ namespace Harmony::Management
 	public:
 		template<typename Base, typename Type>
 		static void registerComponent(const std::string& name);
-		static void createComponent(const std::string& name, const Utilities::Configuration& configuation, const entt::entity entityId, Scenes::Scene & scene);
+		static void createComponent(const std::string& name, const Utilities::Configuration& configuation, entt::entity entityId, Scenes::Scene & scene);
 
 	private:
 		static inline std::shared_mutex mutex_;
-		static inline std::unordered_map<std::string, std::function<void(const Utilities::Configuration&, const entt::entity, Scenes::Scene&)>> componentFactories_;
+		static inline std::unordered_map<std::string, std::function<void(const Utilities::Configuration&, entt::entity, Scenes::Scene&)>> componentFactories_;
 	};
+
+	// Helper to get registry from scene - defined in Scene.cpp
+	extern entt::registry& getRegistryFromScene(Scenes::Scene& scene);
 
 	template<typename Base, typename Type>
 	inline void ComponentManager::registerComponent(const std::string& name) {
@@ -24,7 +28,8 @@ namespace Harmony::Management
 		{
 			std::unique_ptr<Base> component = std::make_unique<Type>(configuration);
 			std::lock_guard<std::shared_mutex> lock(mutex_);
-			scene.registry_.emplace<std::unique_ptr<Base>>(entityId, std::move(component));
+			// Use helper function instead of direct access
+			getRegistryFromScene(scene).emplace<std::unique_ptr<Base>>(entityId, std::move(component));
 		};
 	}
 }

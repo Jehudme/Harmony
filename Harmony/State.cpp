@@ -5,6 +5,7 @@
 #include "Configuration.h"
 #include "TaskManagement.h"
 #include "SceneManagement.h"
+#include <SFML/Graphics.hpp>
 
 namespace Harmony::Scenes
 {
@@ -24,13 +25,15 @@ namespace Harmony::Scenes
 			engine.sceneManagement->remove(scene.first);
 	}
 
-	void State::draw(sf::RenderTarget& target, sf::RenderStates states) const
+	void State::internalDraw(void* renderTarget) const
 	{
+		if (!renderTarget) return;
+		
 		for (const auto& scene : scenes_)
-			scene.second->draw(target, states);
+			scene.second->internalDraw(renderTarget);
 	}
 
-	void State::update(const sf::Time deltaTime) 
+	void State::update(float deltaTime) 
 	{
 		for (const auto& scene : scenes_) 
 			scene.second->update(deltaTime);

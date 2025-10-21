@@ -1,10 +1,13 @@
 #pragma once
 
 #include "Exceptions.h"
+#include <queue>
+#include <memory>
+#include <shared_mutex>
 
 namespace Harmony::Management
 {
-	class StateManager : public sf::Drawable 
+	class StateManager
 	{
 	public:
 		friend class Engine;
@@ -15,8 +18,11 @@ namespace Harmony::Management
 		void pop();
 	
 	private:
-		void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
-		void update(const sf::Time deltaTime);
+		// Hide SFML drawing implementation
+		void internalDraw(void* renderTarget) const;
+		
+		/// @param deltaTime - time since last frame in seconds
+		void update(float deltaTime);
 
 	private:
 		Engine& engine;

@@ -158,13 +158,14 @@ namespace Harmony
 	}
 
 	void Engine::handleUpdates() {
-		stateManagement->update(impl_->clock.restart());
+		stateManagement->update(impl_->deltaTime.asSeconds());
 	}
 
 	void Engine::handleRendering()
 	{
 		impl_->window.clear(sf::Color::Black);
-		impl_->window.draw(*stateManagement.get());
+		// Call internalDraw with renderTarget pointer
+		stateManagement->internalDraw(&impl_->window);
 		impl_->window.display();
 	}
 
