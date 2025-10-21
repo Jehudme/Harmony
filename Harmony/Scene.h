@@ -5,6 +5,7 @@
 
 #include "Configuration.h"
 #include "Logger.h"
+#include "Exceptions.h"
 
 namespace Harmony::Scenes
 {
@@ -42,10 +43,7 @@ namespace Harmony::Scenes
 			return *component->get();
 		}
 		else {
-			HARMONY_CRITICAL("Entity {} does not have component of requested type",
-				static_cast<std::uint32_t>(entityId));
-			throw std::runtime_error("Entity " + std::to_string(static_cast<std::uint32_t>(entityId)) +
-				" missing requested component");
+			throw Exceptions::ComponentNotFoundException(static_cast<std::uint32_t>(entityId));
 		}
 	}
 

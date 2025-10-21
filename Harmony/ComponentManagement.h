@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Scene.h"
+#include "Exceptions.h"
 
 namespace Harmony::Management
 {
@@ -26,13 +27,6 @@ namespace Harmony::Management
 			scene.registry_.emplace<std::unique_ptr<Base>>(entityId, std::move(component));
 		};
 	}
-}
-
-namespace Harmony::Exceptions 
-{
-	struct ComponentNotRegistered : std::runtime_error {
-		explicit ComponentNotRegistered(const std::string& componentName);
-	};
 }
 
 #define HARMONY_REGISTER_COMPONENT_WITH_BASE(ComponentBase, ComponentType, ComponentName)							\

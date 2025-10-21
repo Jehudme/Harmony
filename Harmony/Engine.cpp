@@ -8,17 +8,11 @@
 #include "StateManagement.h"
 #include "SceneManagement.h"
 #include "ComponentManagement.h"
+#include "Exceptions.h"
 #include "Logger.h" // for HARMONY_* macros
 
 namespace Harmony
 {
-	/// Exception type for engine-level errors
-	class EngineError : public std::runtime_error {
-	public:
-		explicit EngineError(const std::string& msg)
-			: std::runtime_error("Engine error: " + msg) {}
-	};
-
 	Engine::Engine(Utilities::Configuration& configuration)
 		: configuration(configuration),
 		taskManagement(std::make_unique<Management::TaskManager>(*this)),
@@ -60,13 +54,13 @@ namespace Harmony
 
 		if (width == 0 || height == 0) {
 			HARMONY_ERROR("Invalid window dimensions: {}x{}", width.value(), height.value());
-			throw EngineError("Window dimensions must be greater than zero");
+			throw Exceptions::EngineError("Window dimensions must be greater than zero");
 		}
 
 		window_.create(sf::VideoMode(width.value(), height.value()), title.value());
 		if (!window_.isOpen()) {
 			HARMONY_ERROR("Failed to create SFML window");
-			throw EngineError("Window creation failed");
+			throw Exceptions::EngineError("Window creation failed");
 		}
 
 		window_.setFramerateLimit(targetFPS_);

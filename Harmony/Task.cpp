@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "Task.h"
 #include "RandomValue.h"
+#include "Exceptions.h"
 
 namespace Harmony::Tasks
 {
@@ -12,7 +13,7 @@ namespace Harmony::Tasks
 	Engine& Task::getEngine()
 	{
 		if (!engine.has_value())
-			throw std::runtime_error("Task is not associated with an Engine.");
+			throw Exceptions::TaskNotAssociatedWithEngineException();
 		return engine->get();
 	}
 

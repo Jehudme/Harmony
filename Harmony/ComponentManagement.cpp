@@ -15,9 +15,3 @@ namespace Harmony::Management
 		HARMONY_TRACE("Component '{}' created for entity {}", name, static_cast<std::uint32_t>(entityId));
 	}
 }
-
-namespace Harmony::Exceptions 
-{
-	ComponentNotRegistered::ComponentNotRegistered(const std::string& componentName)
-		: std::runtime_error("Component not registered: " + componentName) { HARMONY_ERROR(what()); }
-}
