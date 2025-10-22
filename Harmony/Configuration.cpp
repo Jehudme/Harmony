@@ -17,20 +17,24 @@ namespace Harmony::Utilities {
     Configuration::~Configuration() = default;
 
     Configuration::Configuration(const Configuration& other) {
+        std::lock_guard lock(other.mutex_);
         internal_ = std::make_unique<Internal>();
         internal_->data = other.internal_->data;
     }
 
     Configuration& Configuration::operator=(const Configuration& other) {
         if (this != &other) {
-            internal_ = std::make_unique<Internal>();
+            std::scoped_lock lock(mutex_, other.mutex_);
+            if (!internal_) {
+                internal_ = std::make_unique<Internal>();
+            }
             internal_->data = other.internal_->data;
         }
         return *this;
     }
 
     void Configuration::merge(const Configuration& configuration) {
-        std::lock_guard lock(mutex_);
+        std::scoped_lock lock(mutex_, configuration.mutex_);
         internal_->data.merge_patch(configuration.internal_->data);
     }
 

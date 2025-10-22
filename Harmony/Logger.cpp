@@ -51,27 +51,27 @@ namespace Harmony::Utilities
 	}
 
 	void Logger::trace(std::string_view message) {
-		globalLogger->trace(message);
+		if (globalLogger) globalLogger->trace(message);
 	}
 
 	void Logger::debug(std::string_view message) {
-		globalLogger->debug(message);
+		if (globalLogger) globalLogger->debug(message);
 	}
 
 	void Logger::info(std::string_view message) {
-		globalLogger->info(message);
+		if (globalLogger) globalLogger->info(message);
 	}
 
 	void Logger::warn(std::string_view message) {
-		globalLogger->warn(message);
+		if (globalLogger) globalLogger->warn(message);
 	}
 
 	void Logger::error(std::string_view message) {
-		globalLogger->error(message);
+		if (globalLogger) globalLogger->error(message);
 	}
 
 	void Logger::critical(std::string_view message) {
-		globalLogger->critical(message);
+		if (globalLogger) globalLogger->critical(message);
 	}
 
 	void Logger::shutdown() {

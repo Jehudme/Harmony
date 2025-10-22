@@ -35,6 +35,7 @@ namespace Harmony::Management
             "Type must have a constructor taking const Harmony::Utilities::Configuration& and Harmony::Scenes::Scene"
         );
 
+        std::lock_guard<std::shared_mutex> registrationLock(mutex_);
         componentFactories_[name] =
             [](const Utilities::Configuration& configuration, entt::entity entityId, Scenes::Scene& scene)
             {

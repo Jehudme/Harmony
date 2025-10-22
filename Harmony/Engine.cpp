@@ -91,6 +91,7 @@ namespace Harmony
 
 		while (running_) {
 			try {
+				impl_->deltaTime = impl_->clock.restart();
 				handleTasks();
 				handleEvents();
 				handleUpdates();
@@ -159,14 +160,34 @@ namespace Harmony
 	}
 
 	void Engine::handleUpdates() {
-		stateManagement->update(impl_->deltaTime.asSeconds());
+		try {
+			stateManagement->update(impl_->deltaTime.asSeconds());
+		}
+		catch (const Exceptions::StateStackEmptyError& e) {
+			HARMONY_ERROR("Cannot update: {}", e.what());
+			throw;
+		}
+		catch (const std::exception& e) {
+			HARMONY_ERROR("Update error: {}", e.what());
+			throw;
+		}
 	}
 
 	void Engine::handleRendering()
 	{
-		impl_->window.clear(sf::Color::Black);
-		stateManagement->internalDraw(impl_->window);
-		impl_->window.display();
+		try {
+			impl_->window.clear(sf::Color::Black);
+			stateManagement->internalDraw(impl_->window);
+			impl_->window.display();
+		}
+		catch (const Exceptions::StateStackEmptyError& e) {
+			HARMONY_ERROR("Cannot render: {}", e.what());
+			throw;
+		}
+		catch (const std::exception& e) {
+			HARMONY_ERROR("Rendering error: {}", e.what());
+			throw;
+		}
 	}
 
 } // namespace Harmony
