@@ -6,6 +6,7 @@
 #include "Logger.h"
 #include "Transform.h"
 #include "Script.h"
+#include "View.h"
 #include "Configuration.h"
 #include <SFML/Graphics.hpp>
 #include <Entt/entt.hpp>
@@ -15,6 +16,7 @@ namespace Harmony::Scenes
 	// PImpl struct to hide entt::registry
 	struct Scene::SceneImpl {
 		entt::registry registry;
+		std::unique_ptr<Components::View> view;  // Singleton view component per scene
 	};
 
 	// Helper functions for template access to registry
@@ -78,6 +80,26 @@ namespace Harmony::Scenes
 			HARMONY_WARN("Scene {} has no entities defined in configuration", sceneId);
 		}
 
+		// Initialize View component (singleton per scene)
+		if (std::optional<Utilities::Configuration> viewConfig = configuration_.subsection({ "view" })) {
+			impl_->view = std::make_unique<Components::View>(viewConfig.value(), *this);
+			HARMONY_DEBUG("View created from configuration for scene {}", sceneId);
+		}
+		else {
+			// Create default view matching window size
+			Utilities::Configuration defaultViewConfig;
+			unsigned int windowWidth = engine.configuration.get<unsigned int>({ "window", "width" }).value_or(800);
+			unsigned int windowHeight = engine.configuration.get<unsigned int>({ "window", "height" }).value_or(600);
+			
+			defaultViewConfig.set<float>({ "center", "x" }, windowWidth / 2.0f);
+			defaultViewConfig.set<float>({ "center", "y" }, windowHeight / 2.0f);
+			defaultViewConfig.set<float>({ "size", "width" }, static_cast<float>(windowWidth));
+			defaultViewConfig.set<float>({ "size", "height" }, static_cast<float>(windowHeight));
+			
+			impl_->view = std::make_unique<Components::View>(defaultViewConfig, *this);
+			HARMONY_DEBUG("Default view created for scene {}", sceneId);
+		}
+
 		HARMONY_INFO("Scene {} initialized", sceneId);
 	}
 
@@ -117,6 +139,14 @@ namespace Harmony::Scenes
 		}
 
 		std::lock_guard<std::mutex> lock(entityMutex_);
+		
+		// Set the view before drawing the scene
+		if (impl_->view) {
+			const sf::View* sfView = static_cast<const sf::View*>(impl_->view->getInternalView());
+			if (sfView) {
+				renderTarget.setView(*sfView);
+			}
+		}
 		
 		auto entitiesView = impl_->registry.view<std::unique_ptr<sf::Drawable>>();
 
@@ -222,6 +252,28 @@ namespace Harmony::Scenes
 	bool Scene::isUpdatingEnabled() const noexcept
 	{
 		return updatingEnabled_.load();
+	}
+
+	Components::View& Scene::getView()
+	{
+		if (!impl_->view) {
+			throw Exceptions::ComponentNotFoundException(0);  // View is not tied to a specific entity
+		}
+		return *impl_->view;
+	}
+
+	const Components::View& Scene::getView() const
+	{
+		if (!impl_->view) {
+			throw Exceptions::ComponentNotFoundException(0);  // View is not tied to a specific entity
+		}
+		return *impl_->view;
+	}
+
+	void Scene::setView(const Utilities::Configuration& configuration)
+	{
+		impl_->view = std::make_unique<Components::View>(configuration, *this);
+		HARMONY_DEBUG("View singleton created for scene {}", sceneId);
 	}
 
 	void Scene::reset()
