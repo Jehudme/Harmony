@@ -17,6 +17,8 @@ namespace Harmony::Management
 
 		void push(std::uint64_t stateId);
 		void pop();
+		
+		std::shared_ptr<Scenes::State> getCurrentState() const;
 	
 	private:
 		// Hide SFML drawing implementation

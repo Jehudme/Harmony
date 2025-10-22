@@ -74,4 +74,13 @@ namespace Harmony::Management
 
         currentState->update(deltaTime);
     }
+
+    std::shared_ptr<Scenes::State> StateManager::getCurrentState() const
+    {
+        std::shared_lock<std::shared_mutex> lock(mutex_);
+        if (states_.empty()) {
+            return nullptr;
+        }
+        return states_.front();
+    }
 }
