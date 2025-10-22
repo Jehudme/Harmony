@@ -13,7 +13,7 @@ namespace Harmony::Management
 		SceneManager(Harmony::Engine& engine);
 		~SceneManager();
 
-		std::shared_ptr<Scenes::Scene> create(const Utilities::UUID sceneId);
+		std::shared_ptr<Scenes::Scene> create(const Utilities::UUID sceneId, int drawOrder = 0);
 		std::shared_ptr<Scenes::Scene> find(const Utilities::UUID sceneId) const;
 
 	private:

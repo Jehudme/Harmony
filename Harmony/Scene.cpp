@@ -30,10 +30,11 @@ namespace Harmony::Scenes
 	void on_destroy_entity(entt::registry& registry, const entt::entity entity);
 
 
-	Scene::Scene(const Utilities::Configuration& configuration, const Utilities::UUID sceneId, Engine& engine) :
+	Scene::Scene(const Utilities::Configuration& configuration, const Utilities::UUID sceneId, Engine& engine, int drawOrder) :
 		configuration_(configuration),
 		sceneId(sceneId),
 		engine(engine),
+		drawOrder(drawOrder),
 		impl_(std::make_unique<SceneImpl>())
 	{
 		initialize();

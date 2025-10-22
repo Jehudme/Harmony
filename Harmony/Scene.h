@@ -39,7 +39,7 @@ namespace Harmony::Scenes
 		friend class Harmony::Scenes::State;
 		friend entt::registry& Harmony::Scenes::getRegistryFromScene(Scene& scene);
 		friend const entt::registry& Harmony::Scenes::getRegistryFromScene(const Scene& scene);
-		Scene(const Utilities::Configuration& configuration, const Utilities::UUID sceneId, Engine& engine);
+		Scene(const Utilities::Configuration& configuration, const Utilities::UUID sceneId, Engine& engine, int drawOrder = 0);
 		~Scene();
 
 	private:
@@ -52,6 +52,7 @@ namespace Harmony::Scenes
 	public:
 		Engine& engine;
 		const Utilities::UUID sceneId;
+		const int drawOrder;
 
 		template<typename Type>
 		Type& componentReference(EntityID entityId);

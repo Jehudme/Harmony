@@ -35,13 +35,14 @@ namespace Harmony::Tasks
 	class CreateSceneTask : public Tasks::Task
 	{
 	public:
-		CreateSceneTask(const Utilities::UUID sceneId);
+		CreateSceneTask(const Utilities::UUID sceneId, int drawOrder = 0);
 
 	private:
 		void run() override;
 
 	private:
 		const Utilities::UUID sceneId_;
+		const int drawOrder_;
 	};
 
 	// Task to reset a scene
@@ -107,6 +108,32 @@ namespace Harmony::Tasks
 
 	private:
 		const Utilities::UUID sceneId_;
+	};
+
+	// Task to remove a scene from the current state
+	class RemoveSceneFromStateTask : public Tasks::Task
+	{
+	public:
+		RemoveSceneFromStateTask(const Utilities::UUID sceneId);
+
+	private:
+		void run() override;
+
+	private:
+		const Utilities::UUID sceneId_;
+	};
+
+	// Task to remove a scene from the current state by draw order
+	class RemoveSceneByOrderTask : public Tasks::Task
+	{
+	public:
+		RemoveSceneByOrderTask(int drawOrder);
+
+	private:
+		void run() override;
+
+	private:
+		const int drawOrder_;
 	};
 }
 

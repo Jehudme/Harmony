@@ -2,6 +2,7 @@
 #include "SceneTask.h"
 #include "Engine.h"
 #include "SceneManagement.h"
+#include "StateManagement.h"
 #include "Scene.h"
 #include "Logger.h"
 
@@ -40,14 +41,23 @@ namespace Harmony::Tasks
 	}
 
 	// CreateSceneTask implementation
-	CreateSceneTask::CreateSceneTask(const Utilities::UUID sceneId) :
-		Task(100, SlowMultiThreaded), sceneId_(sceneId) {}
+	CreateSceneTask::CreateSceneTask(const Utilities::UUID sceneId, int drawOrder) :
+		Task(100, SlowMultiThreaded), sceneId_(sceneId), drawOrder_(drawOrder) {}
 
 	void CreateSceneTask::run()
 	{
 		try {
-			auto scene = getEngine().sceneManagement->create(sceneId_);
-			HARMONY_INFO("Scene {} created successfully", sceneId_);
+			// Create the scene with the specified draw order
+			auto scene = getEngine().sceneManagement->create(sceneId_, drawOrder_);
+			
+			// Add the scene to the current state
+			auto currentState = getEngine().stateManagement->getCurrentState();
+			if (currentState) {
+				currentState->addScene(sceneId_, scene);
+				HARMONY_INFO("Scene {} created and added to current state with draw order {}", sceneId_, drawOrder_);
+			} else {
+				HARMONY_WARN("Scene {} created but no current state to add it to", sceneId_);
+			}
 		}
 		catch (const std::exception& e) {
 			HARMONY_ERROR("Failed to create scene {}: {}", sceneId_, e.what());
@@ -132,5 +142,37 @@ namespace Harmony::Tasks
 
 		scene->disableUpdating();
 		HARMONY_INFO("Scene {} updating disabled", sceneId_);
+	}
+
+	// RemoveSceneFromStateTask implementation
+	RemoveSceneFromStateTask::RemoveSceneFromStateTask(const Utilities::UUID sceneId) :
+		Task(75, FastMultiThreaded), sceneId_(sceneId) {}
+
+	void RemoveSceneFromStateTask::run()
+	{
+		auto currentState = getEngine().stateManagement->getCurrentState();
+		if (!currentState) {
+			HARMONY_ERROR("Failed to remove scene: No current state");
+			return;
+		}
+
+		currentState->removeScene(sceneId_);
+		HARMONY_INFO("Scene {} removed from current state", sceneId_);
+	}
+
+	// RemoveSceneByOrderTask implementation
+	RemoveSceneByOrderTask::RemoveSceneByOrderTask(int drawOrder) :
+		Task(75, FastMultiThreaded), drawOrder_(drawOrder) {}
+
+	void RemoveSceneByOrderTask::run()
+	{
+		auto currentState = getEngine().stateManagement->getCurrentState();
+		if (!currentState) {
+			HARMONY_ERROR("Failed to remove scene: No current state");
+			return;
+		}
+
+		currentState->removeSceneByOrder(drawOrder_);
+		HARMONY_INFO("Scene with draw order {} removed from current state", drawOrder_);
 	}
 }

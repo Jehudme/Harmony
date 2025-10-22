@@ -35,7 +35,14 @@ namespace Harmony::Scenes
 	public:
 		Engine& engine;
 
+		// Scene management methods for the current state
+		void addScene(const Utilities::UUID sceneId, std::shared_ptr<Scene> scene);
+		void removeScene(const Utilities::UUID sceneId);
+		void removeSceneByOrder(int drawOrder);
+		std::shared_ptr<Scene> getScene(const Utilities::UUID sceneId) const;
+
 	private:
-		std::map<Utilities::UUID, std::shared_ptr<Scene>> scenes_;
+		std::vector<std::shared_ptr<Scene>> scenes_;
+		mutable std::shared_mutex scenesMutex_;
 	};
 }

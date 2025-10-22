@@ -15,7 +15,7 @@ namespace Harmony::Management
         HARMONY_INFO("SceneManager destroyed, {} scenes tracked", scenes_.size());
     }
 
-    std::shared_ptr<Scenes::Scene> SceneManager::create(const Utilities::UUID sceneId)
+    std::shared_ptr<Scenes::Scene> SceneManager::create(const Utilities::UUID sceneId, int drawOrder)
     {
         const std::string sceneKey = std::to_string(sceneId);
         const auto configuration = engine.configuration.subsection({ "scenes", sceneKey });
@@ -29,10 +29,10 @@ namespace Harmony::Management
             HARMONY_WARN("Scene [{}] already exists, overriding", sceneKey);
         }
 
-        std::shared_ptr<Scenes::Scene> scene = std::make_shared<Scenes::Scene>(configuration.value(), sceneId, engine);
+        std::shared_ptr<Scenes::Scene> scene = std::make_shared<Scenes::Scene>(configuration.value(), sceneId, engine, drawOrder);
         scenes_[sceneId] = scene->weak_from_this();
 
-        HARMONY_INFO("Scene [{}] created successfully", sceneKey);
+        HARMONY_INFO("Scene [{}] created successfully with draw order {}", sceneKey, drawOrder);
         return scene;
     }
 
