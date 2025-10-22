@@ -13,10 +13,17 @@ namespace Harmony::Management
 
 	void ComponentManager::createComponent(const std::string& name, const Utilities::Configuration& configuation, const entt::entity entityId, Scenes::Scene& scene)
 	{
-		if (!componentFactories_.contains(name))
-			throw Exceptions::ComponentNotRegistered(name);
+		std::function<void(const Utilities::Configuration&, entt::entity, Scenes::Scene&)> factory;
+		
+		{
+			std::shared_lock<std::shared_mutex> lock(mutex_);
+			if (!componentFactories_.contains(name)) {
+				throw Exceptions::ComponentNotRegistered(name);
+			}
+			factory = componentFactories_[name];
+		}
 
-		componentFactories_[name](configuation, entityId, scene);
+		factory(configuation, entityId, scene);
 		HARMONY_TRACE("Component '{}' created for entity {}", name, static_cast<std::uint32_t>(entityId));
 	}
 }

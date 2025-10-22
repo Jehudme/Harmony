@@ -25,6 +25,7 @@ namespace Harmony::Management
 
 	private:
 		Engine& engine_;
+		std::mutex mutex_;
 		std::unordered_map<Utilities::UUID, std::unique_ptr<Resources::Resource>> resources_;
 	};
 }

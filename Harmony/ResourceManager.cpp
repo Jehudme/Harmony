@@ -18,16 +18,27 @@ namespace Harmony::Management
 
 	Resources::Resource& ResourceManager::get(const std::string& type, const Utilities::UUID resourceId)
 	{
-		if (!resources_.contains(resourceId))
-			load(type, resourceId);
-			
+		{
+			std::lock_guard<std::mutex> lock(mutex_);
+			if (resources_.contains(resourceId)) {
+				return *resources_[resourceId];
+			}
+		}
+		
+		// Load without holding the lock (load will acquire it internally)
+		load(type, resourceId);
+		
+		std::lock_guard<std::mutex> lock(mutex_);
 		return *resources_[resourceId];
 	}
 	void ResourceManager::load(const std::string& type, const Utilities::UUID resourceId)
 	{
-		if (resources_.contains(resourceId)) {
-			HARMONY_WARN("Resource {} of type '{}' already loaded", resourceId, type);
-			return;
+		{
+			std::lock_guard<std::mutex> lock(mutex_);
+			if (resources_.contains(resourceId)) {
+				HARMONY_WARN("Resource {} of type '{}' already loaded", resourceId, type);
+				return;
+			}
 		}
 
 		std::optional<Utilities::Configuration> configuration;
@@ -38,30 +49,35 @@ namespace Harmony::Management
 		if (type == "texture") {
 			resource = std::make_unique<Resources::Texture>(configuration.value());
 
+			std::lock_guard<std::mutex> lock(mutex_);
 			resources_[resourceId] = std::move(resource);
 			HARMONY_INFO("Texture resource {} loaded", resourceId);
 		}
 		else if (type == "font") {
 			resource = std::make_unique<Resources::Font>(configuration.value());
 
+			std::lock_guard<std::mutex> lock(mutex_);
 			resources_[resourceId] = std::move(resource);
 			HARMONY_INFO("Font resource {} loaded", resourceId);
 		}
 		else if (type == "shader") {
 			resource = std::make_unique<Resources::Shader>(configuration.value());
 
+			std::lock_guard<std::mutex> lock(mutex_);
 			resources_[resourceId] = std::move(resource);
 			HARMONY_INFO("Shader resource {} loaded", resourceId);
 		}
 		else if (type == "sound") {
 			resource = std::make_unique<Resources::Sound>(configuration.value());
 
+			std::lock_guard<std::mutex> lock(mutex_);
 			resources_[resourceId] = std::move(resource);
 			HARMONY_INFO("Sound resource {} loaded", resourceId);
 		}
 		else if (type == "music") {
 			resource = std::make_unique<Resources::Music>(configuration.value());
 
+			std::lock_guard<std::mutex> lock(mutex_);
 			resources_[resourceId] = std::move(resource);
 			HARMONY_INFO("Music resource {} loaded", resourceId);
 		}
@@ -69,6 +85,8 @@ namespace Harmony::Management
 	}
 	void ResourceManager::unload(const Utilities::UUID resourceId)
 	{
+		std::lock_guard<std::mutex> lock(mutex_);
+		
 		if (!resources_.contains(resourceId)) {
 			HARMONY_WARN("Resource {} not loaded, cannot unload", resourceId);
 			return;
@@ -79,6 +97,7 @@ namespace Harmony::Management
 
 	void ResourceManager::unloadAll()
 	{
+		std::lock_guard<std::mutex> lock(mutex_);
 		resources_.clear();
 		HARMONY_INFO("All resources unloaded");
 	}

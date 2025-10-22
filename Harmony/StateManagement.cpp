@@ -37,36 +37,41 @@ namespace Harmony::Management
     void StateManager::pop()
     {
         std::lock_guard<std::shared_mutex> lock(mutex_);
-        if (!states_.empty()) states_.pop();
-        else HARMONY_WARN("Attempted to pop from empty state stack");
-
-        HARMONY_INFO("State [{}] popped from stack (stack size = {})",
-            reinterpret_cast<std::uintptr_t>(states_.front().get()),
-            states_.size());
+        if (!states_.empty()) {
+            std::uintptr_t statePtr = reinterpret_cast<std::uintptr_t>(states_.front().get());
+            states_.pop();
+            HARMONY_INFO("State [{}] popped from stack (stack size = {})", statePtr, states_.size());
+        }
+        else {
+            HARMONY_WARN("Attempted to pop from empty state stack");
+        }
     }
 
     void StateManager::internalDraw(sf::RenderTarget& renderTarget) const
     {        
-        if (!states_.empty()) {
+        std::shared_ptr<Scenes::State> currentState;
+        {
             std::shared_lock<std::shared_mutex> lock(mutex_);
-			const std::shared_ptr<Scenes::State>& currentState = states_.front();
-			lock.unlock();
-
-            currentState->internalDraw(renderTarget);
+            if (states_.empty()) {
+                throw Exceptions::StateStackEmptyError();
+            }
+			currentState = states_.front();
         }
-        else throw Exceptions::StateStackEmptyError();
+
+        currentState->internalDraw(renderTarget);
     }
 
     void StateManager::update(float deltaTime)
     {
-        if (!states_.empty()) 
+        std::shared_ptr<Scenes::State> currentState;
         {
 			std::shared_lock<std::shared_mutex> lock(mutex_);
-			const std::shared_ptr<Scenes::State>& currentState = states_.front();
-            lock.unlock();
-
-            currentState->update(deltaTime);
+            if (states_.empty()) {
+                throw Exceptions::StateStackEmptyError();
+            }
+			currentState = states_.front();
         }
-		else throw Exceptions::StateStackEmptyError();
+
+        currentState->update(deltaTime);
     }
 }

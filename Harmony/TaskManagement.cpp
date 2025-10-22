@@ -120,7 +120,10 @@ namespace Harmony::Management
 
             lock.unlock();
 
-            if (!worker.currentTask_) HARMONY_ERROR("Worker encountered null task"); continue;
+            if (!worker.currentTask_) { 
+                HARMONY_ERROR("Worker encountered null task"); 
+                continue;
+            }
 
             try {
                 switch (worker.currentTask_->mode) {
@@ -173,15 +176,21 @@ namespace Harmony::Management
             return;
         }
 
-        tasks_.emplace(std::move(task));
+        {
+            std::lock_guard<std::mutex> lock(mutex_);
+            tasks_.emplace(std::move(task));
+        }
     }
 
     void TaskManager::handleTasks()
     {
-        while (!tasks_.empty()) {
+        while (true) {
             std::unique_ptr<Tasks::Task> task;
             {
                 std::lock_guard<std::mutex> lock(mutex_);
+                if (tasks_.empty()) {
+                    break;
+                }
                 task = std::move(const_cast<std::unique_ptr<Tasks::Task>&>(tasks_.top()));
                 tasks_.pop();
             }
