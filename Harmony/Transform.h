@@ -9,7 +9,7 @@ namespace Harmony::Components
 	class Transform
 	{
 	public:
-		Transform(const Utilities::Configuration& configuration);
+		Transform(const Utilities::Configuration& configuration, Scenes::Scene& scene);
 		~Transform();
 
 		// Position

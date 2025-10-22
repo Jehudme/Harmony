@@ -7,8 +7,8 @@ HARMONY_REGISTER_COMPONENT_WITH_BASE(sf::Drawable, Harmony::Components::Rectangl
 
 namespace Harmony::Components
 {
-	Rectangle::Rectangle(const Utilities::Configuration& configuration)
-		: Shape<sf::RectangleShape>(configuration)
+	Rectangle::Rectangle(const Utilities::Configuration& configuration, Scenes::Scene& scene)
+		: Shape<sf::RectangleShape>(configuration, scene)
 	{
 		std::optional<float> width = configuration.get<float>({ "size", "width" });
 		std::optional<float> height = configuration.get<float>({ "size", "height" });

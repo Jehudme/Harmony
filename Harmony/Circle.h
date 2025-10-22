@@ -7,6 +7,10 @@
 // This is a known limitation that should be addressed in a future refactoring
 // by using composition and interfaces instead of inheritance
 
+namespace Harmony::Scenes {
+	class Scene;
+}
+
 namespace Harmony::Components
 {
 	/// @brief Circle shape component
@@ -14,7 +18,7 @@ namespace Harmony::Components
 	class Circle : public Harmony::Components::Shape<sf::CircleShape>
 	{
 	public:
-		Circle(const Utilities::Configuration& configuration);
+		Circle(const Utilities::Configuration& configuration, Scenes::Scene& scene);
 		~Circle();
 	};
 }

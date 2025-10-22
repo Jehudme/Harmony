@@ -1,15 +1,20 @@
+
+namespace Harmony::Scenes {
+	class Scene;
+}
+
 namespace Harmony::Components
 {
 	template<typename Type>
 	class Shape : public Type
 	{
 	public:
-		Shape(const Utilities::Configuration& configuration);
+		Shape(const Utilities::Configuration& configuration, Scenes::Scene& scene);
 		~Shape() = default;
 	};
 
 	template<typename Type>
-	inline Shape<Type>::Shape(const Utilities::Configuration& configuration)
+	inline Shape<Type>::Shape(const Utilities::Configuration& configuration, Scenes::Scene& scene)
 	{
 		if (std::optional<unsigned int> outlineThickness = configuration.get<unsigned int>({ "outline_thickness" }))
 			this->setOutlineThickness(static_cast<float>(outlineThickness.value()));

@@ -7,6 +7,10 @@
 #include <shared_mutex>
 #include <type_traits>
 
+namespace Harmony::Scenes {
+    class Scene;
+}
+
 namespace Harmony::Management
 {
 	class ComponentManager
@@ -27,20 +31,17 @@ namespace Harmony::Management
 
     template<typename Base, typename Type>
     inline void ComponentManager::registerComponent(const std::string& name) {
-        static_assert( std::is_constructible_v<Type, const Harmony::Utilities::Configuration&>,
-            "Type must have a constructor taking const Harmony::Utilities::Configuration&"
+        static_assert( std::is_constructible_v<Type, const Utilities::Configuration&, Scenes::Scene&>,
+            "Type must have a constructor taking const Harmony::Utilities::Configuration& and Harmony::Scenes::Scene"
         );
 
         componentFactories_[name] =
-            [](const Utilities::Configuration& configuration,
-                entt::entity entityId,
-                Scenes::Scene& scene)
+            [](const Utilities::Configuration& configuration, entt::entity entityId, Scenes::Scene& scene)
             {
-                std::unique_ptr<Base> component = std::make_unique<Type>(configuration);
+                std::unique_ptr<Base> component = std::make_unique<Type>(configuration, scene);
 
                 std::lock_guard<std::shared_mutex> lock(mutex_);
-                getRegistryFromScene(scene)
-                    .emplace<std::unique_ptr<Base>>(entityId, std::move(component));
+                getRegistryFromScene(scene).emplace<std::unique_ptr<Base>>(entityId, std::move(component));
             };
     }
 }

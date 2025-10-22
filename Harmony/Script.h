@@ -8,7 +8,7 @@ namespace Harmony::Components
 	public:
 		friend class Harmony::Scenes::Scene;
 
-		Script(const Utilities::Configuration& configuration);
+		Script(const Utilities::Configuration& configuration, Scenes::Scene& scene);
 		~Script();
 
 		virtual void onCreate();

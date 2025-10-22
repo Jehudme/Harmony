@@ -2,9 +2,9 @@
 #include "Transform.h"
 #include "Configuration.h"
 #include "ComponentManagement.h"
+#include "Scene.h"
 #include "Logger.h"
 #include <SFML/Graphics.hpp>
-
 
 HARMONY_REGISTER_COMPONENT(Harmony::Components::Transform, Transform)
 
@@ -15,7 +15,7 @@ namespace Harmony::Components
 		sf::Transformable transformable;
 	};
 
-	Transform::Transform(const Utilities::Configuration& configuration)
+	Transform::Transform(const Utilities::Configuration& configuration, Scenes::Scene& scene)
 		: impl_(std::make_unique<TransformImpl>())
 	{
 		float x = 0.0f, y = 0.0f;

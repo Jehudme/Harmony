@@ -7,8 +7,8 @@ HARMONY_REGISTER_COMPONENT_WITH_BASE(sf::Drawable, Harmony::Components::Circle, 
 
 namespace Harmony::Components
 {
-	Circle::Circle(const Utilities::Configuration& configuration)
-		: Shape<sf::CircleShape>(configuration)
+	Circle::Circle(const Utilities::Configuration& configuration, Scenes::Scene& scene)
+		: Shape<sf::CircleShape>(configuration, scene)
 	{
 		if (std::optional<float> radius = configuration.get<float>({ "radius" })) 
 			this->setRadius(radius.value());

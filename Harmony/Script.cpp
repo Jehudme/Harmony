@@ -6,7 +6,7 @@ HARMONY_REGISTER_SCRIPT(Harmony::Components::Script, BasicScript);
 
 namespace Harmony::Components
 {
-	Script::Script(const Utilities::Configuration& configuration)
+	Script::Script(const Utilities::Configuration& configuration, Scenes::Scene& scene)
 	{
 	}
 

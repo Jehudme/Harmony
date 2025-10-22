@@ -14,7 +14,7 @@ namespace Harmony::Components
 	class Rectangle : public Harmony::Components::Shape<sf::RectangleShape>
 	{
 	public:
-		Rectangle(const Utilities::Configuration& configuration);
+		Rectangle(const Utilities::Configuration& configuration, Scenes::Scene& scene);
 		~Rectangle();
 	};
 }
