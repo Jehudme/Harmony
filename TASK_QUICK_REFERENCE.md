@@ -14,6 +14,9 @@ Use scene tasks for loading and managing different game scenes:
 - Loading new levels in the background
 - Transitioning between menu and gameplay scenes
 - Preloading upcoming scenes while current scene is active
+- Pausing/resuming scenes by disabling/enabling updates
+- Hiding/showing scenes by disabling/enabling drawing
+- Resetting scenes to their initial state (e.g., retry level)
 
 ### When to Use Component Tasks
 Use component tasks for modifying entity components at runtime:
@@ -122,6 +125,35 @@ std::vector<std::pair<std::string, UUID>> nextLevelAssets = {
 };
 auto preloadTask = std::make_unique<BatchLoadResourcesTask>(nextLevelAssets);
 engine.taskManagement->submit(std::move(preloadTask));
+```
+
+### Pattern: Pause/Resume Game
+```cpp
+// Pause game (stop updates but keep rendering)
+auto pauseTask = std::make_unique<DisableSceneUpdatingTask>(gameSceneId);
+engine.taskManagement->submit(std::move(pauseTask));
+
+// Resume game
+auto resumeTask = std::make_unique<EnableSceneUpdatingTask>(gameSceneId);
+engine.taskManagement->submit(std::move(resumeTask));
+```
+
+### Pattern: Reset Level (Retry)
+```cpp
+// Reset scene to initial configuration
+auto resetTask = std::make_unique<ResetSceneTask>(levelSceneId);
+engine.taskManagement->submit(std::move(resetTask));
+```
+
+### Pattern: Hide/Show UI or Background Layers
+```cpp
+// Hide background scene to save performance
+auto hideTask = std::make_unique<DisableSceneDrawingTask>(backgroundSceneId);
+engine.taskManagement->submit(std::move(hideTask));
+
+// Show background scene again
+auto showTask = std::make_unique<EnableSceneDrawingTask>(backgroundSceneId);
+engine.taskManagement->submit(std::move(showTask));
 ```
 
 ## Thread Safety Tips

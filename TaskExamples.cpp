@@ -263,6 +263,76 @@ void ReturnToMainMenu(Harmony::Engine& engine, Harmony::Utilities::UUID mainMenu
     engine.taskManagement->submit(std::move(pushTask));
 }
 
+// Example 10: Pause/Resume game by disabling scene updates
+void PauseGame(Harmony::Engine& engine, Harmony::Utilities::UUID gameSceneId)
+{
+    // Disable scene updating to pause game logic while keeping rendering
+    auto task = std::make_unique<Harmony::Tasks::DisableSceneUpdatingTask>(gameSceneId);
+    engine.taskManagement->submit(std::move(task));
+    HARMONY_INFO("Game paused - scene updates disabled");
+}
+
+void ResumeGame(Harmony::Engine& engine, Harmony::Utilities::UUID gameSceneId)
+{
+    // Re-enable scene updating to resume game logic
+    auto task = std::make_unique<Harmony::Tasks::EnableSceneUpdatingTask>(gameSceneId);
+    engine.taskManagement->submit(std::move(task));
+    HARMONY_INFO("Game resumed - scene updates enabled");
+}
+
+// Example 11: Hide/Show UI or background scenes
+void HideBackgroundScene(Harmony::Engine& engine, Harmony::Utilities::UUID backgroundSceneId)
+{
+    // Disable drawing for a background scene to save performance
+    auto task = std::make_unique<Harmony::Tasks::DisableSceneDrawingTask>(backgroundSceneId);
+    engine.taskManagement->submit(std::move(task));
+}
+
+void ShowBackgroundScene(Harmony::Engine& engine, Harmony::Utilities::UUID backgroundSceneId)
+{
+    // Re-enable drawing for a background scene
+    auto task = std::make_unique<Harmony::Tasks::EnableSceneDrawingTask>(backgroundSceneId);
+    engine.taskManagement->submit(std::move(task));
+}
+
+// Example 12: Reset scene to initial state (e.g., retry level)
+void RetryLevel(Harmony::Engine& engine, Harmony::Utilities::UUID levelSceneId)
+{
+    // Reset the scene to its initial configuration from JSON
+    auto task = std::make_unique<Harmony::Tasks::ResetSceneTask>(levelSceneId);
+    engine.taskManagement->submit(std::move(task));
+    HARMONY_INFO("Level reset to initial state");
+}
+
+// Example 13: Cutscene playback with scene control
+void PlayCutscene(Harmony::Engine& engine, Harmony::Utilities::UUID gameSceneId, Harmony::Utilities::UUID cutsceneSceneId)
+{
+    // Disable game scene updates during cutscene
+    auto disableGameTask = std::make_unique<Harmony::Tasks::DisableSceneUpdatingTask>(gameSceneId);
+    engine.taskManagement->submit(std::move(disableGameTask));
+    
+    // Enable cutscene scene
+    auto enableCutsceneDrawTask = std::make_unique<Harmony::Tasks::EnableSceneDrawingTask>(cutsceneSceneId);
+    auto enableCutsceneUpdateTask = std::make_unique<Harmony::Tasks::EnableSceneUpdatingTask>(cutsceneSceneId);
+    engine.taskManagement->submit(std::move(enableCutsceneDrawTask));
+    engine.taskManagement->submit(std::move(enableCutsceneUpdateTask));
+    
+    // After cutscene duration, restore game scene
+    auto restoreTask = std::make_unique<Harmony::Tasks::DelayedActionTask>(
+        [&engine, gameSceneId, cutsceneSceneId]() {
+            auto enableGameTask = std::make_unique<Harmony::Tasks::EnableSceneUpdatingTask>(gameSceneId);
+            engine.taskManagement->submit(std::move(enableGameTask));
+            
+            auto disableCutsceneDrawTask = std::make_unique<Harmony::Tasks::DisableSceneDrawingTask>(cutsceneSceneId);
+            auto disableCutsceneUpdateTask = std::make_unique<Harmony::Tasks::DisableSceneUpdatingTask>(cutsceneSceneId);
+            engine.taskManagement->submit(std::move(disableCutsceneDrawTask));
+            engine.taskManagement->submit(std::move(disableCutsceneUpdateTask));
+        },
+        std::chrono::milliseconds(5000) // 5 second cutscene
+    );
+    engine.taskManagement->submit(std::move(restoreTask));
+}
+
 } // namespace Examples
 
 // Usage in your game:

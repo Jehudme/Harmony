@@ -62,11 +62,27 @@ namespace Harmony::Scenes
 		EntityID createEntity(const Utilities::Configuration& configuration);
 		void destroyEntity(EntityID entityId);
 
+		// Scene control functions
+		void enableDrawing();
+		void disableDrawing();
+		bool isDrawingEnabled() const noexcept;
+
+		void enableUpdating();
+		void disableUpdating();
+		bool isUpdatingEnabled() const noexcept;
+
+		void reset();
+		void initialize();
+
 	private:
 		// PImpl to hide entt::registry details
 		struct SceneImpl;
 		std::unique_ptr<SceneImpl> impl_;
 		const Utilities::Configuration& configuration_;
+
+		// Scene control flags
+		bool drawingEnabled_{ true };
+		bool updatingEnabled_{ true };
 	};
 }
 

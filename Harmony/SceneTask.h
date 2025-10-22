@@ -43,5 +43,70 @@ namespace Harmony::Tasks
 	private:
 		const Utilities::UUID sceneId_;
 	};
+
+	// Task to reset a scene
+	class ResetSceneTask : public Tasks::Task
+	{
+	public:
+		ResetSceneTask(const Utilities::UUID sceneId);
+
+	private:
+		void run() override;
+
+	private:
+		const Utilities::UUID sceneId_;
+	};
+
+	// Task to enable scene drawing
+	class EnableSceneDrawingTask : public Tasks::Task
+	{
+	public:
+		EnableSceneDrawingTask(const Utilities::UUID sceneId);
+
+	private:
+		void run() override;
+
+	private:
+		const Utilities::UUID sceneId_;
+	};
+
+	// Task to disable scene drawing
+	class DisableSceneDrawingTask : public Tasks::Task
+	{
+	public:
+		DisableSceneDrawingTask(const Utilities::UUID sceneId);
+
+	private:
+		void run() override;
+
+	private:
+		const Utilities::UUID sceneId_;
+	};
+
+	// Task to enable scene updating
+	class EnableSceneUpdatingTask : public Tasks::Task
+	{
+	public:
+		EnableSceneUpdatingTask(const Utilities::UUID sceneId);
+
+	private:
+		void run() override;
+
+	private:
+		const Utilities::UUID sceneId_;
+	};
+
+	// Task to disable scene updating
+	class DisableSceneUpdatingTask : public Tasks::Task
+	{
+	public:
+		DisableSceneUpdatingTask(const Utilities::UUID sceneId);
+
+	private:
+		void run() override;
+
+	private:
+		const Utilities::UUID sceneId_;
+	};
 }
 

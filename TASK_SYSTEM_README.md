@@ -4,7 +4,7 @@ This pull request adds a comprehensive set of essential task classes to the Harm
 
 ## What's New
 
-### 21 New Task Classes Across 6 Categories
+### 27 New Task Classes Across 6 Categories
 
 #### 🎮 Entity Management (4 tasks)
 - **CreateEntityTask** - Create entities asynchronously in any scene
@@ -12,8 +12,13 @@ This pull request adds a comprehensive set of essential task classes to the Harm
 - **BatchCreateEntitiesTask** - Efficiently create multiple entities at once
 - **BatchDestroyEntitiesTask** - Efficiently destroy multiple entities at once
 
-#### 🎬 Scene Management (1 task)
+#### 🎬 Scene Management (7 tasks)
 - **CreateSceneTask** - Load and initialize scenes in the background
+- **ResetSceneTask** - Reset scene to initial configuration
+- **EnableSceneDrawingTask** - Enable rendering for a scene
+- **DisableSceneDrawingTask** - Disable rendering for a scene
+- **EnableSceneUpdatingTask** - Enable updates for a scene
+- **DisableSceneUpdatingTask** - Disable updates for a scene
 
 #### 🧩 Component Management (1 task)
 - **AddComponentTask** - Dynamically add components to entities at runtime
@@ -110,6 +115,24 @@ auto destroyTask = std::make_unique<DelayedActionTask>(
 engine.taskManagement->submit(std::move(destroyTask));
 ```
 
+### Example 5: Pause/Resume Game
+```cpp
+// Pause game - stop updates but keep rendering
+auto pauseTask = std::make_unique<DisableSceneUpdatingTask>(gameSceneId);
+engine.taskManagement->submit(std::move(pauseTask));
+
+// Resume game
+auto resumeTask = std::make_unique<EnableSceneUpdatingTask>(gameSceneId);
+engine.taskManagement->submit(std::move(resumeTask));
+```
+
+### Example 6: Reset Level (Retry)
+```cpp
+// Reset scene to initial state from configuration
+auto resetTask = std::make_unique<ResetSceneTask>(levelSceneId);
+engine.taskManagement->submit(std::move(resetTask));
+```
+
 ## Files Changed
 
 ### New Implementation Files
@@ -143,6 +166,10 @@ engine.taskManagement->submit(std::move(destroyTask));
 6. **Dynamic Difficulty** - Adjust game parameters based on performance
 7. **Menu Navigation** - Manage UI state transitions
 8. **Projectile Systems** - Create and destroy projectiles efficiently
+9. **Pause/Resume** - Control scene updates for game pause functionality
+10. **Scene Visibility** - Toggle scene rendering for performance optimization
+11. **Level Retry** - Reset scenes to initial state for retry mechanics
+12. **Cutscene Playback** - Control scene updates during non-interactive sequences
 9. **Performance Optimization** - Batch operations for better performance
 10. **Graceful Shutdown** - Proper cleanup and resource deallocation
 
