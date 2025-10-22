@@ -53,4 +53,84 @@ namespace Harmony::Tasks
 			HARMONY_ERROR("Failed to create scene {}: {}", sceneId_, e.what());
 		}
 	}
+
+	// ResetSceneTask implementation
+	ResetSceneTask::ResetSceneTask(const Utilities::UUID sceneId) :
+		Task(75, FastMultiThreaded), sceneId_(sceneId) {}
+
+	void ResetSceneTask::run()
+	{
+		auto scene = getEngine().sceneManagement->find(sceneId_);
+		if (!scene) {
+			HARMONY_ERROR("Failed to reset scene: Scene {} not found", sceneId_);
+			return;
+		}
+
+		scene->reset();
+		HARMONY_INFO("Scene {} reset successfully", sceneId_);
+	}
+
+	// EnableSceneDrawingTask implementation
+	EnableSceneDrawingTask::EnableSceneDrawingTask(const Utilities::UUID sceneId) :
+		Task(50, FastMultiThreaded), sceneId_(sceneId) {}
+
+	void EnableSceneDrawingTask::run()
+	{
+		auto scene = getEngine().sceneManagement->find(sceneId_);
+		if (!scene) {
+			HARMONY_ERROR("Failed to enable drawing: Scene {} not found", sceneId_);
+			return;
+		}
+
+		scene->enableDrawing();
+		HARMONY_INFO("Scene {} drawing enabled", sceneId_);
+	}
+
+	// DisableSceneDrawingTask implementation
+	DisableSceneDrawingTask::DisableSceneDrawingTask(const Utilities::UUID sceneId) :
+		Task(50, FastMultiThreaded), sceneId_(sceneId) {}
+
+	void DisableSceneDrawingTask::run()
+	{
+		auto scene = getEngine().sceneManagement->find(sceneId_);
+		if (!scene) {
+			HARMONY_ERROR("Failed to disable drawing: Scene {} not found", sceneId_);
+			return;
+		}
+
+		scene->disableDrawing();
+		HARMONY_INFO("Scene {} drawing disabled", sceneId_);
+	}
+
+	// EnableSceneUpdatingTask implementation
+	EnableSceneUpdatingTask::EnableSceneUpdatingTask(const Utilities::UUID sceneId) :
+		Task(50, FastMultiThreaded), sceneId_(sceneId) {}
+
+	void EnableSceneUpdatingTask::run()
+	{
+		auto scene = getEngine().sceneManagement->find(sceneId_);
+		if (!scene) {
+			HARMONY_ERROR("Failed to enable updating: Scene {} not found", sceneId_);
+			return;
+		}
+
+		scene->enableUpdating();
+		HARMONY_INFO("Scene {} updating enabled", sceneId_);
+	}
+
+	// DisableSceneUpdatingTask implementation
+	DisableSceneUpdatingTask::DisableSceneUpdatingTask(const Utilities::UUID sceneId) :
+		Task(50, FastMultiThreaded), sceneId_(sceneId) {}
+
+	void DisableSceneUpdatingTask::run()
+	{
+		auto scene = getEngine().sceneManagement->find(sceneId_);
+		if (!scene) {
+			HARMONY_ERROR("Failed to disable updating: Scene {} not found", sceneId_);
+			return;
+		}
+
+		scene->disableUpdating();
+		HARMONY_INFO("Scene {} updating disabled", sceneId_);
+	}
 }

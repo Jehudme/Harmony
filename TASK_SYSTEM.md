@@ -51,6 +51,41 @@ Creates a new scene from configuration.
 - **Parameters**:
   - `sceneId`: ID of the scene to create
 
+### ResetSceneTask
+Resets a scene to its initial configuration by re-initializing all entities.
+- **Priority**: 75
+- **Mode**: FastMultiThreaded
+- **Parameters**:
+  - `sceneId`: ID of the scene to reset
+
+### EnableSceneDrawingTask
+Enables drawing for a specific scene.
+- **Priority**: 50
+- **Mode**: FastMultiThreaded
+- **Parameters**:
+  - `sceneId`: ID of the scene
+
+### DisableSceneDrawingTask
+Disables drawing for a specific scene.
+- **Priority**: 50
+- **Mode**: FastMultiThreaded
+- **Parameters**:
+  - `sceneId`: ID of the scene
+
+### EnableSceneUpdatingTask
+Enables updating for a specific scene.
+- **Priority**: 50
+- **Mode**: FastMultiThreaded
+- **Parameters**:
+  - `sceneId`: ID of the scene
+
+### DisableSceneUpdatingTask
+Disables updating for a specific scene.
+- **Priority**: 50
+- **Mode**: FastMultiThreaded
+- **Parameters**:
+  - `sceneId`: ID of the scene
+
 ## Component Management Tasks
 
 ### AddComponentTask

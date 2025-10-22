@@ -36,6 +36,16 @@ namespace Harmony::Scenes
 		engine(engine),
 		impl_(std::make_unique<SceneImpl>())
 	{
+		initialize();
+	}
+
+	void Scene::initialize()
+	{
+		// Clear existing entities if any
+		for (auto entity : impl_->registry.view<entt::entity>()) {
+			impl_->registry.destroy(static_cast<entt::entity>(entity));
+		}
+
 		if (std::optional<Utilities::UUIDList> entitiesKeys = configuration_.get<Utilities::UUIDList>({"entities"})) {
 			for (const Utilities::UUID entityKey : entitiesKeys.value()) {
 				if (std::optional<Utilities::Configuration> configuration = engine.configuration.subsection({ "entities", std::to_string(entityKey) }))
@@ -76,6 +86,10 @@ namespace Harmony::Scenes
 
 	void Scene::internalDraw(sf::RenderTarget& renderTarget) const
 	{
+		if (!drawingEnabled_) {
+			return;
+		}
+
 		auto entitiesView = impl_->registry.view<std::unique_ptr<sf::Drawable>>();
 
 		for (const entt::entity entity : entitiesView) {
@@ -95,6 +109,10 @@ namespace Harmony::Scenes
 
 	void Scene::update(float deltaTime) 
 	{
+		if (!updatingEnabled_) {
+			return;
+		}
+
 		auto entitiesView = impl_->registry.view<std::unique_ptr<Components::Script>>();
 
 		for (const entt::entity entity : entitiesView) {
@@ -136,5 +154,45 @@ namespace Harmony::Scenes
 		impl_->registry.destroy(entity);
 
 		HARMONY_DEBUG("Entity {} destroyed", entityId);
+	}
+
+	void Scene::enableDrawing()
+	{
+		drawingEnabled_ = true;
+		HARMONY_DEBUG("Scene {} drawing enabled", sceneId);
+	}
+
+	void Scene::disableDrawing()
+	{
+		drawingEnabled_ = false;
+		HARMONY_DEBUG("Scene {} drawing disabled", sceneId);
+	}
+
+	bool Scene::isDrawingEnabled() const noexcept
+	{
+		return drawingEnabled_;
+	}
+
+	void Scene::enableUpdating()
+	{
+		updatingEnabled_ = true;
+		HARMONY_DEBUG("Scene {} updating enabled", sceneId);
+	}
+
+	void Scene::disableUpdating()
+	{
+		updatingEnabled_ = false;
+		HARMONY_DEBUG("Scene {} updating disabled", sceneId);
+	}
+
+	bool Scene::isUpdatingEnabled() const noexcept
+	{
+		return updatingEnabled_;
+	}
+
+	void Scene::reset()
+	{
+		HARMONY_INFO("Resetting scene {}", sceneId);
+		initialize();
 	}
 }
