@@ -41,6 +41,8 @@ namespace Harmony::Scenes
 
 	void Scene::initialize()
 	{
+		std::lock_guard<std::mutex> lock(entityMutex_);
+		
 		// Clear existing entities if any
 		for (auto entity : impl_->registry.view<entt::entity>()) {
 			impl_->registry.destroy(static_cast<entt::entity>(entity));
@@ -48,10 +50,27 @@ namespace Harmony::Scenes
 
 		if (std::optional<Utilities::UUIDList> entitiesKeys = configuration_.get<Utilities::UUIDList>({"entities"})) {
 			for (const Utilities::UUID entityKey : entitiesKeys.value()) {
-				if (std::optional<Utilities::Configuration> configuration = engine.configuration.subsection({ "entities", std::to_string(entityKey) }))
-					createEntity(configuration.value());
+				if (std::optional<Utilities::Configuration> configuration = engine.configuration.subsection({ "entities", std::to_string(entityKey) })) {
+					// Temporarily unlock to call createEntity (which will lock internally)
+					// Actually, we're already holding the lock, so we need to be careful here
+					// Let me refactor this differently
+					const entt::entity entity = impl_->registry.create();
 
-				else HARMONY_ERROR("Entity {} has no configuration defined in engine configuration", entityKey);
+					for (const std::string& componentName : configuration.value().extractKeys({ "components" }))
+						Management::ComponentManager::createComponent(componentName, configuration.value().subsection({ "components", componentName}).value(), entity, *this);
+
+					if (std::optional<std::string> scriptName = configuration.value().get<std::string>({ "script" })) {
+						Management::ComponentManager::createComponent(scriptName.value(), configuration.value().subsection({ "script" }).value(), entity, *this);
+						Components::Script& script = componentReference<Components::Script>(static_cast<EntityID>(entity));
+						script.scene_ = *this;
+						script.onCreate();
+					}
+
+					HARMONY_DEBUG("Entity {} created during initialization", static_cast<std::uint32_t>(entity));
+				}
+				else {
+					HARMONY_ERROR("Entity {} has no configuration defined in engine configuration", entityKey);
+				}
 			}
 		}
 		else {
@@ -76,8 +95,14 @@ namespace Harmony::Scenes
 	}
 
 	Scene::~Scene() {
+		std::lock_guard<std::mutex> lock(entityMutex_);
+		
+		// Inline destroy logic to avoid recursive locking
 		for (auto entity : impl_->registry.view<entt::entity>()) {
-			destroyEntity(static_cast<EntityID>(entity));
+			if (impl_->registry.try_get<Components::Script>(entity))
+				componentReference<Components::Script>(static_cast<EntityID>(entity)).onDestroy();
+
+			impl_->registry.destroy(entity);
 		}
 
 		engine.sceneManagement->remove(sceneId);
@@ -86,10 +111,12 @@ namespace Harmony::Scenes
 
 	void Scene::internalDraw(sf::RenderTarget& renderTarget) const
 	{
-		if (!drawingEnabled_) {
+		if (!drawingEnabled_.load()) {
 			return;
 		}
 
+		std::lock_guard<std::mutex> lock(entityMutex_);
+		
 		auto entitiesView = impl_->registry.view<std::unique_ptr<sf::Drawable>>();
 
 		for (const entt::entity entity : entitiesView) {
@@ -109,10 +136,12 @@ namespace Harmony::Scenes
 
 	void Scene::update(float deltaTime) 
 	{
-		if (!updatingEnabled_) {
+		if (!updatingEnabled_.load()) {
 			return;
 		}
 
+		std::lock_guard<std::mutex> lock(entityMutex_);
+		
 		auto entitiesView = impl_->registry.view<std::unique_ptr<Components::Script>>();
 
 		for (const entt::entity entity : entitiesView) {
@@ -128,6 +157,8 @@ namespace Harmony::Scenes
 
 	EntityID Scene::createEntity(const Utilities::Configuration& configuration) 
 	{
+		std::lock_guard<std::mutex> lock(entityMutex_);
+		
 		const entt::entity entity = impl_->registry.create();
 
 		for (const std::string& componentName : configuration.extractKeys({ "components" }))
@@ -146,6 +177,8 @@ namespace Harmony::Scenes
 
 	void Scene::destroyEntity(EntityID entityId)
 	{
+		std::lock_guard<std::mutex> lock(entityMutex_);
+		
 		entt::entity entity = static_cast<entt::entity>(entityId);
 		
 		if (impl_->registry.try_get<Components::Script>(entity))
@@ -158,36 +191,36 @@ namespace Harmony::Scenes
 
 	void Scene::enableDrawing()
 	{
-		drawingEnabled_ = true;
+		drawingEnabled_.store(true);
 		HARMONY_DEBUG("Scene {} drawing enabled", sceneId);
 	}
 
 	void Scene::disableDrawing()
 	{
-		drawingEnabled_ = false;
+		drawingEnabled_.store(false);
 		HARMONY_DEBUG("Scene {} drawing disabled", sceneId);
 	}
 
 	bool Scene::isDrawingEnabled() const noexcept
 	{
-		return drawingEnabled_;
+		return drawingEnabled_.load();
 	}
 
 	void Scene::enableUpdating()
 	{
-		updatingEnabled_ = true;
+		updatingEnabled_.store(true);
 		HARMONY_DEBUG("Scene {} updating enabled", sceneId);
 	}
 
 	void Scene::disableUpdating()
 	{
-		updatingEnabled_ = false;
+		updatingEnabled_.store(false);
 		HARMONY_DEBUG("Scene {} updating disabled", sceneId);
 	}
 
 	bool Scene::isUpdatingEnabled() const noexcept
 	{
-		return updatingEnabled_;
+		return updatingEnabled_.load();
 	}
 
 	void Scene::reset()

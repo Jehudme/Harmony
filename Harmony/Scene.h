@@ -81,8 +81,11 @@ namespace Harmony::Scenes
 		const Utilities::Configuration& configuration_;
 
 		// Scene control flags
-		bool drawingEnabled_{ true };
-		bool updatingEnabled_{ true };
+		std::atomic<bool> drawingEnabled_{ true };
+		std::atomic<bool> updatingEnabled_{ true };
+		
+		// Mutex for thread-safe entity operations
+		mutable std::mutex entityMutex_;
 	};
 }
 
