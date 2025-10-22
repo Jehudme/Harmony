@@ -19,7 +19,8 @@ namespace Harmony::Resources
 		if(filepath = configuration.get<std::string>({ "filepath" }); !filepath.has_value())
 			throw Exceptions::ConfigurationExceptions("Texture resource missing 'filepath' configuration");
 
-		this->loadFromFile(filepath.value());
+		if (!this->loadFromFile(filepath.value()))
+			throw Exceptions::ResourceLoadException("Texture", 0, "Failed to load texture from file: " + filepath.value());
 	}
 	Texture::~Texture() = default;
 
