@@ -12,20 +12,22 @@ namespace Harmony::Management
 	class ComponentManager
 	{
 	public:
+        ComponentManager(Engine& engine);
+		~ComponentManager();
+
 		template<typename Base, typename Type>
 		static void registerComponent(const std::string& name);
 		static void createComponent(const std::string& name, const Utilities::Configuration& configuation, entt::entity entityId, Scenes::Scene & scene);
 
 	private:
+		Engine& engine_;
 		static inline std::shared_mutex mutex_;
 		static inline std::unordered_map<std::string, std::function<void(const Utilities::Configuration&, entt::entity, Scenes::Scene&)>> componentFactories_;
 	};
 
     template<typename Base, typename Type>
     inline void ComponentManager::registerComponent(const std::string& name) {
-        // Compile‑time check: Type must be constructible from Configuration&
-        static_assert(
-            std::is_constructible_v<Type, const Harmony::Utilities::Configuration&>,
+        static_assert( std::is_constructible_v<Type, const Harmony::Utilities::Configuration&>,
             "Type must have a constructor taking const Harmony::Utilities::Configuration&"
         );
 
@@ -34,7 +36,6 @@ namespace Harmony::Management
                 entt::entity entityId,
                 Scenes::Scene& scene)
             {
-                // Safe: we know Type(configuration) is valid
                 std::unique_ptr<Base> component = std::make_unique<Type>(configuration);
 
                 std::lock_guard<std::shared_mutex> lock(mutex_);
@@ -42,7 +43,6 @@ namespace Harmony::Management
                     .emplace<std::unique_ptr<Base>>(entityId, std::move(component));
             };
     }
-
 }
 
 // Automatic component registration macro with base class

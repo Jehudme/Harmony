@@ -12,6 +12,7 @@ namespace Harmony {
         class TaskManager;
         class SceneManager;
         class StateManager;
+		class ComponentManager;
     }
 }
 
@@ -45,6 +46,7 @@ namespace Harmony
         std::unique_ptr<Management::TaskManager> taskManagement;
         std::unique_ptr<Management::SceneManager> sceneManagement;
         std::unique_ptr<Management::StateManager> stateManagement;
+		std::unique_ptr<Management::ComponentManager> componentManagement;
 
     private:
         void handleTasks();
