@@ -25,10 +25,8 @@ namespace Harmony::Scenes
 			engine.sceneManagement->remove(scene.first);
 	}
 
-	void State::internalDraw(void* renderTarget) const
-	{
-		if (!renderTarget) return;
-		
+	void State::internalDraw(sf::RenderTarget& renderTarget) const
+	{		
 		for (const auto& scene : scenes_)
 			scene.second->internalDraw(renderTarget);
 	}

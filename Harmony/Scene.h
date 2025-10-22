@@ -1,6 +1,8 @@
 #pragma once
 
 #include <memory>
+#include <entt/entity/fwd.hpp>
+#include <SFML/Graphics/Drawable.hpp>
 
 // Forward declare to avoid including Configuration.h
 namespace Harmony::Utilities {
@@ -13,26 +15,36 @@ namespace Harmony {
 	class Engine;
 }
 
-// Forward declare entt types - hide entt header from users
-namespace entt {
-	class registry;
-	enum class entity : unsigned int;
+namespace Harmony::Management {
+	class ComponentManager;
 }
+
+namespace Harmony::Scenes {
+	class State;
+	class Scene;
+}
+
 
 namespace Harmony::Scenes
 {
+	entt::registry& getRegistryFromScene(Scene& scene);
+	const entt::registry& getRegistryFromScene(const Scene& scene);
+
 	// Type alias to allow changing ECS implementation later
 	using EntityID = unsigned int;
-
-	class Scene : public std::enable_shared_from_this<Scene> 
+	class Scene : public std::enable_shared_from_this<Scene>
 	{
 	public:
 		friend class Management::ComponentManager;
+		friend class Harmony::Scenes::State;
+		friend entt::registry& Harmony::Scenes::getRegistryFromScene(Scene& scene);
+		friend const entt::registry& Harmony::Scenes::getRegistryFromScene(const Scene& scene);
 		Scene(const Utilities::Configuration& configuration, const Utilities::UUID sceneId, Engine& engine);
 		~Scene();
 
+	private:
 		// Hide SFML drawing - use internal method
-		void internalDraw(void* renderTarget) const;
+		void internalDraw(sf::RenderTarget& renderTarget) const;
 		
 		/// @param deltaTime - time since last frame in seconds
 		void update(float deltaTime);

@@ -45,10 +45,8 @@ namespace Harmony::Management
             states_.size());
     }
 
-    void StateManager::internalDraw(void* renderTarget) const
-    {
-        if (!renderTarget) return;
-        
+    void StateManager::internalDraw(sf::RenderTarget& renderTarget) const
+    {        
         if (!states_.empty()) {
             std::shared_lock<std::shared_mutex> lock(mutex_);
 			const std::shared_ptr<Scenes::State>& currentState = states_.front();

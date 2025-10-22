@@ -1,4 +1,7 @@
 #pragma once
+#include <filesystem>
+#include <memory>
+#include <mutex>
 
 namespace Harmony::Utilities {
     class Configuration {

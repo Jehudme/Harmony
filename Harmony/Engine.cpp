@@ -86,9 +86,7 @@ namespace Harmony
 		running_ = true;
 		paused_ = false;
 
-		while (running_ && impl_->window.isOpen()) {
-			impl_->deltaTime = impl_->clock.restart();
-
+		while (running_) {
 			try {
 				handleTasks();
 				handleEvents();
@@ -164,8 +162,7 @@ namespace Harmony
 	void Engine::handleRendering()
 	{
 		impl_->window.clear(sf::Color::Black);
-		// Call internalDraw with renderTarget pointer
-		stateManagement->internalDraw(&impl_->window);
+		stateManagement->internalDraw(impl_->window);
 		impl_->window.display();
 	}
 

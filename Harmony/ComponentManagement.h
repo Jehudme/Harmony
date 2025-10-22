@@ -1,8 +1,11 @@
-#pragma once
+﻿#pragma once
 
 #include "Scene.h"
 #include "Exceptions.h"
+#include "Configuration.h"
 #include <Entt/entt.hpp>
+#include <shared_mutex>
+#include <type_traits>
 
 namespace Harmony::Management
 {
@@ -18,22 +21,31 @@ namespace Harmony::Management
 		static inline std::unordered_map<std::string, std::function<void(const Utilities::Configuration&, entt::entity, Scenes::Scene&)>> componentFactories_;
 	};
 
-	// Helper to get registry from scene - defined in Scene.cpp
-	extern entt::registry& getRegistryFromScene(Scenes::Scene& scene);
+    template<typename Base, typename Type>
+    inline void ComponentManager::registerComponent(const std::string& name) {
+        // Compile‑time check: Type must be constructible from Configuration&
+        static_assert(
+            std::is_constructible_v<Type, const Harmony::Utilities::Configuration&>,
+            "Type must have a constructor taking const Harmony::Utilities::Configuration&"
+        );
 
-	template<typename Base, typename Type>
-	inline void ComponentManager::registerComponent(const std::string& name) {
+        componentFactories_[name] =
+            [](const Utilities::Configuration& configuration,
+                entt::entity entityId,
+                Scenes::Scene& scene)
+            {
+                // Safe: we know Type(configuration) is valid
+                std::unique_ptr<Base> component = std::make_unique<Type>(configuration);
 
-		componentFactories_[name] = [](const Utilities::Configuration& configuration, entt::entity entityId, Scenes::Scene& scene) 
-		{
-			std::unique_ptr<Base> component = std::make_unique<Type>(configuration);
-			std::lock_guard<std::shared_mutex> lock(mutex_);
-			// Use helper function instead of direct access
-			getRegistryFromScene(scene).emplace<std::unique_ptr<Base>>(entityId, std::move(component));
-		};
-	}
+                std::lock_guard<std::shared_mutex> lock(mutex_);
+                getRegistryFromScene(scene)
+                    .emplace<std::unique_ptr<Base>>(entityId, std::move(component));
+            };
+    }
+
 }
 
+// Automatic component registration macro with base class
 #define HARMONY_REGISTER_COMPONENT_WITH_BASE(ComponentBase, ComponentType, ComponentName)							\
 namespace Harmony::Components::Registrations::detail {																\
     struct ComponentName##Registration {																			\

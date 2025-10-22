@@ -6,6 +6,7 @@
 #include "Logger.h"
 #include "Transform.h"
 #include "Script.h"
+#include "Configuration.h"
 #include <SFML/Graphics.hpp>
 #include <Entt/entt.hpp>
 
@@ -73,27 +74,22 @@ namespace Harmony::Scenes
 		HARMONY_INFO("Scene {} destroyed", sceneId);
 	}
 
-	void Scene::internalDraw(void* renderTarget) const
+	void Scene::internalDraw(sf::RenderTarget& renderTarget) const
 	{
-		if (!renderTarget) return;
-		sf::RenderTarget& target = *static_cast<sf::RenderTarget*>(renderTarget);
-		sf::RenderStates states;
-
 		auto entitiesView = impl_->registry.view<std::unique_ptr<sf::Drawable>>();
 
 		for (const entt::entity entity : entitiesView) {
-			const sf::Drawable& drawable = componentReference<sf::Drawable>(static_cast<EntityID>(entity));
+			auto& drawable = entitiesView.get<std::unique_ptr<sf::Drawable>>(entity);
+			sf::RenderStates entityStates;
 
-			sf::RenderStates entityStates = states;
-			if (auto* transform = impl_->registry.try_get<std::unique_ptr<Components::Transform>>(entity)) {
-				// Get internal SFML transformable for rendering
+			if (const auto& transform = impl_->registry.try_get<std::unique_ptr<Components::Transform>>(entity)) {
 				const sf::Transformable* sfTransform = static_cast<const sf::Transformable*>((*transform)->getInternalTransform());
 				if (sfTransform) {
 					entityStates.transform *= sfTransform->getTransform();
 				}
 			}
 
-			target.draw(drawable, entityStates);
+			renderTarget.draw(*drawable, entityStates);
 		}
 	}
 

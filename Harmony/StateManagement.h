@@ -4,6 +4,7 @@
 #include <queue>
 #include <memory>
 #include <shared_mutex>
+#include <SFML/Graphics/RenderTarget.hpp>
 
 namespace Harmony::Management
 {
@@ -19,7 +20,7 @@ namespace Harmony::Management
 	
 	private:
 		// Hide SFML drawing implementation
-		void internalDraw(void* renderTarget) const;
+		void internalDraw(sf::RenderTarget& renderTarget) const;
 		
 		/// @param deltaTime - time since last frame in seconds
 		void update(float deltaTime);
