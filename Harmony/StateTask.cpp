@@ -21,4 +21,37 @@ namespace Harmony::Tasks
 		getEngine().stateManagement->pop();
 	}
 
+	// ClearStatesTask implementation
+	ClearStatesTask::ClearStatesTask() :
+		Task(150, FastMultiThreaded) {}
+
+	void ClearStatesTask::run()
+	{
+		// Pop all states until empty
+		try {
+			while (true) {
+				getEngine().stateManagement->pop();
+			}
+		}
+		catch (const std::exception&) {
+			// State stack is now empty, which is expected
+			HARMONY_INFO("All states cleared from stack");
+		}
+	}
+
+	// SwitchStateTask implementation
+	SwitchStateTask::SwitchStateTask(const Utilities::UUID newStateId) :
+		Task(100, FastMultiThreaded), newStateId_(newStateId) {}
+
+	void SwitchStateTask::run()
+	{
+		try {
+			getEngine().stateManagement->pop();
+			getEngine().stateManagement->push(newStateId_);
+			HARMONY_INFO("Switched to state {}", newStateId_);
+		}
+		catch (const std::exception& e) {
+			HARMONY_ERROR("Failed to switch state: {}", e.what());
+		}
+	}
 }

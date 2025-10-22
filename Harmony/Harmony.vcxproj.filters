@@ -78,6 +78,15 @@
     <ClInclude Include="EngineTask.h">
       <Filter>Header Files\Tasks</Filter>
     </ClInclude>
+    <ClInclude Include="ResourceTask.h">
+      <Filter>Header Files\Tasks</Filter>
+    </ClInclude>
+    <ClInclude Include="ComponentTask.h">
+      <Filter>Header Files\Tasks</Filter>
+    </ClInclude>
+    <ClInclude Include="UtilityTask.h">
+      <Filter>Header Files\Tasks</Filter>
+    </ClInclude>
     <ClInclude Include="Logger.h">
       <Filter>Header Files\Utilites</Filter>
     </ClInclude>
@@ -183,6 +192,15 @@
       <Filter>Source Files\Tasks</Filter>
     </ClCompile>
     <ClCompile Include="EngineTask.cpp">
+      <Filter>Source Files\Tasks</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourceTask.cpp">
+      <Filter>Source Files\Tasks</Filter>
+    </ClCompile>
+    <ClCompile Include="ComponentTask.cpp">
+      <Filter>Source Files\Tasks</Filter>
+    </ClCompile>
+    <ClCompile Include="UtilityTask.cpp">
       <Filter>Source Files\Tasks</Filter>
     </ClCompile>
     <ClCompile Include="Transform.cpp">
