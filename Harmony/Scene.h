@@ -19,6 +19,10 @@ namespace Harmony::Management {
 	class ComponentManager;
 }
 
+namespace Harmony::Components {
+	class View;
+}
+
 namespace Harmony::Scenes {
 	class State;
 	class Scene;
@@ -62,6 +66,11 @@ namespace Harmony::Scenes
 
 		EntityID createEntity(const Utilities::Configuration& configuration);
 		void destroyEntity(EntityID entityId);
+
+		// View management (singleton per scene)
+		Components::View& getView();
+		const Components::View& getView() const;
+		void setView(const Utilities::Configuration& configuration);
 
 		// Scene control functions
 		void enableDrawing();
