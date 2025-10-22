@@ -1,3 +1,9 @@
+#pragma once
+#include "Scene.h"
+#include "Engine.h"
+#include "ResourceManager.h"
+#include "Resource.h"
+#include "Texture.h"
 
 namespace Harmony::Scenes {
 	class Scene;
@@ -16,6 +22,13 @@ namespace Harmony::Components
 	template<typename Type>
 	inline Shape<Type>::Shape(const Utilities::Configuration& configuration, Scenes::Scene& scene)
 	{
+		configuration.debugPrint();
+		if (std::optional<std::uint64_t> textureId = configuration.get<std::uint64_t>({ "texture" }))
+		{
+			Resources::Resource& resource = scene.engine.resourceManager->get("texture", textureId.value());
+			this->setTexture(&convert<Resources::Texture>(resource));
+		}
+
 		if (std::optional<unsigned int> outlineThickness = configuration.get<unsigned int>({ "outline_thickness" }))
 			this->setOutlineThickness(static_cast<float>(outlineThickness.value()));
 		else HARMONY_WARN("Rectangle component missing outline thickness configuration");

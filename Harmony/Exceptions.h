@@ -66,5 +66,26 @@ namespace Harmony::Exceptions
 	struct EngineError : public std::runtime_error {
 		explicit EngineError(const std::string& message);
 	};
+
+	// Resource Exceptions
+	struct ResourceException : public std::runtime_error {
+		explicit ResourceException(const std::string& message);
+	};
+
+	struct ResourceNotFoundException : public ResourceException {
+		explicit ResourceNotFoundException(const std::string& resourceType, const Utilities::UUID resourceId);
+	};
+
+	struct ResourceLoadException : public ResourceException {
+		explicit ResourceLoadException(const std::string& resourceType, const Utilities::UUID resourceId, const std::string& details);
+	};
+
+	struct ResourceUnloadException : public ResourceException {
+		explicit ResourceUnloadException(const Utilities::UUID resourceId);
+	};
+
+	struct ResourceConversionException : public ResourceException {
+		explicit ResourceConversionException(const std::string& target, const std::string& type);
+	};
 }
 

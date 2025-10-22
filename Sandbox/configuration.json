@@ -33,9 +33,17 @@
           }
         },
         "Circle": {
+          "texture": 1006,
           "width": 50,
           "height": 75
         }
+      }
+    }
+  },
+  "resources": {
+    "texture": {
+      "1006": {
+        "filepath": "missing_textures.png"
       }
     }
   }

@@ -15,6 +15,7 @@ namespace Harmony::Utilities {
         void merge(const Configuration& configuration);
         void save(const std::filesystem::path& filePath);
         void load(const std::filesystem::path& filePath);
+		void debugPrint() const;
 
         std::optional<Configuration> subsection(const std::vector<std::string>& keys) const;
         std::vector<std::string> extractKeys(const std::vector<std::string>& keys) const;

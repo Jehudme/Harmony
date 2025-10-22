@@ -8,6 +8,7 @@
 #include "StateManagement.h"
 #include "SceneManagement.h"
 #include "ComponentManagement.h"
+#include "ResourceManager.h"
 #include "Exceptions.h"
 #include "Logger.h" // for HARMONY_* macros
 
@@ -23,6 +24,7 @@ namespace Harmony
 	Engine::Engine(Utilities::Configuration& configuration)
 		: configuration(configuration),
 		impl_(std::make_unique<EngineImpl>()),
+		resourceManager(std::make_unique<Management::ResourceManager>(*this)),
 		taskManagement(std::make_unique<Management::TaskManager>(*this)),
 		sceneManagement(std::make_unique<Management::SceneManager>(*this)),
 		stateManagement(std::make_unique<Management::StateManager>(*this)),

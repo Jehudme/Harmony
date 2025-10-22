@@ -59,6 +59,12 @@ namespace Harmony::Utilities {
         }
     }
 
+    void Configuration::debugPrint() const
+    {
+        std::lock_guard lock(mutex_);
+		HARMONY_DEBUG("Configuration Data:\n{}", internal_->data.dump(6));
+    }
+
     // Helpers
     namespace {
         const nlohmann::json* findNode(const nlohmann::json& root, const std::vector<std::string>& keys) {

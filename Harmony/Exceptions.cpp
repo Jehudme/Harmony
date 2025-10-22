@@ -86,4 +86,26 @@ namespace Harmony::Exceptions
 		: std::runtime_error("Engine error: " + message) {
 		HARMONY_ERROR(what());
 	}
+
+	ResourceNotFoundException::ResourceNotFoundException(const std::string& resourceType, const Utilities::UUID resourceId)
+		: ResourceException("Resource not found: Type='" + resourceType + "', ID=" + std::to_string(resourceId)) {
+		HARMONY_ERROR(what());
+	}
+
+	ResourceLoadException::ResourceLoadException(const std::string& resourceType, const Utilities::UUID resourceId, const std::string& details)
+		: ResourceException("Failed to load resource: Type='" + resourceType + "', ID=" + std::to_string(resourceId) + ". Details: " + details) {
+	}
+
+	ResourceException::ResourceException(const std::string& message)
+		: std::runtime_error("Resource Exception: " + message) {
+		HARMONY_ERROR(what());
+	}
+
+	ResourceUnloadException::ResourceUnloadException(const Utilities::UUID resourceId)
+		: ResourceException("Failed to unload resource ID: " + std::to_string(resourceId)) {
+	}
+
+	ResourceConversionException::ResourceConversionException(const std::string& target, const std::string& type)
+		: ResourceException("Failed to convert resource of type '" + type + "' to target type '" + target + "'") {
+	}
 }

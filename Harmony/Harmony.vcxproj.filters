@@ -16,9 +16,6 @@
     <Filter Include="Header Files\Tasks">
       <UniqueIdentifier>{635d7ffd-b741-48f1-9b33-659fb9720d90}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Management">
-      <UniqueIdentifier>{2a0aea8f-63bc-476a-b91a-6ea2fa881edd}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Utilites">
       <UniqueIdentifier>{9c397518-e4e7-4a47-935e-cbe8cb56033e}</UniqueIdentifier>
     </Filter>
@@ -27,9 +24,6 @@
     </Filter>
     <Filter Include="Source Files\Scenes">
       <UniqueIdentifier>{2f5c9c58-3ecd-45e2-911a-7052c46e0280}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Management">
-      <UniqueIdentifier>{85ee2848-9d3e-47a0-96b9-04feadf49d04}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\Tasks">
       <UniqueIdentifier>{2096d02f-6ad7-4a95-9021-6cbb4ed41ffd}</UniqueIdentifier>
@@ -43,16 +37,28 @@
     <Filter Include="Source Files\Components">
       <UniqueIdentifier>{1beacd81-c838-4a2d-9e4e-df32e6cee4b6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Resources">
+      <UniqueIdentifier>{9d73f7f8-f895-4ea7-a75a-a855f92b5fca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Managers">
+      <UniqueIdentifier>{2a0aea8f-63bc-476a-b91a-6ea2fa881edd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Managers">
+      <UniqueIdentifier>{85ee2848-9d3e-47a0-96b9-04feadf49d04}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Resources">
+      <UniqueIdentifier>{1832ba2a-784d-4797-bdf7-4ec25881e26e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Configuration.h">
       <Filter>Header Files\Utilites</Filter>
     </ClInclude>
     <ClInclude Include="StateManagement.h">
-      <Filter>Header Files\Management</Filter>
+      <Filter>Header Files\Managers</Filter>
     </ClInclude>
     <ClInclude Include="SceneManagement.h">
-      <Filter>Header Files\Management</Filter>
+      <Filter>Header Files\Managers</Filter>
     </ClInclude>
     <ClInclude Include="Harmony.h">
       <Filter>Header Files</Filter>
@@ -61,7 +67,7 @@
       <Filter>Header Files\Tasks</Filter>
     </ClInclude>
     <ClInclude Include="TaskManagement.h">
-      <Filter>Header Files\Management</Filter>
+      <Filter>Header Files\Managers</Filter>
     </ClInclude>
     <ClInclude Include="StateTask.h">
       <Filter>Header Files\Tasks</Filter>
@@ -94,7 +100,7 @@
       <Filter>Header Files\Components</Filter>
     </ClInclude>
     <ClInclude Include="ComponentManagement.h">
-      <Filter>Header Files\Management</Filter>
+      <Filter>Header Files\Managers</Filter>
     </ClInclude>
     <ClInclude Include="Shape.h">
       <Filter>Header Files\Components</Filter>
@@ -111,19 +117,28 @@
     <ClInclude Include="Exceptions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>Header Files\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Configuration.cpp">
       <Filter>Source Files\Utilities</Filter>
     </ClCompile>
     <ClCompile Include="SceneManagement.cpp">
-      <Filter>Source Files\Management</Filter>
+      <Filter>Source Files\Managers</Filter>
     </ClCompile>
     <ClCompile Include="StateManagement.cpp">
-      <Filter>Source Files\Management</Filter>
+      <Filter>Source Files\Managers</Filter>
     </ClCompile>
     <ClCompile Include="TaskManagement.cpp">
-      <Filter>Source Files\Management</Filter>
+      <Filter>Source Files\Managers</Filter>
     </ClCompile>
     <ClCompile Include="Logger.cpp">
       <Filter>Source Files\Utilities</Filter>
@@ -159,13 +174,10 @@
       <Filter>Source Files\Components</Filter>
     </ClCompile>
     <ClCompile Include="ComponentManagement.cpp">
-      <Filter>Source Files\Management</Filter>
+      <Filter>Source Files\Managers</Filter>
     </ClCompile>
     <ClCompile Include="Rectangle.cpp">
       <Filter>Source Files\Components</Filter>
-    </ClCompile>
-    <ClCompile Include="Circle.cpp">
-      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Script.cpp">
       <Filter>Source Files\Components</Filter>
@@ -173,11 +185,26 @@
     <ClCompile Include="Exceptions.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Circle.cpp">
+      <Filter>Source Files\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource.cpp">
+      <Filter>Source Files\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourceManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="cpp.hint" />
     <None Include="Logger.inl">
       <Filter>Header Files\Utilites</Filter>
+    </None>
+    <None Include="Scene.inl">
+      <Filter>Header Files\Scenes</Filter>
     </None>
   </ItemGroup>
 </Project>
