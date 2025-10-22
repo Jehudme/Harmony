@@ -65,7 +65,8 @@ void TransitionToNextLevel(Harmony::Engine& engine, Harmony::Utilities::UUID nex
     engine.taskManagement->submit(std::move(unloadTask));
     
     // Step 3: Load next scene (this runs in background)
-    auto loadSceneTask = std::make_unique<Harmony::Tasks::CreateSceneTask>(nextSceneId);
+    // The scene will be added to the current state with draw order 0
+    auto loadSceneTask = std::make_unique<Harmony::Tasks::CreateSceneTask>(nextSceneId, 0);
     engine.taskManagement->submit(std::move(loadSceneTask));
     
     // Step 4: After loading completes, hide loading screen
@@ -286,51 +287,51 @@ void HideBackgroundScene(Harmony::Engine& engine, Harmony::Utilities::UUID backg
     // Disable drawing for a background scene to save performance
     auto task = std::make_unique<Harmony::Tasks::DisableSceneDrawingTask>(backgroundSceneId);
     engine.taskManagement->submit(std::move(task));
+    HARMONY_INFO("Background scene hidden");
 }
 
-void ShowBackgroundScene(Harmony::Engine& engine, Harmony::Utilities::UUID backgroundSceneId)
+// Example 12: Create layered scenes with draw order
+void CreateLayeredUI(Harmony::Engine& engine)
 {
-    // Re-enable drawing for a background scene
-    auto task = std::make_unique<Harmony::Tasks::EnableSceneDrawingTask>(backgroundSceneId);
-    engine.taskManagement->submit(std::move(task));
-}
-
-// Example 12: Reset scene to initial state (e.g., retry level)
-void RetryLevel(Harmony::Engine& engine, Harmony::Utilities::UUID levelSceneId)
-{
-    // Reset the scene to its initial configuration from JSON
-    auto task = std::make_unique<Harmony::Tasks::ResetSceneTask>(levelSceneId);
-    engine.taskManagement->submit(std::move(task));
-    HARMONY_INFO("Level reset to initial state");
-}
-
-// Example 13: Cutscene playback with scene control
-void PlayCutscene(Harmony::Engine& engine, Harmony::Utilities::UUID gameSceneId, Harmony::Utilities::UUID cutsceneSceneId)
-{
-    // Disable game scene updates during cutscene
-    auto disableGameTask = std::make_unique<Harmony::Tasks::DisableSceneUpdatingTask>(gameSceneId);
-    engine.taskManagement->submit(std::move(disableGameTask));
+    // Create scenes with specific draw orders
+    // Lower draw order values are drawn first (background)
+    // Higher draw order values are drawn last (foreground)
     
-    // Enable cutscene scene
-    auto enableCutsceneDrawTask = std::make_unique<Harmony::Tasks::EnableSceneDrawingTask>(cutsceneSceneId);
-    auto enableCutsceneUpdateTask = std::make_unique<Harmony::Tasks::EnableSceneUpdatingTask>(cutsceneSceneId);
-    engine.taskManagement->submit(std::move(enableCutsceneDrawTask));
-    engine.taskManagement->submit(std::move(enableCutsceneUpdateTask));
+    // Background scene (drawn first)
+    auto backgroundTask = std::make_unique<Harmony::Tasks::CreateSceneTask>(1001, 0);
+    engine.taskManagement->submit(std::move(backgroundTask));
     
-    // After cutscene duration, restore game scene
-    auto restoreTask = std::make_unique<Harmony::Tasks::DelayedActionTask>(
-        [&engine, gameSceneId, cutsceneSceneId]() {
-            auto enableGameTask = std::make_unique<Harmony::Tasks::EnableSceneUpdatingTask>(gameSceneId);
-            engine.taskManagement->submit(std::move(enableGameTask));
-            
-            auto disableCutsceneDrawTask = std::make_unique<Harmony::Tasks::DisableSceneDrawingTask>(cutsceneSceneId);
-            auto disableCutsceneUpdateTask = std::make_unique<Harmony::Tasks::DisableSceneUpdatingTask>(cutsceneSceneId);
-            engine.taskManagement->submit(std::move(disableCutsceneDrawTask));
-            engine.taskManagement->submit(std::move(disableCutsceneUpdateTask));
-        },
-        std::chrono::milliseconds(5000) // 5 second cutscene
-    );
-    engine.taskManagement->submit(std::move(restoreTask));
+    // Game scene (drawn second)
+    auto gameTask = std::make_unique<Harmony::Tasks::CreateSceneTask>(1002, 10);
+    engine.taskManagement->submit(std::move(gameTask));
+    
+    // UI overlay scene (drawn third)
+    auto uiTask = std::make_unique<Harmony::Tasks::CreateSceneTask>(1003, 20);
+    engine.taskManagement->submit(std::move(uiTask));
+    
+    // Debug overlay scene (drawn last, on top)
+    auto debugTask = std::make_unique<Harmony::Tasks::CreateSceneTask>(1004, 30);
+    engine.taskManagement->submit(std::move(debugTask));
+    
+    HARMONY_INFO("Layered scenes created with draw order");
+}
+
+// Example 13: Remove scene from current state
+void RemoveUIOverlay(Harmony::Engine& engine, Harmony::Utilities::UUID uiSceneId)
+{
+    // Remove a scene from the current state by its ID
+    auto task = std::make_unique<Harmony::Tasks::RemoveSceneFromStateTask>(uiSceneId);
+    engine.taskManagement->submit(std::move(task));
+    HARMONY_INFO("UI overlay removed from current state");
+}
+
+// Example 14: Remove scene by draw order
+void RemoveTopMostLayer(Harmony::Engine& engine)
+{
+    // Remove the scene with the highest draw order (e.g., 30 for debug overlay)
+    auto task = std::make_unique<Harmony::Tasks::RemoveSceneByOrderTask>(30);
+    engine.taskManagement->submit(std::move(task));
+    HARMONY_INFO("Top-most layer removed by draw order");
 }
 
 } // namespace Examples
@@ -350,6 +351,12 @@ void YourGameCode(Harmony::Engine& engine)
     
     // Apply power-up
     Examples::ApplyPowerUp(engine, sceneId, playerId, "SpeedBoost");
+    
+    // Create layered UI
+    Examples::CreateLayeredUI(engine);
+    
+    // Remove specific layer
+    Examples::RemoveTopMostLayer(engine);
     
     // Shutdown game
     Examples::ShutdownGame(engine);

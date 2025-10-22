@@ -45,11 +45,12 @@ Destroys multiple entities in a scene at once.
 ## Scene Management Tasks
 
 ### CreateSceneTask
-Creates a new scene from configuration.
+Creates a new scene from configuration and adds it to the current state.
 - **Priority**: 100
 - **Mode**: SlowMultiThreaded
 - **Parameters**:
   - `sceneId`: ID of the scene to create
+  - `drawOrder`: Drawing order for the scene (default: 0). Lower values are drawn first.
 
 ### ResetSceneTask
 Resets a scene to its initial configuration by re-initializing all entities.
@@ -57,6 +58,20 @@ Resets a scene to its initial configuration by re-initializing all entities.
 - **Mode**: FastMultiThreaded
 - **Parameters**:
   - `sceneId`: ID of the scene to reset
+
+### RemoveSceneFromStateTask
+Removes a scene from the current state by its ID.
+- **Priority**: 75
+- **Mode**: FastMultiThreaded
+- **Parameters**:
+  - `sceneId`: ID of the scene to remove
+
+### RemoveSceneByOrderTask
+Removes a scene from the current state by its draw order.
+- **Priority**: 75
+- **Mode**: FastMultiThreaded
+- **Parameters**:
+  - `drawOrder`: Draw order of the scene to remove
 
 ### EnableSceneDrawingTask
 Enables drawing for a specific scene.
