@@ -4,6 +4,10 @@
 #include "Exceptions.h"
 #include "Resource.h"
 #include "Texture.h"
+#include "Font.h"
+#include "Shader.h"
+#include "Sound.h"
+#include "Music.h"
 
 namespace Harmony::Management 
 {
@@ -36,6 +40,30 @@ namespace Harmony::Management
 
 			resources_[resourceId] = std::move(resource);
 			HARMONY_INFO("Texture resource {} loaded", resourceId);
+		}
+		else if (type == "font") {
+			resource = std::make_unique<Resources::Font>(configuration.value());
+
+			resources_[resourceId] = std::move(resource);
+			HARMONY_INFO("Font resource {} loaded", resourceId);
+		}
+		else if (type == "shader") {
+			resource = std::make_unique<Resources::Shader>(configuration.value());
+
+			resources_[resourceId] = std::move(resource);
+			HARMONY_INFO("Shader resource {} loaded", resourceId);
+		}
+		else if (type == "sound") {
+			resource = std::make_unique<Resources::Sound>(configuration.value());
+
+			resources_[resourceId] = std::move(resource);
+			HARMONY_INFO("Sound resource {} loaded", resourceId);
+		}
+		else if (type == "music") {
+			resource = std::make_unique<Resources::Music>(configuration.value());
+
+			resources_[resourceId] = std::move(resource);
+			HARMONY_INFO("Music resource {} loaded", resourceId);
 		}
 		else throw Exceptions::ResourceLoadException(type, resourceId, "Unsupported resource type");
 	}
