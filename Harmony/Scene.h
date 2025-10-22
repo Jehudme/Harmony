@@ -52,6 +52,7 @@ namespace Harmony::Scenes
 	public:
 		Engine& engine;
 		const Utilities::UUID sceneId;
+		const int drawOrder;
 
 		template<typename Type>
 		Type& componentReference(EntityID entityId);

@@ -35,6 +35,10 @@ namespace Harmony::Scenes
 	public:
 		Engine& engine;
 
+		// Public methods to manage scenes dynamically
+		void addScene(std::shared_ptr<Scene> scene);
+		void removeScene(Utilities::UUID sceneId);
+
 	private:
 		std::map<Utilities::UUID, std::shared_ptr<Scene>> scenes_;
 	};

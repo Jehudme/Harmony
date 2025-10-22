@@ -6,6 +6,7 @@
 #include "TaskManagement.h"
 #include "SceneManagement.h"
 #include <SFML/Graphics.hpp>
+#include <algorithm>
 
 namespace Harmony::Scenes
 {
@@ -27,13 +28,47 @@ namespace Harmony::Scenes
 
 	void State::internalDraw(sf::RenderTarget& renderTarget) const
 	{		
-		for (const auto& scene : scenes_)
-			scene.second->internalDraw(renderTarget);
+		// Create a sorted vector of scenes by drawOrder
+		std::vector<std::shared_ptr<Scene>> sortedScenes;
+		sortedScenes.reserve(scenes_.size());
+		
+		for (const auto& [id, scene] : scenes_) {
+			sortedScenes.push_back(scene);
+		}
+		
+		// Sort by drawOrder (lower values drawn first, i.e., in background)
+		std::sort(sortedScenes.begin(), sortedScenes.end(), 
+			[](const std::shared_ptr<Scene>& a, const std::shared_ptr<Scene>& b) {
+				return a->drawOrder < b->drawOrder;
+			});
+		
+		// Draw scenes in sorted order
+		for (const auto& scene : sortedScenes) {
+			scene->internalDraw(renderTarget);
+		}
 	}
 
 	void State::update(float deltaTime) 
 	{
 		for (const auto& scene : scenes_) 
 			scene.second->update(deltaTime);
+	}
+
+	void State::addScene(std::shared_ptr<Scene> scene)
+	{
+		if (scene) {
+			scenes_.insert({ scene->sceneId, scene });
+			HARMONY_INFO("Scene {} added to state (drawOrder: {})", scene->sceneId, scene->drawOrder);
+		}
+	}
+
+	void State::removeScene(Utilities::UUID sceneId)
+	{
+		if (scenes_.erase(sceneId)) {
+			HARMONY_INFO("Scene {} removed from state", sceneId);
+		}
+		else {
+			HARMONY_WARN("Attempted to remove non-existent scene {} from state", sceneId);
+		}
 	}
 }

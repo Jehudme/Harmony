@@ -34,6 +34,7 @@ namespace Harmony::Scenes
 		configuration_(configuration),
 		sceneId(sceneId),
 		engine(engine),
+		drawOrder(configuration.get<int>({"drawOrder"}).value_or(0)),
 		impl_(std::make_unique<SceneImpl>())
 	{
 		initialize();

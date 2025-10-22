@@ -108,5 +108,18 @@ namespace Harmony::Tasks
 	private:
 		const Utilities::UUID sceneId_;
 	};
+
+	// Task to delete a scene from the current state
+	class DeleteSceneTask : public Tasks::Task
+	{
+	public:
+		DeleteSceneTask(const Utilities::UUID sceneId);
+
+	private:
+		void run() override;
+
+	private:
+		const Utilities::UUID sceneId_;
+	};
 }
 

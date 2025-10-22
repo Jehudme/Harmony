@@ -2,7 +2,9 @@
 #include "SceneTask.h"
 #include "Engine.h"
 #include "SceneManagement.h"
+#include "StateManagement.h"
 #include "Scene.h"
+#include "State.h"
 #include "Logger.h"
 
 namespace Harmony::Tasks
@@ -48,6 +50,16 @@ namespace Harmony::Tasks
 		try {
 			auto scene = getEngine().sceneManagement->create(sceneId_);
 			HARMONY_INFO("Scene {} created successfully", sceneId_);
+			
+			// Add the scene to the current state
+			auto currentState = getEngine().stateManagement->getCurrentState();
+			if (currentState) {
+				currentState->addScene(scene);
+				HARMONY_INFO("Scene {} added to current state", sceneId_);
+			}
+			else {
+				HARMONY_WARN("No current state available to add scene {}", sceneId_);
+			}
 		}
 		catch (const std::exception& e) {
 			HARMONY_ERROR("Failed to create scene {}: {}", sceneId_, e.what());
@@ -132,5 +144,21 @@ namespace Harmony::Tasks
 
 		scene->disableUpdating();
 		HARMONY_INFO("Scene {} updating disabled", sceneId_);
+	}
+
+	// DeleteSceneTask implementation
+	DeleteSceneTask::DeleteSceneTask(const Utilities::UUID sceneId) :
+		Task(75, FastMultiThreaded), sceneId_(sceneId) {}
+
+	void DeleteSceneTask::run()
+	{
+		auto currentState = getEngine().stateManagement->getCurrentState();
+		if (!currentState) {
+			HARMONY_ERROR("Failed to delete scene: No current state", sceneId_);
+			return;
+		}
+
+		currentState->removeScene(sceneId_);
+		HARMONY_INFO("Scene {} deleted from state", sceneId_);
 	}
 }
