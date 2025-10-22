@@ -10,7 +10,13 @@ namespace Harmony::Tasks
 
 	void PushState::run()
 	{
-		getEngine().stateManagement->push(stateId_);
+		try {
+			getEngine().stateManagement->push(stateId_);
+		}
+		catch (const std::exception& e) {
+			HARMONY_ERROR("Failed to push state {}: {}", stateId_, e.what());
+			throw;
+		}
 	}
 
 	PopState::PopState() :
@@ -18,7 +24,13 @@ namespace Harmony::Tasks
 
 	void PopState::run()
 	{
-		getEngine().stateManagement->pop();
+		try {
+			getEngine().stateManagement->pop();
+		}
+		catch (const std::exception& e) {
+			HARMONY_ERROR("Failed to pop state: {}", e.what());
+			throw;
+		}
 	}
 
 	// ClearStatesTask implementation

@@ -10,7 +10,13 @@ namespace Harmony::Tasks
 
 	void SetFPS::run()
 	{
-		getEngine().setTargetFPS(targetFPS_);
+		try {
+			getEngine().setTargetFPS(targetFPS_);
+		}
+		catch (const std::exception& e) {
+			HARMONY_ERROR("Failed to set target FPS to {}: {}", targetFPS_, e.what());
+			throw;
+		}
 	}
 
 	// StopEngineTask implementation
@@ -19,8 +25,14 @@ namespace Harmony::Tasks
 
 	void StopEngineTask::run()
 	{
-		HARMONY_INFO("Stopping engine via task");
-		getEngine().stop();
+		try {
+			HARMONY_INFO("Stopping engine via task");
+			getEngine().stop();
+		}
+		catch (const std::exception& e) {
+			HARMONY_ERROR("Failed to stop engine: {}", e.what());
+			throw;
+		}
 	}
 
 	// DelayedActionTask implementation

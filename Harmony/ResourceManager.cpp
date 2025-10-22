@@ -48,40 +48,33 @@ namespace Harmony::Management
 		std::unique_ptr<Resources::Resource> resource;
 		if (type == "texture") {
 			resource = std::make_unique<Resources::Texture>(configuration.value());
-
-			std::lock_guard<std::mutex> lock(mutex_);
-			resources_[resourceId] = std::move(resource);
-			HARMONY_INFO("Texture resource {} loaded", resourceId);
 		}
 		else if (type == "font") {
 			resource = std::make_unique<Resources::Font>(configuration.value());
-
-			std::lock_guard<std::mutex> lock(mutex_);
-			resources_[resourceId] = std::move(resource);
-			HARMONY_INFO("Font resource {} loaded", resourceId);
 		}
 		else if (type == "shader") {
 			resource = std::make_unique<Resources::Shader>(configuration.value());
-
-			std::lock_guard<std::mutex> lock(mutex_);
-			resources_[resourceId] = std::move(resource);
-			HARMONY_INFO("Shader resource {} loaded", resourceId);
 		}
 		else if (type == "sound") {
 			resource = std::make_unique<Resources::Sound>(configuration.value());
-
-			std::lock_guard<std::mutex> lock(mutex_);
-			resources_[resourceId] = std::move(resource);
-			HARMONY_INFO("Sound resource {} loaded", resourceId);
 		}
 		else if (type == "music") {
 			resource = std::make_unique<Resources::Music>(configuration.value());
-
-			std::lock_guard<std::mutex> lock(mutex_);
-			resources_[resourceId] = std::move(resource);
-			HARMONY_INFO("Music resource {} loaded", resourceId);
 		}
-		else throw Exceptions::ResourceLoadException(type, resourceId, "Unsupported resource type");
+		else {
+			throw Exceptions::ResourceLoadException(type, resourceId, "Unsupported resource type");
+		}
+
+		{
+			std::lock_guard<std::mutex> lock(mutex_);
+			// Double-check pattern: another thread might have loaded it while we were creating the resource
+			if (resources_.contains(resourceId)) {
+				HARMONY_WARN("Resource {} of type '{}' was loaded by another thread, discarding duplicate", resourceId, type);
+				return;
+			}
+			resources_[resourceId] = std::move(resource);
+			HARMONY_INFO("{} resource {} loaded", type, resourceId);
+		}
 	}
 	void ResourceManager::unload(const Utilities::UUID resourceId)
 	{
