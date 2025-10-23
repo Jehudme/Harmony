@@ -23,10 +23,11 @@ namespace Harmony::Management
 		static void registerComponent(const std::string& name);
 		static void createComponent(const std::string& name, const Utilities::Configuration& configuation, entt::entity entityId, Scenes::Scene & scene);
 
-	private:
+    private:
+        static std::mutex& getMutex();
+        static std::unordered_map<std::string, std::function<void(const Utilities::Configuration&, entt::entity, Scenes::Scene&)>>& getComponentFactories();
+
 		Engine& engine_;
-		static inline std::shared_mutex mutex_;
-		static inline std::unordered_map<std::string, std::function<void(const Utilities::Configuration&, entt::entity, Scenes::Scene&)>> componentFactories_;
 	};
 
     template<typename Base, typename Type>
@@ -35,13 +36,10 @@ namespace Harmony::Management
             "Type must have a constructor taking const Harmony::Utilities::Configuration& and Harmony::Scenes::Scene"
         );
 
-        std::lock_guard<std::shared_mutex> registrationLock(mutex_);
-        componentFactories_[name] =
+        getComponentFactories()[name] =
             [](const Utilities::Configuration& configuration, entt::entity entityId, Scenes::Scene& scene)
             {
                 std::unique_ptr<Base> component = std::make_unique<Type>(configuration, scene);
-
-                std::lock_guard<std::shared_mutex> lock(mutex_);
                 getRegistryFromScene(scene).emplace<std::unique_ptr<Base>>(entityId, std::move(component));
             };
     }

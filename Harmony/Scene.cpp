@@ -44,8 +44,6 @@ namespace Harmony::Scenes
 
 	void Scene::initialize()
 	{
-		std::lock_guard<std::mutex> lock(entityMutex_);
-		
 		// Clear existing entities if any
 		for (auto entity : impl_->registry.view<entt::entity>()) {
 			impl_->registry.destroy(static_cast<entt::entity>(entity));
@@ -54,22 +52,7 @@ namespace Harmony::Scenes
 		if (std::optional<Utilities::UUIDList> entitiesKeys = configuration_.get<Utilities::UUIDList>({"entities"})) {
 			for (const Utilities::UUID entityKey : entitiesKeys.value()) {
 				if (std::optional<Utilities::Configuration> configuration = engine.configuration.subsection({ "entities", std::to_string(entityKey) })) {
-					// Temporarily unlock to call createEntity (which will lock internally)
-					// Actually, we're already holding the lock, so we need to be careful here
-					// Let me refactor this differently
-					const entt::entity entity = impl_->registry.create();
-
-					for (const std::string& componentName : configuration.value().extractKeys({ "components" }))
-						Management::ComponentManager::createComponent(componentName, configuration.value().subsection({ "components", componentName}).value(), entity, *this);
-
-					if (std::optional<std::string> scriptName = configuration.value().get<std::string>({ "script" })) {
-						Management::ComponentManager::createComponent(scriptName.value(), configuration.value().subsection({ "script" }).value(), entity, *this);
-						Components::Script& script = componentReference<Components::Script>(static_cast<EntityID>(entity));
-						script.scene_ = *this;
-						script.onCreate();
-					}
-
-					HARMONY_DEBUG("Entity {} created during initialization", static_cast<std::uint32_t>(entity));
+					createEntity(configuration.value());
 				}
 				else {
 					HARMONY_ERROR("Entity {} has no configuration defined in engine configuration", entityKey);
@@ -198,6 +181,7 @@ namespace Harmony::Scenes
 		if (std::optional<std::string> scriptName = configuration.get<std::string>({ "script" })) {
 			Management::ComponentManager::createComponent(scriptName.value(), configuration.subsection({ "script" }).value(), entity, *this);
 			Components::Script& script = componentReference<Components::Script>(static_cast<EntityID>(entity));
+			script.entityId = static_cast<EntityID>(entity);
 			script.scene_ = *this;
 			script.onCreate();
 		}
