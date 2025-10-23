@@ -89,50 +89,83 @@ namespace Harmony::Scripts
 		transform.getPosition(birdX, birdY);
 
 		// Check ground collision (y > 620 is approximately ground level)
-		if (birdY > 620.0f || birdY < -20.0f)
+		// Check ceiling collision (y < 20)
+		if (birdY > 600.0f || birdY < 20.0f)
 		{
 			HARMONY_WARN("Bird hit ground or ceiling! Game Over!");
 			GameManagerScript::gameOverState();
 			return;
 		}
 
-		// Check pipe collisions - iterate through all entities with PipeScript
+		// Check pipe collisions with all entities that have rectangles
 		auto& registry = Scenes::getRegistryFromScene(scene);
-		auto view = registry.view<Components::Script>();
+		auto pipeView = registry.view<Components::Rectangle>();
 		
-		for (auto entity : view)
+		for (auto entity : pipeView)
 		{
-			auto& script = view.get<Components::Script>(entity);
-			// Check if this is a pipe entity by comparing position range
-			auto& pipeTransform = scene.componentReference<Components::Transform>(static_cast<Scenes::EntityID>(entity));
-			float pipeX, pipeY;
-			pipeTransform.getPosition(pipeX, pipeY);
-
-			// Simple AABB collision detection
-			// Bird bounds: approximately 40x40 at (birdX, birdY)
-			// Pipe bounds: approximately 80 width
-			float birdLeft = birdX - 20.0f;
-			float birdRight = birdX + 20.0f;
-			float birdTop = birdY - 20.0f;
-			float birdBottom = birdY + 20.0f;
-
-			float pipeLeft = pipeX - 40.0f;
-			float pipeRight = pipeX + 40.0f;
-
-			// Check if bird is in pipe's horizontal range
-			if (birdRight > pipeLeft && birdLeft < pipeRight)
+			try
 			{
-				// Check if bird hits top or bottom pipe
-				// Gap is at around y=300-450 (150px gap)
-				float gapTop = 250.0f;
-				float gapBottom = 400.0f;
+				auto& pipeTransform = scene.componentReference<Components::Transform>(static_cast<Scenes::EntityID>(entity));
+				float pipeX, pipeY;
+				pipeTransform.getPosition(pipeX, pipeY);
 
-				if (birdTop < gapTop || birdBottom > gapBottom)
+				// Skip if this is not a pipe (ground, background, etc)
+				// Pipes are in the x range 400-2000 initially
+				if (pipeX < 0 || pipeX > 2000)
+					continue;
+
+				// Simple AABB collision detection
+				// Bird bounds: 40x40 centered at (birdX, birdY)
+				// Pipe bounds: 80x(various heights) centered at (pipeX, pipeY)
+				float birdRadius = 20.0f;
+				float pipeHalfWidth = 40.0f;
+				
+				float birdLeft = birdX - birdRadius;
+				float birdRight = birdX + birdRadius;
+				float birdTop = birdY - birdRadius;
+				float birdBottom = birdY + birdRadius;
+
+				float pipeLeft = pipeX - pipeHalfWidth;
+				float pipeRight = pipeX + pipeHalfWidth;
+
+				// Check if bird is in pipe's horizontal range
+				if (birdRight > pipeLeft && birdLeft < pipeRight)
 				{
-					HARMONY_WARN("Bird hit pipe! Game Over!");
-					GameManagerScript::gameOverState();
-					return;
+					// Get pipe height from rectangle component
+					auto& pipeRect = registry.get<Components::Rectangle>(entity);
+					// Pipes positioned so their center is at pipeY
+					// Top pipes have their bottom edge at pipeY + height/2
+					// Bottom pipes have their top edge at pipeY - height/2
+					
+					// Check if bird collides with the pipe rectangle
+					// If pipeY < 300, it's a top pipe, if > 400, it's a bottom pipe
+					if (pipeY < 300.0f)
+					{
+						// Top pipe - check if bird hits the bottom of it
+						float pipeBottom = pipeY + 125.0f; // Approximate half height of top pipes
+						if (birdTop < pipeBottom)
+						{
+							HARMONY_WARN("Bird hit top pipe! Game Over!");
+							GameManagerScript::gameOverState();
+							return;
+						}
+					}
+					else if (pipeY > 400.0f)
+					{
+						// Bottom pipe - check if bird hits the top of it
+						float pipeTop = pipeY - 125.0f; // Approximate half height of bottom pipes
+						if (birdBottom > pipeTop)
+						{
+							HARMONY_WARN("Bird hit bottom pipe! Game Over!");
+							GameManagerScript::gameOverState();
+							return;
+						}
+					}
 				}
+			}
+			catch (...)
+			{
+				// Entity doesn't have transform, skip it
 			}
 		}
 	}
@@ -179,22 +212,33 @@ namespace Harmony::Scripts
 		transform.getPosition(x, y);
 
 		x -= scrollSpeed_ * deltaTime;
-		transform.setPosition(x, y);
 
 		// Check if pipe passed the bird (bird is at x=150)
-		if (!scoreCounted_ && x < 150.0f)
+		// Only count score for bottom pipes (y > 400) to avoid double counting
+		if (!scoreCounted_ && x < 150.0f && y > 400.0f)
 		{
 			GameManagerScript::currentScore++;
 			scoreCounted_ = true;
 			HARMONY_INFO("Score: {}", GameManagerScript::currentScore);
 		}
 
-		// Destroy pipe when off screen
+		// Recycle pipe when off screen - move to the right
 		if (x < -100.0f)
 		{
-			// Mark for destruction or recycle
-			// For now, we'll just let it go off screen
+			x = 1400.0f; // Move back to the right side
+			scoreCounted_ = false; // Reset score counting
+			
+			// Randomize pipe height slightly for variety
+			// Keep y roughly the same but add some variation
+			float variation = (rand() % 100) - 50.0f; // -50 to +50
+			y += variation;
+			
+			// Clamp to reasonable values
+			if (y < 100.0f) y = 100.0f;
+			if (y > 600.0f) y = 600.0f;
 		}
+
+		transform.setPosition(x, y);
 	}
 
 	void PipeScript::onDestroy()

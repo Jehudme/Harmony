@@ -18,11 +18,11 @@
     },
     "200": {
       "drawOrder": 0,
-      "entities": [ 2001, 2002, 2003, 2004, 2005, 2006 ]
+      "entities": [ 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010 ]
     },
     "300": {
       "drawOrder": 10,
-      "entities": [ 3001 ]
+      "entities": [ 3001, 3002 ]
     },
     "400": {
       "drawOrder": 50,
@@ -172,6 +172,74 @@
         }
       }
     },
+    "2007": {
+      "name": "Pipe Top 3",
+      "script": "PipeScript",
+      "components": {
+        "Transform": {
+          "position": { "x": 1600, "y": 100 },
+          "rotation": 0,
+          "scale": { "x": 1, "y": 1 }
+        },
+        "Rectangle": {
+          "width": 80,
+          "height": 200,
+          "fill_color": { "r": 34, "g": 139, "b": 34, "a": 255 },
+          "outline_color": { "r": 0, "g": 100, "b": 0, "a": 255 },
+          "outline_thickness": 3
+        }
+      }
+    },
+    "2008": {
+      "name": "Pipe Bottom 3",
+      "script": "PipeScript",
+      "components": {
+        "Transform": {
+          "position": { "x": 1600, "y": 500 },
+          "rotation": 0,
+          "scale": { "x": 1, "y": 1 }
+        },
+        "Rectangle": {
+          "width": 80,
+          "height": 200,
+          "fill_color": { "r": 34, "g": 139, "b": 34, "a": 255 },
+          "outline_color": { "r": 0, "g": 100, "b": 0, "a": 255 },
+          "outline_thickness": 3
+        }
+      }
+    },
+    "2009": {
+      "name": "Cloud 1",
+      "components": {
+        "Transform": {
+          "position": { "x": 300, "y": 150 },
+          "rotation": 0,
+          "scale": { "x": 1, "y": 1 }
+        },
+        "Circle": {
+          "width": 60,
+          "height": 60,
+          "fill_color": { "r": 255, "g": 255, "b": 255, "a": 180 },
+          "outline_thickness": 0
+        }
+      }
+    },
+    "2010": {
+      "name": "Cloud 2",
+      "components": {
+        "Transform": {
+          "position": { "x": 700, "y": 200 },
+          "rotation": 0,
+          "scale": { "x": 1, "y": 1 }
+        },
+        "Circle": {
+          "width": 80,
+          "height": 80,
+          "fill_color": { "r": 255, "g": 255, "b": 255, "a": 180 },
+          "outline_thickness": 0
+        }
+      }
+    },
     "3001": {
       "name": "Flappy Bird",
       "script": "FlappyBirdScript",
@@ -187,6 +255,22 @@
           "fill_color": { "r": 255, "g": 215, "b": 0, "a": 255 },
           "outline_color": { "r": 255, "g": 140, "b": 0, "a": 255 },
           "outline_thickness": 3
+        }
+      }
+    },
+    "3002": {
+      "name": "Bird Wing",
+      "components": {
+        "Transform": {
+          "position": { "x": 165, "y": 295 },
+          "rotation": 0,
+          "scale": { "x": 1, "y": 1 }
+        },
+        "Circle": {
+          "width": 15,
+          "height": 15,
+          "fill_color": { "r": 255, "g": 165, "b": 0, "a": 255 },
+          "outline_thickness": 0
         }
       }
     },
@@ -208,19 +292,19 @@
       }
     },
     "4002": {
-      "name": "Title Decoration 1",
+      "name": "Sun Decoration",
       "components": {
         "Transform": {
-          "position": { "x": 400, "y": 100 },
+          "position": { "x": 1100, "y": 100 },
           "rotation": 0,
           "scale": { "x": 1, "y": 1 }
         },
-        "Rectangle": {
-          "width": 200,
+        "Circle": {
+          "width": 80,
           "height": 80,
-          "fill_color": { "r": 255, "g": 215, "b": 0, "a": 200 },
-          "outline_color": { "r": 139, "g": 69, "b": 19, "a": 255 },
-          "outline_thickness": 4
+          "fill_color": { "r": 255, "g": 223, "b": 0, "a": 255 },
+          "outline_color": { "r": 255, "g": 165, "b": 0, "a": 255 },
+          "outline_thickness": 5
         }
       }
     },

@@ -88,5 +88,7 @@ namespace Harmony::Scripts
 
 	private:
 		bool rKeyPressed_ = false;
+		float timeSinceLastSpawn_ = 0.0f;
+		const float spawnInterval_ = 3.0f; // Spawn pipes every 3 seconds
 	};
 }
