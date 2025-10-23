@@ -15,6 +15,7 @@ A modern, multi-threaded C++ game engine built with SFML and EnTT, featuring a p
   - [Configuration Structure](#configuration-structure)
 - [Core Components](#core-components)
   - [Engine](#engine)
+  - [Input System](#input-system)
   - [Configuration System](#configuration-system)
   - [Logger](#logger)
   - [Task System](#task-system)
@@ -47,6 +48,7 @@ Harmony is a modern game engine designed for C++ developers who want a clean, th
 
 - ✅ **Multi-threaded Task System**: Execute operations across three modes (SingleThreaded, FastMultiThreaded, SlowMultiThreaded)
 - ✅ **Entity-Component-System (ECS)**: High-performance entity management using EnTT
+- ✅ **Input System**: Comprehensive input handling with virtual input support for keyboard, mouse, and custom events
 - ✅ **Scene & State Management**: Organize your game with scenes and states, including draw order support
 - ✅ **Resource Management**: Efficient loading and caching of textures, fonts, sounds, and music
 - ✅ **Configuration-Driven**: JSON-based configuration for all game objects and settings
@@ -361,6 +363,206 @@ std::unique_ptr<Management::TaskManager> taskManagement;
 std::unique_ptr<Management::SceneManager> sceneManagement;
 std::unique_ptr<Management::StateManager> stateManagement;
 std::unique_ptr<Management::ComponentManager> componentManagement;
+std::unique_ptr<InputManager> inputManager;
+```
+
+### Input System
+
+The `InputManager` class provides comprehensive input handling for keyboard, mouse, and supports virtual input injection for testing and automation.
+
+**Key Features:**
+
+- Custom input enums independent of SFML for flexibility
+- Per-frame input state tracking (Pressed, Held, Released)
+- Mouse position and wheel tracking
+- Virtual input injection for simulating user input
+- Clear event handling through switch-based processing
+
+**Input Enums:**
+
+```cpp
+namespace Harmony::Input {
+    // Keyboard keys: Key::A, Key::Escape, Key::F1, etc.
+    enum class Key { ... };
+    
+    // Mouse buttons: MouseButton::Left, MouseButton::Right, etc.
+    enum class MouseButton { ... };
+    
+    // Mouse wheel: MouseWheel::Vertical, MouseWheel::Horizontal
+    enum class MouseWheel { ... };
+    
+    // Input states: InputState::Released, InputState::Pressed, InputState::Held
+    enum class InputState { ... };
+}
+```
+
+**Keyboard Query Functions:**
+
+```cpp
+// Check if a key was just pressed this frame
+bool isKeyPressed(Input::Key key) const;
+
+// Check if a key was just released this frame
+bool isKeyReleased(Input::Key key) const;
+
+// Check if a key is currently held down (pressed or held state)
+bool isKeyHeld(Input::Key key) const;
+```
+
+**Mouse Query Functions:**
+
+```cpp
+// Check if a mouse button was just pressed this frame
+bool isMouseButtonPressed(Input::MouseButton button) const;
+
+// Check if a mouse button was just released this frame
+bool isMouseButtonReleased(Input::MouseButton button) const;
+
+// Check if a mouse button is currently held down
+bool isMouseButtonHeld(Input::MouseButton button) const;
+
+// Get current mouse position
+void getMousePosition(int& x, int& y) const;
+std::pair<int, int> getMousePosition() const;
+
+// Get mouse wheel scroll delta for this frame
+float getMouseWheelDelta(Input::MouseWheel wheel) const;
+```
+
+**Virtual Input Functions:**
+
+```cpp
+// Simulate keyboard input
+void simulateKeyPress(Input::Key key);
+void simulateKeyRelease(Input::Key key);
+
+// Simulate mouse input
+void simulateMouseButtonPress(Input::MouseButton button);
+void simulateMouseButtonRelease(Input::MouseButton button);
+void simulateMouseMove(int x, int y);
+void simulateMouseWheelScroll(Input::MouseWheel wheel, float delta);
+
+// Clear all input states (useful for state transitions)
+void clearAllStates();
+```
+
+**Usage Examples:**
+
+```cpp
+// Example 1: Basic keyboard input in a script
+void PlayerScript::onPreUpdate() override {
+    auto& input = getScene().engine.inputManager;
+    auto& transform = getScene().componentReference<Transform>(entityId);
+    
+    float speed = 200.0f * getScene().engine.getDeltaTime();
+    float x, y;
+    transform.getPosition(x, y);
+    
+    // Movement with WASD keys
+    if (input->isKeyHeld(Harmony::Input::Key::W)) {
+        y -= speed;
+    }
+    if (input->isKeyHeld(Harmony::Input::Key::S)) {
+        y += speed;
+    }
+    if (input->isKeyHeld(Harmony::Input::Key::A)) {
+        x -= speed;
+    }
+    if (input->isKeyHeld(Harmony::Input::Key::D)) {
+        x += speed;
+    }
+    
+    transform.setPosition(x, y);
+    
+    // Jump action on space press (only once per press)
+    if (input->isKeyPressed(Harmony::Input::Key::Space)) {
+        HARMONY_INFO("Jump!");
+        // Trigger jump logic
+    }
+}
+
+// Example 2: Mouse input
+void onPreUpdate() override {
+    auto& input = getScene().engine.inputManager;
+    
+    // Get mouse position
+    auto [mouseX, mouseY] = input->getMousePosition();
+    
+    // Check for mouse clicks
+    if (input->isMouseButtonPressed(Harmony::Input::MouseButton::Left)) {
+        HARMONY_INFO("Left click at ({}, {})", mouseX, mouseY);
+        // Handle click at position
+    }
+    
+    // Check mouse wheel
+    float wheelDelta = input->getMouseWheelDelta(Harmony::Input::MouseWheel::Vertical);
+    if (wheelDelta != 0.0f) {
+        HARMONY_INFO("Mouse wheel scrolled: {}", wheelDelta);
+        // Zoom in/out based on wheel delta
+    }
+}
+
+// Example 3: Virtual input for automated testing
+void RunAutomatedTest(Harmony::Engine& engine) {
+    auto& input = engine.inputManager;
+    
+    // Simulate player movement
+    input->simulateKeyPress(Harmony::Input::Key::W);
+    // ... wait some frames ...
+    input->simulateKeyRelease(Harmony::Input::Key::W);
+    
+    // Simulate mouse click
+    input->simulateMouseMove(100, 200);
+    input->simulateMouseButtonPress(Harmony::Input::MouseButton::Left);
+    // ... next frame ...
+    input->simulateMouseButtonRelease(Harmony::Input::MouseButton::Left);
+}
+
+// Example 4: Input state clearing on state transition
+void TransitionToNewState(Harmony::Engine& engine) {
+    // Clear all input states to prevent carryover
+    engine.inputManager->clearAllStates();
+    
+    // Switch to new state
+    auto task = std::make_unique<Harmony::Tasks::SwitchStateTask>(newStateId);
+    engine.taskManagement->submit(std::move(task));
+}
+```
+
+**Input State Behavior:**
+
+- **Pressed**: True only on the first frame when the input is activated
+- **Held**: True for all subsequent frames while the input remains active
+- **Released**: True only on the frame when the input is deactivated
+
+This design allows distinguishing between "just pressed" (for one-time actions like jumping) and "held down" (for continuous actions like movement).
+
+**Event Processing:**
+
+The InputManager automatically processes all SFML events forwarded from the Engine's event loop. The Engine uses a clear switch statement to handle different event types:
+
+```cpp
+void Engine::handleEvents() {
+    sf::Event event;
+    while (window.pollEvent(event)) {
+        // Forward all events to InputManager
+        inputManager->handleEvent(event);
+        
+        // Handle engine-specific events
+        switch (event.type) {
+            case sf::Event::Closed:
+                stop();
+                break;
+            case sf::Event::Resized:
+                // Handle window resize
+                break;
+            // ... other event types ...
+        }
+    }
+    
+    // Update input states (transition Pressed to Held)
+    inputManager->updateStates();
+}
 ```
 
 ### Configuration System
