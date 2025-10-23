@@ -18,11 +18,11 @@
     },
     "200": {
       "drawOrder": 0,
-      "entities": [ 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010 ]
+      "entities": [ 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020 ]
     },
     "300": {
       "drawOrder": 10,
-      "entities": [ 3001, 3002 ]
+      "entities": [ 3001, 3002, 3003 ]
     },
     "400": {
       "drawOrder": 50,
@@ -240,6 +240,178 @@
         }
       }
     },
+    "2011": {
+      "name": "Grass Tuft 1",
+      "components": {
+        "Transform": {
+          "position": { "x": 200, "y": 630 },
+          "rotation": 0,
+          "scale": { "x": 1, "y": 1 }
+        },
+        "Rectangle": {
+          "width": 20,
+          "height": 30,
+          "fill_color": { "r": 34, "g": 139, "b": 34, "a": 255 },
+          "outline_thickness": 0
+        }
+      }
+    },
+    "2012": {
+      "name": "Grass Tuft 2",
+      "components": {
+        "Transform": {
+          "position": { "x": 500, "y": 630 },
+          "rotation": 0,
+          "scale": { "x": 1, "y": 1 }
+        },
+        "Rectangle": {
+          "width": 25,
+          "height": 35,
+          "fill_color": { "r": 50, "g": 205, "b": 50, "a": 255 },
+          "outline_thickness": 0
+        }
+      }
+    },
+    "2013": {
+      "name": "Grass Tuft 3",
+      "components": {
+        "Transform": {
+          "position": { "x": 900, "y": 630 },
+          "rotation": 0,
+          "scale": { "x": 1, "y": 1 }
+        },
+        "Rectangle": {
+          "width": 20,
+          "height": 30,
+          "fill_color": { "r": 34, "g": 139, "b": 34, "a": 255 },
+          "outline_thickness": 0
+        }
+      }
+    },
+    "2014": {
+      "name": "Grass Tuft 4",
+      "components": {
+        "Transform": {
+          "position": { "x": 1100, "y": 630 },
+          "rotation": 0,
+          "scale": { "x": 1, "y": 1 }
+        },
+        "Rectangle": {
+          "width": 25,
+          "height": 35,
+          "fill_color": { "r": 50, "g": 205, "b": 50, "a": 255 },
+          "outline_thickness": 0
+        }
+      }
+    },
+    "2015": {
+      "name": "Pipe Cap Top 1",
+      "script": "PipeScript",
+      "components": {
+        "Transform": {
+          "position": { "x": 800, "y": 250 },
+          "rotation": 0,
+          "scale": { "x": 1, "y": 1 }
+        },
+        "Rectangle": {
+          "width": 100,
+          "height": 30,
+          "fill_color": { "r": 60, "g": 179, "b": 113, "a": 255 },
+          "outline_color": { "r": 0, "g": 100, "b": 0, "a": 255 },
+          "outline_thickness": 3
+        }
+      }
+    },
+    "2016": {
+      "name": "Pipe Cap Bottom 1",
+      "script": "PipeScript",
+      "components": {
+        "Transform": {
+          "position": { "x": 800, "y": 400 },
+          "rotation": 0,
+          "scale": { "x": 1, "y": 1 }
+        },
+        "Rectangle": {
+          "width": 100,
+          "height": 30,
+          "fill_color": { "r": 60, "g": 179, "b": 113, "a": 255 },
+          "outline_color": { "r": 0, "g": 100, "b": 0, "a": 255 },
+          "outline_thickness": 3
+        }
+      }
+    },
+    "2017": {
+      "name": "Pipe Cap Top 2",
+      "script": "PipeScript",
+      "components": {
+        "Transform": {
+          "position": { "x": 1200, "y": 300 },
+          "rotation": 0,
+          "scale": { "x": 1, "y": 1 }
+        },
+        "Rectangle": {
+          "width": 100,
+          "height": 30,
+          "fill_color": { "r": 60, "g": 179, "b": 113, "a": 255 },
+          "outline_color": { "r": 0, "g": 100, "b": 0, "a": 255 },
+          "outline_thickness": 3
+        }
+      }
+    },
+    "2018": {
+      "name": "Pipe Cap Bottom 2",
+      "script": "PipeScript",
+      "components": {
+        "Transform": {
+          "position": { "x": 1200, "y": 450 },
+          "rotation": 0,
+          "scale": { "x": 1, "y": 1 }
+        },
+        "Rectangle": {
+          "width": 100,
+          "height": 30,
+          "fill_color": { "r": 60, "g": 179, "b": 113, "a": 255 },
+          "outline_color": { "r": 0, "g": 100, "b": 0, "a": 255 },
+          "outline_thickness": 3
+        }
+      }
+    },
+    "2019": {
+      "name": "Pipe Cap Top 3",
+      "script": "PipeScript",
+      "components": {
+        "Transform": {
+          "position": { "x": 1600, "y": 200 },
+          "rotation": 0,
+          "scale": { "x": 1, "y": 1 }
+        },
+        "Rectangle": {
+          "width": 100,
+          "height": 30,
+          "fill_color": { "r": 60, "g": 179, "b": 113, "a": 255 },
+          "outline_color": { "r": 0, "g": 100, "b": 0, "a": 255 },
+          "outline_thickness": 3
+        }
+      }
+    },
+    "2020": {
+      "name": "Pipe Cap Bottom 3",
+      "script": "PipeScript",
+      "components": {
+        "Transform": {
+          "position": { "x": 1600, "y": 400 },
+          "rotation": 0,
+          "scale": { "x": 1, "y": 1 }
+        },
+        "Rectangle": {
+          "width": 100,
+          "height": 30,
+          "fill_color": { "r": 60, "g": 179, "b": 113, "a": 255 },
+          "outline_color": { "r": 0, "g": 100, "b": 0, "a": 255 },
+          "outline_thickness": 3
+        }
+      }
+    },
     "3001": {
       "name": "Flappy Bird",
       "script": "FlappyBirdScript",
@@ -270,6 +442,22 @@
           "width": 15,
           "height": 15,
           "fill_color": { "r": 255, "g": 165, "b": 0, "a": 255 },
+          "outline_thickness": 0
+        }
+      }
+    },
+    "3003": {
+      "name": "Bird Eye",
+      "components": {
+        "Transform": {
+          "position": { "x": 160, "y": 290 },
+          "rotation": 0,
+          "scale": { "x": 1, "y": 1 }
+        },
+        "Circle": {
+          "width": 8,
+          "height": 8,
+          "fill_color": { "r": 0, "g": 0, "b": 0, "a": 255 },
           "outline_thickness": 0
         }
       }
