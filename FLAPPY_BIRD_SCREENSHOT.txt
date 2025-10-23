@@ -1,0 +1,164 @@
+================================================================================
+                     FLAPPY BIRD - HARMONY ENGINE DEMO
+================================================================================
+
+Visual Representation (1280x720 window):
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│                    ☁️                                    🌞                  │
+│                          🎯                                                 │
+│                                                                             │
+│                                                  ▓▓▓▓▓▓▓▓                   │
+│                                                  ▓▓▓▓▓▓▓▓                   │
+│                        (‾‾)                      ▓▓▓▓▓▓▓▓                   │
+│                         🐤 <-- Bird              ▓▓▓▓▓▓▓▓                   │
+│                                                  ▓▓▓▓▓▓▓▓                   │
+│                                                ┏━━━━━━━━━━┓                 │
+│                                                ┗━━━━━━━━━━┛ <-- Pipe Cap    │
+│              ☁️                                                             │
+│                                                                             │
+│                                                ┏━━━━━━━━━━┓                 │
+│                                                ┗━━━━━━━━━━┛                 │
+│                                                  ▓▓▓▓▓▓▓▓                   │
+│                                                  ▓▓▓▓▓▓▓▓                   │
+│      🌿    🌿         🌿          🌿             ▓▓▓▓▓▓▓▓                   │
+│━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━│
+│█████████████████████████████████████████████████████████████████████████████│
+└────────────────────────────────────────────────────────────────────────────┘
+
+Legend:
+  🐤 Bird (Golden circle with wing and eye)
+  ▓  Green Pipe Body
+  ┏┓ Pipe Cap (Wider green rectangle)
+  ☁️ White Cloud (Semi-transparent)
+  🌞 Sun (Yellow circle with orange outline)
+  🌿 Grass Tuft (Green rectangles)
+  🎯 Score Indicator (Golden circle)
+  █  Ground (Brown rectangle)
+  ━  Ground outline
+
+================================================================================
+                              GAME ELEMENTS
+================================================================================
+
+BIRD COMPOSITION:
+    ╭─────╮
+    │  ●  │  <-- Eye (Black circle)
+    │ ⚪️  │  <-- Wing (Orange circle)
+    │     │
+    ╰─────╯
+   Golden body with orange outline
+
+PIPE STRUCTURE:
+    ┏━━━━━━━━┓
+    ┃▓▓▓▓▓▓▓▓┃  <-- Cap (Medium sea green, wider)
+    ┗━━━━━━━━┛
+    ┃▓▓▓▓▓▓┃    <-- Body (Forest green)
+    ┃▓▓▓▓▓▓┃
+    ┃▓▓▓▓▓▓┃
+    ┃▓▓▓▓▓▓┃
+    
+    [GAP - 150-200px]
+    
+    ┃▓▓▓▓▓▓┃
+    ┃▓▓▓▓▓▓┃
+    ┃▓▓▓▓▓▓┃
+    ┏━━━━━━━━┓
+    ┃▓▓▓▓▓▓▓▓┃  <-- Cap
+    ┗━━━━━━━━┛
+
+BACKGROUND LAYERS:
+  Layer -20: Sky (Light blue) - Scrolls slowly
+  Layer 0:   Pipes + Ground - Scrolls medium
+  Layer 10:  Bird - Controlled by player
+  Layer 50:  UI - Static
+
+================================================================================
+                              COLOR SCHEME
+================================================================================
+
+Primary Colors:
+  Sky Background:    RGB(135, 206, 235) - Sky Blue
+  Bird Body:         RGB(255, 215, 0)   - Golden Yellow
+  Bird Outline:      RGB(255, 140, 0)   - Orange
+  Bird Wing:         RGB(255, 165, 0)   - Orange
+  Bird Eye:          RGB(0, 0, 0)       - Black
+  
+Pipe Colors:
+  Pipe Body:         RGB(34, 139, 34)   - Forest Green
+  Pipe Outline:      RGB(0, 100, 0)     - Dark Green
+  Pipe Cap:          RGB(60, 179, 113)  - Medium Sea Green
+  
+Ground Colors:
+  Ground Fill:       RGB(139, 69, 19)   - Saddle Brown
+  Ground Outline:    RGB(101, 67, 33)   - Dark Brown
+  Grass Tuft 1:      RGB(34, 139, 34)   - Forest Green
+  Grass Tuft 2:      RGB(50, 205, 50)   - Lime Green
+  
+Decorations:
+  Cloud:             RGB(255, 255, 255) - White (Alpha 180)
+  Sun Fill:          RGB(255, 223, 0)   - Bright Yellow
+  Sun Outline:       RGB(255, 165, 0)   - Orange
+
+================================================================================
+                           GAMEPLAY VISUALIZATION
+================================================================================
+
+PHYSICS:
+  Gravity:    ↓ 980 px/s²
+  Jump:       ↑ -350 px/s
+  Scroll:     ← 200 px/s (pipes/ground)
+              ← 50 px/s (background - parallax)
+
+COLLISION ZONES:
+  Bird: 40x40 box (20px radius)
+  Pipes: 80px wide body + 100px wide cap
+  Ground: y > 600
+  Ceiling: y < 20
+
+GAME FLOW:
+  1. Press SPACE → Bird jumps upward
+  2. Gravity pulls bird down continuously
+  3. Navigate through pipe gaps
+  4. Score +1 for each pipe passed
+  5. Hit pipe/ground/ceiling → Game Over
+  6. Press R → Restart game
+
+================================================================================
+                            TECHNICAL DETAILS
+================================================================================
+
+Total Entities: 31
+  - Background: 2 (sky tiles)
+  - Gameplay: 23 (ground, pipes, caps, decorations)
+  - Player: 3 (bird body, wing, eye)
+  - UI: 3 (score, sun, manager)
+
+Active Scripts: 18
+  - FlappyBirdScript: 1
+  - PipeScript: 12 (6 bodies + 6 caps)
+  - GroundScript: 2
+  - BackgroundScript: 2
+  - GameManagerScript: 1
+
+Components: ~80
+  - Transform: 31
+  - Rectangle: 24
+  - Circle: 7
+  - Script: 18
+
+Performance:
+  Target FPS: 60
+  Physics: Delta-time based
+  Rendering: Multi-layer with proper draw order
+  Memory: Efficient entity recycling (no runtime creation)
+
+================================================================================
+                              CONTROLS
+================================================================================
+
+  SPACE    → Jump / Flap wings
+  R        → Restart game (after Game Over)
+  ESC      → Exit game
+
+================================================================================
