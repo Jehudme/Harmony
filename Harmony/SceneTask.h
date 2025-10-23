@@ -122,5 +122,32 @@ namespace Harmony::Tasks
 	private:
 		const Utilities::UUID sceneId_;
 	};
+
+	// Task to create a global View component in a scene
+	class CreateSceneViewTask : public Tasks::Task
+	{
+	public:
+		CreateSceneViewTask(const Utilities::UUID sceneId, const Utilities::Configuration& viewConfig);
+
+	private:
+		void run() override;
+
+	private:
+		const Utilities::UUID sceneId_;
+		const Utilities::Configuration viewConfig_;
+	};
+
+	// Task to delete a global View component from a scene
+	class DeleteSceneViewTask : public Tasks::Task
+	{
+	public:
+		DeleteSceneViewTask(const Utilities::UUID sceneId);
+
+	private:
+		void run() override;
+
+	private:
+		const Utilities::UUID sceneId_;
+	};
 }
 

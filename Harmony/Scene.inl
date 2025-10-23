@@ -35,4 +35,29 @@ namespace Harmony::Scenes
 		extern const entt::registry& getRegistryFromScene(const Scene& scene);
 		return getComponentReferenceImpl<Type>(getRegistryFromScene(*this), entityId);
 	}
+
+	// Global component management template implementations
+	template<typename Type, typename... Args>
+	inline Type& Scene::createGlobalComponent(Args&&... args) {
+		extern entt::registry& getRegistryFromScene(Scene& scene);
+		return getRegistryFromScene(*this).ctx().emplace<Type>(std::forward<Args>(args)...);
+	}
+
+	template<typename Type>
+	inline void Scene::deleteGlobalComponent() {
+		extern entt::registry& getRegistryFromScene(Scene& scene);
+		getRegistryFromScene(*this).ctx().erase<Type>();
+	}
+
+	template<typename Type>
+	inline Type* Scene::getGlobalComponent() {
+		extern entt::registry& getRegistryFromScene(Scene& scene);
+		return getRegistryFromScene(*this).ctx().find<Type>();
+	}
+
+	template<typename Type>
+	inline const Type* Scene::getGlobalComponent() const {
+		extern const entt::registry& getRegistryFromScene(const Scene& scene);
+		return getRegistryFromScene(*this).ctx().find<Type>();
+	}
 }

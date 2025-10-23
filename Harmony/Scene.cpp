@@ -16,7 +16,7 @@ namespace Harmony::Scenes
 	// PImpl struct to hide entt::registry
 	struct Scene::SceneImpl {
 		entt::registry registry;
-		std::unique_ptr<Components::View> view;  // Singleton view component per scene
+		// View is now stored in registry ctx as a global component
 	};
 
 	// Helper functions for template access to registry
@@ -63,9 +63,9 @@ namespace Harmony::Scenes
 			HARMONY_WARN("Scene {} has no entities defined in configuration", sceneId);
 		}
 
-		// Initialize View component (singleton per scene)
+		// Initialize View component (stored in registry ctx as global)
 		if (std::optional<Utilities::Configuration> viewConfig = configuration_.subsection({ "view" })) {
-			impl_->view = std::make_unique<Components::View>(viewConfig.value(), *this);
+			impl_->registry.ctx().emplace<Components::View>(viewConfig.value(), *this);
 			HARMONY_DEBUG("View created from configuration for scene {}", sceneId);
 		}
 		else {
@@ -79,7 +79,7 @@ namespace Harmony::Scenes
 			defaultViewConfig.set<float>({ "size", "width" }, static_cast<float>(windowWidth));
 			defaultViewConfig.set<float>({ "size", "height" }, static_cast<float>(windowHeight));
 			
-			impl_->view = std::make_unique<Components::View>(defaultViewConfig, *this);
+			impl_->registry.ctx().emplace<Components::View>(defaultViewConfig, *this);
 			HARMONY_DEBUG("Default view created for scene {}", sceneId);
 		}
 
@@ -123,12 +123,9 @@ namespace Harmony::Scenes
 
 		std::lock_guard<std::mutex> lock(entityMutex_);
 		
-		// Set the view before drawing the scene
-		if (impl_->view) {
-			const sf::View* sfView = static_cast<const sf::View*>(impl_->view->getInternalView());
-			if (sfView) {
-				renderTarget.setView(*sfView);
-			}
+		// Set the view before drawing the scene - now retrieved from registry ctx
+		if (auto* view = impl_->registry.ctx().find<Components::View>()) {
+			renderTarget.setView(*view);
 		}
 		
 		auto entitiesView = impl_->registry.view<std::unique_ptr<sf::Drawable>>();
@@ -240,24 +237,29 @@ namespace Harmony::Scenes
 
 	Components::View& Scene::getView()
 	{
-		if (!impl_->view) {
+		auto* view = impl_->registry.ctx().find<Components::View>();
+		if (!view) {
 			throw Exceptions::ComponentNotFoundException(0);  // View is not tied to a specific entity
 		}
-		return *impl_->view;
+		return *view;
 	}
 
 	const Components::View& Scene::getView() const
 	{
-		if (!impl_->view) {
+		const auto* view = impl_->registry.ctx().find<Components::View>();
+		if (!view) {
 			throw Exceptions::ComponentNotFoundException(0);  // View is not tied to a specific entity
 		}
-		return *impl_->view;
+		return *view;
 	}
 
 	void Scene::setView(const Utilities::Configuration& configuration)
 	{
-		impl_->view = std::make_unique<Components::View>(configuration, *this);
-		HARMONY_DEBUG("View singleton created for scene {}", sceneId);
+		// Remove existing view if present
+		impl_->registry.ctx().erase<Components::View>();
+		// Create new view in ctx
+		impl_->registry.ctx().emplace<Components::View>(configuration, *this);
+		HARMONY_DEBUG("View created for scene {}", sceneId);
 	}
 
 	void Scene::reset()
