@@ -5,14 +5,19 @@
 #include "Logger.h"
 
 int main() {
-	// Initialize the logger
-	Harmony::Utilities::Logger::initialize("Harmony.log");
+	try {
+		// Initialize the logger
+		Harmony::Utilities::Logger::initialize("Harmony.log");
 
 
-	Harmony::Utilities::Configuration configuration;
-	configuration.load("configuration.json");
+		Harmony::Utilities::Configuration configuration;
+		configuration.load("configuration.json");
 
-	Harmony::Engine engine(configuration);
+		Harmony::Engine engine(configuration);
 
-	engine.start();
+		engine.start();
+	}
+	catch (const std::exception& e) {
+		return EXIT_FAILURE;
+	}
 }

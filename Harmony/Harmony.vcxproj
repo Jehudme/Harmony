@@ -150,7 +150,6 @@
     <ClInclude Include="EngineTask.h" />
     <ClInclude Include="InputManager.h" />
     <ClInclude Include="Exceptions.h" />
-    <ClInclude Include="FlappyBirdScripts.h" />
     <ClInclude Include="Font.h" />
     <ClInclude Include="Harmony.h" />
     <ClInclude Include="Logger.h" />
@@ -188,7 +187,6 @@
     <ClCompile Include="EngineTask.cpp" />
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="Exceptions.cpp" />
-    <ClCompile Include="FlappyBirdScripts.cpp" />
     <ClCompile Include="Font.cpp" />
     <ClCompile Include="Logger.cpp" />
     <ClCompile Include="main.cpp" />
