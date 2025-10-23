@@ -9,6 +9,7 @@
 #include "SceneManagement.h"
 #include "ComponentManagement.h"
 #include "ResourceManager.h"
+#include "InputManager.h"
 #include "Exceptions.h"
 #include "Logger.h" // for HARMONY_* macros
 
@@ -28,7 +29,8 @@ namespace Harmony
 		taskManagement(std::make_unique<Management::TaskManager>(*this)),
 		sceneManagement(std::make_unique<Management::SceneManager>(*this)),
 		stateManagement(std::make_unique<Management::StateManager>(*this)),
-		componentManagement(std::make_unique<Management::ComponentManager>(*this))
+		componentManagement(std::make_unique<Management::ComponentManager>(*this)),
+		inputManager(std::make_unique<InputManager>(*this))
 	{
 		HARMONY_INFO("Engine initializing...");
 
@@ -152,11 +154,78 @@ namespace Harmony
 	{
 		sf::Event event;
 		while (impl_->window.pollEvent(event)) {
-			if (event.type == sf::Event::Closed) {
+			// Forward all events to the InputManager for processing
+			inputManager->handleEvent(event);
+
+			// Handle specific engine-level events using a switch statement for clarity
+			switch (event.type)
+			{
+			case sf::Event::Closed:
 				HARMONY_INFO("Window close event received");
 				stop();
+				break;
+
+			case sf::Event::Resized:
+				HARMONY_DEBUG("Window resized to {}x{}", event.size.width, event.size.height);
+				// Future: Handle window resize events
+				break;
+
+			case sf::Event::LostFocus:
+				HARMONY_DEBUG("Window lost focus");
+				// Future: Could pause game or clear input states
+				break;
+
+			case sf::Event::GainedFocus:
+				HARMONY_DEBUG("Window gained focus");
+				// Future: Could resume game
+				break;
+
+			// Input events are already handled by InputManager::handleEvent
+			case sf::Event::KeyPressed:
+			case sf::Event::KeyReleased:
+			case sf::Event::MouseButtonPressed:
+			case sf::Event::MouseButtonReleased:
+			case sf::Event::MouseMoved:
+			case sf::Event::MouseWheelScrolled:
+			case sf::Event::MouseEntered:
+			case sf::Event::MouseLeft:
+				// Already processed by InputManager, no additional action needed
+				break;
+
+			case sf::Event::TextEntered:
+				HARMONY_TRACE("Text entered: {}", event.text.unicode);
+				// Future: Text input for UI elements
+				break;
+
+			case sf::Event::JoystickButtonPressed:
+			case sf::Event::JoystickButtonReleased:
+			case sf::Event::JoystickMoved:
+			case sf::Event::JoystickConnected:
+			case sf::Event::JoystickDisconnected:
+				HARMONY_TRACE("Joystick event: {}", static_cast<int>(event.type));
+				// Future: Joystick input support
+				break;
+
+			case sf::Event::TouchBegan:
+			case sf::Event::TouchMoved:
+			case sf::Event::TouchEnded:
+				HARMONY_TRACE("Touch event: {}", static_cast<int>(event.type));
+				// Future: Touch input support
+				break;
+
+			case sf::Event::SensorChanged:
+				// Future: Sensor input support (accelerometer, etc.)
+				break;
+
+			default:
+				// Unknown or unhandled event type
+				break;
 			}
 		}
+
+		// Update input states at the end of event processing
+		// This transitions "Pressed" to "Held" states
+		inputManager->updateStates();
 	}
 
 	void Engine::handleUpdates() {
