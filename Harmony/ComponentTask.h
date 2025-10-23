@@ -1,6 +1,7 @@
 #pragma once
 #include "Task.h"
 #include "Scene.h"
+#include "Configuration.h"
 
 namespace Harmony::Tasks
 {

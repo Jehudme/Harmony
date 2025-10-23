@@ -12,10 +12,7 @@ namespace Harmony::Scenes {
 
 namespace Harmony::Components
 {
-	/// @brief View component - camera/viewport for rendering
-	/// Uses composition to hide SFML implementation details
-	/// Registered as a singleton per scene
-	class View
+	class View : sf::View
 	{
 	public:
 		View(const Utilities::Configuration& configuration, Scenes::Scene& scene);

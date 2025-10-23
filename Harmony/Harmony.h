@@ -34,6 +34,8 @@ namespace Harmony::Components {
 namespace Harmony::Scenes {
 	class State;
 	class Scene;
+
+	using EntityID = unsigned int;
 }
 
 namespace Harmony::Tasks {
