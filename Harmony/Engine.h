@@ -15,6 +15,7 @@ namespace Harmony {
 		class ComponentManager;
 		class ResourceManager;
     }
+	class InputManager;
 }
 
 namespace Harmony
@@ -49,6 +50,7 @@ namespace Harmony
         std::unique_ptr<Management::SceneManager> sceneManagement;
         std::unique_ptr<Management::StateManager> stateManagement;
 		std::unique_ptr<Management::ComponentManager> componentManagement;
+		std::unique_ptr<InputManager> inputManager;
 
 
     private:
