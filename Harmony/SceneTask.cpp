@@ -5,6 +5,7 @@
 #include "StateManagement.h"
 #include "Scene.h"
 #include "State.h"
+#include "View.h"
 #include "Logger.h"
 
 namespace Harmony::Tasks
@@ -160,5 +161,37 @@ namespace Harmony::Tasks
 
 		currentState->removeScene(sceneId_);
 		HARMONY_INFO("Scene {} deleted from state", sceneId_);
+	}
+
+	// CreateSceneViewTask implementation
+	CreateSceneViewTask::CreateSceneViewTask(const Utilities::UUID sceneId, const Utilities::Configuration& viewConfig) :
+		Task(50, FastMultiThreaded), sceneId_(sceneId), viewConfig_(viewConfig) {}
+
+	void CreateSceneViewTask::run()
+	{
+		auto scene = getEngine().sceneManagement->find(sceneId_);
+		if (!scene) {
+			HARMONY_ERROR("Failed to create View: Scene {} not found", sceneId_);
+			return;
+		}
+
+		scene->setView(viewConfig_);
+		HARMONY_INFO("View created for scene {}", sceneId_);
+	}
+
+	// DeleteSceneViewTask implementation
+	DeleteSceneViewTask::DeleteSceneViewTask(const Utilities::UUID sceneId) :
+		Task(50, FastMultiThreaded), sceneId_(sceneId) {}
+
+	void DeleteSceneViewTask::run()
+	{
+		auto scene = getEngine().sceneManagement->find(sceneId_);
+		if (!scene) {
+			HARMONY_ERROR("Failed to delete View: Scene {} not found", sceneId_);
+			return;
+		}
+
+		scene->deleteGlobalComponent<Components::View>();
+		HARMONY_INFO("View deleted from scene {}", sceneId_);
 	}
 }

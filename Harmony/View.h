@@ -1,6 +1,6 @@
 #pragma once
 
-#include <memory>
+#include <SFML/Graphics/View.hpp>
 
 namespace Harmony::Utilities {
 	class Configuration;
@@ -12,46 +12,27 @@ namespace Harmony::Scenes {
 
 namespace Harmony::Components
 {
-	class View : sf::View
+	// View now inherits from sf::View instead of composing it
+	class View : public sf::View
 	{
 	public:
 		View(const Utilities::Configuration& configuration, Scenes::Scene& scene);
 		~View();
 
-		// Center
-		void setCenter(float x, float y);
+		// Additional helper methods that wrap or extend sf::View functionality
+		
+		// Center helpers
 		void setCenter(const float center[2]);
 		void getCenter(float& x, float& y) const;
 
-		// Size
-		void setSize(float width, float height);
+		// Size helpers
 		void setSize(const float size[2]);
 		void getSize(float& width, float& height) const;
 
-		// Rotation
-		void setRotation(float angle);
-		float getRotation() const;
-
-		// Viewport (normalized coordinates 0-1)
-		void setViewport(float left, float top, float width, float height);
+		// Viewport helpers (normalized coordinates 0-1)
 		void getViewport(float& left, float& top, float& width, float& height) const;
 
-		// Zoom
-		void zoom(float factor);
-
-		// Move
-		void move(float offsetX, float offsetY);
-
-		// Reset to default
-		void reset(float centerX, float centerY, float width, float height);
-
-		// Internal access for rendering - returns void* to sf::View
-		void* getInternalView();
-		const void* getInternalView() const;
-
-	private:
-		// PImpl to hide sf::View
-		struct ViewImpl;
-		std::unique_ptr<ViewImpl> impl_;
+		// Note: setCenter(x, y), setSize(width, height), setRotation(), getRotation(),
+		// setViewport(), zoom(), move(), and reset() are inherited from sf::View
 	};
 }

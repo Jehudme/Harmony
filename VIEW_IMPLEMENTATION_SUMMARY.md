@@ -1,82 +1,122 @@
 # View Component Implementation Summary
 
 ## Overview
-Successfully implemented a View component system for the Harmony Engine that provides camera/viewport functionality for scenes, following the same pattern as other components like Transform.
+Successfully refactored the View component to use inheritance instead of composition and to store the View in EnTT's registry context (ctx) as a global component.
 
-## Changes Made
+## Recent Changes (Refactoring)
 
-### New Files Created
+### Architectural Changes
 
-1. **Harmony/View.h**
-   - Header file for the View component class
-   - Follows PImpl idiom to hide SFML implementation
-   - Provides API for:
-     - Center position (setCenter, getCenter)
-     - Size (setSize, getSize)
-     - Rotation (setRotation, getRotation)
-     - Viewport (setViewport, getViewport)
-     - Zoom and move operations
-     - Reset functionality
-     - Internal view access for rendering
+1. **Changed from Composition to Inheritance**
+   - View now directly inherits from `sf::View` instead of composing it
+   - Removed PImpl pattern (`ViewImpl` struct)
+   - Removed `getInternalView()` methods - no longer needed
+   - All sf::View methods now directly accessible
 
-2. **Harmony/View.cpp**
-   - Implementation of View component
-   - Registers component with `HARMONY_REGISTER_COMPONENT(Harmony::Components::View, View)`
-   - Implements PImpl pattern with `ViewImpl` struct containing `sf::View`
-   - Reads configuration for center, size, rotation, and viewport
-   - Provides default values with warnings for missing required config
-   - Full implementation of all API methods
+2. **Changed from Scene Member to Registry Context Storage**
+   - View is now stored in `entt::registry::ctx()` as a global component
+   - Changed from `std::unique_ptr<Components::View>` in SceneImpl to ctx storage
+   - Uses EnTT's context mechanism for singleton-like behavior
+   - Not tied to any entity but accessible globally within a scene
 
-3. **VIEW_COMPONENT_DOCUMENTATION.md**
-   - Comprehensive documentation for the View component
-   - Explains singleton pattern and how it works
-   - Configuration examples
-   - Runtime API usage examples
-   - Use cases (camera following, zoom, split screen, minimap)
-   - Implementation details and best practices
+3. **Added Global Component Management**
+   - Added template methods to Scene class:
+     - `createGlobalComponent<Type, Args...>()` - Create global component in ctx
+     - `deleteGlobalComponent<Type>()` - Delete global component from ctx
+     - `getGlobalComponent<Type>()` - Get global component from ctx
+   - These methods work with any type, not just View
 
-4. **ViewExample.json**
-   - Example configuration demonstrating View usage
-   - Shows multiple scenes with different views
-   - Demonstrates viewport configuration for split-screen effect
+4. **Added View Management Tasks**
+   - `CreateSceneViewTask` - Create View component in scene's registry ctx
+   - `DeleteSceneViewTask` - Delete View component from scene's registry ctx
 
 ### Modified Files
 
-1. **Harmony/Scene.h**
-   - Added forward declaration for `Components::View`
-   - Added public methods:
-     - `Components::View& getView()`
-     - `const Components::View& getView() const`
-     - `void setView(const Utilities::Configuration& configuration)`
+1. **Harmony/View.h**
+   - Changed from `class View : sf::View` to `class View : public sf::View`
+   - Removed `ViewImpl` forward declaration and `impl_` member
+   - Removed duplicate methods that are now inherited from sf::View:
+     - `setCenter(float, float)`, `setSize(float, float)`, `setRotation(float)`
+     - `getRotation()`, `setViewport(float, float, float, float)`
+     - `zoom(float)`, `move(float, float)`, `reset(...)`
+   - Removed `getInternalView()` methods
+   - Kept helper methods for array-based input
 
-2. **Harmony/Scene.cpp**
+2. **Harmony/View.cpp**
+   - Removed `ViewImpl` struct definition
+   - Changed constructor to initialize base class: `: sf::View()`
+   - Changed all method implementations from `impl_->view.method()` to `sf::View::method()`
+   - Removed all removed methods from header
+
+3. **Harmony/Scene.h**
+   - Added declarations for global component management methods
+   - View access methods remain the same (getView, setView)
+
+4. **Harmony/Scene.cpp**
+   - Changed SceneImpl from storing `std::unique_ptr<Components::View> view` to comment noting View is in ctx
+   - Modified `initialize()` to use `impl_->registry.ctx().emplace<Components::View>()`
+   - Modified `getView()` to use `impl_->registry.ctx().find<Components::View>()`
+   - Modified `setView()` to erase and emplace in ctx
+   - Modified `internalDraw()` to get View from ctx
+
+5. **Harmony/Scene.inl**
+   - Added template implementations for global component management:
+     - `createGlobalComponent<Type, Args...>()`
+     - `deleteGlobalComponent<Type>()`
+     - `getGlobalComponent<Type>()`
+
+6. **Harmony/SceneTask.h**
+   - Added `CreateSceneViewTask` class
+   - Added `DeleteSceneViewTask` class
+
+7. **Harmony/SceneTask.cpp**
    - Added `#include "View.h"`
-   - Modified `Scene::SceneImpl` to include `std::unique_ptr<Components::View> view`
-   - Implemented `getView()` methods with null checks
-   - Implemented `setView()` method
-   - Modified `Scene::initialize()` to create View from configuration or default
-   - Modified `Scene::internalDraw()` to set view on render target before drawing
+   - Implemented `CreateSceneViewTask::run()` - calls scene.setView()
+   - Implemented `DeleteSceneViewTask::run()` - calls scene.deleteGlobalComponent<View>()
+
+8. **VIEW_COMPONENT_DOCUMENTATION.md**
+   - Updated to reflect inheritance instead of composition
+   - Updated to reflect ctx storage instead of Scene member
+   - Added section on using tasks for View management
+   - Added section on global component pattern
+   - Updated implementation details
+   - Added new best practices and pitfalls
 
 ## Key Design Decisions
 
-### Singleton Per Scene
-- Each scene has exactly one View component
-- Stored in `Scene::SceneImpl` as `std::unique_ptr<Components::View>`
-- Not tied to any entity (unlike other components)
-- Accessed via Scene methods (`getView()`, `setView()`)
+### Inheritance Over Composition
+- **Before**: View composed sf::View via PImpl pattern
+- **After**: View inherits from sf::View directly
+- **Benefits**:
+  - Simpler code - no PImpl boilerplate
+  - Direct access to all sf::View methods
+  - No need for wrapper methods or getInternalView()
+  - More idiomatic C++ (is-a relationship instead of has-a)
 
-### Automatic Initialization
-- View is created during `Scene::initialize()`
-- If configuration provides a "view" section, it's used
-- Otherwise, a default view matching window size is created
-- Ensures every scene always has a valid view
+### Registry Context (ctx) Storage
+- **Before**: Stored as `std::unique_ptr<Components::View>` in Scene
+- **After**: Stored in `entt::registry::ctx()` as global component
+- **Benefits**:
+  - Leverages EnTT's built-in global storage mechanism
+  - Consistent with EnTT best practices
+  - Can be extended to other global components
+  - Thread-safe access via EnTT
+  - No manual lifetime management needed
 
-### Rendering Integration
-- View is set on the render target before drawing entities in `Scene::internalDraw()`
-- Uses null check before accessing view
-- Safe casting from void* to sf::View*
+### Generic Global Component API
+- Added template methods for managing any global component type
+- View is the first user of this pattern, but it's reusable
+- Enables future global components without code duplication
 
-### Configuration Format
+### Generic Global Component API
+- Added template methods for managing any global component type
+- View is the first user of this pattern, but it's reusable
+- Enables future global components without code duplication
+
+## Configuration Format
+
+Configuration format remains the same:
+
 ```json
 {
   "scenes": {
@@ -92,6 +132,18 @@ Successfully implemented a View component system for the Harmony Engine that pro
 }
 ```
 
+## Automatic Initialization
+- View is still created during `Scene::initialize()`
+- If configuration provides a "view" section, it's used
+- Otherwise, a default view matching window size is created
+- Ensures every scene always has a valid view
+- Now stored in registry ctx instead of Scene member
+
+## Rendering Integration
+- View is retrieved from registry ctx before drawing in `Scene::internalDraw()`
+- Uses `impl_->registry.ctx().find<Components::View>()` to get View
+- No casting needed - View is directly usable as sf::View
+
 ## Security Considerations
 
 ### Safe Optional Access
@@ -99,18 +151,19 @@ Successfully implemented a View component system for the Harmony Engine that pro
 - Uses `value_or()` for optional values with safe defaults
 
 ### Null Pointer Safety
-- `getView()` methods check for null before returning reference
-- `internalDraw()` checks `if (impl_->view)` before accessing
+- `getView()` methods check for null before returning reference using ctx.find()
+- `internalDraw()` checks `if (auto* view = ctx.find<View>())` before accessing
 - Throws `ComponentNotFoundException` if view is not initialized
-
-### Safe Casting
-- Uses `static_cast` for compatible type conversions
-- Checks pointer validity before dereferencing
-- All casts are from known internal types
 
 ### Thread Safety
 - View access protected by scene's entity mutex
 - Modifications during rendering are safe
+- EnTT ctx provides thread-safe access
+
+### No Manual Memory Management
+- EnTT ctx manages View lifetime automatically
+- No need for unique_ptr or manual deletion
+- View is automatically destroyed with the registry
 
 ## Testing Recommendations
 
@@ -123,22 +176,57 @@ Successfully implemented a View component system for the Harmony Engine that pro
    - Test getView() access
    - Test setView() modification
    - Test view methods (setCenter, zoom, etc.)
+   - Test inherited sf::View methods directly
 
-3. **Rendering Testing**
+3. **Global Component Testing**
+   - Test createGlobalComponent()
+   - Test getGlobalComponent()
+   - Test deleteGlobalComponent()
+
+4. **Task Testing**
+   - Test CreateSceneViewTask
+   - Test DeleteSceneViewTask
+
+5. **Rendering Testing**
    - Verify view is applied before drawing
    - Test multiple scenes with different views
    - Test viewport configurations
 
-4. **Error Handling**
-   - Verify exception thrown when accessing uninitialized view (shouldn't happen with auto-init)
+6. **Error Handling**
+   - Verify exception thrown when accessing uninitialized view
    - Test with invalid configuration values
 
 ## Compatibility
 
-- Follows existing component pattern (Transform, Circle, Rectangle, Text)
-- Uses same PImpl idiom as other components
-- Integrates with existing Scene, ComponentManager, and Configuration systems
-- Compatible with existing rendering pipeline
+- **Breaking Changes**:
+  - `getInternalView()` method removed - View is now sf::View directly
+  - View storage changed from Scene member to registry ctx
+  - Code using `getInternalView()` must be updated to use View directly
+  
+- **Maintained Compatibility**:
+  - Configuration format unchanged
+  - Public API (`getView()`, `setView()`) unchanged in signature
+  - All functionality preserved
+  - Follows existing Scene and Component patterns
+  - Compatible with existing rendering pipeline
+
+## Migration Guide
+
+For code using the old View implementation:
+
+**Before:**
+```cpp
+// Getting internal view for rendering
+const sf::View* sfView = static_cast<const sf::View*>(view.getInternalView());
+renderTarget.setView(*sfView);
+```
+
+**After:**
+```cpp
+// View is now sf::View directly
+auto& view = scene.getView();
+renderTarget.setView(view);
+```
 
 ## Future Enhancements
 
@@ -148,13 +236,14 @@ Potential future improvements:
 3. View shake effects
 4. Smooth camera following with lerp
 5. View stacking for effects
+6. Additional global components using the same ctx pattern
 
 ## Conclusion
 
-The View component has been successfully implemented following the Harmony Engine's established patterns. It provides:
-- Singleton view per scene
-- Automatic initialization with sensible defaults
-- Full control over camera/viewport
-- Safe, well-documented API
-- Integration with existing rendering pipeline
-- Comprehensive documentation and examples
+The View component has been successfully refactored to:
+- Use inheritance instead of composition for cleaner, more idiomatic code
+- Leverage EnTT's registry context for global component storage
+- Provide a template pattern for future global components
+- Maintain all existing functionality while simplifying the implementation
+- Add task-based View management for async operations
+- Improve code maintainability and reduce boilerplate

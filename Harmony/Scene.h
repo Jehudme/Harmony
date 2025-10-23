@@ -72,6 +72,19 @@ namespace Harmony::Scenes
 		const Components::View& getView() const;
 		void setView(const Utilities::Configuration& configuration);
 
+		// Global component management (stored in registry ctx)
+		template<typename Type, typename... Args>
+		Type& createGlobalComponent(Args&&... args);
+		
+		template<typename Type>
+		void deleteGlobalComponent();
+		
+		template<typename Type>
+		Type* getGlobalComponent();
+		
+		template<typename Type>
+		const Type* getGlobalComponent() const;
+
 		// Scene control functions
 		void enableDrawing();
 		void disableDrawing();
