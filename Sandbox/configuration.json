@@ -1,6 +1,6 @@
 {
   "window": {
-    "title": "Harmony Engine Demo",
+    "title": "Flappy Bird - Harmony Engine",
     "width": 1280,
     "height": 720,
     "fps": 60
@@ -8,84 +8,234 @@
   "startupStatesIds": [ 1 ],
   "states": {
     "1": {
-      "scenes": [ 1002 ]
+      "scenes": [ 100, 200, 300, 400 ]
     }
   },
   "scenes": {
-    "1002" : {
+    "100": {
+      "drawOrder": -20,
+      "entities": [ 1001, 1002 ]
+    },
+    "200": {
       "drawOrder": 0,
-      "entities": [2001, 2001, 2001, 2002]
+      "entities": [ 2001, 2002, 2003, 2004, 2005, 2006 ]
+    },
+    "300": {
+      "drawOrder": 10,
+      "entities": [ 3001 ]
+    },
+    "400": {
+      "drawOrder": 50,
+      "entities": [ 4001, 4002, 4003 ]
     }
   },
   "entities": {
-    "2001": {
-      "name": "Player",
-      "script": "BasicScript",
+    "1001": {
+      "name": "Sky Background",
+      "script": "BackgroundScript",
       "components": {
         "Transform": {
-          "position": {
-            "x": 100,
-            "y": 150
-          },
+          "position": { "x": 640, "y": 360 },
           "rotation": 0,
-          "scale": {
-            "x": 1,
-            "y": 1
-          }
+          "scale": { "x": 1, "y": 1 }
         },
-        "Circle": {
-          "texture": 1006,
-          "width": 50,
-          "height": 75
+        "Rectangle": {
+          "width": 1280,
+          "height": 720,
+          "fill_color": { "r": 135, "g": 206, "b": 235, "a": 255 },
+          "outline_thickness": 0
+        }
+      }
+    },
+    "1002": {
+      "name": "Sky Background 2",
+      "script": "BackgroundScript",
+      "components": {
+        "Transform": {
+          "position": { "x": 1920, "y": 360 },
+          "rotation": 0,
+          "scale": { "x": 1, "y": 1 }
+        },
+        "Rectangle": {
+          "width": 1280,
+          "height": 720,
+          "fill_color": { "r": 135, "g": 206, "b": 235, "a": 255 },
+          "outline_thickness": 0
+        }
+      }
+    },
+    "2001": {
+      "name": "Ground",
+      "script": "GroundScript",
+      "components": {
+        "Transform": {
+          "position": { "x": 640, "y": 670 },
+          "rotation": 0,
+          "scale": { "x": 1, "y": 1 }
+        },
+        "Rectangle": {
+          "width": 1280,
+          "height": 100,
+          "fill_color": { "r": 139, "g": 69, "b": 19, "a": 255 },
+          "outline_color": { "r": 101, "g": 67, "b": 33, "a": 255 },
+          "outline_thickness": 3
         }
       }
     },
     "2002": {
-      "name": "TextLabel",
+      "name": "Ground 2",
+      "script": "GroundScript",
       "components": {
         "Transform": {
-          "position": {
-            "x": 200,
-            "y": 300
-          },
+          "position": { "x": 1920, "y": 670 },
           "rotation": 0,
-          "scale": {
-            "x": 1,
-            "y": 1
-          }
+          "scale": { "x": 1, "y": 1 }
         },
-        "Text": {
-          "font": 1007,
-          "string": "Hello, Harmony!",
-          "character_size": 48,
-          "style": 0,
-          "outline_thickness": 2,
-          "fill_color": {
-            "r": 255,
-            "g": 255,
-            "b": 255,
-            "a": 255
-          },
-          "outline_color": {
-            "r": 0,
-            "g": 0,
-            "b": 0,
-            "a": 255
-          }
+        "Rectangle": {
+          "width": 1280,
+          "height": 100,
+          "fill_color": { "r": 139, "g": 69, "b": 19, "a": 255 },
+          "outline_color": { "r": 101, "g": 67, "b": 33, "a": 255 },
+          "outline_thickness": 3
+        }
+      }
+    },
+    "2003": {
+      "name": "Pipe Top 1",
+      "script": "PipeScript",
+      "components": {
+        "Transform": {
+          "position": { "x": 800, "y": 125 },
+          "rotation": 0,
+          "scale": { "x": 1, "y": 1 }
+        },
+        "Rectangle": {
+          "width": 80,
+          "height": 250,
+          "fill_color": { "r": 34, "g": 139, "b": 34, "a": 255 },
+          "outline_color": { "r": 0, "g": 100, "b": 0, "a": 255 },
+          "outline_thickness": 3
+        }
+      }
+    },
+    "2004": {
+      "name": "Pipe Bottom 1",
+      "script": "PipeScript",
+      "components": {
+        "Transform": {
+          "position": { "x": 800, "y": 525 },
+          "rotation": 0,
+          "scale": { "x": 1, "y": 1 }
+        },
+        "Rectangle": {
+          "width": 80,
+          "height": 250,
+          "fill_color": { "r": 34, "g": 139, "b": 34, "a": 255 },
+          "outline_color": { "r": 0, "g": 100, "b": 0, "a": 255 },
+          "outline_thickness": 3
+        }
+      }
+    },
+    "2005": {
+      "name": "Pipe Top 2",
+      "script": "PipeScript",
+      "components": {
+        "Transform": {
+          "position": { "x": 1200, "y": 150 },
+          "rotation": 0,
+          "scale": { "x": 1, "y": 1 }
+        },
+        "Rectangle": {
+          "width": 80,
+          "height": 300,
+          "fill_color": { "r": 34, "g": 139, "b": 34, "a": 255 },
+          "outline_color": { "r": 0, "g": 100, "b": 0, "a": 255 },
+          "outline_thickness": 3
+        }
+      }
+    },
+    "2006": {
+      "name": "Pipe Bottom 2",
+      "script": "PipeScript",
+      "components": {
+        "Transform": {
+          "position": { "x": 1200, "y": 550 },
+          "rotation": 0,
+          "scale": { "x": 1, "y": 1 }
+        },
+        "Rectangle": {
+          "width": 80,
+          "height": 200,
+          "fill_color": { "r": 34, "g": 139, "b": 34, "a": 255 },
+          "outline_color": { "r": 0, "g": 100, "b": 0, "a": 255 },
+          "outline_thickness": 3
+        }
+      }
+    },
+    "3001": {
+      "name": "Flappy Bird",
+      "script": "FlappyBirdScript",
+      "components": {
+        "Transform": {
+          "position": { "x": 150, "y": 300 },
+          "rotation": 0,
+          "scale": { "x": 1, "y": 1 }
+        },
+        "Circle": {
+          "width": 40,
+          "height": 40,
+          "fill_color": { "r": 255, "g": 215, "b": 0, "a": 255 },
+          "outline_color": { "r": 255, "g": 140, "b": 0, "a": 255 },
+          "outline_thickness": 3
+        }
+      }
+    },
+    "4001": {
+      "name": "Score Indicator",
+      "components": {
+        "Transform": {
+          "position": { "x": 50, "y": 30 },
+          "rotation": 0,
+          "scale": { "x": 1, "y": 1 }
+        },
+        "Circle": {
+          "width": 30,
+          "height": 30,
+          "fill_color": { "r": 255, "g": 215, "b": 0, "a": 255 },
+          "outline_color": { "r": 0, "g": 0, "b": 0, "a": 255 },
+          "outline_thickness": 2
+        }
+      }
+    },
+    "4002": {
+      "name": "Title Decoration 1",
+      "components": {
+        "Transform": {
+          "position": { "x": 400, "y": 100 },
+          "rotation": 0,
+          "scale": { "x": 1, "y": 1 }
+        },
+        "Rectangle": {
+          "width": 200,
+          "height": 80,
+          "fill_color": { "r": 255, "g": 215, "b": 0, "a": 200 },
+          "outline_color": { "r": 139, "g": 69, "b": 19, "a": 255 },
+          "outline_thickness": 4
+        }
+      }
+    },
+    "4003": {
+      "name": "Game Manager",
+      "script": "GameManagerScript",
+      "components": {
+        "Transform": {
+          "position": { "x": 0, "y": 0 },
+          "rotation": 0,
+          "scale": { "x": 1, "y": 1 }
         }
       }
     }
   },
   "resources": {
-    "texture": {
-      "1006": {
-        "filepath": "missing_textures.png"
-      }
-    },
-    "font": {
-      "1007": {
-        "filepath": "arial.ttf"
-      }
-    }
   }
 }
