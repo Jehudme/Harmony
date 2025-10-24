@@ -53,6 +53,13 @@ namespace Harmony::Components
 			centerX, centerY, width, height);
 	}
 
+	View::View(const sf::View& other)
+		: sf::View(other) {}
+
+
+
+	View::View() = default;
+
 	View::~View() = default;
 
 	void View::setCenter(const float center[2]) {

@@ -1,5 +1,6 @@
 #pragma once
 #include "ComponentManagement.h"
+#include "entt/entity/fwd.hpp"
 
 namespace Harmony::Components
 {
@@ -20,7 +21,7 @@ namespace Harmony::Components
 		Scenes::Scene& getScene();
 
 	public:
-		Scenes::EntityID entityId;
+		entt::entity entityId;
 
 	private:
 		std::optional<std::reference_wrapper<Scenes::Scene>> scene_;

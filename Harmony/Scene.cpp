@@ -8,6 +8,7 @@
 #include "Script.h"
 #include "View.h"
 #include "Configuration.h"
+#include "RenderManager.h"
 #include <SFML/Graphics.hpp>
 #include <Entt/entt.hpp>
 
@@ -50,21 +51,11 @@ namespace Harmony::Scenes
 
 		// Initialize View component (stored in registry ctx as global)
 		if (std::optional<Utilities::Configuration> viewConfig = configuration_.subsection({ "view" })) {
-			impl_->registry.ctx().emplace<Components::View>(viewConfig.value(), *this);
+			createGlobalComponent<Components::View>(viewConfig.value(), *this);
 			HARMONY_DEBUG("View created from configuration for scene {}", sceneId);
 		}
 		else {
-			// Create default view matching window size
-			Utilities::Configuration defaultViewConfig;
-			unsigned int windowWidth = engine.configuration.get<unsigned int>({ "window", "width" }).value_or(800);
-			unsigned int windowHeight = engine.configuration.get<unsigned int>({ "window", "height" }).value_or(600);
-			
-			defaultViewConfig.set<float>({ "center", "x" }, windowWidth / 2.0f);
-			defaultViewConfig.set<float>({ "center", "y" }, windowHeight / 2.0f);
-			defaultViewConfig.set<float>({ "size", "width" }, static_cast<float>(windowWidth));
-			defaultViewConfig.set<float>({ "size", "height" }, static_cast<float>(windowHeight));
-			
-			impl_->registry.ctx().emplace<Components::View>(defaultViewConfig, *this);
+			createGlobalComponent<Components::View>(engine.renderManager->getDefaultView());
 			HARMONY_DEBUG("Default view created for scene {}", sceneId);
 		}
 
@@ -77,7 +68,7 @@ namespace Harmony::Scenes
 		// Inline destroy logic to avoid recursive locking
 		for (auto entity : impl_->registry.view<entt::entity>()) {
 			if (impl_->registry.try_get<Components::Script>(entity))
-				componentReference<Components::Script>(static_cast<EntityID>(entity)).onDestroy();
+				getComponent<Components::Script>(static_cast<EntityID>(entity)).onDestroy();
 
 			impl_->registry.destroy(entity);
 		}
@@ -127,17 +118,33 @@ namespace Harmony::Scenes
 		auto entitiesView = impl_->registry.view<std::unique_ptr<Components::Script>>();
 
 		for (const entt::entity entity : entitiesView) {
-			Components::Script& scriptComponent = componentReference<Components::Script>(static_cast<EntityID>(entity));
+			Components::Script& scriptComponent = getComponent<Components::Script>(static_cast<EntityID>(entity));
 			scriptComponent.onPreUpdate();
 		}
 
 		for (const entt::entity entity : entitiesView) {
-			Components::Script& scriptComponent = componentReference<Components::Script>(static_cast<EntityID>(entity));
+			Components::Script& scriptComponent = getComponent<Components::Script>(static_cast<EntityID>(entity));
 			scriptComponent.onPostUpdate();
 		}
 	}
 
-	EntityID Scene::createEntity(const Utilities::Configuration& configuration) 
+	void Scene::createComponent(const std::string& componentName, const Utilities::Configuration& configuration, entt::entity entity){
+		Harmony::Management::ComponentManager::createComponent(componentName, configuration, entity, *this);
+	}
+
+	void Scene::deleteComponent(const std::string& componentName, entt::entity entityId) {
+		Harmony::Management::ComponentManager::deleteComponent(componentName, entityId, *this);
+	}
+
+	void Scene::createGlobalComponent(const std::string& componentName, const Utilities::Configuration& configuration) {
+		Harmony::Management::ComponentManager::createComponent(componentName, configuration, entt::null, *this);
+	}
+
+	void Scene::deleteGlobalComponent(const std::string& componentName) {
+		Harmony::Management::ComponentManager::deleteComponent(componentName, entt::null, *this);
+	}
+
+	EntityID Scene::createEntity(const Utilities::Configuration& configuration)
 	{
 		std::lock_guard<std::mutex> lock(entityMutex_);
 		configuration.debugPrint();
@@ -148,10 +155,10 @@ namespace Harmony::Scenes
 			Management::ComponentManager::createComponent(componentName, configuration.subsection({ "components", componentName}).value(), entity, *this);
 
 		if (std::optional<std::string> scriptName = configuration.get<std::string>({ "script" })) {
-			Management::ComponentManager::createComponent(scriptName.value(), configuration.subsection({ "script" }).value(), entity, *this);
-			Components::Script& script = componentReference<Components::Script>(static_cast<EntityID>(entity));
-			script.entityId = static_cast<EntityID>(entity);
-			script.scene_ = *this;
+			createComponent(scriptName.value(), configuration.subsection({ "script" }).value(), entity);
+
+			Components::Script& script = getComponent<Components::Script>(static_cast<EntityID>(entity));
+			script.entityId = entity; script.scene_ = *this;
 			script.onCreate();
 		}
 
@@ -178,7 +185,7 @@ namespace Harmony::Scenes
 		entt::entity entity = static_cast<entt::entity>(entityId);
 		
 		if (impl_->registry.try_get<Components::Script>(entity))
-			componentReference<Components::Script>(entityId).onDestroy();
+			getComponent<Components::Script>(entityId).onDestroy();
 
 		impl_->registry.destroy(entity);
 

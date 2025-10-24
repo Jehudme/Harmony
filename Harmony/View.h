@@ -17,6 +17,8 @@ namespace Harmony::Components
 	{
 	public:
 		View(const Utilities::Configuration& configuration, Scenes::Scene& scene);
+		View(const sf::View& other);
+		View();
 		~View();
 
 		// Additional helper methods that wrap or extend sf::View functionality

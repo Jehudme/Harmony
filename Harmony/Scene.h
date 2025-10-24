@@ -59,10 +59,34 @@ namespace Harmony::Scenes
 		const int drawOrder;
 
 		template<typename Type>
-		Type& componentReference(EntityID entityId);
+		Type& getComponent(EntityID entityId);
+		template<typename Type>
+		Type& getComponent(EntityID entityId) const;
+
+		template<typename Type, typename... Args>
+		Type& createComponent(entt::entity entityId, Args&&... args);
+		template<typename Base, typename Type, typename... Args>
+		Type& createComponent(entt::entity entityId, Args&&... args);
+		template<typename Type>
+		void deleteComponent(entt::entity entityId);
+
+		void createComponent(const std::string& componentName, const Utilities::Configuration& configuration, entt::entity entityId);
+		void deleteComponent(const std::string& componentName, entt::entity entityId);
 
 		template<typename Type>
-		Type& componentReference(EntityID entityId) const;
+		Type& getGlobalComponent();
+		template<typename Type>
+		const Type& getGlobalComponent() const;
+		
+		template<typename Type, typename... Args>
+		Type& createGlobalComponent(Args&&... args);
+		template<typename Base, typename Type, typename... Args>
+		Type& createGlobalComponent(Args&&... args);
+		template<typename Type>
+		void deleteGlobalComponent();
+		
+		void createGlobalComponent(const std::string& componentName, const Utilities::Configuration& configuration);
+		void deleteGlobalComponent(const std::string& componentName);
 
 		EntityID createEntity(const Utilities::Configuration& configuration);
 		EntityID createEntity(const Utilities::Configuration& configuration, Utilities::UUID premadeId);
@@ -73,19 +97,6 @@ namespace Harmony::Scenes
 		Components::View& getView();
 		const Components::View& getView() const;
 		void setView(const Utilities::Configuration& configuration);
-
-		// Global component management (stored in registry ctx)
-		template<typename Type, typename... Args>
-		Type& createGlobalComponent(Args&&... args);
-		
-		template<typename Type>
-		void deleteGlobalComponent();
-		
-		template<typename Type>
-		Type* getGlobalComponent();
-		
-		template<typename Type>
-		const Type* getGlobalComponent() const;
 
 		// Scene control functions
 		void enableDrawing();
