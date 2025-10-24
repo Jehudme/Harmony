@@ -53,7 +53,7 @@ namespace Harmony::Components
 		if (!outlineB.has_value())  HARMONY_WARN("Shape component missing outline color blue configuration");
 		if (!outlineA.has_value())  HARMONY_WARN("Shape component missing outline color alpha configuration");
 
-		this->setFillColor(sf::Color(fillA.value_or(255), fillR.value_or(255), fillG.value_or(255), fillB.value_or(255)));
-		this->setOutlineColor(sf::Color(outlineA.value_or(255), outlineR.value_or(255), outlineG.value_or(255), outlineB.value_or(255)));
+		this->setFillColor(sf::Color(fillR.value_or(255), fillG.value_or(255), fillB.value_or(255), fillA.value_or(255)));
+		this->setOutlineColor(sf::Color(outlineR.value_or(255), outlineG.value_or(255), outlineB.value_or(255), outlineA.value_or(255)));
 	}
 }

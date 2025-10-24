@@ -16,7 +16,9 @@
   "scenes": {
     "201": {
       "drawOrder": 0,
-      "entities": [ 301 ]
+      "entities": {
+        "301": {}
+      }
     }
   },
   "entities": {
@@ -43,7 +45,7 @@
           "fill_color": {
             "r": 0,
             "g": 0,
-            "b": 255,
+            "b": 0,
             "a": 255
           }
         }

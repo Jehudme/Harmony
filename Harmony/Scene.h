@@ -65,6 +65,8 @@ namespace Harmony::Scenes
 		Type& componentReference(EntityID entityId) const;
 
 		EntityID createEntity(const Utilities::Configuration& configuration);
+		EntityID createEntity(const Utilities::Configuration& configuration, Utilities::UUID premadeId);
+
 		void destroyEntity(EntityID entityId);
 
 		// View management (singleton per scene)

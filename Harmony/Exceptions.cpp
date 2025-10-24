@@ -9,7 +9,7 @@ namespace Harmony::Exceptions
 	// Configuration Exceptions
 	ConfigurationExceptions::ConfigurationExceptions(const std::string& message)
 		: std::runtime_error(std::format("Configuration Exception: {}", message)) {
-		Harmony::Utilities::Logger::error(what());
+		HARMONY_ERROR(what());
 	}
 
 	OpenConfigurationFileException::OpenConfigurationFileException(const std::string& filepath)
@@ -19,7 +19,7 @@ namespace Harmony::Exceptions
 
 	ParseConfigurationFileException::ParseConfigurationFileException(const std::string& filepath, const std::string& details)
 		: ConfigurationExceptions(std::format("Failed to parse configuration file: {}. Details: {}", filepath, details)) {
-		HARMONY_ERROR(what());
+		HARMONY_ERROR(what(
 	}
 
 	// Component Exceptions
@@ -41,7 +41,7 @@ namespace Harmony::Exceptions
 
 	ComponentNotFoundException::ComponentNotFoundException(const std::uint32_t entityId)
 		: std::runtime_error("Entity " + std::to_string(entityId) + " missing requested component") {
-		HARMONY_CRITICAL("Entity {} does not have component of requested type", entityId);
+		HARMONY_CRITICAL(what());
 	}
 
 	// State Exceptions

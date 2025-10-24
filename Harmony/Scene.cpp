@@ -28,17 +28,12 @@ namespace Harmony::Scenes
 		return scene.impl_->registry;
 	}
 
-	void on_create_entity(entt::registry& registry, const entt::entity entity);
-	void on_destroy_entity(entt::registry& registry, const entt::entity entity);
-
-
 	Scene::Scene(const Utilities::Configuration& configuration, const Utilities::UUID sceneId, Engine& engine) :
+		drawOrder(configuration.get<int>({ "drawOrder" }).value_or(0)),
+		impl_(std::make_unique<SceneImpl>()),
 		configuration_(configuration),
 		sceneId(sceneId),
-		engine(engine),
-		drawOrder(configuration.get<int>({"drawOrder"}).value_or(0)),
-		impl_(std::make_unique<SceneImpl>())
-	{
+		engine(engine) {
 		initialize();
 	}
 
@@ -49,19 +44,9 @@ namespace Harmony::Scenes
 			impl_->registry.destroy(static_cast<entt::entity>(entity));
 		}
 
-		if (std::optional<Utilities::UUIDList> entitiesKeys = configuration_.get<Utilities::UUIDList>({"entities"})) {
-			for (const Utilities::UUID entityKey : entitiesKeys.value()) {
-				if (std::optional<Utilities::Configuration> configuration = engine.configuration.subsection({ "entities", std::to_string(entityKey) })) {
-					createEntity(configuration.value());
-				}
-				else {
-					HARMONY_ERROR("Entity {} has no configuration defined in engine configuration", entityKey);
-				}
-			}
-		}
-		else {
-			HARMONY_WARN("Scene {} has no entities defined in configuration", sceneId);
-		}
+		std::vector<std::string> entitiesKeys = configuration_.extractKeys({ "entities" });
+		for (std::string& entityKey : entitiesKeys)
+			createEntity(configuration_.subsection({ "entities", entityKey }).value(), std::stoull(entityKey));
 
 		// Initialize View component (stored in registry ctx as global)
 		if (std::optional<Utilities::Configuration> viewConfig = configuration_.subsection({ "view" })) {
@@ -84,20 +69,6 @@ namespace Harmony::Scenes
 		}
 
 		HARMONY_INFO("Scene {} initialized", sceneId);
-	}
-
-	void on_create_entity(entt::registry& registry, const entt::entity entity)
-	{
-		if (auto scriptComponent = registry.try_get<Components::Script>(entity)) {
-			scriptComponent->onCreate();
-		}
-	}
-
-	void on_destroy_entity(entt::registry& registry, const entt::entity entity)
-	{
-		if (auto scriptComponent = registry.try_get<Components::Script>(entity)) {
-			scriptComponent->onDestroy();
-		}
 	}
 
 	Scene::~Scene() {
@@ -169,6 +140,7 @@ namespace Harmony::Scenes
 	EntityID Scene::createEntity(const Utilities::Configuration& configuration) 
 	{
 		std::lock_guard<std::mutex> lock(entityMutex_);
+		configuration.debugPrint();
 		
 		const entt::entity entity = impl_->registry.create();
 
@@ -185,6 +157,18 @@ namespace Harmony::Scenes
 
 		HARMONY_DEBUG("Entity {} created", static_cast<std::uint32_t>(entity));
 		return static_cast<EntityID>(entity);
+	}
+
+	EntityID Scene::createEntity(const Utilities::Configuration& configuration, Utilities::UUID premadeId)
+	{
+		Utilities::Configuration mergedConfiguration;
+		if (std::optional<Utilities::Configuration> premadeConfiguration = engine.configuration.subsection({ "entities", std::to_string(premadeId) }))
+			mergedConfiguration.merge(premadeConfiguration.value());
+
+		else HARMONY_WARN("Premade entity {} has no configuration defined in engine configuration", premadeId);
+
+		mergedConfiguration.merge(configuration);
+		return createEntity(mergedConfiguration);
 	}
 
 	void Scene::destroyEntity(EntityID entityId)
