@@ -11,13 +11,13 @@
 #include "ResourceManager.h"
 #include "InputManager.h"
 #include "Exceptions.h"
+#include "RenderManager.h"
 #include "Logger.h" // for HARMONY_* macros
 
 namespace Harmony
 {
 	// PImpl struct to hide SFML types from header
 	struct Engine::EngineImpl {
-		sf::RenderWindow window;
 		sf::Clock clock;
 		sf::Time deltaTime;
 	};
@@ -25,6 +25,7 @@ namespace Harmony
 	Engine::Engine(Utilities::Configuration& configuration)
 		: configuration(configuration),
 		impl_(std::make_unique<EngineImpl>()),
+		renderManager(std::make_unique<Management::RenderManager>(*this)),
 		resourceManager(std::make_unique<Management::ResourceManager>(*this)),
 		taskManagement(std::make_unique<Management::TaskManager>(*this)),
 		sceneManagement(std::make_unique<Management::SceneManager>(*this)),
@@ -32,52 +33,6 @@ namespace Harmony
 		componentManagement(std::make_unique<Management::ComponentManager>(*this)),
 		inputManager(std::make_unique<InputManager>(*this))
 	{
-		HARMONY_INFO("Engine initializing...");
-
-		// Load window settings from configuration
-		std::optional<std::string> title = configuration.get<std::string>({ "window", "title" });
-		std::optional<unsigned int> width = configuration.get<unsigned int>({ "window", "width" });
-		std::optional<unsigned int> height = configuration.get<unsigned int>({ "window", "height" });
-		std::optional<unsigned int> fps = configuration.get<unsigned int>({ "window", "fps" });
-
-		if (!title.has_value()) 
-		{
-			title = "Harmony Engine";
-			HARMONY_WARN("Window title not specified in configuration, using default: '{}'", title.value());
-		}
-		if (!width.has_value()) 
-		{
-			width = 800;
-			HARMONY_WARN("Window width not specified in configuration, using default: {}", width.value());
-		}
-		if (!height.has_value()) 
-		{
-			height = 600;
-			HARMONY_WARN("Window height not specified in configuration, using default: {}", height.value());
-		}
-		if (!fps.has_value()) 
-		{
-			targetFPS_ = 0;
-			HARMONY_WARN("Window FPS not specified in configuration, using default: uncapped");
-		}
-		else
-		{
-			targetFPS_ = fps.value();
-		}
-
-		if (width == 0 || height == 0) {
-			HARMONY_ERROR("Invalid window dimensions: {}x{}", width.value(), height.value());
-			throw Exceptions::EngineError("Window dimensions must be greater than zero");
-		}
-
-		impl_->window.create(sf::VideoMode(width.value(), height.value()), title.value());
-		if (!impl_->window.isOpen()) {
-			HARMONY_ERROR("Failed to create SFML window");
-			throw Exceptions::EngineError("Window creation failed");
-		}
-
-		impl_->window.setFramerateLimit(targetFPS_);
-		HARMONY_INFO("Window created: '{}' ({}x{}, targetFPS={})", title.value(), width.value(), height.value(), targetFPS_);
 	}
 
 	Engine::~Engine() {
@@ -112,8 +67,8 @@ namespace Harmony
 	{
 		HARMONY_WARN("Engine stopping...");
 		running_ = false;
-		if (impl_->window.isOpen()) {
-			impl_->window.close();
+		if (renderManager->isOpen()) {
+			renderManager->close();
 			HARMONY_INFO("Window closed");
 		}
 	}
@@ -121,24 +76,6 @@ namespace Harmony
 	bool Engine::isRunning() const noexcept
 	{
 		return running_;
-	}
-
-	void Engine::setTargetFPS(unsigned int fps)
-	{
-		targetFPS_ = fps;
-		if (targetFPS_ > 0) {
-			impl_->window.setFramerateLimit(targetFPS_);
-			HARMONY_INFO("Target FPS set to {}", targetFPS_);
-		}
-		else {
-			impl_->window.setFramerateLimit(0);
-			HARMONY_WARN("Target FPS uncapped");
-		}
-	}
-
-	unsigned int Engine::getTargetFPS() const noexcept
-	{
-		return targetFPS_;
 	}
 
 	float Engine::getDeltaTime() const noexcept
@@ -153,7 +90,7 @@ namespace Harmony
 	void Engine::handleEvents()
 	{
 		sf::Event event;
-		while (impl_->window.pollEvent(event)) {
+		while (renderManager->pollEvent(event)) {
 			// Forward all events to the InputManager for processing
 			inputManager->handleEvent(event);
 
@@ -245,9 +182,9 @@ namespace Harmony
 	void Engine::handleRendering()
 	{
 		try {
-			impl_->window.clear(sf::Color::Black);
-			stateManagement->internalDraw(impl_->window);
-			impl_->window.display();
+			renderManager->clear(sf::Color::Black);
+			stateManagement->internalDraw(renderManager->getRenderTarget());
+			renderManager->display();
 		}
 		catch (const Exceptions::StateStackEmptyError& e) {
 			HARMONY_ERROR("Cannot render: {}", e.what());

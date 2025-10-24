@@ -19,7 +19,7 @@ namespace Harmony::Exceptions
 
 	ParseConfigurationFileException::ParseConfigurationFileException(const std::string& filepath, const std::string& details)
 		: ConfigurationExceptions(std::format("Failed to parse configuration file: {}. Details: {}", filepath, details)) {
-		HARMONY_ERROR(what(
+		HARMONY_ERROR(what());
 	}
 
 	// Component Exceptions
@@ -103,9 +103,21 @@ namespace Harmony::Exceptions
 
 	ResourceUnloadException::ResourceUnloadException(const Utilities::UUID resourceId)
 		: ResourceException("Failed to unload resource ID: " + std::to_string(resourceId)) {
+		HARMONY_ERROR(what());
 	}
 
 	ResourceConversionException::ResourceConversionException(const std::string& target, const std::string& type)
 		: ResourceException("Failed to convert resource of type '" + type + "' to target type '" + target + "'") {
+		HARMONY_ERROR(what());
+	}
+
+	RenderManagementException::RenderManagementException(const std::string& message)
+		: std::runtime_error("Render Management Exception: " + message) {
+		HARMONY_ERROR(what());
+	}
+
+	InvalidRenderTargetException::InvalidRenderTargetException(const std::string& details)
+		: RenderManagementException("Invalid render target: " + details) {
+		HARMONY_ERROR(what());
 	}
 }

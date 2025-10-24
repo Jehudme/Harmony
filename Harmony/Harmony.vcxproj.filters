@@ -156,6 +156,9 @@
     <ClInclude Include="View.h">
       <Filter>Header Files\Components</Filter>
     </ClInclude>
+    <ClInclude Include="RenderManager.h">
+      <Filter>Header Files\Managers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Configuration.cpp">
@@ -256,6 +259,9 @@
     </ClCompile>
     <ClCompile Include="View.cpp">
       <Filter>Source Files\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderManager.cpp">
+      <Filter>Source Files\Managers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

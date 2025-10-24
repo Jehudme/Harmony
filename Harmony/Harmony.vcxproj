@@ -157,6 +157,7 @@
     <ClInclude Include="pch.h" />
     <ClInclude Include="RandomValue.h" />
     <ClInclude Include="Rectangle.h" />
+    <ClInclude Include="RenderManager.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="ResourceTask.h" />
@@ -198,6 +199,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Rectangle.cpp" />
+    <ClCompile Include="RenderManager.cpp" />
     <ClCompile Include="Resource.cpp" />
     <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="ResourceTask.cpp" />

@@ -14,6 +14,7 @@ namespace Harmony {
         class StateManager;
 		class ComponentManager;
 		class ResourceManager;
+		class RenderManager;
     }
 	class InputManager;
 }
@@ -35,9 +36,6 @@ namespace Harmony
         void stop();
 
         bool isRunning() const noexcept;
-
-        void setTargetFPS(unsigned int fps);
-        unsigned int getTargetFPS() const noexcept;
         
         /// @brief Get delta time in seconds
         float getDeltaTime() const noexcept;
@@ -45,6 +43,7 @@ namespace Harmony
     public:
         Utilities::Configuration& configuration;
 
+		std::unique_ptr<Management::RenderManager> renderManager;
         std::unique_ptr<Management::ResourceManager> resourceManager;
         std::unique_ptr<Management::TaskManager> taskManagement;
         std::unique_ptr<Management::SceneManager> sceneManagement;
@@ -60,7 +59,6 @@ namespace Harmony
         void handleRendering();
 
     private:
-        // PImpl idiom - hide SFML window, clock, and time implementation
         struct EngineImpl;
         std::unique_ptr<EngineImpl> impl_;
 

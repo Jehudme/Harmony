@@ -43,7 +43,7 @@
           "point_count": 50,
           "radius": 25,
           "fill_color": {
-            "r": 0,
+            "r": 255,
             "g": 0,
             "b": 0,
             "a": 255

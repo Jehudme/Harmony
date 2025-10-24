@@ -87,5 +87,13 @@ namespace Harmony::Exceptions
 	struct ResourceConversionException : public ResourceException {
 		explicit ResourceConversionException(const std::string& target, const std::string& type);
 	};
+
+	struct RenderManagementException : public std::runtime_error {
+		explicit RenderManagementException(const std::string& message);
+	};
+
+	struct InvalidRenderTargetException : public RenderManagementException {
+		explicit InvalidRenderTargetException(const std::string& details);
+	};
 }
 

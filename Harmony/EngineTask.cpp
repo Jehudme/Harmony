@@ -2,6 +2,7 @@
 #include "Engine.h"
 #include "EngineTask.h"
 #include "Logger.h"
+#include "RenderManager.h"
 
 namespace Harmony::Tasks
 {
@@ -11,7 +12,7 @@ namespace Harmony::Tasks
 	void SetFPS::run()
 	{
 		try {
-			getEngine().setTargetFPS(targetFPS_);
+			getEngine().renderManager->setFramerateLimit(targetFPS_);
 		}
 		catch (const std::exception& e) {
 			HARMONY_ERROR("Failed to set target FPS to {}: {}", targetFPS_, e.what());
