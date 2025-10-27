@@ -64,15 +64,26 @@ Built-in components include:
 - **Rectangle**: Rectangular shape rendering with texture support
 - **Text**: Text rendering with font support
 - **Script**: Custom behavior attachment
+- **Sprite**: Efficient texture rendering with sprite sheet animation support
+- **Camera**: View control and viewport management for scene rendering
+- **Audio**: Sound and music playback attached to entities for spatial audio
+- **ParticleEmitter**: Particle system for visual effects (explosions, fire, smoke, etc.)
+- **PhysicsBody**: Basic physics simulation with velocity, forces, and mass
+- **Collision**: Collision detection and response with shape and layer support
+- **Timer**: Entity-specific timing, delays, and periodic events
+- **StateMachine**: Entity state management with transition callbacks
+
+See [NEW_COMPONENTS_DOCUMENTATION.md](NEW_COMPONENTS_DOCUMENTATION.md) for detailed documentation on the 8 new components.
 
 ### Task System
 
-Over 20 pre-built task types for:
+Over 90 pre-built task types for:
 - Entity management (create, destroy, batch operations)
 - Scene management (create, delete, enable/disable drawing/updating, reset)
 - State management (push, pop, switch, clear)
 - Resource management (load, unload, batch loading)
 - Engine control (set FPS, stop engine, delayed actions)
+- Component control (sprite animation, camera control, audio playback, particle effects, physics forces, collision, timers, state machines)
 - Utility operations (callbacks, lambdas, conditionals, repeated actions)
 
 ## Getting Started
