@@ -1,28 +1,13 @@
 #pragma once
 #include "pch.h"
-
-#include <string>
-#include <memory>
-#include <stdexcept>
-#include <cstdint>
-#include <optional>
-#include <fstream>
-#include <variant>
-#include <unordered_map>
-#include <vector>
-#include <queue>
-#include <mutex>
-#include <atomic>
-#include <functional>
-#include <chrono>
-#include <filesystem>
-#include <thread>
-#include <future>
+#include "entt/fwd.hpp"
 
 namespace Harmony {
 	inline constexpr const char* VERSION = "1.0.0";
 	
 	class Engine;
+
+	using EntityID = entt::entity;
 }
 
 namespace Harmony::Components {
@@ -34,8 +19,6 @@ namespace Harmony::Components {
 namespace Harmony::Scenes {
 	class State;
 	class Scene;
-
-	using EntityID = unsigned int;
 }
 
 namespace Harmony::Tasks {

@@ -22,12 +22,12 @@ namespace Harmony::Tasks
 			return;
 		}
 		
-		Scenes::EntityID entityId = scene->createEntity(entityConfig_);
-		HARMONY_INFO("Entity {} created in scene {}", entityId, sceneId_);
+		EntityID entityId = scene->createEntity(entityConfig_);
+		HARMONY_INFO("Entity {} created in scene {}", static_cast<unsigned int>(entityId), sceneId_);
 	}
 
 	// DestroyEntityTask implementation
-	DestroyEntityTask::DestroyEntityTask(const Utilities::UUID sceneId, Scenes::EntityID entityId) :
+	DestroyEntityTask::DestroyEntityTask(const Utilities::UUID sceneId, EntityID entityId) :
 		Task(50, FastMultiThreaded), sceneId_(sceneId), entityId_(entityId) {}
 
 	void DestroyEntityTask::run()
@@ -39,7 +39,7 @@ namespace Harmony::Tasks
 		}
 		
 		scene->destroyEntity(entityId_);
-		HARMONY_INFO("Entity {} destroyed in scene {}", entityId_, sceneId_);
+		HARMONY_INFO("Entity {} destroyed in scene {}", static_cast<unsigned int>(entityId_), sceneId_);
 	}
 
 	// CreateSceneTask implementation

@@ -13,8 +13,8 @@ namespace Harmony::Scenes
 	// Helper function for component access
 	template<typename Type, typename Registry>
 	static Type& getComponentReferenceImpl(Registry& registry, EntityID entityId) {
-		// Cast EntityID to entt::entity for internal use
-		entt::entity entity = static_cast<entt::entity>(entityId);
+		// Cast EntityID to EntityID for internal use
+		EntityID entity = static_cast<EntityID>(entityId);
 		if (auto* component = registry.template try_get<std::unique_ptr<Type>>(entity))
 			return *component->get();
 	
@@ -36,12 +36,12 @@ namespace Harmony::Scenes
 	}
 
 	template<typename Type, typename ...Args>
-	inline Type& Scene::createComponent(entt::entity entityId, Args && ...args) {
+	inline Type& Scene::createComponent(EntityID entityId, Args && ...args) {
 		return createComponent<Type, Type>(entityId, std::forward<Args>(args)...);
 	}
 
 	template<typename Base, typename Type, typename ...Args>
-	inline Type& Scene::createComponent(entt::entity entityId, Args&&... args)
+	inline Type& Scene::createComponent(EntityID entityId, Args&&... args)
 	{
 		extern entt::registry& getRegistryFromScene(Scene & scene);
 		static_assert(std::is_base_of_v<Base, Type>, "Type must be derived from Base");
@@ -53,9 +53,9 @@ namespace Harmony::Scenes
 	}
 
 	template<typename Type>
-	inline void Scene::deleteComponent(entt::entity entityId) {
+	inline void Scene::deleteComponent(EntityID entityId) {
 		extern entt::registry& getRegistryFromScene(Scene& scene);
-		getRegistryFromScene(*this).remove<std::unique_ptr<Type>>(static_cast<entt::entity>(entityId));
+		getRegistryFromScene(*this).remove<std::unique_ptr<Type>>(static_cast<EntityID>(entityId));
 	}
 
 	// Global component management template implementations

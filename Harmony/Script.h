@@ -21,7 +21,7 @@ namespace Harmony::Components
 		Scenes::Scene& getScene();
 
 	public:
-		entt::entity entityId;
+		EntityID entityId;
 
 	private:
 		std::optional<std::reference_wrapper<Scenes::Scene>> scene_;

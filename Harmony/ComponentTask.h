@@ -9,7 +9,7 @@ namespace Harmony::Tasks
 	class AddComponentTask : public Tasks::Task
 	{
 	public:
-		AddComponentTask(const Utilities::UUID sceneId, Scenes::EntityID entityId, 
+		AddComponentTask(const Utilities::UUID sceneId, EntityID entityId, 
 			const std::string& componentName, const Utilities::Configuration& componentConfig);
 
 	private:
@@ -17,7 +17,7 @@ namespace Harmony::Tasks
 
 	private:
 		const Utilities::UUID sceneId_;
-		const Scenes::EntityID entityId_;
+		const EntityID entityId_;
 		const std::string componentName_;
 		const Utilities::Configuration componentConfig_;
 	};
@@ -42,13 +42,13 @@ namespace Harmony::Tasks
 	{
 	public:
 		BatchDestroyEntitiesTask(const Utilities::UUID sceneId, 
-			const std::vector<Scenes::EntityID>& entityIds);
+			const std::vector<EntityID>& entityIds);
 
 	private:
 		void run() override;
 
 	private:
 		const Utilities::UUID sceneId_;
-		const std::vector<Scenes::EntityID> entityIds_;
+		const std::vector<EntityID> entityIds_;
 	};
 }

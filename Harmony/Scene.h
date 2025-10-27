@@ -34,8 +34,6 @@ namespace Harmony::Scenes
 	entt::registry& getRegistryFromScene(Scene& scene);
 	const entt::registry& getRegistryFromScene(const Scene& scene);
 
-	// Type alias to allow changing ECS implementation later
-	using EntityID = unsigned int;
 	class Scene : public std::enable_shared_from_this<Scene>
 	{
 	public:
@@ -64,14 +62,14 @@ namespace Harmony::Scenes
 		Type& getComponent(EntityID entityId) const;
 
 		template<typename Type, typename... Args>
-		Type& createComponent(entt::entity entityId, Args&&... args);
+		Type& createComponent(EntityID entityId, Args&&... args);
 		template<typename Base, typename Type, typename... Args>
-		Type& createComponent(entt::entity entityId, Args&&... args);
+		Type& createComponent(EntityID entityId, Args&&... args);
 		template<typename Type>
-		void deleteComponent(entt::entity entityId);
+		void deleteComponent(EntityID entityId);
 
-		void createComponent(const std::string& componentName, const Utilities::Configuration& configuration, entt::entity entityId);
-		void deleteComponent(const std::string& componentName, entt::entity entityId);
+		void createComponent(const std::string& componentName, const Utilities::Configuration& configuration, EntityID entityId);
+		void deleteComponent(const std::string& componentName, EntityID entityId);
 
 		template<typename Type>
 		Type& getGlobalComponent();

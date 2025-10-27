@@ -11,7 +11,7 @@ namespace Harmony::Management
 
 	ComponentManager::~ComponentManager() = default;
 
-	void ComponentManager::createComponent(const std::string& name, const Utilities::Configuration& configuation, const entt::entity entityId, Scenes::Scene& scene)
+	void ComponentManager::createComponent(const std::string& name, const Utilities::Configuration& configuation, const EntityID entityId, Scenes::Scene& scene)
 	{
 		if (!getComponentConstructorFactories().contains(name)) throw Exceptions::ComponentNotRegistered(name);
 
@@ -19,7 +19,7 @@ namespace Harmony::Management
 		HARMONY_TRACE("Component '{}' created for entity {}", name, static_cast<std::uint32_t>(entityId));
 	}
 
-	void ComponentManager::deleteComponent(const std::string& name, entt::entity entityId, Scenes::Scene& scene)
+	void ComponentManager::deleteComponent(const std::string& name, EntityID entityId, Scenes::Scene& scene)
 	{
 		if (!getComponentDestructorFactories().contains(name)) throw Exceptions::ComponentNotRegistered(name);
 
@@ -33,14 +33,14 @@ namespace Harmony::Management
 		return mutex_;
 	}
 
-	std::unordered_map<std::string, std::function<void(const Utilities::Configuration&, entt::entity, Scenes::Scene&)>>& ComponentManager::getComponentConstructorFactories()
+	std::unordered_map<std::string, std::function<void(const Utilities::Configuration&, EntityID, Scenes::Scene&)>>& ComponentManager::getComponentConstructorFactories()
 	{
-		static std::unordered_map<std::string, std::function<void(const Utilities::Configuration&, entt::entity, Scenes::Scene&)>> componentFactories_;
+		static std::unordered_map<std::string, std::function<void(const Utilities::Configuration&, EntityID, Scenes::Scene&)>> componentFactories_;
 		return componentFactories_;
 	}
-	std::unordered_map<std::string, std::function<void(entt::entity, Scenes::Scene& scene)>>& ComponentManager::getComponentDestructorFactories()
+	std::unordered_map<std::string, std::function<void(EntityID, Scenes::Scene& scene)>>& ComponentManager::getComponentDestructorFactories()
 	{
-		static std::unordered_map<std::string, std::function<void(entt::entity, Scenes::Scene& scene)>> componentFactories_;
+		static std::unordered_map<std::string, std::function<void(EntityID, Scenes::Scene& scene)>> componentFactories_;
 		return componentFactories_;
 	}
 }

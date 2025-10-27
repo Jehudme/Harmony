@@ -10,7 +10,7 @@
 namespace Harmony::Tasks
 {
 	// AddComponentTask implementation
-	AddComponentTask::AddComponentTask(const Utilities::UUID sceneId, Scenes::EntityID entityId, 
+	AddComponentTask::AddComponentTask(const Utilities::UUID sceneId, EntityID entityId, 
 		const std::string& componentName, const Utilities::Configuration& componentConfig) :
 		Task(50, FastMultiThreaded), sceneId_(sceneId), entityId_(entityId), 
 		componentName_(componentName), componentConfig_(componentConfig) {}
@@ -24,12 +24,12 @@ namespace Harmony::Tasks
 				return;
 			}
 
-			entt::entity entity = static_cast<entt::entity>(entityId_);
+			EntityID entity = static_cast<EntityID>(entityId_);
 			Management::ComponentManager::createComponent(componentName_, componentConfig_, entity, *scene);
-			HARMONY_INFO("Component '{}' added to entity {} in scene {}", componentName_, entityId_, sceneId_);
+			HARMONY_INFO("Component '{}' added to entity {} in scene {}", componentName_, static_cast<unsigned int>(entityId_), sceneId_);
 		}
 		catch (const std::exception& e) {
-			HARMONY_ERROR("Failed to add component '{}' to entity {}: {}", componentName_, entityId_, e.what());
+			HARMONY_ERROR("Failed to add component '{}' to entity {}: {}", componentName_, static_cast<unsigned int>(entityId_), e.what());
 		}
 	}
 
@@ -52,9 +52,9 @@ namespace Harmony::Tasks
 
 		for (const auto& entityConfig : entityConfigs_) {
 			try {
-				Scenes::EntityID entityId = scene->createEntity(entityConfig);
+				EntityID entityId = scene->createEntity(entityConfig);
 				successCount++;
-				HARMONY_DEBUG("Entity {} created in scene {}", entityId, sceneId_);
+				HARMONY_DEBUG("Entity {} created in scene {}", static_cast<unsigned int>(entityId), sceneId_);
 			}
 			catch (const std::exception& e) {
 				failCount++;
@@ -67,7 +67,7 @@ namespace Harmony::Tasks
 
 	// BatchDestroyEntitiesTask implementation
 	BatchDestroyEntitiesTask::BatchDestroyEntitiesTask(const Utilities::UUID sceneId, 
-		const std::vector<Scenes::EntityID>& entityIds) :
+		const std::vector<EntityID>& entityIds) :
 		Task(75, SlowMultiThreaded), sceneId_(sceneId), entityIds_(entityIds) {}
 
 	void BatchDestroyEntitiesTask::run()
@@ -86,11 +86,11 @@ namespace Harmony::Tasks
 			try {
 				scene->destroyEntity(entityId);
 				successCount++;
-				HARMONY_DEBUG("Entity {} destroyed in scene {}", entityId, sceneId_);
+				HARMONY_DEBUG("Entity {} destroyed in scene {}", static_cast<unsigned int>(entityId), sceneId_);
 			}
 			catch (const std::exception& e) {
 				failCount++;
-				HARMONY_ERROR("Failed to destroy entity {}: {}", entityId, e.what());
+				HARMONY_ERROR("Failed to destroy entity {}: {}", static_cast<unsigned int>(entityId), e.what());
 			}
 		}
 

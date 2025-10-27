@@ -2,7 +2,7 @@
 #include "Configuration.h"
 #include "Logger.h"
 #include "Exceptions.h"
-
+#include <fstream>
 
 namespace Harmony::Utilities {
 

@@ -22,14 +22,14 @@ namespace Harmony::Tasks
 	class DestroyEntityTask : public Tasks::Task
 	{
 	public:
-		DestroyEntityTask(const Utilities::UUID sceneId, Scenes::EntityID entityId);
+		DestroyEntityTask(const Utilities::UUID sceneId, EntityID entityId);
 
 	private:
 		void run() override;
 
 	private:
 		const Utilities::UUID sceneId_;
-		const Scenes::EntityID entityId_;
+		const EntityID entityId_;
 	};
 
 	// Task to create a new scene

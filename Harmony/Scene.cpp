@@ -7,10 +7,10 @@
 #include "Transform.h"
 #include "Script.h"
 #include "View.h"
+#include "Node.h"
 #include "Configuration.h"
 #include "RenderManager.h"
 #include <SFML/Graphics.hpp>
-#include <Entt/entt.hpp>
 
 namespace Harmony::Scenes 
 {
@@ -41,8 +41,8 @@ namespace Harmony::Scenes
 	void Scene::initialize()
 	{
 		// Clear existing entities if any
-		for (auto entity : impl_->registry.view<entt::entity>()) {
-			impl_->registry.destroy(static_cast<entt::entity>(entity));
+		for (auto entity : impl_->registry.view<EntityID>()) {
+			impl_->registry.destroy(static_cast<EntityID>(entity));
 		}
 
 		std::vector<std::string> entitiesKeys = configuration_.extractKeys({ "entities" });
@@ -66,7 +66,7 @@ namespace Harmony::Scenes
 		std::lock_guard<std::mutex> lock(entityMutex_);
 		
 		// Inline destroy logic to avoid recursive locking
-		for (auto entity : impl_->registry.view<entt::entity>()) {
+		for (auto entity : impl_->registry.view<EntityID>()) {
 			if (impl_->registry.try_get<Components::Script>(entity))
 				getComponent<Components::Script>(static_cast<EntityID>(entity)).onDestroy();
 
@@ -92,7 +92,7 @@ namespace Harmony::Scenes
 		
 		auto entitiesView = impl_->registry.view<std::unique_ptr<sf::Drawable>>();
 
-		for (const entt::entity entity : entitiesView) {
+		for (const EntityID entity : entitiesView) {
 			auto& drawable = entitiesView.get<std::unique_ptr<sf::Drawable>>(entity);
 			sf::RenderStates entityStates;
 
@@ -117,22 +117,22 @@ namespace Harmony::Scenes
 		
 		auto entitiesView = impl_->registry.view<std::unique_ptr<Components::Script>>();
 
-		for (const entt::entity entity : entitiesView) {
+		for (const EntityID entity : entitiesView) {
 			Components::Script& scriptComponent = getComponent<Components::Script>(static_cast<EntityID>(entity));
 			scriptComponent.onPreUpdate();
 		}
 
-		for (const entt::entity entity : entitiesView) {
+		for (const EntityID entity : entitiesView) {
 			Components::Script& scriptComponent = getComponent<Components::Script>(static_cast<EntityID>(entity));
 			scriptComponent.onPostUpdate();
 		}
 	}
 
-	void Scene::createComponent(const std::string& componentName, const Utilities::Configuration& configuration, entt::entity entity){
+	void Scene::createComponent(const std::string& componentName, const Utilities::Configuration& configuration, EntityID entity){
 		Harmony::Management::ComponentManager::createComponent(componentName, configuration, entity, *this);
 	}
 
-	void Scene::deleteComponent(const std::string& componentName, entt::entity entityId) {
+	void Scene::deleteComponent(const std::string& componentName, EntityID entityId) {
 		Harmony::Management::ComponentManager::deleteComponent(componentName, entityId, *this);
 	}
 
@@ -146,10 +146,8 @@ namespace Harmony::Scenes
 
 	EntityID Scene::createEntity(const Utilities::Configuration& configuration)
 	{
-		std::lock_guard<std::mutex> lock(entityMutex_);
-		configuration.debugPrint();
-		
-		const entt::entity entity = impl_->registry.create();
+		std::unique_lock<std::mutex> lock(entityMutex_);		
+		const EntityID entity = impl_->registry.create();
 
 		for (const std::string& componentName : configuration.extractKeys({ "components" }))
 			Management::ComponentManager::createComponent(componentName, configuration.subsection({ "components", componentName}).value(), entity, *this);
@@ -161,6 +159,17 @@ namespace Harmony::Scenes
 			script.entityId = entity; script.scene_ = *this;
 			script.onCreate();
 		}
+
+		Components::Node& node = createComponent<Components::Node>(entity, entity, *this);
+		if (std::optional<Utilities::Configuration> childrenConfigurations = configuration.subsection({ "children" })) {
+			lock.unlock(); // Unlock to allow recursive entity creation
+			for (const std::string& childKey : childrenConfigurations->extractKeys({})) {
+				EntityID entityId = createEntity(childrenConfigurations->subsection({ childKey }).value(), std::stoul(childKey));
+				node.attach(entityId);
+			}
+		}
+		else HARMONY_WARN("Entity {} has no children configuration", static_cast<std::uint32_t>(entity));
+
 
 		HARMONY_DEBUG("Entity {} created", static_cast<std::uint32_t>(entity));
 		return static_cast<EntityID>(entity);
@@ -182,14 +191,14 @@ namespace Harmony::Scenes
 	{
 		std::lock_guard<std::mutex> lock(entityMutex_);
 		
-		entt::entity entity = static_cast<entt::entity>(entityId);
+		EntityID entity = static_cast<EntityID>(entityId);
 		
 		if (impl_->registry.try_get<Components::Script>(entity))
 			getComponent<Components::Script>(entityId).onDestroy();
 
 		impl_->registry.destroy(entity);
 
-		HARMONY_DEBUG("Entity {} destroyed", entityId);
+		HARMONY_DEBUG("Entity {} destroyed", static_cast<unsigned int>(entityId));
 	}
 
 	void Scene::enableDrawing()
@@ -230,7 +239,7 @@ namespace Harmony::Scenes
 	{
 		auto* view = impl_->registry.ctx().find<Components::View>();
 		if (!view) {
-			throw Exceptions::ComponentNotFoundException(0);  // View is not tied to a specific entity
+			throw Exceptions::ComponentNotFoundException(static_cast<EntityID>(NULL));  // View is not tied to a specific entity
 		}
 		return *view;
 	}
@@ -239,7 +248,7 @@ namespace Harmony::Scenes
 	{
 		const auto* view = impl_->registry.ctx().find<Components::View>();
 		if (!view) {
-			throw Exceptions::ComponentNotFoundException(0);  // View is not tied to a specific entity
+			throw Exceptions::ComponentNotFoundException(static_cast<EntityID>(NULL));  // View is not tied to a specific entity
 		}
 		return *view;
 	}

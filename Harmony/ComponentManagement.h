@@ -21,13 +21,13 @@ namespace Harmony::Management
 
 		template<typename Base, typename Type>
 		static void registerComponent(const std::string& name);
-		static void createComponent(const std::string& name, const Utilities::Configuration& configuation, entt::entity entityId, Scenes::Scene& scene);
-		static void deleteComponent(const std::string& name, entt::entity entityId, Scenes::Scene& scene);
+		static void createComponent(const std::string& name, const Utilities::Configuration& configuation, EntityID entityId, Scenes::Scene& scene);
+		static void deleteComponent(const std::string& name, EntityID entityId, Scenes::Scene& scene);
 
     private:
         static std::mutex& getMutex();
-        static std::unordered_map<std::string, std::function<void(const Utilities::Configuration&, entt::entity, Scenes::Scene&)>>& getComponentConstructorFactories();
-        static std::unordered_map<std::string, std::function<void(entt::entity, Scenes::Scene& scene)>>& getComponentDestructorFactories();
+        static std::unordered_map<std::string, std::function<void(const Utilities::Configuration&, EntityID, Scenes::Scene&)>>& getComponentConstructorFactories();
+        static std::unordered_map<std::string, std::function<void(EntityID, Scenes::Scene& scene)>>& getComponentDestructorFactories();
 
 		Engine& engine_;
 	};
@@ -39,7 +39,7 @@ namespace Harmony::Management
         );
 
         getComponentConstructorFactories()[name] =
-            [](const Utilities::Configuration& configuration, entt::entity entityId, Scenes::Scene& scene)
+            [](const Utilities::Configuration& configuration, EntityID entityId, Scenes::Scene& scene)
             {
                 std::unique_ptr<Base> component = std::make_unique<Type>(configuration, scene);
 
@@ -48,7 +48,7 @@ namespace Harmony::Management
             };
 
         getComponentDestructorFactories()[name] =
-            [](entt::entity entityId, Scenes::Scene& scene)
+            [](EntityID entityId, Scenes::Scene& scene)
             {
                if (entityId == entt::null) scene.deleteGlobalComponent<Type>();
 			   else scene.deleteComponent<Type>(entityId);

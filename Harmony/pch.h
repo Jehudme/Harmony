@@ -7,7 +7,7 @@
 #ifndef PCH_H
 #define PCH_H
 
-#include "Harmony.h"
+#include "fwd.h"
 
 #include <nlohmann/json.hpp>
 #include <spdlog/spdlog.h>
@@ -15,7 +15,7 @@
 #include <fmt/Core.h>
 #include <fmt/ranges.h>
 #include <fmt/format.h>
-#include <Entt/entt.hpp>
+#include <entt/entt.hpp>
 #include <shared_mutex>
 #include <format>
 #include <string>

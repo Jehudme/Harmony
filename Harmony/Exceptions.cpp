@@ -39,8 +39,8 @@ namespace Harmony::Exceptions
 		HARMONY_ERROR(what());
 	}
 
-	ComponentNotFoundException::ComponentNotFoundException(const std::uint32_t entityId)
-		: std::runtime_error("Entity " + std::to_string(entityId) + " missing requested component") {
+	ComponentNotFoundException::ComponentNotFoundException(const EntityID entityId)
+		: std::runtime_error("Entity " + std::to_string(static_cast<unsigned int>(entityId)) + " missing requested component") {
 		HARMONY_CRITICAL(what());
 	}
 

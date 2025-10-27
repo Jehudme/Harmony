@@ -29,7 +29,7 @@ namespace Harmony::Exceptions
 	};
 
 	struct ComponentNotFoundException : std::runtime_error {
-		explicit ComponentNotFoundException(const std::uint32_t entityId);
+		explicit ComponentNotFoundException(const EntityID entityId);
 	};
 
 	// State Exceptions
