@@ -1,6 +1,8 @@
 #pragma once
 #include "Task.h"
 #include <functional>
+#include <vector>
+#include <memory>
 
 namespace Harmony::Tasks
 {

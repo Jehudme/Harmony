@@ -4,6 +4,7 @@
 #include "Logger.h"
 #include "Scene.h"
 #include "SceneManagement.h"
+#include "TaskManagement.h"
 #include <thread>
 #include <chrono>
 #include <unordered_map>
