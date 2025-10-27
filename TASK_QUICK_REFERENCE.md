@@ -8,6 +8,17 @@ Use entity tasks when you need to create or destroy game objects in a thread-saf
 - Creating projectiles in response to player actions
 - Cleaning up destroyed objects
 - Loading multiple entities from level data
+- Counting entities for statistics or debugging
+- Clearing scenes for level transitions
+- Moving entities between scenes
+
+### When to Use Component Tasks
+Use component tasks for modifying entity components at runtime:
+- Adding abilities or power-ups to entities
+- Removing components when effects expire
+- Batch processing entity modifications
+- Cloning entities with their components
+- Adding/removing components from multiple entities efficiently
 
 ### When to Use Scene Tasks
 Use scene tasks for loading and managing different game scenes:
@@ -23,8 +34,26 @@ Use component tasks for modifying entity components at runtime:
 - Adding abilities or power-ups to entities
 - Attaching scripts to entities dynamically
 - Batch processing entity modifications
+- Removing components when they're no longer needed
+- Cloning entities with all their components
+- Counting entities for analytics or debugging
 
-### When to Use State Tasks
+### When to Use Utility Tasks
+Use utility tasks for custom behaviors:
+- Implementing game-specific logic with callbacks
+- Creating custom event systems
+- Conditional behavior based on game state
+- Repeating actions (e.g., periodic saves, heartbeat systems)
+- Measuring performance of operations
+- Retrying failed operations
+- Throttling or debouncing frequent events
+- Scheduling actions for specific times
+- Creating interval-based timers
+- Chaining multiple operations with error handling
+- Memory profiling and debugging
+- Scene validation and debugging
+
+## Common Patterns
 Use state tasks for managing game states:
 - Menu navigation (main menu → settings → gameplay)
 - Pausing and resuming gameplay
@@ -154,6 +183,131 @@ engine.taskManagement->submit(std::move(hideTask));
 // Show background scene again
 auto showTask = std::make_unique<EnableSceneDrawingTask>(backgroundSceneId);
 engine.taskManagement->submit(std::move(showTask));
+```
+
+### Pattern: Batch Component Management
+```cpp
+// Add a power-up component to multiple entities
+std::vector<EntityID> powerUpEntities = {entity1, entity2, entity3};
+auto addTask = std::make_unique<BatchAddComponentsTask>(
+    sceneId, powerUpEntities, "PowerUp", powerUpConfig
+);
+engine.taskManagement->submit(std::move(addTask));
+
+// Remove expired power-up from multiple entities
+auto removeTask = std::make_unique<BatchRemoveComponentsTask>(
+    sceneId, powerUpEntities, "PowerUp"
+);
+engine.taskManagement->submit(std::move(removeTask));
+```
+
+### Pattern: Performance Monitoring
+```cpp
+// Measure execution time of a heavy operation
+auto task = std::make_unique<TimedActionTask>(
+    [](Engine& engine) {
+        // Perform complex physics calculations
+    },
+    "Physics Step"
+);
+engine.taskManagement->submit(std::move(task));
+```
+
+### Pattern: Retry Network Operations
+```cpp
+// Retry failed network request up to 3 times
+auto networkTask = std::make_unique<RetryTask>(
+    [](Engine& engine) -> bool {
+        return attemptServerConnection();  // Returns true on success
+    },
+    3,  // Max retries
+    std::chrono::milliseconds(2000)  // 2 second delay between retries
+);
+engine.taskManagement->submit(std::move(networkTask));
+```
+
+### Pattern: Throttled Save System
+```cpp
+// Save game state, but at most once per 5 seconds
+auto saveTask = std::make_unique<ThrottledTask>(
+    [](Engine& engine) {
+        saveGameState();
+    },
+    std::chrono::milliseconds(5000)  // Min 5 seconds between saves
+);
+engine.taskManagement->submit(std::move(saveTask));
+```
+
+### Pattern: Scheduled Event
+```cpp
+// Schedule an event to happen at a specific time
+auto futureTime = std::chrono::steady_clock::now() + std::chrono::hours(1);
+auto scheduledTask = std::make_unique<ScheduledTask>(
+    [](Engine& engine) {
+        triggerHourlyEvent();
+    },
+    futureTime
+);
+engine.taskManagement->submit(std::move(scheduledTask));
+```
+
+### Pattern: Game Timer/Interval
+```cpp
+// Create a countdown timer that ticks every second
+int countdown = 60;
+auto timerTask = std::make_unique<IntervalTask>(
+    [&countdown](Engine& engine) -> bool {
+        countdown--;
+        HARMONY_INFO("Time remaining: {}", countdown);
+        return countdown > 0;  // Continue until countdown reaches 0
+    },
+    std::chrono::milliseconds(1000),  // 1 second interval
+    60  // Max 60 executions
+);
+engine.taskManagement->submit(std::move(timerTask));
+```
+
+### Pattern: Scene Debugging
+```cpp
+// Dump detailed scene information
+auto dumpTask = std::make_unique<DumpSceneInfoTask>(sceneId);
+engine.taskManagement->submit(std::move(dumpTask));
+
+// Validate scene integrity
+auto validateTask = std::make_unique<ValidateSceneTask>(
+    sceneId,
+    [](bool isValid, std::string message) {
+        if (!isValid) {
+            HARMONY_ERROR("Scene validation failed: {}", message);
+        }
+    }
+);
+engine.taskManagement->submit(std::move(validateTask));
+```
+
+### Pattern: Sequential Task Chain
+```cpp
+// Execute multiple tasks in order
+std::vector<std::function<void(Engine&)>> actions = {
+    [](Engine& e) { /* Step 1 */ },
+    [](Engine& e) { /* Step 2 */ },
+    [](Engine& e) { /* Step 3 */ }
+};
+auto sequentialTask = std::make_unique<SequentialTasksTask>(actions);
+engine.taskManagement->submit(std::move(sequentialTask));
+```
+
+### Pattern: Entity Count Statistics
+```cpp
+// Get entity count asynchronously
+auto countTask = std::make_unique<CountEntitiesTask>(
+    sceneId,
+    [](size_t count) {
+        HARMONY_INFO("Current entity count: {}", count);
+        updateEntityCountUI(count);
+    }
+);
+engine.taskManagement->submit(std::move(countTask));
 ```
 
 ## Thread Safety Tips
