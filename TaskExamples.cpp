@@ -583,8 +583,7 @@ void ScheduleDailyBonus(Harmony::Engine& engine)
 void StartGameTimer(Harmony::Engine& engine, int seconds)
 {
     auto task = std::make_unique<Harmony::Tasks::IntervalTask>(
-        [seconds](Harmony::Engine& e) mutable -> bool {
-            static int remaining = seconds;
+        [remaining = seconds](Harmony::Engine& e) mutable -> bool {
             HARMONY_INFO("Time remaining: {} seconds", remaining);
             remaining--;
             return remaining > 0;  // Continue while time remains
@@ -600,10 +599,10 @@ void SafeSceneOperation(Harmony::Engine& engine, Harmony::Utilities::UUID sceneI
 {
     auto checkTask = std::make_unique<Harmony::Tasks::CheckSceneExistsTask>(
         sceneId,
-        [&engine, sceneId](bool exists) {
+        [sceneId](bool exists) {
             if (exists) {
                 HARMONY_INFO("Scene exists, proceeding with operation");
-                // Perform scene operation
+                // Perform scene operation (would need engine reference passed differently)
             } else {
                 HARMONY_WARN("Scene does not exist, skipping operation");
             }
