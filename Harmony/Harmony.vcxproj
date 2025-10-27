@@ -142,7 +142,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Audio.h" />
+    <ClInclude Include="Camera.h" />
     <ClInclude Include="Circle.h" />
+    <ClInclude Include="Collision.h" />
     <ClInclude Include="ComponentManagement.h" />
     <ClInclude Include="ComponentTask.h" />
     <ClInclude Include="Configuration.h" />
@@ -154,8 +157,11 @@
     <ClInclude Include="fwd.h" />
     <ClInclude Include="Logger.h" />
     <ClInclude Include="Music.h" />
+    <ClInclude Include="NewComponentTasks.h" />
     <ClInclude Include="Node.h" />
+    <ClInclude Include="ParticleEmitter.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="PhysicsBody.h" />
     <ClInclude Include="RandomValue.h" />
     <ClInclude Include="Rectangle.h" />
     <ClInclude Include="RenderManager.h" />
@@ -169,19 +175,25 @@
     <ClInclude Include="Shader.h" />
     <ClInclude Include="Shape.h" />
     <ClInclude Include="Sound.h" />
+    <ClInclude Include="Sprite.h" />
     <ClInclude Include="State.h" />
+    <ClInclude Include="StateMachine.h" />
     <ClInclude Include="StateManagement.h" />
     <ClInclude Include="StateTask.h" />
     <ClInclude Include="Task.h" />
     <ClInclude Include="TaskManagement.h" />
     <ClInclude Include="Text.h" />
     <ClInclude Include="Texture.h" />
+    <ClInclude Include="Timer.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="UtilityTask.h" />
     <ClInclude Include="View.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Audio.cpp" />
+    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Circle.cpp" />
+    <ClCompile Include="Collision.cpp" />
     <ClCompile Include="ComponentManagement.cpp" />
     <ClCompile Include="ComponentTask.cpp" />
     <ClCompile Include="Configuration.cpp" />
@@ -193,13 +205,16 @@
     <ClCompile Include="Logger.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Music.cpp" />
+    <ClCompile Include="NewComponentTasks.cpp" />
     <ClCompile Include="Node.cpp" />
+    <ClCompile Include="ParticleEmitter.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="PhysicsBody.cpp" />
     <ClCompile Include="Rectangle.cpp" />
     <ClCompile Include="RenderManager.cpp" />
     <ClCompile Include="Resource.cpp" />
@@ -211,13 +226,16 @@
     <ClCompile Include="Script.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="Sound.cpp" />
+    <ClCompile Include="Sprite.cpp" />
     <ClCompile Include="State.cpp" />
+    <ClCompile Include="StateMachine.cpp" />
     <ClCompile Include="StateManagement.cpp" />
     <ClCompile Include="StateTask.cpp" />
     <ClCompile Include="Task.cpp" />
     <ClCompile Include="TaskManagement.cpp" />
     <ClCompile Include="Text.cpp" />
     <ClCompile Include="Texture.cpp" />
+    <ClCompile Include="Timer.cpp" />
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="UtilityTask.cpp" />
     <ClCompile Include="View.cpp" />
