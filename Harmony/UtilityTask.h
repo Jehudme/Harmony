@@ -257,4 +257,265 @@ namespace Harmony::Tasks
 		const std::chrono::milliseconds interval_;
 		const int maxExecutions_;
 	};
+
+	// Task to monitor and log frame time statistics
+	class FrameTimeProfilerTask : public Tasks::Task
+	{
+	public:
+		FrameTimeProfilerTask(int sampleCount = 60, 
+			std::function<void(double, double, double)> callback = nullptr);
+
+	private:
+		void run() override;
+
+	private:
+		const int sampleCount_;
+		std::function<void(double, double, double)> callback_;
+	};
+
+	// Task to track CPU usage over time
+	class CPUUsageProfilerTask : public Tasks::Task
+	{
+	public:
+		CPUUsageProfilerTask(std::chrono::milliseconds duration = std::chrono::milliseconds(5000),
+			std::function<void(double)> callback = nullptr);
+
+	private:
+		void run() override;
+
+	private:
+		const std::chrono::milliseconds duration_;
+		std::function<void(double)> callback_;
+	};
+
+	// Task to create detailed snapshot of all resource usage
+	class ResourceUsageSnapshotTask : public Tasks::Task
+	{
+	public:
+		ResourceUsageSnapshotTask(std::function<void(std::string)> callback = nullptr);
+
+	private:
+		void run() override;
+
+	private:
+		std::function<void(std::string)> callback_;
+	};
+
+	// Task to generate comprehensive performance report
+	class PerformanceReportTask : public Tasks::Task
+	{
+	public:
+		PerformanceReportTask(bool includeScenes = true,
+			bool includeResources = true,
+			std::function<void(std::string)> callback = nullptr);
+
+	private:
+		void run() override;
+
+	private:
+		const bool includeScenes_;
+		const bool includeResources_;
+		std::function<void(std::string)> callback_;
+	};
+
+	// Task to monitor task queue depth and processing time
+	class TaskQueueMonitorTask : public Tasks::Task
+	{
+	public:
+		TaskQueueMonitorTask(std::function<void(std::string)> callback = nullptr);
+
+	private:
+		void run() override;
+
+	private:
+		std::function<void(std::string)> callback_;
+	};
+
+	// Task to reload configuration from file
+	class ConfigurationReloadTask : public Tasks::Task
+	{
+	public:
+		ConfigurationReloadTask(const std::string& configPath,
+			std::function<void(bool)> callback = nullptr);
+
+	private:
+		void run() override;
+
+	private:
+		const std::string configPath_;
+		std::function<void(bool)> callback_;
+	};
+
+	// Task to dump system and engine information
+	class SystemInfoDumpTask : public Tasks::Task
+	{
+	public:
+		SystemInfoDumpTask(std::function<void(std::string)> callback = nullptr);
+
+	private:
+		void run() override;
+
+	private:
+		std::function<void(std::string)> callback_;
+	};
+
+	// Task for general cleanup with custom handlers
+	class CleanupTask : public Tasks::Task
+	{
+	public:
+		CleanupTask(std::function<void(Engine&)> cleanupHandler,
+			const std::string& cleanupName = "General Cleanup",
+			int priority = 50);
+
+	private:
+		void run() override;
+
+	private:
+		std::function<void(Engine&)> cleanupHandler_;
+		const std::string cleanupName_;
+	};
+
+	// Task to monitor system health and trigger actions on issues
+	class WatchdogTask : public Tasks::Task
+	{
+	public:
+		WatchdogTask(std::function<bool(Engine&)> healthCheck,
+			std::function<void(Engine&)> recoveryAction,
+			std::chrono::milliseconds checkInterval = std::chrono::milliseconds(1000),
+			int maxChecks = 10);
+
+	private:
+		void run() override;
+
+	private:
+		std::function<bool(Engine&)> healthCheck_;
+		std::function<void(Engine&)> recoveryAction_;
+		const std::chrono::milliseconds checkInterval_;
+		const int maxChecks_;
+	};
+
+	// Task to create backup of current engine state
+	class BackupStateTask : public Tasks::Task
+	{
+	public:
+		BackupStateTask(const std::string& backupId,
+			std::function<void(bool, std::string)> callback = nullptr);
+
+	private:
+		void run() override;
+
+	private:
+		const std::string backupId_;
+		std::function<void(bool, std::string)> callback_;
+	};
+
+	// Task to restore engine state from backup
+	class RestoreStateTask : public Tasks::Task
+	{
+	public:
+		RestoreStateTask(const std::string& backupId,
+			std::function<void(bool, std::string)> callback = nullptr);
+
+	private:
+		void run() override;
+
+	private:
+		const std::string backupId_;
+		std::function<void(bool, std::string)> callback_;
+	};
+
+	// Task for runtime assertion with custom message
+	class AssertTask : public Tasks::Task
+	{
+	public:
+		AssertTask(std::function<bool(Engine&)> condition,
+			const std::string& assertMessage,
+			std::function<void(Engine&)> onFailure = nullptr);
+
+	private:
+		void run() override;
+
+	private:
+		std::function<bool(Engine&)> condition_;
+		const std::string assertMessage_;
+		std::function<void(Engine&)> onFailure_;
+	};
+
+	// Task to verify engine subsystems health
+	class HealthCheckTask : public Tasks::Task
+	{
+	public:
+		HealthCheckTask(std::function<void(bool, std::string)> callback = nullptr);
+
+	private:
+		void run() override;
+
+	private:
+		std::function<void(bool, std::string)> callback_;
+	};
+
+	// Task to attempt recovery from error state
+	class ErrorRecoveryTask : public Tasks::Task
+	{
+	public:
+		ErrorRecoveryTask(const std::string& errorDescription,
+			std::function<bool(Engine&)> recoveryAction,
+			std::function<void(bool)> callback = nullptr);
+
+	private:
+		void run() override;
+
+	private:
+		const std::string errorDescription_;
+		std::function<bool(Engine&)> recoveryAction_;
+		std::function<void(bool)> callback_;
+	};
+
+	// Task to submit multiple tasks at once
+	class BatchSubmitTasksTask : public Tasks::Task
+	{
+	public:
+		BatchSubmitTasksTask(std::vector<std::unique_ptr<Tasks::Task>> tasks,
+			int priority = 50);
+
+	private:
+		void run() override;
+
+	private:
+		std::vector<std::unique_ptr<Tasks::Task>> tasks_;
+	};
+
+	// Task to submit tasks based on conditions
+	class ConditionalSubmitTask : public Tasks::Task
+	{
+	public:
+		ConditionalSubmitTask(std::function<bool(Engine&)> condition,
+			std::unique_ptr<Tasks::Task> taskOnTrue,
+			std::unique_ptr<Tasks::Task> taskOnFalse = nullptr,
+			int priority = 50);
+
+	private:
+		void run() override;
+
+	private:
+		std::function<bool(Engine&)> condition_;
+		std::unique_ptr<Tasks::Task> taskOnTrue_;
+		std::unique_ptr<Tasks::Task> taskOnFalse_;
+	};
+
+	// Task to schedule multiple tasks for future submission
+	class ScheduledBatchSubmitTask : public Tasks::Task
+	{
+	public:
+		ScheduledBatchSubmitTask(std::vector<std::unique_ptr<Tasks::Task>> tasks,
+			std::chrono::steady_clock::time_point submitAt,
+			int priority = 50);
+
+	private:
+		void run() override;
+
+	private:
+		std::vector<std::unique_ptr<Tasks::Task>> tasks_;
+		const std::chrono::steady_clock::time_point submitAt_;
+	};
 }

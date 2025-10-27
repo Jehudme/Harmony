@@ -47,5 +47,48 @@ namespace Harmony::Tasks
 	private:
 		const Utilities::UUID newStateId_;
 	};
+
+	// Task for smooth transition with optional delay/fade support
+	class TransitionToStateTask : public Tasks::Task
+	{
+	public:
+		TransitionToStateTask(const Utilities::UUID newStateId,
+			std::chrono::milliseconds transitionDelay = std::chrono::milliseconds(0),
+			std::function<void(Engine&)> transitionEffect = nullptr);
+
+	private:
+		void run() override;
+
+	private:
+		const Utilities::UUID newStateId_;
+		const std::chrono::milliseconds transitionDelay_;
+		std::function<void(Engine&)> transitionEffect_;
+	};
+
+	// Task to replace top state without popping first
+	class ReplaceStateTask : public Tasks::Task
+	{
+	public:
+		ReplaceStateTask(const Utilities::UUID newStateId);
+
+	private:
+		void run() override;
+
+	private:
+		const Utilities::UUID newStateId_;
+	};
+
+	// Task to query current state without modifying stack
+	class PeekStateTask : public Tasks::Task
+	{
+	public:
+		PeekStateTask(std::function<void(Utilities::UUID)> callback);
+
+	private:
+		void run() override;
+
+	private:
+		std::function<void(Utilities::UUID)> callback_;
+	};
 }
 
