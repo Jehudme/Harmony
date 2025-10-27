@@ -355,3 +355,274 @@ void YourGameCode(Harmony::Engine& engine)
     Examples::ShutdownGame(engine);
 }
 */
+
+// ============================================================================
+// NEW TASK EXAMPLES - Component and General Operations
+// ============================================================================
+
+// Example 14: Remove component from entity
+void RemovePowerUp(Harmony::Engine& engine, Harmony::Utilities::UUID sceneId, Harmony::Scenes::EntityID entityId)
+{
+    // Remove expired power-up component
+    auto task = std::make_unique<Harmony::Tasks::RemoveComponentTask>(
+        sceneId, entityId, "PowerUp"
+    );
+    engine.taskManagement->submit(std::move(task));
+    HARMONY_INFO("Power-up removed from entity");
+}
+
+// Example 15: Batch add components to multiple entities
+void AddShieldsToAllies(Harmony::Engine& engine, Harmony::Utilities::UUID sceneId, 
+    const std::vector<Harmony::Scenes::EntityID>& allyEntities)
+{
+    auto shieldConfig = engine.configuration.subsection({"components", "shield"}).value();
+    
+    auto task = std::make_unique<Harmony::Tasks::BatchAddComponentsTask>(
+        sceneId, allyEntities, "Shield", shieldConfig
+    );
+    engine.taskManagement->submit(std::move(task));
+    HARMONY_INFO("Shields applied to {} allies", allyEntities.size());
+}
+
+// Example 16: Batch remove components from multiple entities
+void RemoveStatusEffects(Harmony::Engine& engine, Harmony::Utilities::UUID sceneId,
+    const std::vector<Harmony::Scenes::EntityID>& entities)
+{
+    // Remove status effect component from all affected entities
+    auto task = std::make_unique<Harmony::Tasks::BatchRemoveComponentsTask>(
+        sceneId, entities, "StatusEffect"
+    );
+    engine.taskManagement->submit(std::move(task));
+    HARMONY_INFO("Status effects cleared from {} entities", entities.size());
+}
+
+// Example 17: Count entities with callback
+void DisplayEntityCount(Harmony::Engine& engine, Harmony::Utilities::UUID sceneId)
+{
+    auto task = std::make_unique<Harmony::Tasks::CountEntitiesTask>(
+        sceneId,
+        [](size_t count) {
+            HARMONY_INFO("Current entity count: {}", count);
+            // Update UI with entity count
+        }
+    );
+    engine.taskManagement->submit(std::move(task));
+}
+
+// Example 18: Clear all entities from scene
+void ClearLevel(Harmony::Engine& engine, Harmony::Utilities::UUID sceneId)
+{
+    // Remove all entities from the scene for level reset
+    auto task = std::make_unique<Harmony::Tasks::ClearSceneEntitiesTask>(sceneId);
+    engine.taskManagement->submit(std::move(task));
+    HARMONY_INFO("All entities cleared from scene");
+}
+
+// Example 19: Sequential task execution
+void LevelTransitionSequence(Harmony::Engine& engine, Harmony::Utilities::UUID oldSceneId, 
+    Harmony::Utilities::UUID newSceneId)
+{
+    std::vector<std::function<void(Harmony::Engine&)>> sequence = {
+        [oldSceneId](Harmony::Engine& e) {
+            HARMONY_INFO("Step 1: Fading out current level");
+        },
+        [oldSceneId](Harmony::Engine& e) {
+            HARMONY_INFO("Step 2: Saving progress");
+        },
+        [newSceneId](Harmony::Engine& e) {
+            HARMONY_INFO("Step 3: Loading new level");
+        },
+        [newSceneId](Harmony::Engine& e) {
+            HARMONY_INFO("Step 4: Fading in new level");
+        }
+    };
+    
+    auto task = std::make_unique<Harmony::Tasks::SequentialTasksTask>(sequence);
+    engine.taskManagement->submit(std::move(task));
+}
+
+// Example 20: Timed action for performance measurement
+void MeasurePhysicsPerformance(Harmony::Engine& engine)
+{
+    auto task = std::make_unique<Harmony::Tasks::TimedActionTask>(
+        [](Harmony::Engine& e) {
+            // Perform physics calculations
+            HARMONY_DEBUG("Physics step executed");
+        },
+        "Physics Step"
+    );
+    engine.taskManagement->submit(std::move(task));
+}
+
+// Example 21: Retry failed operations
+void RetryServerConnection(Harmony::Engine& engine)
+{
+    auto task = std::make_unique<Harmony::Tasks::RetryTask>(
+        [](Harmony::Engine& e) -> bool {
+            // Attempt to connect to server
+            bool success = false; // Simulate connection attempt
+            if (success) {
+                HARMONY_INFO("Server connection established");
+                return true;
+            }
+            HARMONY_WARN("Server connection failed, will retry");
+            return false;
+        },
+        5,  // Max 5 retries
+        std::chrono::milliseconds(2000)  // 2 seconds between retries
+    );
+    engine.taskManagement->submit(std::move(task));
+}
+
+// Example 22: Throttled save system
+void ThrottledSave(Harmony::Engine& engine)
+{
+    // Save will execute at most once per 5 seconds
+    auto task = std::make_unique<Harmony::Tasks::ThrottledTask>(
+        [](Harmony::Engine& e) {
+            HARMONY_INFO("Game saved");
+            // Perform save operations
+        },
+        std::chrono::milliseconds(5000)  // Minimum 5 seconds between saves
+    );
+    engine.taskManagement->submit(std::move(task));
+}
+
+// Example 23: Debounced input handling
+void HandleSearchInput(Harmony::Engine& engine, const std::string& searchText)
+{
+    // Wait for user to stop typing before performing search
+    auto task = std::make_unique<Harmony::Tasks::DebouncedTask>(
+        [searchText](Harmony::Engine& e) {
+            HARMONY_INFO("Searching for: {}", searchText);
+            // Perform search operation
+        },
+        std::chrono::milliseconds(500)  // Wait 500ms after last input
+    );
+    engine.taskManagement->submit(std::move(task));
+}
+
+// Example 24: Memory snapshot for debugging
+void CheckMemoryUsage(Harmony::Engine& engine)
+{
+    auto task = std::make_unique<Harmony::Tasks::MemorySnapshotTask>(
+        [](std::string snapshot) {
+            HARMONY_DEBUG("Memory snapshot: {}", snapshot);
+        }
+    );
+    engine.taskManagement->submit(std::move(task));
+}
+
+// Example 25: Dump scene information
+void DebugScene(Harmony::Engine& engine, Harmony::Utilities::UUID sceneId)
+{
+    auto task = std::make_unique<Harmony::Tasks::DumpSceneInfoTask>(sceneId);
+    engine.taskManagement->submit(std::move(task));
+}
+
+// Example 26: Validate scene integrity
+void ValidateLevel(Harmony::Engine& engine, Harmony::Utilities::UUID sceneId)
+{
+    auto task = std::make_unique<Harmony::Tasks::ValidateSceneTask>(
+        sceneId,
+        [](bool isValid, std::string message) {
+            if (isValid) {
+                HARMONY_INFO("Scene validation passed: {}", message);
+            } else {
+                HARMONY_ERROR("Scene validation failed: {}", message);
+            }
+        }
+    );
+    engine.taskManagement->submit(std::move(task));
+}
+
+// Example 27: Chained tasks with error handling
+void ComplexInitialization(Harmony::Engine& engine)
+{
+    std::vector<std::function<bool(Harmony::Engine&)>> tasks = {
+        [](Harmony::Engine& e) -> bool {
+            HARMONY_INFO("Initializing graphics");
+            return true;  // Success
+        },
+        [](Harmony::Engine& e) -> bool {
+            HARMONY_INFO("Initializing audio");
+            return true;  // Success
+        },
+        [](Harmony::Engine& e) -> bool {
+            HARMONY_INFO("Loading configuration");
+            return true;  // Success
+        }
+    };
+    
+    auto task = std::make_unique<Harmony::Tasks::ChainedTasksTask>(
+        tasks,
+        [](Harmony::Engine& e, int failedIndex) {
+            HARMONY_ERROR("Initialization failed at step {}", failedIndex);
+        }
+    );
+    engine.taskManagement->submit(std::move(task));
+}
+
+// Example 28: Scheduled event
+void ScheduleDailyBonus(Harmony::Engine& engine)
+{
+    // Schedule bonus to trigger in 24 hours
+    auto targetTime = std::chrono::steady_clock::now() + std::chrono::hours(24);
+    
+    auto task = std::make_unique<Harmony::Tasks::ScheduledTask>(
+        [](Harmony::Engine& e) {
+            HARMONY_INFO("Daily bonus awarded!");
+            // Award bonus to player
+        },
+        targetTime
+    );
+    engine.taskManagement->submit(std::move(task));
+}
+
+// Example 29: Interval timer (countdown)
+void StartGameTimer(Harmony::Engine& engine, int seconds)
+{
+    auto task = std::make_unique<Harmony::Tasks::IntervalTask>(
+        [seconds](Harmony::Engine& e) mutable -> bool {
+            static int remaining = seconds;
+            HARMONY_INFO("Time remaining: {} seconds", remaining);
+            remaining--;
+            return remaining > 0;  // Continue while time remains
+        },
+        std::chrono::milliseconds(1000),  // 1 second interval
+        seconds  // Max executions
+    );
+    engine.taskManagement->submit(std::move(task));
+}
+
+// Example 30: Check if scene exists before operations
+void SafeSceneOperation(Harmony::Engine& engine, Harmony::Utilities::UUID sceneId)
+{
+    auto checkTask = std::make_unique<Harmony::Tasks::CheckSceneExistsTask>(
+        sceneId,
+        [&engine, sceneId](bool exists) {
+            if (exists) {
+                HARMONY_INFO("Scene exists, proceeding with operation");
+                // Perform scene operation
+            } else {
+                HARMONY_WARN("Scene does not exist, skipping operation");
+            }
+        }
+    );
+    engine.taskManagement->submit(std::move(checkTask));
+}
+
+// Example 31: Batch move entities between scenes
+void MoveUnitsToNewLocation(Harmony::Engine& engine, 
+    Harmony::Utilities::UUID sourceSceneId,
+    Harmony::Utilities::UUID targetSceneId,
+    const std::vector<Harmony::Scenes::EntityID>& units)
+{
+    auto task = std::make_unique<Harmony::Tasks::BatchMoveEntitiesTask>(
+        sourceSceneId, targetSceneId, units
+    );
+    engine.taskManagement->submit(std::move(task));
+    HARMONY_INFO("Moving {} units to new scene", units.size());
+}
+
+} // namespace Examples
