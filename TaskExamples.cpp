@@ -624,4 +624,337 @@ void MoveUnitsToNewLocation(Harmony::Engine& engine,
     HARMONY_INFO("Moving {} units to new scene", units.size());
 }
 
+// Example 32: Frame time profiling for performance monitoring
+void MonitorFramePerformance(Harmony::Engine& engine)
+{
+    auto task = std::make_unique<Harmony::Tasks::FrameTimeProfilerTask>(
+        120,  // Sample 120 frames (2 seconds at 60 FPS)
+        [](double minTime, double avgTime, double maxTime) {
+            HARMONY_INFO("Frame Performance - Min: {:.2f}ms, Avg: {:.2f}ms, Max: {:.2f}ms",
+                minTime * 1000.0, avgTime * 1000.0, maxTime * 1000.0);
+            
+            if (avgTime > 0.020) {  // More than 20ms average
+                HARMONY_WARN("Average frame time exceeds target (20ms)");
+            }
+        }
+    );
+    engine.taskManagement->submit(std::move(task));
+}
+
+// Example 33: System health check
+void PerformSystemHealthCheck(Harmony::Engine& engine)
+{
+    auto task = std::make_unique<Harmony::Tasks::HealthCheckTask>(
+        [](bool isHealthy, std::string report) {
+            if (isHealthy) {
+                HARMONY_INFO("System health check passed");
+            } else {
+                HARMONY_ERROR("System health check failed:\n{}", report);
+            }
+        }
+    );
+    engine.taskManagement->submit(std::move(task));
+}
+
+// Example 34: Smooth state transition with fade effect
+void TransitionWithFadeEffect(Harmony::Engine& engine, Harmony::Utilities::UUID newStateId)
+{
+    auto fadeEffect = [](Harmony::Engine& e) {
+        // In a real implementation, this would trigger a fade animation
+        HARMONY_INFO("Executing fade-out effect");
+    };
+    
+    auto task = std::make_unique<Harmony::Tasks::TransitionToStateTask>(
+        newStateId,
+        std::chrono::milliseconds(500),  // 500ms transition delay
+        fadeEffect
+    );
+    engine.taskManagement->submit(std::move(task));
+}
+
+// Example 35: Conditional task submission based on FPS
+void AdaptiveQualityControl(Harmony::Engine& engine)
+{
+    auto condition = [](Harmony::Engine& e) {
+        return e.getDeltaTime() < 0.020;  // Less than 20ms = good FPS
+    };
+    
+    auto goodFpsTask = std::make_unique<Harmony::Tasks::LogMessageTask>(
+        "Performance is good - maintaining quality settings",
+        Harmony::Tasks::LogMessageTask::Info
+    );
+    
+    auto badFpsTask = std::make_unique<Harmony::Tasks::LogMessageTask>(
+        "Performance degraded - consider reducing quality",
+        Harmony::Tasks::LogMessageTask::Warning
+    );
+    
+    auto task = std::make_unique<Harmony::Tasks::ConditionalSubmitTask>(
+        condition,
+        std::move(goodFpsTask),
+        std::move(badFpsTask)
+    );
+    engine.taskManagement->submit(std::move(task));
+}
+
+// Example 36: Batch submit initialization tasks
+void InitializeGameSystems(Harmony::Engine& engine, 
+    Harmony::Utilities::UUID sceneId)
+{
+    std::vector<std::unique_ptr<Harmony::Tasks::Task>> tasks;
+    
+    // Add multiple initialization tasks
+    tasks.push_back(std::make_unique<Harmony::Tasks::CreateSceneTask>(sceneId));
+    tasks.push_back(std::make_unique<Harmony::Tasks::EnableSceneDrawingTask>(sceneId));
+    tasks.push_back(std::make_unique<Harmony::Tasks::EnableSceneUpdatingTask>(sceneId));
+    
+    auto batchTask = std::make_unique<Harmony::Tasks::BatchSubmitTasksTask>(
+        std::move(tasks),
+        100  // Normal priority
+    );
+    
+    engine.taskManagement->submit(std::move(batchTask));
+    HARMONY_INFO("Submitted batch of initialization tasks");
+}
+
+// Example 37: Watchdog for system stability
+void StartSystemWatchdog(Harmony::Engine& engine)
+{
+    auto healthCheck = [](Harmony::Engine& e) -> bool {
+        // Check if engine is in good state
+        return e.isRunning() && e.getDeltaTime() < 1.0;  // Less than 1 second frame time
+    };
+    
+    auto recoveryAction = [](Harmony::Engine& e) {
+        HARMONY_WARN("Watchdog detected system issue - attempting recovery");
+        // Perform recovery actions like clearing caches, reloading resources, etc.
+    };
+    
+    auto task = std::make_unique<Harmony::Tasks::WatchdogTask>(
+        healthCheck,
+        recoveryAction,
+        std::chrono::milliseconds(1000),  // Check every second
+        300  // Monitor for 5 minutes
+    );
+    
+    engine.taskManagement->submit(std::move(task));
+}
+
+// Example 38: Runtime assertion for critical conditions
+void VerifyCriticalSystems(Harmony::Engine& engine)
+{
+    auto condition = [](Harmony::Engine& e) {
+        return e.taskManagement != nullptr && 
+               e.sceneManagement != nullptr &&
+               e.stateManagement != nullptr;
+    };
+    
+    auto onFailure = [](Harmony::Engine& e) {
+        HARMONY_ERROR("Critical systems verification failed - stopping engine");
+        e.stop();
+    };
+    
+    auto task = std::make_unique<Harmony::Tasks::AssertTask>(
+        condition,
+        "All critical managers must be initialized",
+        onFailure
+    );
+    
+    engine.taskManagement->submit(std::move(task));
+}
+
+// Example 39: Generate and save performance report
+void GeneratePerformanceReport(Harmony::Engine& engine)
+{
+    auto task = std::make_unique<Harmony::Tasks::PerformanceReportTask>(
+        true,   // Include scene information
+        true,   // Include resource information
+        [](std::string report) {
+            HARMONY_INFO("Performance Report Generated:\n{}", report);
+            // In a real implementation, save to file
+        }
+    );
+    
+    engine.taskManagement->submit(std::move(task));
+}
+
+// Example 40: Backup and restore game state
+void BackupCurrentState(Harmony::Engine& engine, const std::string& backupId)
+{
+    auto task = std::make_unique<Harmony::Tasks::BackupStateTask>(
+        backupId,
+        [backupId](bool success, std::string message) {
+            if (success) {
+                HARMONY_INFO("State backup '{}' created successfully", backupId);
+            } else {
+                HARMONY_ERROR("Failed to create backup '{}': {}", backupId, message);
+            }
+        }
+    );
+    
+    engine.taskManagement->submit(std::move(task));
+}
+
+void RestorePreviousState(Harmony::Engine& engine, const std::string& backupId)
+{
+    auto task = std::make_unique<Harmony::Tasks::RestoreStateTask>(
+        backupId,
+        [backupId](bool success, std::string message) {
+            if (success) {
+                HARMONY_INFO("State '{}' restored successfully", backupId);
+            } else {
+                HARMONY_ERROR("Failed to restore state '{}': {}", backupId, message);
+            }
+        }
+    );
+    
+    engine.taskManagement->submit(std::move(task));
+}
+
+// Example 41: Custom cleanup task
+void PerformGameCleanup(Harmony::Engine& engine)
+{
+    auto cleanupHandler = [](Harmony::Engine& e) {
+        // Perform custom cleanup operations
+        HARMONY_INFO("Cleaning up temporary game data");
+        // Clear caches, temporary files, etc.
+    };
+    
+    auto task = std::make_unique<Harmony::Tasks::CleanupTask>(
+        cleanupHandler,
+        "Game Session Cleanup",
+        150  // Low priority
+    );
+    
+    engine.taskManagement->submit(std::move(task));
+}
+
+// Example 42: Replace state without popping
+void HotSwapGameState(Harmony::Engine& engine, Harmony::Utilities::UUID newStateId)
+{
+    auto task = std::make_unique<Harmony::Tasks::ReplaceStateTask>(newStateId);
+    engine.taskManagement->submit(std::move(task));
+    HARMONY_INFO("Hot-swapping game state");
+}
+
+// Example 43: Peek at current state
+void QueryCurrentState(Harmony::Engine& engine)
+{
+    auto task = std::make_unique<Harmony::Tasks::PeekStateTask>(
+        [](Harmony::Utilities::UUID stateId) {
+            HARMONY_INFO("Current state ID: {}", stateId);
+        }
+    );
+    engine.taskManagement->submit(std::move(task));
+}
+
+// Example 44: Scheduled batch submit for timed events
+void ScheduleEventTasks(Harmony::Engine& engine)
+{
+    std::vector<std::unique_ptr<Harmony::Tasks::Task>> tasks;
+    
+    tasks.push_back(std::make_unique<Harmony::Tasks::LogMessageTask>(
+        "Event started", Harmony::Tasks::LogMessageTask::Info));
+    tasks.push_back(std::make_unique<Harmony::Tasks::LogMessageTask>(
+        "Event in progress", Harmony::Tasks::LogMessageTask::Info));
+    
+    // Schedule to execute 5 seconds from now
+    auto executeAt = std::chrono::steady_clock::now() + std::chrono::seconds(5);
+    
+    auto task = std::make_unique<Harmony::Tasks::ScheduledBatchSubmitTask>(
+        std::move(tasks),
+        executeAt,
+        50  // Medium priority
+    );
+    
+    engine.taskManagement->submit(std::move(task));
+    HARMONY_INFO("Scheduled batch of tasks to execute in 5 seconds");
+}
+
+// Example 45: Error recovery attempt
+void AttemptErrorRecovery(Harmony::Engine& engine, const std::string& errorDesc)
+{
+    auto recoveryAction = [](Harmony::Engine& e) -> bool {
+        HARMONY_INFO("Attempting to recover from error");
+        // Perform recovery steps
+        // Return true if recovery succeeded
+        return true;
+    };
+    
+    auto task = std::make_unique<Harmony::Tasks::ErrorRecoveryTask>(
+        errorDesc,
+        recoveryAction,
+        [errorDesc](bool success) {
+            if (success) {
+                HARMONY_INFO("Successfully recovered from: {}", errorDesc);
+            } else {
+                HARMONY_ERROR("Failed to recover from: {}", errorDesc);
+            }
+        }
+    );
+    
+    engine.taskManagement->submit(std::move(task));
+}
+
+// Example 46: Resource usage snapshot
+void TakeResourceSnapshot(Harmony::Engine& engine)
+{
+    auto task = std::make_unique<Harmony::Tasks::ResourceUsageSnapshotTask>(
+        [](std::string snapshot) {
+            HARMONY_INFO("Resource Usage:\n{}", snapshot);
+        }
+    );
+    engine.taskManagement->submit(std::move(task));
+}
+
+// Example 47: System information dump
+void DumpSystemInfo(Harmony::Engine& engine)
+{
+    auto task = std::make_unique<Harmony::Tasks::SystemInfoDumpTask>(
+        [](std::string info) {
+            HARMONY_INFO("{}", info);
+        }
+    );
+    engine.taskManagement->submit(std::move(task));
+}
+
+// Example 48: Task queue monitoring
+void MonitorTaskQueue(Harmony::Engine& engine)
+{
+    auto task = std::make_unique<Harmony::Tasks::TaskQueueMonitorTask>(
+        [](std::string report) {
+            HARMONY_INFO("Task Queue Status:\n{}", report);
+        }
+    );
+    engine.taskManagement->submit(std::move(task));
+}
+
+// Example 49: Configuration reload
+void ReloadGameConfig(Harmony::Engine& engine, const std::string& configPath)
+{
+    auto task = std::make_unique<Harmony::Tasks::ConfigurationReloadTask>(
+        configPath,
+        [configPath](bool success) {
+            if (success) {
+                HARMONY_INFO("Configuration reloaded from: {}", configPath);
+            } else {
+                HARMONY_WARN("Failed to reload configuration from: {}", configPath);
+            }
+        }
+    );
+    engine.taskManagement->submit(std::move(task));
+}
+
+// Example 50: CPU usage profiling
+void ProfileCPUUsage(Harmony::Engine& engine)
+{
+    auto task = std::make_unique<Harmony::Tasks::CPUUsageProfilerTask>(
+        std::chrono::milliseconds(5000),  // Monitor for 5 seconds
+        [](double avgCpuUsage) {
+            HARMONY_INFO("Average CPU usage: {:.2f}%", avgCpuUsage);
+        }
+    );
+    engine.taskManagement->submit(std::move(task));
+}
+
 } // namespace Examples

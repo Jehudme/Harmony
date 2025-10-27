@@ -53,6 +53,36 @@ Use utility tasks for custom behaviors:
 - Memory profiling and debugging
 - Scene validation and debugging
 
+### When to Use Profiling Tasks
+Use profiling tasks for performance monitoring and optimization:
+- Tracking frame time statistics to identify performance issues
+- Monitoring CPU usage over time
+- Creating snapshots of resource usage for memory profiling
+- Generating comprehensive performance reports
+- Monitoring task queue health and processing times
+
+### When to Use State Transition Tasks
+Use state transition tasks for advanced state management:
+- Smooth transitions between states with effects and delays
+- Replacing states without full stack manipulation
+- Querying current state without modifications
+- Creating fade effects or loading screens during transitions
+
+### When to Use Task Submission Tasks
+Use task submission tasks to orchestrate complex workflows:
+- Submitting multiple related tasks together for atomic operations
+- Conditionally executing tasks based on runtime conditions
+- Scheduling future task submissions for timed events
+- Creating dynamic task workflows that adapt to game state
+
+### When to Use Safety and Debugging Tasks
+Use safety and debugging tasks for robust operation:
+- Runtime assertions to catch logic errors early
+- Health checks to verify subsystem integrity
+- Error recovery to handle and recover from failures
+- Watchdog monitoring to detect and respond to system issues
+- Backup and restore functionality for critical state
+
 ## Common Patterns
 Use state tasks for managing game states:
 - Menu navigation (main menu → settings → gameplay)
@@ -308,6 +338,156 @@ auto countTask = std::make_unique<CountEntitiesTask>(
     }
 );
 engine.taskManagement->submit(std::move(countTask));
+```
+
+### Pattern: Frame Time Profiling
+```cpp
+// Monitor frame performance
+auto profilerTask = std::make_unique<FrameTimeProfilerTask>(
+    120,  // Sample 120 frames
+    [](double min, double avg, double max) {
+        if (avg > 0.016) {  // More than 16ms = less than 60 FPS
+            HARMONY_WARN("Average frame time too high: {:.2f}ms", avg * 1000.0);
+        }
+    }
+);
+engine.taskManagement->submit(std::move(profilerTask));
+```
+
+### Pattern: Health Monitoring
+```cpp
+// Periodic health check
+auto healthTask = std::make_unique<HealthCheckTask>(
+    [](bool isHealthy, std::string report) {
+        if (!isHealthy) {
+            HARMONY_ERROR("Engine health check failed:\n{}", report);
+            // Trigger recovery or alert
+        }
+    }
+);
+engine.taskManagement->submit(std::move(healthTask));
+```
+
+### Pattern: Smooth State Transition with Effects
+```cpp
+// Transition with fade effect
+auto fadeOut = [](Engine& e) {
+    // Implement fade-out visual effect
+    HARMONY_INFO("Fading out...");
+};
+auto transitionTask = std::make_unique<TransitionToStateTask>(
+    nextStateId,
+    std::chrono::milliseconds(500),  // 500ms delay
+    fadeOut
+);
+engine.taskManagement->submit(std::move(transitionTask));
+```
+
+### Pattern: Conditional Task Execution
+```cpp
+// Submit different tasks based on condition
+auto checkFPS = [](Engine& e) { 
+    return e.getDeltaTime() < 0.020;  // Less than 20ms = good FPS
+};
+auto goodFpsTask = std::make_unique<LogMessageTask>("Performance is good", LogMessageTask::Info);
+auto badFpsTask = std::make_unique<LogMessageTask>("Performance degraded", LogMessageTask::Warning);
+
+auto conditionalTask = std::make_unique<ConditionalSubmitTask>(
+    checkFPS,
+    std::move(goodFpsTask),
+    std::move(badFpsTask)
+);
+engine.taskManagement->submit(std::move(conditionalTask));
+```
+
+### Pattern: Batch Task Submission
+```cpp
+// Submit multiple related tasks together
+std::vector<std::unique_ptr<Task>> initTasks;
+initTasks.push_back(std::make_unique<LoadResourceTask>("texture", textureId));
+initTasks.push_back(std::make_unique<LoadResourceTask>("sound", soundId));
+initTasks.push_back(std::make_unique<CreateSceneTask>(sceneId));
+
+auto batchTask = std::make_unique<BatchSubmitTasksTask>(
+    std::move(initTasks),
+    100  // Normal priority
+);
+engine.taskManagement->submit(std::move(batchTask));
+```
+
+### Pattern: Watchdog for System Stability
+```cpp
+// Monitor engine health and recover if needed
+auto healthCheck = [](Engine& e) -> bool {
+    return e.isRunning() && e.getDeltaTime() < 1.0;
+};
+auto recovery = [](Engine& e) {
+    HARMONY_WARN("Watchdog detected issue - attempting recovery");
+    // Perform recovery actions
+};
+auto watchdog = std::make_unique<WatchdogTask>(
+    healthCheck,
+    recovery,
+    std::chrono::milliseconds(1000),  // Check every second
+    300  // Monitor for 5 minutes
+);
+engine.taskManagement->submit(std::move(watchdog));
+```
+
+### Pattern: Runtime Assertion
+```cpp
+// Verify critical conditions
+auto checkCondition = [](Engine& e) {
+    return e.taskManagement != nullptr && e.sceneManagement != nullptr;
+};
+auto onFailure = [](Engine& e) {
+    HARMONY_ERROR("Critical systems not initialized!");
+    e.stop();
+};
+auto assertTask = std::make_unique<AssertTask>(
+    checkCondition,
+    "Core managers must be initialized",
+    onFailure
+);
+engine.taskManagement->submit(std::move(assertTask));
+```
+
+### Pattern: Performance Report Generation
+```cpp
+// Generate comprehensive performance report
+auto reportTask = std::make_unique<PerformanceReportTask>(
+    true,   // Include scene info
+    true,   // Include resource info
+    [](std::string report) {
+        // Log or save the report
+        HARMONY_INFO("Performance Report:\n{}", report);
+        saveToFile("performance_report.txt", report);
+    }
+);
+engine.taskManagement->submit(std::move(reportTask));
+```
+
+### Pattern: State Backup and Restore
+```cpp
+// Create backup before risky operation
+auto backupTask = std::make_unique<BackupStateTask>(
+    "pre_operation_backup",
+    [](bool success, std::string message) {
+        if (success) {
+            HARMONY_INFO("Backup created: {}", message);
+        }
+    }
+);
+engine.taskManagement->submit(std::move(backupTask));
+
+// Later, restore if needed
+auto restoreTask = std::make_unique<RestoreStateTask>(
+    "pre_operation_backup",
+    [](bool success, std::string message) {
+        HARMONY_INFO("Restore result: {}", message);
+    }
+);
+// Submit when restoration is needed
 ```
 
 ## Thread Safety Tips

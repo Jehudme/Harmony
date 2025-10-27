@@ -403,6 +403,180 @@ Checks if a scene exists and reports result via callback.
   - `sceneId`: ID of the scene to check
   - `callback`: Function called with bool result
 
+## Profiling and Performance Tasks
+
+### FrameTimeProfilerTask
+Monitors and logs frame time statistics over multiple samples.
+- **Priority**: 0
+- **Mode**: FastMultiThreaded
+- **Parameters**:
+  - `sampleCount`: Number of frame samples to collect (default: 60)
+  - `callback`: Optional callback receiving (min, avg, max) frame times
+
+### CPUUsageProfilerTask
+Tracks CPU usage over a specified duration.
+- **Priority**: 0
+- **Mode**: SlowMultiThreaded
+- **Parameters**:
+  - `duration`: Time to monitor CPU usage (default: 5000ms)
+  - `callback`: Optional callback receiving average CPU usage percentage
+
+### ResourceUsageSnapshotTask
+Creates a detailed snapshot of all resource usage.
+- **Priority**: 0
+- **Mode**: FastMultiThreaded
+- **Parameters**:
+  - `callback`: Optional callback receiving snapshot as string
+
+### PerformanceReportTask
+Generates a comprehensive performance report including engine and subsystem stats.
+- **Priority**: 0
+- **Mode**: FastMultiThreaded
+- **Parameters**:
+  - `includeScenes`: Include scene information (default: true)
+  - `includeResources`: Include resource information (default: true)
+  - `callback`: Optional callback receiving report as string
+
+### TaskQueueMonitorTask
+Monitors task queue depth and processing times.
+- **Priority**: 0
+- **Mode**: FastMultiThreaded
+- **Parameters**:
+  - `callback`: Optional callback receiving monitor report as string
+
+## State Transition Tasks (Additional)
+
+### TransitionToStateTask
+Performs a smooth transition to a new state with optional effects and delays.
+- **Priority**: 100
+- **Mode**: SlowMultiThreaded
+- **Parameters**:
+  - `newStateId`: ID of the state to transition to
+  - `transitionDelay`: Delay before transition (default: 0ms)
+  - `transitionEffect`: Optional effect function to execute during transition
+
+### ReplaceStateTask
+Replaces the current state with a new state (pop then push).
+- **Priority**: 100
+- **Mode**: FastMultiThreaded
+- **Parameters**:
+  - `newStateId`: ID of the state to replace with
+
+### PeekStateTask
+Queries the current state without modifying the state stack.
+- **Priority**: 0
+- **Mode**: FastMultiThreaded
+- **Parameters**:
+  - `callback`: Function called with current state ID
+
+## Task Submission Tasks
+
+### BatchSubmitTasksTask
+Submits multiple tasks at once to the task manager.
+- **Priority**: Configurable (default: 50)
+- **Mode**: FastMultiThreaded
+- **Parameters**:
+  - `tasks`: Vector of tasks to submit
+  - `priority`: Priority for this batch submission task
+
+### ConditionalSubmitTask
+Submits tasks based on a condition evaluation.
+- **Priority**: Configurable (default: 50)
+- **Mode**: FastMultiThreaded
+- **Parameters**:
+  - `condition`: Function returning bool to evaluate
+  - `taskOnTrue`: Task to submit if condition is true
+  - `taskOnFalse`: Optional task to submit if condition is false
+  - `priority`: Priority for this conditional submission task
+
+### ScheduledBatchSubmitTask
+Schedules multiple tasks for submission at a specific future time.
+- **Priority**: Configurable (default: 50)
+- **Mode**: SlowMultiThreaded
+- **Parameters**:
+  - `tasks`: Vector of tasks to submit
+  - `submitAt`: Time point when tasks should be submitted
+  - `priority`: Priority for this scheduled submission task
+
+## System and Utility Tasks (Additional)
+
+### ConfigurationReloadTask
+Reloads engine configuration from a file.
+- **Priority**: 100
+- **Mode**: SlowMultiThreaded
+- **Parameters**:
+  - `configPath`: Path to configuration file
+  - `callback`: Optional callback receiving success status
+
+### SystemInfoDumpTask
+Dumps comprehensive system and engine information to logs.
+- **Priority**: 0
+- **Mode**: FastMultiThreaded
+- **Parameters**:
+  - `callback`: Optional callback receiving info as string
+
+### CleanupTask
+Executes a custom cleanup handler with logging support.
+- **Priority**: Configurable (default: 50)
+- **Mode**: FastMultiThreaded
+- **Parameters**:
+  - `cleanupHandler`: Function to execute for cleanup
+  - `cleanupName`: Name for logging purposes (default: "General Cleanup")
+  - `priority`: Task priority
+
+### WatchdogTask
+Monitors system health at intervals and triggers recovery actions on issues.
+- **Priority**: 0
+- **Mode**: SlowMultiThreaded
+- **Parameters**:
+  - `healthCheck`: Function returning bool (healthy/unhealthy)
+  - `recoveryAction`: Function to execute on health issues
+  - `checkInterval`: Time between health checks (default: 1000ms)
+  - `maxChecks`: Maximum number of checks (default: 10)
+
+### BackupStateTask
+Creates a backup snapshot of the current engine state.
+- **Priority**: 100
+- **Mode**: FastMultiThreaded
+- **Parameters**:
+  - `backupId`: Identifier for the backup
+  - `callback`: Optional callback receiving (success, message)
+
+### RestoreStateTask
+Restores engine state from a previously created backup.
+- **Priority**: 150
+- **Mode**: FastMultiThreaded
+- **Parameters**:
+  - `backupId`: Identifier of the backup to restore
+  - `callback`: Optional callback receiving (success, message)
+
+## Debugging and Safety Tasks
+
+### AssertTask
+Performs a runtime assertion check with custom failure handling.
+- **Priority**: 0
+- **Mode**: FastMultiThreaded
+- **Parameters**:
+  - `condition`: Function returning bool to assert
+  - `assertMessage`: Message to log on assertion failure
+  - `onFailure`: Optional function to execute on assertion failure
+
+### HealthCheckTask
+Verifies the health of all engine subsystems.
+- **Priority**: 0
+- **Mode**: FastMultiThreaded
+- **Parameters**:
+  - `callback`: Optional callback receiving (isHealthy, report)
+
+### ErrorRecoveryTask
+Attempts to recover from an error state using a custom recovery action.
+- **Priority**: 200
+- **Mode**: FastMultiThreaded
+- **Parameters**:
+  - `errorDescription`: Description of the error to recover from
+  - `recoveryAction`: Function returning bool (success/failure)
+  - `callback`: Optional callback receiving recovery success status
+
 ## Usage Examples
 
 ### Creating an Entity
@@ -503,6 +677,120 @@ auto handleInput = [](Engine& engine) {
 auto task = std::make_unique<Harmony::Tasks::ThrottledTask>(
     handleInput,
     std::chrono::milliseconds(100)  // Minimum 100ms between executions
+);
+engine.taskManagement->submit(std::move(task));
+```
+
+### Frame Time Profiling
+```cpp
+auto task = std::make_unique<Harmony::Tasks::FrameTimeProfilerTask>(
+    120,  // Collect 120 frame samples
+    [](double minTime, double avgTime, double maxTime) {
+        std::cout << "Frame stats: " << avgTime * 1000.0 << "ms avg" << std::endl;
+    }
+);
+engine.taskManagement->submit(std::move(task));
+```
+
+### System Health Check
+```cpp
+auto task = std::make_unique<Harmony::Tasks::HealthCheckTask>(
+    [](bool isHealthy, std::string report) {
+        if (!isHealthy) {
+            std::cerr << "Health check failed:\n" << report << std::endl;
+        }
+    }
+);
+engine.taskManagement->submit(std::move(task));
+```
+
+### Smooth State Transition
+```cpp
+auto fadeEffect = [](Engine& engine) {
+    // Implement fade out effect
+};
+auto task = std::make_unique<Harmony::Tasks::TransitionToStateTask>(
+    newStateId,
+    std::chrono::milliseconds(500),  // 500ms transition delay
+    fadeEffect
+);
+engine.taskManagement->submit(std::move(task));
+```
+
+### Conditional Task Submission
+```cpp
+auto condition = [](Engine& engine) { 
+    return engine.getDeltaTime() > 0.033; // FPS too low
+};
+auto lowFpsTask = std::make_unique<Harmony::Tasks::LogMessageTask>(
+    "Low FPS detected", 
+    Harmony::Tasks::LogMessageTask::Warning
+);
+auto task = std::make_unique<Harmony::Tasks::ConditionalSubmitTask>(
+    condition,
+    std::move(lowFpsTask)
+);
+engine.taskManagement->submit(std::move(task));
+```
+
+### Watchdog Monitoring
+```cpp
+auto healthCheck = [](Engine& engine) -> bool {
+    return engine.isRunning() && engine.getDeltaTime() < 1.0;
+};
+auto recovery = [](Engine& engine) {
+    // Attempt recovery actions
+    HARMONY_WARN("Watchdog triggered recovery");
+};
+auto task = std::make_unique<Harmony::Tasks::WatchdogTask>(
+    healthCheck,
+    recovery,
+    std::chrono::milliseconds(1000),  // Check every second
+    60  // Monitor for 60 seconds
+);
+engine.taskManagement->submit(std::move(task));
+```
+
+### Batch Task Submission
+```cpp
+std::vector<std::unique_ptr<Harmony::Tasks::Task>> tasks;
+tasks.push_back(std::make_unique<Harmony::Tasks::LogMessageTask>("Task 1", LogMessageTask::Info));
+tasks.push_back(std::make_unique<Harmony::Tasks::LogMessageTask>("Task 2", LogMessageTask::Info));
+tasks.push_back(std::make_unique<Harmony::Tasks::LogMessageTask>("Task 3", LogMessageTask::Info));
+
+auto batchTask = std::make_unique<Harmony::Tasks::BatchSubmitTasksTask>(
+    std::move(tasks),
+    50  // Medium priority
+);
+engine.taskManagement->submit(std::move(batchTask));
+```
+
+### Runtime Assertion
+```cpp
+auto condition = [](Engine& engine) {
+    return engine.taskManagement != nullptr;
+};
+auto onFailure = [](Engine& engine) {
+    HARMONY_ERROR("Critical: TaskManager is null!");
+    engine.stop();
+};
+auto task = std::make_unique<Harmony::Tasks::AssertTask>(
+    condition,
+    "TaskManager must be initialized",
+    onFailure
+);
+engine.taskManagement->submit(std::move(task));
+```
+
+### Performance Report Generation
+```cpp
+auto task = std::make_unique<Harmony::Tasks::PerformanceReportTask>(
+    true,   // Include scenes
+    true,   // Include resources
+    [](std::string report) {
+        // Save report to file or display in UI
+        std::cout << report << std::endl;
+    }
 );
 engine.taskManagement->submit(std::move(task));
 ```
