@@ -4,7 +4,7 @@ This pull request adds a comprehensive set of essential task classes to the Harm
 
 ## What's New
 
-### 27 New Task Classes Across 6 Categories
+### 51 Task Classes Across 6 Categories
 
 #### 🎮 Entity Management (4 tasks)
 - **CreateEntityTask** - Create entities asynchronously in any scene
@@ -12,16 +12,29 @@ This pull request adds a comprehensive set of essential task classes to the Harm
 - **BatchCreateEntitiesTask** - Efficiently create multiple entities at once
 - **BatchDestroyEntitiesTask** - Efficiently destroy multiple entities at once
 
-#### 🎬 Scene Management (7 tasks)
+#### 🎬 Scene Management (13 tasks)
 - **CreateSceneTask** - Load and initialize scenes in the background
 - **ResetSceneTask** - Reset scene to initial configuration
 - **EnableSceneDrawingTask** - Enable rendering for a scene
 - **DisableSceneDrawingTask** - Disable rendering for a scene
 - **EnableSceneUpdatingTask** - Enable updates for a scene
 - **DisableSceneUpdatingTask** - Disable updates for a scene
+- **DeleteSceneTask** - Delete a scene from the current state
+- **CreateSceneViewTask** - Create a View component for a scene
+- **DeleteSceneViewTask** - Delete View component from a scene
+- **SetSceneDrawOrderTask** - Modify scene draw order (if mutable)
+- **CheckSceneExistsTask** - Check if a scene exists
 
-#### 🧩 Component Management (1 task)
+#### 🧩 Component Management (10 tasks)
 - **AddComponentTask** - Dynamically add components to entities at runtime
+- **RemoveComponentTask** - Remove components from entities
+- **CloneEntityTask** - Clone an entity with all its components
+- **BatchAddComponentsTask** - Add same component to multiple entities
+- **BatchRemoveComponentsTask** - Remove same component from multiple entities
+- **CountEntitiesTask** - Count entities in a scene
+- **ClearSceneEntitiesTask** - Remove all entities from a scene
+- **MoveEntityTask** - Move entity between scenes
+- **BatchMoveEntitiesTask** - Batch move entities between scenes
 
 #### 🔄 State Management (4 tasks)
 - **PushState** - Push states onto the state stack
@@ -35,7 +48,7 @@ This pull request adds a comprehensive set of essential task classes to the Harm
 - **UnloadAllResourcesTask** - Clear all loaded resources
 - **BatchLoadResourcesTask** - Load multiple resources efficiently
 
-#### ⚙️ Engine & Utility Operations (7 tasks)
+#### ⚙️ Engine & Utility Operations (16 tasks)
 - **SetFPS** - Adjust target FPS dynamically
 - **StopEngineTask** - Gracefully stop the engine
 - **DelayedActionTask** - Execute actions after a delay
@@ -44,6 +57,17 @@ This pull request adds a comprehensive set of essential task classes to the Harm
 - **LogMessageTask** - Log messages at different levels
 - **ConditionalTask** - Conditional execution based on predicates
 - **RepeatedTask** - Execute actions repeatedly with delays
+- **SequentialTasksTask** - Execute multiple actions in sequence
+- **TimedActionTask** - Measure and log execution time
+- **RetryTask** - Retry actions on failure
+- **ThrottledTask** - Throttle execution frequency
+- **DebouncedTask** - Debounce rapid executions
+- **MemorySnapshotTask** - Log memory usage information
+- **DumpSceneInfoTask** - Dump scene debugging information
+- **ValidateSceneTask** - Validate scene integrity
+- **ChainedTasksTask** - Chain tasks with error handling
+- **ScheduledTask** - Schedule actions for specific times
+- **IntervalTask** - Execute actions at regular intervals
 
 ## Key Features
 

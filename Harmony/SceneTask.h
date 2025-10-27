@@ -149,5 +149,34 @@ namespace Harmony::Tasks
 	private:
 		const Utilities::UUID sceneId_;
 	};
+
+	// Task to set scene draw order
+	class SetSceneDrawOrderTask : public Tasks::Task
+	{
+	public:
+		SetSceneDrawOrderTask(const Utilities::UUID sceneId, int drawOrder);
+
+	private:
+		void run() override;
+
+	private:
+		const Utilities::UUID sceneId_;
+		const int drawOrder_;
+	};
+
+	// Task to check if scene exists
+	class CheckSceneExistsTask : public Tasks::Task
+	{
+	public:
+		CheckSceneExistsTask(const Utilities::UUID sceneId, 
+			std::function<void(bool)> callback);
+
+	private:
+		void run() override;
+
+	private:
+		const Utilities::UUID sceneId_;
+		std::function<void(bool)> callback_;
+	};
 }
 
