@@ -1,6 +1,6 @@
 # New Components and Tasks Documentation
 
-This document describes the 8 new components and 27 related tasks added to the Harmony engine.
+This document describes the 8 new components and 28 related tasks added to the Harmony engine.
 
 ## Overview
 
@@ -844,7 +844,7 @@ void GameScript::onPreUpdate() override {
 
 This addition provides:
 - **8 new components** covering rendering, audio, physics, and game logic
-- **27 new tasks** for controlling these components
+- **28 new tasks** for controlling these components
 - **Thread-safe** operations following Harmony patterns
 - **Comprehensive error handling** and logging
 - **Configuration-driven** initialization

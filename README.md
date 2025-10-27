@@ -77,7 +77,7 @@ See [NEW_COMPONENTS_DOCUMENTATION.md](NEW_COMPONENTS_DOCUMENTATION.md) for detai
 
 ### Task System
 
-Over 90 pre-built task types for:
+Over 99 pre-built task types for:
 - Entity management (create, destroy, batch operations)
 - Scene management (create, delete, enable/disable drawing/updating, reset)
 - State management (push, pop, switch, clear)
