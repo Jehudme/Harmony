@@ -29,6 +29,7 @@ namespace Harmony::Scenes {
 	// Scene classes
 	class Scene;
 	class State;
+	class EntityCounter;
 }
 
 namespace Harmony::Tasks {

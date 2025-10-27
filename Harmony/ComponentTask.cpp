@@ -228,12 +228,11 @@ namespace Harmony::Tasks
 			}
 
 			auto& registry = Scenes::getRegistryFromScene(*scene);
-			size_t count = registry.alive();
 			
-			HARMONY_INFO("Scene {} has {} active entities", sceneId_, count);
+			HARMONY_INFO("Scene {} has {} active entities", sceneId_, scene->entityCounter->getCount());
 			
 			if (callback_) {
-				callback_(count);
+				callback_(scene->entityCounter->getCount());
 			}
 		}
 		catch (const std::exception& e) {
@@ -256,10 +255,9 @@ namespace Harmony::Tasks
 			}
 
 			auto& registry = Scenes::getRegistryFromScene(*scene);
-			size_t count = registry.alive();
 			registry.clear();
 			
-			HARMONY_INFO("Cleared {} entities from scene {}", count, sceneId_);
+			HARMONY_INFO("Cleared {} entities from scene {}", scene->entityCounter->getCount(), sceneId_);
 		}
 		catch (const std::exception& e) {
 			HARMONY_ERROR("Failed to clear entities from scene {}: {}", sceneId_, e.what());

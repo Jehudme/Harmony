@@ -108,10 +108,13 @@ namespace Harmony::Scenes
 		void reset();
 		void initialize();
 
+		struct EntityCounter;
+		std::unique_ptr<EntityCounter> entityCounter;
+
 	private:
-		// PImpl to hide entt::registry details
 		struct SceneImpl;
 		std::unique_ptr<SceneImpl> impl_;
+
 		const Utilities::Configuration& configuration_;
 
 		// Scene control flags
@@ -120,6 +123,21 @@ namespace Harmony::Scenes
 		
 		// Mutex for thread-safe entity operations
 		mutable std::mutex entityMutex_;
+
+		const entt::connection onConstructConnection_;
+		const entt::connection onDestroyConnection_;
+	};
+
+	struct Scene::EntityCounter {
+	public:
+		friend class Scene;
+		std::size_t getCount() const;
+
+	private:
+		void increment();
+		void decrement();
+
+		std::size_t count;
 	};
 }
 

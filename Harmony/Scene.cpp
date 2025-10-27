@@ -31,6 +31,9 @@ namespace Harmony::Scenes
 
 	Scene::Scene(const Utilities::Configuration& configuration, const Utilities::UUID sceneId, Engine& engine) :
 		drawOrder(configuration.get<int>({ "drawOrder" }).value_or(0)),
+		onConstructConnection_(impl_->registry.on_construct<entt::entity>().connect<&EntityCounter::increment>(entityCounter.get())),
+		onDestroyConnection_(impl_->registry.on_destroy<entt::entity>().connect<&EntityCounter::decrement>(entityCounter.get())),
+		entityCounter(std::make_unique<EntityCounter>()),
 		impl_(std::make_unique<SceneImpl>()),
 		configuration_(configuration),
 		sceneId(sceneId),
@@ -266,5 +269,15 @@ namespace Harmony::Scenes
 	{
 		HARMONY_INFO("Resetting scene {}", sceneId);
 		initialize();
+	}
+
+	void Scene::EntityCounter::increment() {
+		count++;
+	}
+	void Scene::EntityCounter::decrement() {
+		count--;
+	}
+	std::size_t Scene::EntityCounter::getCount() const {
+		return count;
 	}
 }

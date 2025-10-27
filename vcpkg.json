@@ -2,7 +2,10 @@
   "dependencies": [
     "sfml",
     "spdlog",
-    "entt",
+    {
+      "name": "entt",
+      "version>=": "3.15.0"
+    },
     {
       "name": "nlohmann-json",
       "version>=": "3.11.3"
@@ -10,3 +13,4 @@
     "fmt"
   ]
 }
+

@@ -353,11 +353,10 @@ namespace Harmony::Tasks
 			}
 
 			auto& registry = Scenes::getRegistryFromScene(*scene);
-			size_t entityCount = registry.alive();
 
 			HARMONY_INFO("Scene {} Information:", sceneId_);
 			HARMONY_INFO("  Scene ID: {}", sceneId_);
-			HARMONY_INFO("  Entity Count: {}", entityCount);
+			HARMONY_INFO("  Entity Count: {}", scene->entityCounter->getCount());
 			HARMONY_INFO("  Drawing Enabled: {}", scene->isDrawingEnabled());
 			HARMONY_INFO("  Updating Enabled: {}", scene->isUpdatingEnabled());
 			HARMONY_INFO("  Draw Order: {}", scene->drawOrder);
@@ -384,13 +383,12 @@ namespace Harmony::Tasks
 			}
 
 			auto& registry = Scenes::getRegistryFromScene(*scene);
-			size_t entityCount = registry.alive();
 
 			// Basic validation checks
 			bool isValid = true;
 			std::string message = "Scene validation passed";
 
-			if (entityCount == 0) {
+			if (scene->entityCounter->getCount() == 0) {
 				HARMONY_WARN("Scene {} has no entities", sceneId_);
 			}
 

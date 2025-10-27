@@ -47,7 +47,7 @@ namespace Harmony::Scenes
 		static_assert(std::is_base_of_v<Base, Type>, "Type must be derived from Base");
 
 		auto& ptr = getRegistryFromScene(*this)
-			.emplace<std::unique_ptr<Base>>(entityId,std::make_unique<Type>(std::forward<Args>(args)...));
+			.emplace_or_replace<std::unique_ptr<Base>>(entityId,std::make_unique<Type>(std::forward<Args>(args)...));
 
 		return static_cast<Type&>(*ptr);
 	}
