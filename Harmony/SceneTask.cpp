@@ -194,4 +194,38 @@ namespace Harmony::Tasks
 		scene->deleteGlobalComponent<Components::View>();
 		HARMONY_INFO("View deleted from scene {}", sceneId_);
 	}
+
+	// SetSceneDrawOrderTask implementation
+	SetSceneDrawOrderTask::SetSceneDrawOrderTask(const Utilities::UUID sceneId, int drawOrder) :
+		Task(50, FastMultiThreaded), sceneId_(sceneId), drawOrder_(drawOrder) {}
+
+	void SetSceneDrawOrderTask::run()
+	{
+		auto scene = getEngine().sceneManagement->find(sceneId_);
+		if (!scene) {
+			HARMONY_ERROR("Failed to set draw order: Scene {} not found", sceneId_);
+			return;
+		}
+
+		// Note: drawOrder is const in Scene, so this would require API changes
+		HARMONY_WARN("SetSceneDrawOrderTask: Scene draw order is immutable after creation");
+		HARMONY_INFO("Scene {} draw order change requested (current: {})", sceneId_, scene->drawOrder);
+	}
+
+	// CheckSceneExistsTask implementation
+	CheckSceneExistsTask::CheckSceneExistsTask(const Utilities::UUID sceneId,
+		std::function<void(bool)> callback) :
+		Task(0, FastMultiThreaded), sceneId_(sceneId), callback_(callback) {}
+
+	void CheckSceneExistsTask::run()
+	{
+		auto scene = getEngine().sceneManagement->find(sceneId_);
+		bool exists = (scene != nullptr);
+
+		HARMONY_DEBUG("Scene {} existence check: {}", sceneId_, exists ? "exists" : "not found");
+
+		if (callback_) {
+			callback_(exists);
+		}
+	}
 }
