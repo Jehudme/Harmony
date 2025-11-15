@@ -159,17 +159,17 @@
     <ClInclude Include="RenderManager.h">
       <Filter>Header Files\Managers</Filter>
     </ClInclude>
-    <ClInclude Include="Node.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Window.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="type_name.h">
       <Filter>Header Files\Utilites</Filter>
     </ClInclude>
+    <ClInclude Include="Node.h">
+      <Filter>Header Files\Components</Filter>
+    </ClInclude>
     <ClInclude Include="OptionalReference.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Utilites</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -282,7 +282,7 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="OptionalReference.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Utilities</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
