@@ -30,6 +30,7 @@ namespace Harmony::Exceptions
 
 	struct ComponentNotFoundException : std::runtime_error {
 		explicit ComponentNotFoundException(const EntityID entityId);
+		explicit ComponentNotFoundException(const EntityID entityId, const std::string_view type);
 	};
 
 	// State Exceptions

@@ -3,18 +3,20 @@
     "width": 1024,
     "height": 768,
     "resizable": true,
-    "title": "Sandbox Application"
+    "title": "Asteroid"
   },
 
   "startupStatesIds": [ 101 ],
 
   "states": {
     "101": {
+      "name": "GameState",
       "scenes": [ 201 ]
     }
   },
   "scenes": {
     "201": {
+      "name": "GameScene",
       "drawOrder": 0,
       "entities": {
         "301": {}
@@ -23,9 +25,7 @@
   },
   "entities": {
     "301": {
-      "children": {
-        "302": {}
-      },
+      "script": "player_script",
       "components": {
         "Transform": {
           "position": {
@@ -38,48 +38,17 @@
             "y": 1
           },
           "origin": {
-            "x": 25,
-            "y": 25
+            "x": 0,
+            "y": 0
           }
         },
         "Circle": {
-          "point_count": 50,
+          "point_count": 3,
           "radius": 25,
           "fill_color": {
             "r": 255,
             "g": 0,
             "b": 0,
-            "a": 255
-          }
-        }
-      }
-    },
-    "302": {
-      "components": {
-        "Transform": {
-          "position": {
-            "x": 200,
-            "y": 150
-          },
-          "rotation": 0,
-          "scale": {
-            "x": 1,
-            "y": 1
-          },
-          "origin": {
-            "x": 0,
-            "y": 0
-          }
-        },
-        "Rectangle": {
-          "size": {
-            "width": 100,
-            "height": 50
-          },
-          "fill_color": {
-            "r": 0,
-            "g": 0,
-            "b": 255,
             "a": 255
           }
         }

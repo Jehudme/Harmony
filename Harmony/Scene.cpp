@@ -100,7 +100,7 @@ namespace Harmony::Scenes
 			sf::RenderStates entityStates;
 
 			if (const auto& transform = impl_->registry.try_get<std::unique_ptr<Components::Transform>>(entity)) {
-				const sf::Transformable* sfTransform = static_cast<const sf::Transformable*>((*transform)->getInternalTransform());
+				const sf::Transformable* sfTransform = static_cast<const sf::Transformable*>(transform->get());
 				if (sfTransform) {
 					entityStates.transform *= sfTransform->getTransform();
 				}
@@ -156,10 +156,11 @@ namespace Harmony::Scenes
 			Management::ComponentManager::createComponent(componentName, configuration.subsection({ "components", componentName}).value(), entity, *this);
 
 		if (std::optional<std::string> scriptName = configuration.get<std::string>({ "script" })) {
-			createComponent(scriptName.value(), configuration.subsection({ "script" }).value(), entity);
+			createComponent(scriptName.value(), configuration, entity);
 
-			Components::Script& script = getComponent<Components::Script>(static_cast<EntityID>(entity));
-			script.entityId = entity; script.scene_ = *this;
+			Components::Script& script = getComponent<Components::Script>(entity);
+			script.entityId_ = entity; 
+			script.scene_ = *this;
 			script.onCreate();
 		}
 
@@ -181,6 +182,7 @@ namespace Harmony::Scenes
 	EntityID Scene::createEntity(const Utilities::Configuration& configuration, Utilities::UUID premadeId)
 	{
 		Utilities::Configuration mergedConfiguration;
+		engine.configuration.debugPrint();
 		if (std::optional<Utilities::Configuration> premadeConfiguration = engine.configuration.subsection({ "entities", std::to_string(premadeId) }))
 			mergedConfiguration.merge(premadeConfiguration.value());
 

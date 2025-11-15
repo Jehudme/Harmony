@@ -1,6 +1,7 @@
 #pragma once
 #include "ComponentManagement.h"
 #include "entt/entity/fwd.hpp"
+#include "fwd.h"
 
 namespace Harmony::Components
 {
@@ -9,6 +10,7 @@ namespace Harmony::Components
 	public:
 		friend class Harmony::Scenes::Scene;
 
+		Script();
 		Script(const Utilities::Configuration& configuration, Scenes::Scene& scene);
 		~Script();
 
@@ -19,11 +21,10 @@ namespace Harmony::Components
 		virtual void onPostUpdate();
 
 		Scenes::Scene& getScene();
-
-	public:
-		EntityID entityId;
+		const EntityID getEntityId() const;
 
 	private:
+		EntityID entityId_;
 		std::optional<std::reference_wrapper<Scenes::Scene>> scene_;
 	};
 }

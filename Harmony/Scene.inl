@@ -7,6 +7,7 @@
 #include <Entt/entt.hpp>
 #include "Exceptions.h"
 #include "Scene.h"
+#include "type_name.h"
 
 namespace Harmony::Scenes
 {
@@ -18,7 +19,7 @@ namespace Harmony::Scenes
 		if (auto* component = registry.template try_get<std::unique_ptr<Type>>(entity))
 			return *component->get();
 	
-		else throw Exceptions::ComponentNotFoundException(entityId);
+		else throw Exceptions::ComponentNotFoundException(entityId, Utilities::typeName<Type>());
 	}
 
 	// Scene member template implementations

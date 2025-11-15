@@ -22,7 +22,6 @@ namespace Harmony::Components
 	template<typename Type>
 	inline Shape<Type>::Shape(const Utilities::Configuration& configuration, Scenes::Scene& scene)
 	{
-		configuration.debugPrint();
 		if (std::optional<std::uint64_t> textureId = configuration.get<std::uint64_t>({ "texture" }))
 		{
 			Resources::Resource& resource = scene.engine.resourceManager->get("texture", textureId.value());

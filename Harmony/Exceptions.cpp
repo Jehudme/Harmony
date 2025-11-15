@@ -44,6 +44,12 @@ namespace Harmony::Exceptions
 		HARMONY_CRITICAL(what());
 	}
 
+
+	ComponentNotFoundException::ComponentNotFoundException(const EntityID entityId, const std::string_view type)
+		: std::runtime_error("Entity " + std::to_string(static_cast<unsigned int>(entityId)) + " missing requested component " + type.data()) {
+		HARMONY_CRITICAL(what());
+	}
+
 	// State Exceptions
 	StateStackPushFailed::StateStackPushFailed(const std::string& reason)
 		: std::runtime_error("Failed to push state onto stack: " + reason) {

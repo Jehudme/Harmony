@@ -533,7 +533,7 @@ namespace Harmony::Tasks
 			HARMONY_INFO("Frame time profiler starting: collecting {} samples", sampleCount_);
 
 			for (int i = 0; i < sampleCount_; ++i) {
-				double deltaTime = static_cast<double>(getEngine().getDeltaTime());
+				double deltaTime = static_cast<double>(getEngine().getDeltaTime().asSeconds());
 				frameTimes.push_back(deltaTime);
 				std::this_thread::sleep_for(std::chrono::milliseconds(16)); // ~60fps sampling
 			}
@@ -645,7 +645,7 @@ namespace Harmony::Tasks
 			// Engine information
 			report += "Engine Status:\n";
 			report += "  Running: " + std::string(getEngine().isRunning() ? "Yes" : "No") + "\n";
-			report += "  Delta Time: " + std::to_string(getEngine().getDeltaTime() * 1000.0) + "ms\n";
+			report += "  Delta Time: " + std::to_string(getEngine().getDeltaTime().asSeconds() * 1000.0) + "ms\n";
 
 			if (includeScenes_) {
 				report += "\nScene Information:\n";

@@ -42,7 +42,6 @@ namespace Harmony
 	void Engine::start()
 	{
 		HARMONY_INFO("Engine starting main loop");
-		impl_->clock.restart();
 		running_ = true;
 		paused_ = false;
 
@@ -78,9 +77,9 @@ namespace Harmony
 		return running_;
 	}
 
-	float Engine::getDeltaTime() const noexcept
+	const sf::Time& Engine::getDeltaTime() const noexcept
 	{
-		return impl_->deltaTime.asSeconds();
+		return impl_->deltaTime;
 	}
 
 	void Engine::handleTasks() {
@@ -92,7 +91,7 @@ namespace Harmony
 		sf::Event event;
 		while (renderManager->pollEvent(event)) {
 			// Forward all events to the InputManager for processing
-			inputManager->handleEvent(event);
+			//inputManager->handleEvent(event);
 
 			// Handle specific engine-level events using a switch statement for clarity
 			switch (event.type)
@@ -162,7 +161,7 @@ namespace Harmony
 
 		// Update input states at the end of event processing
 		// This transitions "Pressed" to "Held" states
-		inputManager->updateStates();
+		//inputManager->updateStates();
 	}
 
 	void Engine::handleUpdates() {
