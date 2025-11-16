@@ -21,9 +21,15 @@
     <ClCompile Include="Asteroid.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="PhysicsDemo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="configuration.json">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="physics_configuration.json">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>

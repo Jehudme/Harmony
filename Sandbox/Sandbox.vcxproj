@@ -138,10 +138,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Asteroid.cpp" />
+    <ClCompile Include="PhysicsDemo.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="configuration.json" />
+    <None Include="physics_configuration.json" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="missing_textures.png" />
