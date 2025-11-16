@@ -2,6 +2,7 @@
 
 #include <box2d/box2d.h>
 #include <memory>
+#include <vector>
 
 namespace Harmony::Scenes {
 	class Scene;
@@ -95,12 +96,25 @@ namespace Harmony::Components
 		/// @return Pointer to the created fixture
 		b2Fixture* createFixture(const b2Shape* shape, float density);
 
-		/// @brief Create a box fixture
-		/// @param halfWidth Half-width of the box
-		/// @param halfHeight Half-height of the box
+		/// @brief Create a box fixture from width and height
+		/// @param width Full width of the box
+		/// @param height Full height of the box
 		/// @param density Density of the fixture
 		/// @return Pointer to the created fixture
-		b2Fixture* createBoxFixture(float halfWidth, float halfHeight, float density);
+		b2Fixture* createBoxFixture(float width, float height, float density);
+
+		/// @brief Create a circle fixture from radius
+		/// @param radius Radius of the circle
+		/// @param density Density of the fixture
+		/// @param center Optional center position (default is origin)
+		/// @return Pointer to the created fixture
+		b2Fixture* createCircleFixture(float radius, float density, const b2Vec2& center = b2Vec2(0.0f, 0.0f));
+
+		/// @brief Create a polygon fixture from a vector of points
+		/// @param points Vector of points defining the polygon (must be convex, counter-clockwise, max 8 points)
+		/// @param density Density of the fixture
+		/// @return Pointer to the created fixture, or nullptr if points are invalid
+		b2Fixture* createPolygonFixture(const std::vector<b2Vec2>& points, float density);
 
 		// Body state methods
 		/// @brief Set the body type (static, kinematic, dynamic)
