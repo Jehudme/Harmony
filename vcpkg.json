@@ -10,7 +10,8 @@
       "name": "nlohmann-json",
       "version>=": "3.11.3"
     },
-    "fmt"
+    "fmt",
+    "box2d"
   ]
 }
 

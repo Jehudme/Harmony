@@ -157,6 +157,8 @@
     <ClInclude Include="Node.h" />
     <ClInclude Include="OptionalReference.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="PhysicsBody.h" />
+    <ClInclude Include="PhysicsWorld.h" />
     <ClInclude Include="RandomValue.h" />
     <ClInclude Include="Rectangle.h" />
     <ClInclude Include="RenderManager.h" />
@@ -204,6 +206,8 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="PhysicsBody.cpp" />
+    <ClCompile Include="PhysicsWorld.cpp" />
     <ClCompile Include="Rectangle.cpp" />
     <ClCompile Include="RenderManager.cpp" />
     <ClCompile Include="Resource.cpp" />
