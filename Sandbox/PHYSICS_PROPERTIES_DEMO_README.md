@@ -59,19 +59,54 @@ The physics system now supports a `FixtureProperties` struct that allows you to 
 
 ## API Usage Examples
 
-### Using FixtureProperties
+### Configuration-Based Approach (Recommended)
+
+The properties are now configured directly in the component configuration:
+
+```json
+"PhysicsBody": {
+  "type": "dynamic",
+  "linear_damping": 0.1,
+  "angular_damping": 0.1,
+  "fixture": {
+    "density": 1.0,
+    "friction": 0.3,
+    "restitution": 0.9,
+    "is_sensor": false
+  }
+}
+```
+
+Then in your script, simply create fixtures using the stored properties:
+
+```cpp
+void onCreate() {
+    physicsBody_ = getScene().getComponent<PhysicsBody>(getEntityId());
+    
+    // Uses properties from configuration
+    physicsBody_->createCircleFixture(25.0f, physicsBody_->getFixtureProperties());
+}
+```
+
+### Programmatic Approach
 
 ```cpp
 #include <Harmony/PhysicsBody.h>
 
-// Create properties with custom values
+// Get/Set individual properties
+physicsBody->setFriction(0.8f);
+physicsBody->setRestitution(0.6f);
+physicsBody->setDensity(2.0f);
+
+// Or set all at once
 Harmony::Components::FixtureProperties props;
 props.density = 2.0f;
 props.friction = 0.8f;
 props.restitution = 0.6f;
 props.isSensor = false;
+physicsBody->setFixtureProperties(props);
 
-// Create a box fixture with these properties
+// Create a box fixture with custom properties
 physicsBody->createBoxFixture(50.0f, 50.0f, props);
 ```
 
@@ -79,16 +114,15 @@ physicsBody->createBoxFixture(50.0f, 50.0f, props);
 
 ```cpp
 // Old API with density only still works
+// Other properties use the values stored in the component
 physicsBody->createBoxFixture(50.0f, 50.0f, 1.0f);
 ```
 
 ### Different Fixture Types
 
 ```cpp
-// Circle with custom properties
-FixtureProperties circleProps;
-circleProps.restitution = 0.9f;  // Bouncy ball
-physicsBody->createCircleFixture(25.0f, circleProps);
+// Circle using stored properties
+physicsBody->createCircleFixture(25.0f, physicsBody->getFixtureProperties());
 
 // Polygon with custom properties
 std::vector<b2Vec2> trianglePoints = {

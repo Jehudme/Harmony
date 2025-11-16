@@ -1,7 +1,7 @@
 # Physics Properties Enhancement Implementation Summary
 
 ## Overview
-Enhanced the Harmony physics system with comprehensive support for fixture properties including friction, restitution (bounciness), density, and sensor flags.
+Enhanced the Harmony physics system with comprehensive support for fixture properties including friction, restitution (bounciness), density, and sensor flags. Properties are stored in the PhysicsBody component and can be configured via JSON or programmatically.
 
 ## Changes Made
 
@@ -19,7 +19,38 @@ struct FixtureProperties
 };
 ```
 
-### 2. PhysicsBody API Enhancements
+### 2. PhysicsBody Storage and Configuration
+
+#### Member Variable
+Added `FixtureProperties fixtureProperties_;` to store default properties for the body.
+
+#### Configuration Parsing
+Properties are loaded from the configuration object in the constructor:
+
+```cpp
+// Fixture properties
+if (std::optional<float> density = configuration.get<float>({ "fixture", "density" }))
+    fixtureProperties_.density = density.value();
+
+if (std::optional<float> friction = configuration.get<float>({ "fixture", "friction" }))
+    fixtureProperties_.friction = friction.value();
+
+if (std::optional<float> restitution = configuration.get<float>({ "fixture", "restitution" }))
+    fixtureProperties_.restitution = restitution.value();
+
+if (std::optional<bool> isSensor = configuration.get<bool>({ "fixture", "is_sensor" }))
+    fixtureProperties_.isSensor = isSensor.value();
+```
+
+#### Getter and Setter Methods
+Added comprehensive property access methods:
+- `setFixtureProperties(const FixtureProperties& properties)` / `getFixtureProperties()`
+- `setFriction(float)` / `getFriction()`
+- `setRestitution(float)` / `getRestitution()`
+- `setDensity(float)` / `getDensity()`
+- `setIsSensor(bool)` / `getIsSensor()`
+
+### 3. PhysicsBody API Enhancements
 
 #### New Overloaded Methods (with FixtureProperties)
 - `createFixture(const b2Shape* shape, const FixtureProperties& properties)`
@@ -34,9 +65,18 @@ All existing methods with `float density` parameter remain unchanged for backwar
 - `createCircleFixture(float radius, float density, const b2Vec2& center)`
 - `createPolygonFixture(const std::vector<b2Vec2>& points, float density)`
 
-The legacy methods internally create a `FixtureProperties` struct with default values and call the new implementation.
+The legacy methods now use stored properties and only override density:
 
-### 3. PhysicsBody.cpp - Implementation
+```cpp
+b2Fixture* PhysicsBody::createBoxFixture(float width, float height, float density)
+{
+    FixtureProperties properties = fixtureProperties_;  // Use stored properties
+    properties.density = density;                        // Override density
+    return createBoxFixture(width, height, properties);
+}
+```
+
+### 4. PhysicsBody.cpp - Implementation
 
 #### Primary Implementation
 The new `createFixture` method with `FixtureProperties` is the main implementation:
@@ -73,11 +113,43 @@ b2Fixture* PhysicsBody::createBoxFixture(float width, float height, float densit
 This design ensures:
 - ✅ Zero code duplication
 - ✅ Full backward compatibility
+- ✅ Properties stored in component, accessible via getters/setters
+- ✅ Configuration-driven approach (JSON)
 - ✅ Easy maintenance (all logic in one place)
 
-### 4. Demo: PhysicsPropertiesDemo.cpp
+### 5. Demo: PhysicsPropertiesDemo.cpp
 
-Created a comprehensive demo showcasing different physics properties:
+Created a comprehensive demo showcasing different physics properties. The demo uses configuration-based approach where properties are defined in JSON and loaded into the PhysicsBody component.
+
+#### Configuration Example
+
+```json
+"PhysicsBody": {
+  "type": "dynamic",
+  "linear_damping": 0.1,
+  "angular_damping": 0.1,
+  "fixture": {
+    "density": 1.0,
+    "friction": 0.9,
+    "restitution": 0.9,
+    "is_sensor": false
+  }
+}
+```
+
+#### Script Usage
+
+Scripts now simply use the configured properties:
+
+```cpp
+void onCreate()
+{
+    physicsBody_ = getScene().getComponent<PhysicsBody>(getEntityId());
+    
+    // Uses properties from configuration
+    physicsBody_->createCircleFixture(25.0f, physicsBody_->getFixtureProperties());
+}
+```
 
 #### Entities Demonstrated
 
