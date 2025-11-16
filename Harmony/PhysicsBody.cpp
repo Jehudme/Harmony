@@ -73,6 +73,19 @@ namespace Harmony::Components
 		if (std::optional<float> angDamp = configuration.get<float>({ "angular_damping" }))
 			bodyDef.angularDamping = angDamp.value();
 
+		// Fixture properties
+		if (std::optional<float> density = configuration.get<float>({ "fixture", "density" }))
+			fixtureProperties_.density = density.value();
+
+		if (std::optional<float> friction = configuration.get<float>({ "fixture", "friction" }))
+			fixtureProperties_.friction = friction.value();
+
+		if (std::optional<float> restitution = configuration.get<float>({ "fixture", "restitution" }))
+			fixtureProperties_.restitution = restitution.value();
+
+		if (std::optional<bool> isSensor = configuration.get<bool>({ "fixture", "is_sensor" }))
+			fixtureProperties_.isSensor = isSensor.value();
+
 		// Create the body
 		if (world_)
 		{
@@ -232,43 +245,67 @@ namespace Harmony::Components
 		return 0.0f;
 	}
 
-	b2Fixture* PhysicsBody::createFixture(const b2Shape* shape, float density)
+	b2Fixture* PhysicsBody::createFixture(const b2Shape* shape, const FixtureProperties& properties)
 	{
 		if (body_)
 		{
 			b2FixtureDef fixtureDef;
 			fixtureDef.shape = shape;
-			fixtureDef.density = density;
+			fixtureDef.density = properties.density;
+			fixtureDef.friction = properties.friction;
+			fixtureDef.restitution = properties.restitution;
+			fixtureDef.isSensor = properties.isSensor;
 			return body_->CreateFixture(&fixtureDef);
 		}
 		return nullptr;
 	}
 
-	b2Fixture* PhysicsBody::createBoxFixture(float width, float height, float density)
+	b2Fixture* PhysicsBody::createFixture(const b2Shape* shape, float density)
+	{
+		FixtureProperties properties = fixtureProperties_;
+		properties.density = density;
+		return createFixture(shape, properties);
+	}
+
+	b2Fixture* PhysicsBody::createBoxFixture(float width, float height, const FixtureProperties& properties)
 	{
 		if (body_)
 		{
 			b2PolygonShape boxShape;
 			// Box2D's SetAsBox takes half-widths, so we divide by 2
 			boxShape.SetAsBox(width / 2.0f, height / 2.0f);
-			return createFixture(&boxShape, density);
+			return createFixture(&boxShape, properties);
 		}
 		return nullptr;
 	}
 
-	b2Fixture* PhysicsBody::createCircleFixture(float radius, float density, const b2Vec2& center)
+	b2Fixture* PhysicsBody::createBoxFixture(float width, float height, float density)
+	{
+		FixtureProperties properties = fixtureProperties_;
+		properties.density = density;
+		return createBoxFixture(width, height, properties);
+	}
+
+	b2Fixture* PhysicsBody::createCircleFixture(float radius, const FixtureProperties& properties, const b2Vec2& center)
 	{
 		if (body_)
 		{
 			b2CircleShape circleShape;
 			circleShape.m_radius = radius;
 			circleShape.m_p = center;
-			return createFixture(&circleShape, density);
+			return createFixture(&circleShape, properties);
 		}
 		return nullptr;
 	}
 
-	b2Fixture* PhysicsBody::createPolygonFixture(const std::vector<b2Vec2>& points, float density)
+	b2Fixture* PhysicsBody::createCircleFixture(float radius, float density, const b2Vec2& center)
+	{
+		FixtureProperties properties = fixtureProperties_;
+		properties.density = density;
+		return createCircleFixture(radius, properties, center);
+	}
+
+	b2Fixture* PhysicsBody::createPolygonFixture(const std::vector<b2Vec2>& points, const FixtureProperties& properties)
 	{
 		if (!body_)
 		{
@@ -284,7 +321,14 @@ namespace Harmony::Components
 
 		b2PolygonShape polygonShape;
 		polygonShape.Set(points.data(), static_cast<int32>(points.size()));
-		return createFixture(&polygonShape, density);
+		return createFixture(&polygonShape, properties);
+	}
+
+	b2Fixture* PhysicsBody::createPolygonFixture(const std::vector<b2Vec2>& points, float density)
+	{
+		FixtureProperties properties = fixtureProperties_;
+		properties.density = density;
+		return createPolygonFixture(points, properties);
 	}
 
 	void PhysicsBody::setType(b2BodyType type)
@@ -336,5 +380,55 @@ namespace Harmony::Components
 			return body_->IsFixedRotation();
 		}
 		return false;
+	}
+
+	void PhysicsBody::setFixtureProperties(const FixtureProperties& properties)
+	{
+		fixtureProperties_ = properties;
+	}
+
+	const FixtureProperties& PhysicsBody::getFixtureProperties() const
+	{
+		return fixtureProperties_;
+	}
+
+	void PhysicsBody::setFriction(float friction)
+	{
+		fixtureProperties_.friction = friction;
+	}
+
+	float PhysicsBody::getFriction() const
+	{
+		return fixtureProperties_.friction;
+	}
+
+	void PhysicsBody::setRestitution(float restitution)
+	{
+		fixtureProperties_.restitution = restitution;
+	}
+
+	float PhysicsBody::getRestitution() const
+	{
+		return fixtureProperties_.restitution;
+	}
+
+	void PhysicsBody::setDensity(float density)
+	{
+		fixtureProperties_.density = density;
+	}
+
+	float PhysicsBody::getDensity() const
+	{
+		return fixtureProperties_.density;
+	}
+
+	void PhysicsBody::setIsSensor(bool isSensor)
+	{
+		fixtureProperties_.isSensor = isSensor;
+	}
+
+	bool PhysicsBody::getIsSensor() const
+	{
+		return fixtureProperties_.isSensor;
 	}
 }

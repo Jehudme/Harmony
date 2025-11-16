@@ -24,12 +24,18 @@
     <ClCompile Include="PhysicsDemo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="PhysicsPropertiesDemo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="configuration.json">
       <Filter>Resource Files</Filter>
     </None>
     <None Include="physics_configuration.json">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="physics_properties_demo_configuration.json">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>
