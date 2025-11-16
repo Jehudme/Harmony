@@ -232,43 +232,67 @@ namespace Harmony::Components
 		return 0.0f;
 	}
 
-	b2Fixture* PhysicsBody::createFixture(const b2Shape* shape, float density)
+	b2Fixture* PhysicsBody::createFixture(const b2Shape* shape, const FixtureProperties& properties)
 	{
 		if (body_)
 		{
 			b2FixtureDef fixtureDef;
 			fixtureDef.shape = shape;
-			fixtureDef.density = density;
+			fixtureDef.density = properties.density;
+			fixtureDef.friction = properties.friction;
+			fixtureDef.restitution = properties.restitution;
+			fixtureDef.isSensor = properties.isSensor;
 			return body_->CreateFixture(&fixtureDef);
 		}
 		return nullptr;
 	}
 
-	b2Fixture* PhysicsBody::createBoxFixture(float width, float height, float density)
+	b2Fixture* PhysicsBody::createFixture(const b2Shape* shape, float density)
+	{
+		FixtureProperties properties;
+		properties.density = density;
+		return createFixture(shape, properties);
+	}
+
+	b2Fixture* PhysicsBody::createBoxFixture(float width, float height, const FixtureProperties& properties)
 	{
 		if (body_)
 		{
 			b2PolygonShape boxShape;
 			// Box2D's SetAsBox takes half-widths, so we divide by 2
 			boxShape.SetAsBox(width / 2.0f, height / 2.0f);
-			return createFixture(&boxShape, density);
+			return createFixture(&boxShape, properties);
 		}
 		return nullptr;
 	}
 
-	b2Fixture* PhysicsBody::createCircleFixture(float radius, float density, const b2Vec2& center)
+	b2Fixture* PhysicsBody::createBoxFixture(float width, float height, float density)
+	{
+		FixtureProperties properties;
+		properties.density = density;
+		return createBoxFixture(width, height, properties);
+	}
+
+	b2Fixture* PhysicsBody::createCircleFixture(float radius, const FixtureProperties& properties, const b2Vec2& center)
 	{
 		if (body_)
 		{
 			b2CircleShape circleShape;
 			circleShape.m_radius = radius;
 			circleShape.m_p = center;
-			return createFixture(&circleShape, density);
+			return createFixture(&circleShape, properties);
 		}
 		return nullptr;
 	}
 
-	b2Fixture* PhysicsBody::createPolygonFixture(const std::vector<b2Vec2>& points, float density)
+	b2Fixture* PhysicsBody::createCircleFixture(float radius, float density, const b2Vec2& center)
+	{
+		FixtureProperties properties;
+		properties.density = density;
+		return createCircleFixture(radius, properties, center);
+	}
+
+	b2Fixture* PhysicsBody::createPolygonFixture(const std::vector<b2Vec2>& points, const FixtureProperties& properties)
 	{
 		if (!body_)
 		{
@@ -284,7 +308,14 @@ namespace Harmony::Components
 
 		b2PolygonShape polygonShape;
 		polygonShape.Set(points.data(), static_cast<int32>(points.size()));
-		return createFixture(&polygonShape, density);
+		return createFixture(&polygonShape, properties);
+	}
+
+	b2Fixture* PhysicsBody::createPolygonFixture(const std::vector<b2Vec2>& points, float density)
+	{
+		FixtureProperties properties;
+		properties.density = density;
+		return createPolygonFixture(points, properties);
 	}
 
 	void PhysicsBody::setType(b2BodyType type)
