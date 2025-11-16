@@ -10,7 +10,10 @@
 #include "Node.h"
 #include "Configuration.h"
 #include "RenderManager.h"
+#include "PhysicsWorld.h"
+#include "PhysicsBody.h"
 #include <SFML/Graphics.hpp>
+#include <box2d/box2d.h>
 
 namespace Harmony::Scenes 
 {
@@ -46,6 +49,16 @@ namespace Harmony::Scenes
 		// Clear existing entities if any
 		for (auto entity : impl_->registry.view<EntityID>()) {
 			impl_->registry.destroy(static_cast<EntityID>(entity));
+		}
+
+		// Initialize global components if specified
+		if (std::optional<Utilities::Configuration> globalComponentsConfig = configuration_.subsection({ "globalComponents" })) {
+			std::vector<std::string> globalComponentNames = globalComponentsConfig->extractKeys({});
+			for (const std::string& componentName : globalComponentNames) {
+				Utilities::Configuration componentConfig = globalComponentsConfig->subsection({ componentName }).value();
+				createGlobalComponent(componentName, componentConfig);
+				HARMONY_DEBUG("Global component '{}' created for scene {}", componentName, sceneId);
+			}
 		}
 
 		std::vector<std::string> entitiesKeys = configuration_.extractKeys({ "entities" });
@@ -123,6 +136,48 @@ namespace Harmony::Scenes
 		for (const EntityID entity : entitiesView) {
 			Components::Script& scriptComponent = getComponent<Components::Script>(static_cast<EntityID>(entity));
 			scriptComponent.onPreUpdate();
+		}
+
+		// Physics integration: Sync Transform -> PhysicsBody before physics step
+		if (auto* physicsWorldPtr = impl_->registry.ctx().find<std::unique_ptr<Components::PhysicsWorld>>()) {
+			auto physicsView = impl_->registry.view<std::unique_ptr<Components::Transform>, std::unique_ptr<Components::PhysicsBody>>();
+			
+			// Before physics step: copy Transform data to PhysicsBody
+			for (const EntityID entity : physicsView) {
+				auto& transform = *physicsView.get<std::unique_ptr<Components::Transform>>(entity);
+				auto& physicsBody = *physicsView.get<std::unique_ptr<Components::PhysicsBody>>(entity);
+				
+				// Get position and rotation from Transform
+				sf::Vector2f position = transform.getPosition();
+				float rotation = transform.getRotation();
+				
+				// Convert rotation from degrees to radians
+				float angleRadians = rotation * 3.14159265359f / 180.0f;
+				
+				// Set the physics body transform
+				physicsBody.setTransform(b2Vec2(position.x, position.y), angleRadians);
+			}
+			
+			// Step the physics world
+			Components::PhysicsWorld& physicsWorld = **physicsWorldPtr;
+			physicsWorld.step(deltaTime, 6, 2);
+			
+			// After physics step: copy PhysicsBody data back to Transform
+			for (const EntityID entity : physicsView) {
+				auto& transform = *physicsView.get<std::unique_ptr<Components::Transform>>(entity);
+				auto& physicsBody = *physicsView.get<std::unique_ptr<Components::PhysicsBody>>(entity);
+				
+				// Get position and angle from physics body
+				b2Vec2 position = physicsBody.getPosition();
+				float angleRadians = physicsBody.getAngle();
+				
+				// Convert angle from radians to degrees
+				float angleDegrees = angleRadians * 180.0f / 3.14159265359f;
+				
+				// Update Transform with physics data
+				transform.setPosition(position.x, position.y);
+				transform.setRotation(angleDegrees);
+			}
 		}
 
 		for (const EntityID entity : entitiesView) {
