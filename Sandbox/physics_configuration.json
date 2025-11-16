@@ -88,7 +88,7 @@
             "x": 542,
             "y": 100
           },
-          "rotation": 0,
+          "rotation": 45,
           "scale": {
             "x": 1,
             "y": 1
@@ -110,7 +110,6 @@
         },
         "PhysicsBody": {
           "type": "dynamic",
-          "angle": 0,
           "linear_damping": 0.5,
           "angular_damping": 0.5
         }
@@ -124,7 +123,7 @@
             "x": 512,
             "y": 384
           },
-          "rotation": 0,
+          "rotation": -45,
           "scale": {
             "x": 1,
             "y": 1
@@ -146,7 +145,6 @@
         },
         "PhysicsBody": {
           "type": "static",
-          "angle": 0,
           "linear_damping": 0.5,
           "angular_damping": 0.5
         }
