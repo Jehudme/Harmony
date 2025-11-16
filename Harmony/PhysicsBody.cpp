@@ -73,6 +73,19 @@ namespace Harmony::Components
 		if (std::optional<float> angDamp = configuration.get<float>({ "angular_damping" }))
 			bodyDef.angularDamping = angDamp.value();
 
+		// Fixture properties
+		if (std::optional<float> density = configuration.get<float>({ "fixture", "density" }))
+			fixtureProperties_.density = density.value();
+
+		if (std::optional<float> friction = configuration.get<float>({ "fixture", "friction" }))
+			fixtureProperties_.friction = friction.value();
+
+		if (std::optional<float> restitution = configuration.get<float>({ "fixture", "restitution" }))
+			fixtureProperties_.restitution = restitution.value();
+
+		if (std::optional<bool> isSensor = configuration.get<bool>({ "fixture", "is_sensor" }))
+			fixtureProperties_.isSensor = isSensor.value();
+
 		// Create the body
 		if (world_)
 		{
@@ -249,7 +262,7 @@ namespace Harmony::Components
 
 	b2Fixture* PhysicsBody::createFixture(const b2Shape* shape, float density)
 	{
-		FixtureProperties properties;
+		FixtureProperties properties = fixtureProperties_;
 		properties.density = density;
 		return createFixture(shape, properties);
 	}
@@ -268,7 +281,7 @@ namespace Harmony::Components
 
 	b2Fixture* PhysicsBody::createBoxFixture(float width, float height, float density)
 	{
-		FixtureProperties properties;
+		FixtureProperties properties = fixtureProperties_;
 		properties.density = density;
 		return createBoxFixture(width, height, properties);
 	}
@@ -287,7 +300,7 @@ namespace Harmony::Components
 
 	b2Fixture* PhysicsBody::createCircleFixture(float radius, float density, const b2Vec2& center)
 	{
-		FixtureProperties properties;
+		FixtureProperties properties = fixtureProperties_;
 		properties.density = density;
 		return createCircleFixture(radius, properties, center);
 	}
@@ -313,7 +326,7 @@ namespace Harmony::Components
 
 	b2Fixture* PhysicsBody::createPolygonFixture(const std::vector<b2Vec2>& points, float density)
 	{
-		FixtureProperties properties;
+		FixtureProperties properties = fixtureProperties_;
 		properties.density = density;
 		return createPolygonFixture(points, properties);
 	}
@@ -367,5 +380,55 @@ namespace Harmony::Components
 			return body_->IsFixedRotation();
 		}
 		return false;
+	}
+
+	void PhysicsBody::setFixtureProperties(const FixtureProperties& properties)
+	{
+		fixtureProperties_ = properties;
+	}
+
+	const FixtureProperties& PhysicsBody::getFixtureProperties() const
+	{
+		return fixtureProperties_;
+	}
+
+	void PhysicsBody::setFriction(float friction)
+	{
+		fixtureProperties_.friction = friction;
+	}
+
+	float PhysicsBody::getFriction() const
+	{
+		return fixtureProperties_.friction;
+	}
+
+	void PhysicsBody::setRestitution(float restitution)
+	{
+		fixtureProperties_.restitution = restitution;
+	}
+
+	float PhysicsBody::getRestitution() const
+	{
+		return fixtureProperties_.restitution;
+	}
+
+	void PhysicsBody::setDensity(float density)
+	{
+		fixtureProperties_.density = density;
+	}
+
+	float PhysicsBody::getDensity() const
+	{
+		return fixtureProperties_.density;
+	}
+
+	void PhysicsBody::setIsSensor(bool isSensor)
+	{
+		fixtureProperties_.isSensor = isSensor;
+	}
+
+	bool PhysicsBody::getIsSensor() const
+	{
+		return fixtureProperties_.isSensor;
 	}
 }

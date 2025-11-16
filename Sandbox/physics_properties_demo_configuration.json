@@ -78,7 +78,13 @@
           "type": "dynamic",
           "angle": 0,
           "linear_damping": 0.1,
-          "angular_damping": 0.1
+          "angular_damping": 0.1,
+          "fixture": {
+            "density": 1.0,
+            "friction": 0.3,
+            "restitution": 0.9,
+            "is_sensor": false
+          }
         }
       }
     },
@@ -113,7 +119,13 @@
           "type": "dynamic",
           "angle": 0,
           "linear_damping": 0.1,
-          "angular_damping": 0.1
+          "angular_damping": 0.1,
+          "fixture": {
+            "density": 1.0,
+            "friction": 1.0,
+            "restitution": 0.0,
+            "is_sensor": false
+          }
         }
       }
     },
@@ -149,7 +161,13 @@
           "type": "dynamic",
           "angle": 0,
           "linear_damping": 0.0,
-          "angular_damping": 0.1
+          "angular_damping": 0.1,
+          "fixture": {
+            "density": 1.0,
+            "friction": 0.0,
+            "restitution": 0.5,
+            "is_sensor": false
+          }
         }
       }
     },
@@ -185,7 +203,13 @@
           "type": "dynamic",
           "angle": 0,
           "linear_damping": 0.1,
-          "angular_damping": 0.1
+          "angular_damping": 0.1,
+          "fixture": {
+            "density": 10.0,
+            "friction": 0.3,
+            "restitution": 0.2,
+            "is_sensor": false
+          }
         }
       }
     },
@@ -219,7 +243,13 @@
         },
         "PhysicsBody": {
           "type": "static",
-          "angle": 0
+          "angle": 0,
+          "fixture": {
+            "density": 1.0,
+            "friction": 0.5,
+            "restitution": 0.0,
+            "is_sensor": false
+          }
         }
       }
     },
@@ -253,7 +283,13 @@
         },
         "PhysicsBody": {
           "type": "static",
-          "angle": -0.349
+          "angle": -0.349,
+          "fixture": {
+            "density": 1.0,
+            "friction": 0.2,
+            "restitution": 0.0,
+            "is_sensor": false
+          }
         }
       }
     }

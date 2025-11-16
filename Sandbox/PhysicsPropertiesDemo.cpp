@@ -29,14 +29,8 @@ namespace Sandbox::PhysicsPropertiesDemo
 		{
 			physicsBody_ = getScene().getComponent<PhysicsBody>(getEntityId());
 			
-			// Create a circle fixture with high restitution (bounciness)
-			FixtureProperties props;
-			props.density = 1.0f;
-			props.friction = 0.3f;
-			props.restitution = 0.9f;  // Very bouncy!
-			props.isSensor = false;
-			
-			physicsBody_->createCircleFixture(25.0f, props);
+			// Create a circle fixture using the properties configured in the component
+			physicsBody_->createCircleFixture(25.0f, physicsBody_->getFixtureProperties());
 		}
 
 		void onDestroy() {}
@@ -59,14 +53,8 @@ namespace Sandbox::PhysicsPropertiesDemo
 		{
 			physicsBody_ = getScene().getComponent<PhysicsBody>(getEntityId());
 			
-			// Create a circle fixture with no bounce and high friction
-			FixtureProperties props;
-			props.density = 1.0f;
-			props.friction = 1.0f;     // Maximum friction
-			props.restitution = 0.0f;  // No bounce
-			props.isSensor = false;
-			
-			physicsBody_->createCircleFixture(25.0f, props);
+			// Create a circle fixture using the properties configured in the component
+			physicsBody_->createCircleFixture(25.0f, physicsBody_->getFixtureProperties());
 		}
 
 		void onDestroy() {}
@@ -89,14 +77,8 @@ namespace Sandbox::PhysicsPropertiesDemo
 		{
 			physicsBody_ = getScene().getComponent<PhysicsBody>(getEntityId());
 			
-			// Create a box fixture with no friction (like ice)
-			FixtureProperties props;
-			props.density = 1.0f;
-			props.friction = 0.0f;     // No friction - slides like ice
-			props.restitution = 0.5f;
-			props.isSensor = false;
-			
-			physicsBody_->createBoxFixture(50.0f, 50.0f, props);
+			// Create a box fixture using the properties configured in the component
+			physicsBody_->createBoxFixture(50.0f, 50.0f, physicsBody_->getFixtureProperties());
 		}
 
 		void onDestroy() {}
@@ -119,14 +101,8 @@ namespace Sandbox::PhysicsPropertiesDemo
 		{
 			physicsBody_ = getScene().getComponent<PhysicsBody>(getEntityId());
 			
-			// Create a box fixture with high density (heavy)
-			FixtureProperties props;
-			props.density = 10.0f;     // 10x heavier than normal
-			props.friction = 0.3f;
-			props.restitution = 0.2f;
-			props.isSensor = false;
-			
-			physicsBody_->createBoxFixture(50.0f, 50.0f, props);
+			// Create a box fixture using the properties configured in the component
+			physicsBody_->createBoxFixture(50.0f, 50.0f, physicsBody_->getFixtureProperties());
 		}
 
 		void onDestroy() {}
@@ -149,14 +125,8 @@ namespace Sandbox::PhysicsPropertiesDemo
 		{
 			physicsBody_ = getScene().getComponent<PhysicsBody>(getEntityId());
 			
-			// Create a box fixture with medium friction
-			FixtureProperties props;
-			props.density = 1.0f;
-			props.friction = 0.5f;
-			props.restitution = 0.0f;
-			props.isSensor = false;
-			
-			physicsBody_->createBoxFixture(1000.0f, 50.0f, props);
+			// Create a box fixture using the properties configured in the component
+			physicsBody_->createBoxFixture(1000.0f, 50.0f, physicsBody_->getFixtureProperties());
 		}
 
 		void onDestroy() {}
@@ -179,14 +149,8 @@ namespace Sandbox::PhysicsPropertiesDemo
 		{
 			physicsBody_ = getScene().getComponent<PhysicsBody>(getEntityId());
 			
-			// Create a sloped box fixture with low friction
-			FixtureProperties props;
-			props.density = 1.0f;
-			props.friction = 0.2f;     // Low friction slope
-			props.restitution = 0.0f;
-			props.isSensor = false;
-			
-			physicsBody_->createBoxFixture(300.0f, 50.0f, props);
+			// Create a sloped box fixture using the properties configured in the component
+			physicsBody_->createBoxFixture(300.0f, 50.0f, physicsBody_->getFixtureProperties());
 		}
 
 		void onDestroy() {}

@@ -181,8 +181,50 @@ namespace Harmony::Components
 		b2Body* get() { return body_; }
 		const b2Body* get() const { return body_; }
 
+		// Fixture properties methods
+		/// @brief Set the default fixture properties for this body
+		/// @param properties Fixture properties to set
+		void setFixtureProperties(const FixtureProperties& properties);
+
+		/// @brief Get the default fixture properties for this body
+		/// @return Current fixture properties
+		const FixtureProperties& getFixtureProperties() const;
+
+		/// @brief Set the friction coefficient
+		/// @param friction Friction coefficient (0.0 = no friction, 1.0 = high friction)
+		void setFriction(float friction);
+
+		/// @brief Get the friction coefficient
+		/// @return Friction coefficient
+		float getFriction() const;
+
+		/// @brief Set the restitution (bounciness)
+		/// @param restitution Restitution value (0.0 = no bounce, 1.0 = perfect bounce)
+		void setRestitution(float restitution);
+
+		/// @brief Get the restitution (bounciness)
+		/// @return Restitution value
+		float getRestitution() const;
+
+		/// @brief Set the density
+		/// @param density Density value (kg/m^2)
+		void setDensity(float density);
+
+		/// @brief Get the density
+		/// @return Density value
+		float getDensity() const;
+
+		/// @brief Set whether fixtures are sensors
+		/// @param isSensor True if fixtures should be sensors
+		void setIsSensor(bool isSensor);
+
+		/// @brief Get whether fixtures are sensors
+		/// @return True if fixtures are sensors
+		bool getIsSensor() const;
+
 	private:
 		b2Body* body_;
 		b2World* world_;
+		FixtureProperties fixtureProperties_;
 	};
 }
