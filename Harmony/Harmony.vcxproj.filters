@@ -90,6 +90,9 @@
     <ClInclude Include="Logger.h">
       <Filter>Header Files\Utilites</Filter>
     </ClInclude>
+    <ClInclude Include="Assert.h">
+      <Filter>Header Files\Utilites</Filter>
+    </ClInclude>
     <ClInclude Include="pch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
