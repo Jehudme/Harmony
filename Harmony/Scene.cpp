@@ -140,6 +140,7 @@ namespace Harmony::Scenes
 
 		// Physics integration: Sync Transform -> PhysicsBody before physics step
 		if (auto* physicsWorldPtr = impl_->registry.ctx().find<std::unique_ptr<Components::PhysicsWorld>>()) {
+			Components::PhysicsWorld& physicsWorld = **physicsWorldPtr;
 			auto physicsView = impl_->registry.view<std::unique_ptr<Components::Transform>, std::unique_ptr<Components::PhysicsBody>>();
 			
 			// Before physics step: copy Transform data to PhysicsBody
@@ -147,19 +148,24 @@ namespace Harmony::Scenes
 				auto& transform = *physicsView.get<std::unique_ptr<Components::Transform>>(entity);
 				auto& physicsBody = *physicsView.get<std::unique_ptr<Components::PhysicsBody>>(entity);
 				
-				// Get position and rotation from Transform
+				// Get position and rotation from Transform (in pixels)
 				// The transform position is where the origin is located in world space
 				// Since fixtures are centered at the body origin and visual origins are typically
 				// set to the shape center, the body position should match the transform position
-				sf::Vector2f position = transform.getPosition();
+				sf::Vector2f positionPixels = transform.getPosition();
 				float rotation = transform.getRotation();
+
+				// Convert position from pixels to meters for Box2D
+				float positionMetersX = physicsWorld.pixelsToMeters(positionPixels.x);
+				float positionMetersY = physicsWorld.pixelsToMeters(positionPixels.y);
 
 				// Convert rotation from degrees to radians
 				float angleRadians = rotation * 3.14159265359f / 180.0f;
 				
-				// Set the physics body transform
-				if (position.x != physicsBody.getPosition().x || position.y != physicsBody.getPosition().y || angleRadians != physicsBody.getAngle())
-					physicsBody.setTransform(b2Vec2(position.x, position.y), angleRadians);
+				// Set the physics body transform (in meters and radians)
+				b2Vec2 currentPos = physicsBody.getPosition();
+				if (positionMetersX != currentPos.x || positionMetersY != currentPos.y || angleRadians != physicsBody.getAngle())
+					physicsBody.setTransform(b2Vec2(positionMetersX, positionMetersY), angleRadians);
 			}
 			
 			// Step the physics world
@@ -171,9 +177,13 @@ namespace Harmony::Scenes
 				auto& transform = *physicsView.get<std::unique_ptr<Components::Transform>>(entity);
 				auto& physicsBody = *physicsView.get<std::unique_ptr<Components::PhysicsBody>>(entity);
 				
-				// Get position and angle from physics body
-				b2Vec2 position = physicsBody.getPosition();
+				// Get position and angle from physics body (in meters and radians)
+				b2Vec2 positionMeters = physicsBody.getPosition();
 				float angleRadians = physicsBody.getAngle();
+				
+				// Convert position from meters to pixels for rendering
+				float positionPixelsX = physicsWorld.metersToPixels(positionMeters.x);
+				float positionPixelsY = physicsWorld.metersToPixels(positionMeters.y);
 				
 				// Convert angle from radians to degrees
 				float angleDegrees = angleRadians * 180.0f / 3.14159265359f;
@@ -181,7 +191,7 @@ namespace Harmony::Scenes
 				// Update Transform with physics data
 				// The body position is at the fixture center, which should match the transform origin location
 				transform.setRotation(angleDegrees);
-				transform.setPosition(position.x, position.y);
+				transform.setPosition(positionPixelsX, positionPixelsY);
 			}
 		}
 
