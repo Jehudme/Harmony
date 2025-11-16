@@ -148,19 +148,20 @@ namespace Harmony::Scenes
 				auto& physicsBody = *physicsView.get<std::unique_ptr<Components::PhysicsBody>>(entity);
 				
 				// Get position and rotation from Transform
-				sf::Vector2f position = transform.getPosition();
+				sf::Vector2f position = transform.getPosition() + transform.getOrigin();
 				float rotation = transform.getRotation();
-				
+
 				// Convert rotation from degrees to radians
 				float angleRadians = rotation * 3.14159265359f / 180.0f;
 				
 				// Set the physics body transform
-				physicsBody.setTransform(b2Vec2(position.x, position.y), angleRadians);
+				if (position.x != physicsBody.getPosition().x || position.y != physicsBody.getPosition().y || angleRadians != physicsBody.getAngle())
+					physicsBody.setTransform(b2Vec2(position.x, position.y), angleRadians);
 			}
 			
 			// Step the physics world
 			Components::PhysicsWorld& physicsWorld = **physicsWorldPtr;
-			physicsWorld.step(deltaTime, 6, 2);
+			physicsWorld.step(deltaTime, 60, 20);
 			
 			// After physics step: copy PhysicsBody data back to Transform
 			for (const EntityID entity : physicsView) {
@@ -175,8 +176,8 @@ namespace Harmony::Scenes
 				float angleDegrees = angleRadians * 180.0f / 3.14159265359f;
 				
 				// Update Transform with physics data
-				transform.setPosition(position.x, position.y);
 				transform.setRotation(angleDegrees);
+				transform.setPosition(position.x - transform.getOrigin().x, position.y - transform.getOrigin().y);
 			}
 		}
 

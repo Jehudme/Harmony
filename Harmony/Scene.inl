@@ -83,13 +83,15 @@ namespace Harmony::Scenes
 
 	template<typename Type>
 	inline Type& Scene::getGlobalComponent() {
-		extern entt::registry& getRegistryFromScene(Scene& scene);
-		return *getRegistryFromScene(*this).ctx().find<std::unique_ptr<Type>>();
+		extern entt::registry& getRegistryFromScene(Scene & scene);
+		auto* ptr = getRegistryFromScene(*this).ctx().find<std::unique_ptr<Type>>();
+		return **ptr;
 	}
 
 	template<typename Type>
 	inline const Type& Scene::getGlobalComponent() const {
-		extern const entt::registry& getRegistryFromScene(const Scene& scene);
-		return *getRegistryFromScene(*this).ctx().find<std::unique_ptr<Type>>();
+		extern const entt::registry& getRegistryFromScene(const Scene & scene);
+		auto* ptr = getRegistryFromScene(*this).ctx().find<std::unique_ptr<Type>>();
+		return **ptr;
 	}
 }

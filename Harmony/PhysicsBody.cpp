@@ -29,26 +29,6 @@ namespace Harmony::Components
 		// Get body configuration
 		b2BodyDef bodyDef;
 
-		// Position
-		float x = 0.0f, y = 0.0f;
-		if (std::optional<float> posX = configuration.get<float>({ "position", "x" }))
-			x = posX.value();
-		else
-			HARMONY_WARN("PhysicsBody component missing position x configuration, using default 0.0");
-
-		if (std::optional<float> posY = configuration.get<float>({ "position", "y" }))
-			y = posY.value();
-		else
-			HARMONY_WARN("PhysicsBody component missing position y configuration, using default 0.0");
-
-		bodyDef.position.Set(x, y);
-
-		// Angle
-		if (std::optional<float> angle = configuration.get<float>({ "angle" }))
-			bodyDef.angle = angle.value();
-		else
-			HARMONY_WARN("PhysicsBody component missing angle configuration, using default 0.0");
-
 		// Body type
 		if (std::optional<std::string> typeStr = configuration.get<std::string>({ "type" }))
 		{
@@ -104,8 +84,6 @@ namespace Harmony::Components
 				HARMONY_ERROR("Failed to create physics body");
 				return;
 			}
-
-			HARMONY_INFO("PhysicsBody component created at position ({}, {})", x, y);
 		}
 	}
 

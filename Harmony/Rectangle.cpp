@@ -10,8 +10,8 @@ namespace Harmony::Components
 	Rectangle::Rectangle(const Utilities::Configuration& configuration, Scenes::Scene& scene)
 		: Shape<sf::RectangleShape>(configuration, scene)
 	{
-		std::optional<float> width = configuration.get<float>({ "size", "width" });
-		std::optional<float> height = configuration.get<float>({ "size", "height" });
+		std::optional<float> width = configuration.get<float>({ "width" });
+		std::optional<float> height = configuration.get<float>({ "height" });
 
 		if (!width.has_value())  HARMONY_WARN("Rectangle component missing width configuration");
 		if (!height.has_value()) HARMONY_WARN("Rectangle component missing height configuration");		
