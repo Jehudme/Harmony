@@ -27,8 +27,8 @@ namespace Sandbox::PhysicsDemo
 			transform_ = getScene().getComponent<Harmony::Components::Transform>(getEntityId());
 			physicsBody_ = getScene().getComponent<Harmony::Components::PhysicsBody>(getEntityId());
 			
-			// Create a box fixture for collision
-			physicsBody_->createBoxFixture(25.0f, 25.0f, 1.0f);
+			// Create a box fixture for collision with moderate friction and no bounce
+			physicsBody_->createBoxFixture(25.0f, 25.0f, 1.0f, 0.3f, 0.0f);
 		}
 
 		void onDestroy()
@@ -79,8 +79,8 @@ namespace Sandbox::PhysicsDemo
 			// Just setup, physics handles rest
 			physicsBody_ = getScene().getComponent<Harmony::Components::PhysicsBody>(getEntityId());
 			
-			// Create a box fixture for the ground
-			physicsBody_->createBoxFixture(400.0f, 10.0f, 1.0f);
+			// Create a box fixture for the ground with high friction
+			physicsBody_->createBoxFixture(400.0f, 10.0f, 1.0f, 0.5f, 0.0f);
 		}
 
 		void onDestroy()
@@ -111,8 +111,8 @@ namespace Sandbox::PhysicsDemo
 		{
 			physicsBody_ = getScene().getComponent<Harmony::Components::PhysicsBody>(getEntityId());
 			
-			// Create a box fixture for collision
-			physicsBody_->createBoxFixture(25.0f, 25.0f, 1.0f);
+			// Create a box fixture for collision with moderate friction and slight bounce
+			physicsBody_->createBoxFixture(25.0f, 25.0f, 1.0f, 0.3f, 0.2f);
 		}
 
 		void onDestroy()

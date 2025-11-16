@@ -138,25 +138,9 @@ namespace Harmony::Scenes
 			scriptComponent.onPreUpdate();
 		}
 
-		// Physics integration: Sync Transform -> PhysicsBody before physics step
+		// Physics integration: Step physics and sync PhysicsBody -> Transform
 		if (auto* physicsWorldPtr = impl_->registry.ctx().find<std::unique_ptr<Components::PhysicsWorld>>()) {
 			auto physicsView = impl_->registry.view<std::unique_ptr<Components::Transform>, std::unique_ptr<Components::PhysicsBody>>();
-			
-			// Before physics step: copy Transform data to PhysicsBody
-			for (const EntityID entity : physicsView) {
-				auto& transform = *physicsView.get<std::unique_ptr<Components::Transform>>(entity);
-				auto& physicsBody = *physicsView.get<std::unique_ptr<Components::PhysicsBody>>(entity);
-				
-				// Get position and rotation from Transform
-				sf::Vector2f position = transform.getPosition();
-				float rotation = transform.getRotation();
-				
-				// Convert rotation from degrees to radians
-				float angleRadians = rotation * 3.14159265359f / 180.0f;
-				
-				// Set the physics body transform
-				physicsBody.setTransform(b2Vec2(position.x, position.y), angleRadians);
-			}
 			
 			// Step the physics world
 			Components::PhysicsWorld& physicsWorld = **physicsWorldPtr;

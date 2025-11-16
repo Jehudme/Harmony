@@ -92,15 +92,19 @@ namespace Harmony::Components
 		/// @brief Create a fixture from a shape
 		/// @param shape Shape to attach
 		/// @param density Density of the fixture
+		/// @param friction Friction coefficient (0.0 to 1.0, default 0.2)
+		/// @param restitution Restitution coefficient (0.0 to 1.0, default 0.0)
 		/// @return Pointer to the created fixture
-		b2Fixture* createFixture(const b2Shape* shape, float density);
+		b2Fixture* createFixture(const b2Shape* shape, float density, float friction = 0.2f, float restitution = 0.0f);
 
 		/// @brief Create a box fixture
 		/// @param halfWidth Half-width of the box
 		/// @param halfHeight Half-height of the box
 		/// @param density Density of the fixture
+		/// @param friction Friction coefficient (0.0 to 1.0, default 0.2)
+		/// @param restitution Restitution coefficient (0.0 to 1.0, default 0.0)
 		/// @return Pointer to the created fixture
-		b2Fixture* createBoxFixture(float halfWidth, float halfHeight, float density);
+		b2Fixture* createBoxFixture(float halfWidth, float halfHeight, float density, float friction = 0.2f, float restitution = 0.0f);
 
 		// Body state methods
 		/// @brief Set the body type (static, kinematic, dynamic)

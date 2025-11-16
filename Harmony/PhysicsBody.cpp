@@ -254,25 +254,27 @@ namespace Harmony::Components
 		return 0.0f;
 	}
 
-	b2Fixture* PhysicsBody::createFixture(const b2Shape* shape, float density)
+	b2Fixture* PhysicsBody::createFixture(const b2Shape* shape, float density, float friction, float restitution)
 	{
 		if (body_)
 		{
 			b2FixtureDef fixtureDef;
 			fixtureDef.shape = shape;
 			fixtureDef.density = density;
+			fixtureDef.friction = friction;
+			fixtureDef.restitution = restitution;
 			return body_->CreateFixture(&fixtureDef);
 		}
 		return nullptr;
 	}
 
-	b2Fixture* PhysicsBody::createBoxFixture(float halfWidth, float halfHeight, float density)
+	b2Fixture* PhysicsBody::createBoxFixture(float halfWidth, float halfHeight, float density, float friction, float restitution)
 	{
 		if (body_)
 		{
 			b2PolygonShape boxShape;
 			boxShape.SetAsBox(halfWidth, halfHeight);
-			return createFixture(&boxShape, density);
+			return createFixture(&boxShape, density, friction, restitution);
 		}
 		return nullptr;
 	}
