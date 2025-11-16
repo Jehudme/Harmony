@@ -28,8 +28,8 @@ namespace Sandbox::PhysicsDemo
 			// Just setup, physics handles rest
 			physicsBody_ = getScene().getComponent<Harmony::Components::PhysicsBody>(getEntityId());
 			
-			// Create a box fixture for the ground
-			physicsBody_->createBoxFixture(2500.0f, 25.0f, 1.0f);
+			// Create a box fixture for the ground (full width and height)
+			physicsBody_->createBoxFixture(5000.0f, 50.0f, 1.0f);
 		}
 
 		void onDestroy()
@@ -60,8 +60,78 @@ namespace Sandbox::PhysicsDemo
 		{
 			physicsBody_ = getScene().getComponent<Harmony::Components::PhysicsBody>(getEntityId());
 			
-			// Create a box fixture for collision
-			physicsBody_->createBoxFixture(25.0f, 25.0f, 1.0f);
+			// Create a box fixture for collision (full width and height)
+			physicsBody_->createBoxFixture(50.0f, 50.0f, 1.0f);
+		}
+
+		void onDestroy()
+		{
+		}
+
+		void onPreUpdate()
+		{
+		}
+
+		void onPostUpdate()
+		{
+		}
+
+	private:
+		Harmony::Utilities::OptionalReference<Harmony::Components::PhysicsBody> physicsBody_;
+	};
+
+	/// @brief Script for a falling circle
+	struct FallingCircleScript : public Harmony::Components::Script
+	{
+	public:
+		FallingCircleScript(const Harmony::Utilities::Configuration&, Harmony::Scenes::Scene&)
+		{
+		}
+
+		void onCreate()
+		{
+			physicsBody_ = getScene().getComponent<Harmony::Components::PhysicsBody>(getEntityId());
+			
+			// Create a circle fixture for collision
+			physicsBody_->createCircleFixture(25.0f, 1.0f);
+		}
+
+		void onDestroy()
+		{
+		}
+
+		void onPreUpdate()
+		{
+		}
+
+		void onPostUpdate()
+		{
+		}
+
+	private:
+		Harmony::Utilities::OptionalReference<Harmony::Components::PhysicsBody> physicsBody_;
+	};
+
+	/// @brief Script for a falling triangle (using polygon fixture)
+	struct FallingTriangleScript : public Harmony::Components::Script
+	{
+	public:
+		FallingTriangleScript(const Harmony::Utilities::Configuration&, Harmony::Scenes::Scene&)
+		{
+		}
+
+		void onCreate()
+		{
+			physicsBody_ = getScene().getComponent<Harmony::Components::PhysicsBody>(getEntityId());
+			
+			// Create a triangle fixture using polygon with 3 points
+			// Points must be in counter-clockwise order
+			std::vector<b2Vec2> points = {
+				b2Vec2(0.0f, -25.0f),   // Top vertex
+				b2Vec2(-25.0f, 25.0f),  // Bottom left
+				b2Vec2(25.0f, 25.0f)    // Bottom right
+			};
+			physicsBody_->createPolygonFixture(points, 1.0f);
 		}
 
 		void onDestroy()
@@ -83,3 +153,5 @@ namespace Sandbox::PhysicsDemo
 
 HARMONY_REGISTER_SCRIPT(Sandbox::PhysicsDemo::GroundScript, physics_ground_script)
 HARMONY_REGISTER_SCRIPT(Sandbox::PhysicsDemo::FallingBoxScript, physics_falling_box_script)
+HARMONY_REGISTER_SCRIPT(Sandbox::PhysicsDemo::FallingCircleScript, physics_falling_circle_script)
+HARMONY_REGISTER_SCRIPT(Sandbox::PhysicsDemo::FallingTriangleScript, physics_falling_triangle_script)

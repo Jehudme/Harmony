@@ -134,6 +134,72 @@ User documentation explaining:
 - No hardcoded magic numbers (well-documented constants)
 - Proper conversion between coordinate systems
 
+## PhysicsBody Component Enhancement (Latest Update)
+
+### Overview
+Extended the PhysicsBody component with generic fixture creation methods to support circles, polygons, and rectangles with a cleaner API.
+
+### New Features
+
+#### 1. Circle Fixture Creation
+```cpp
+b2Fixture* createCircleFixture(float radius, float density, const b2Vec2& center = b2Vec2(0.0f, 0.0f));
+```
+- Creates circular collision shapes from a radius
+- Optional center offset for non-centered circles
+- Example: `createCircleFixture(25.0f, 1.0f)` creates a circle with 25-pixel radius
+
+#### 2. Polygon Fixture Creation
+```cpp
+b2Fixture* createPolygonFixture(const std::vector<b2Vec2>& points, float density);
+```
+- Creates complex polygon shapes from a vector of points
+- Validates point count (3-8 points required by Box2D)
+- Points must be convex and in counter-clockwise order
+- Example: Triangle with 3 custom vertices
+
+#### 3. Improved Box Fixture API
+```cpp
+b2Fixture* createBoxFixture(float width, float height, float density);
+```
+- **BREAKING CHANGE**: Now takes full width/height instead of half-width/half-height
+- More intuitive: `createBoxFixture(50, 50)` creates a 50x50 box
+- Internally converts to Box2D's half-extent format
+
+### Implementation Details
+
+**PhysicsBody.h Changes:**
+- Added `#include <vector>` for polygon points
+- Updated method signatures with comprehensive documentation
+- Added validation documentation for polygon fixtures
+
+**PhysicsBody.cpp Changes:**
+- `createBoxFixture()`: Divides width/height by 2 internally for Box2D
+- `createCircleFixture()`: Uses b2CircleShape with configurable radius and center
+- `createPolygonFixture()`: Uses b2PolygonShape with validation (3-8 points)
+
+**PhysicsDemo.cpp Changes:**
+- Updated existing scripts to use new box fixture API (doubled values)
+- Added `FallingCircleScript` demonstrating circle fixtures
+- Added `FallingTriangleScript` demonstrating polygon fixtures with 3 vertices
+
+### API Migration Guide
+
+**Old API (half-extents):**
+```cpp
+physicsBody->createBoxFixture(25.0f, 25.0f, 1.0f);  // Creates 50x50 box
+```
+
+**New API (full dimensions):**
+```cpp
+physicsBody->createBoxFixture(50.0f, 50.0f, 1.0f);  // Creates 50x50 box
+```
+
+### Validation and Error Handling
+- Polygon fixtures validate point count (3-8) and log errors for invalid input
+- All methods return nullptr on failure (null body or invalid parameters)
+- Proper null checks before creating Box2D shapes
+
 ## Maintenance Considerations
 - Physics can be disabled by not including PhysicsWorld in scene config
 - Individual entities can opt-in to physics by having both Transform and PhysicsBody

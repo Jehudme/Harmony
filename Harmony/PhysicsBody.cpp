@@ -244,15 +244,47 @@ namespace Harmony::Components
 		return nullptr;
 	}
 
-	b2Fixture* PhysicsBody::createBoxFixture(float halfWidth, float halfHeight, float density)
+	b2Fixture* PhysicsBody::createBoxFixture(float width, float height, float density)
 	{
 		if (body_)
 		{
 			b2PolygonShape boxShape;
-			boxShape.SetAsBox(halfWidth, halfHeight);
+			// Box2D's SetAsBox takes half-widths, so we divide by 2
+			boxShape.SetAsBox(width / 2.0f, height / 2.0f);
 			return createFixture(&boxShape, density);
 		}
 		return nullptr;
+	}
+
+	b2Fixture* PhysicsBody::createCircleFixture(float radius, float density, const b2Vec2& center)
+	{
+		if (body_)
+		{
+			b2CircleShape circleShape;
+			circleShape.m_radius = radius;
+			circleShape.m_p = center;
+			return createFixture(&circleShape, density);
+		}
+		return nullptr;
+	}
+
+	b2Fixture* PhysicsBody::createPolygonFixture(const std::vector<b2Vec2>& points, float density)
+	{
+		if (!body_)
+		{
+			return nullptr;
+		}
+
+		// Box2D polygons must have at least 3 points and at most 8 points
+		if (points.size() < 3 || points.size() > 8)
+		{
+			HARMONY_ERROR("PhysicsBody::createPolygonFixture: polygon must have 3-8 points, got {}", points.size());
+			return nullptr;
+		}
+
+		b2PolygonShape polygonShape;
+		polygonShape.Set(points.data(), static_cast<int32>(points.size()));
+		return createFixture(&polygonShape, density);
 	}
 
 	void PhysicsBody::setType(b2BodyType type)
