@@ -26,6 +26,9 @@ namespace Sandbox::PhysicsDemo
 		{
 			transform_ = getScene().getComponent<Harmony::Components::Transform>(getEntityId());
 			physicsBody_ = getScene().getComponent<Harmony::Components::PhysicsBody>(getEntityId());
+			
+			// Create a box fixture for collision
+			physicsBody_->createBoxFixture(25.0f, 25.0f, 1.0f);
 		}
 
 		void onDestroy()
