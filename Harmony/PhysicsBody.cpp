@@ -14,16 +14,17 @@ namespace Harmony::Components
 		: body_(nullptr), world_(nullptr)
 	{
 		// Get the PhysicsWorld component from the scene
-		// For now, we'll assume the world is a global component
-		// In a real implementation, this would need to be retrieved from the scene
-		if (!scene.hasGlobalComponent<PhysicsWorld>())
+		// The PhysicsWorld should be a global component
+		try
+		{
+			PhysicsWorld& physicsWorld = scene.getGlobalComponent<PhysicsWorld>();
+			world_ = physicsWorld.get();
+		}
+		catch (...)
 		{
 			HARMONY_ERROR("PhysicsBody component requires a PhysicsWorld global component in the scene");
 			return;
 		}
-
-		PhysicsWorld& physicsWorld = scene.getGlobalComponent<PhysicsWorld>();
-		world_ = physicsWorld.get();
 
 		// Get body configuration
 		b2BodyDef bodyDef;
@@ -93,15 +94,19 @@ namespace Harmony::Components
 			bodyDef.angularDamping = angDamp.value();
 
 		// Create the body
-		body_ = physicsWorld.createBody(&bodyDef);
-
-		if (!body_)
+		if (world_)
 		{
-			HARMONY_ERROR("Failed to create physics body");
-			return;
-		}
+			PhysicsWorld& physicsWorld = scene.getGlobalComponent<PhysicsWorld>();
+			body_ = physicsWorld.createBody(&bodyDef);
 
-		HARMONY_INFO("PhysicsBody component created at position ({}, {})", x, y);
+			if (!body_)
+			{
+				HARMONY_ERROR("Failed to create physics body");
+				return;
+			}
+
+			HARMONY_INFO("PhysicsBody component created at position ({}, {})", x, y);
+		}
 	}
 
 	PhysicsBody::~PhysicsBody()
