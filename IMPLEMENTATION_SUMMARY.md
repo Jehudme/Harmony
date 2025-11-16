@@ -29,8 +29,8 @@ Modified `Scene::update(float deltaTime)` to integrate physics:
 - Converts rotation from SFML's degrees to Box2D's radians
 
 **Phase 2: Physics Simulation**
-- Calls `PhysicsWorld::step(deltaTime, 6, 2)` to advance simulation
-- Uses 6 velocity iterations and 2 position iterations (Box2D defaults)
+- Calls `PhysicsWorld::step(deltaTime, 8, 3)` to advance simulation
+- Uses 8 velocity iterations and 3 position iterations (Box2D recommended values for typical games)
 
 **Phase 3: Post-Physics Sync (PhysicsBody → Transform)**
 - Iterates over entities with both Transform and PhysicsBody
