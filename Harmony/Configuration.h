@@ -31,4 +31,7 @@ namespace Harmony::Utilities {
         std::unique_ptr<Internal> internal_;
     };
 
+	Configuration operator+(const Configuration& left, const Configuration& right);
+	Configuration& operator+=(Configuration& left, const Configuration& right);
+
 } // namespace Harmony

@@ -6,9 +6,8 @@ namespace Harmony::Utilities
     class Color
     {
     public:
-        Color();
         Color(int color);
-        Color(unsigned char red, unsigned char green, unsigned char blue, unsigned char alpha = 255);
+        Color(unsigned char red = 255, unsigned char green = 255, unsigned char blue = 255, unsigned char alpha = 255);
 
         int toInteger() const;
 

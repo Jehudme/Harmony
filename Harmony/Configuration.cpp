@@ -162,6 +162,20 @@ namespace Harmony::Utilities {
         return rKeys;
     }
 
+    Configuration operator+(const Configuration& left, const Configuration& right)
+    {
+        Configuration result = left;
+        result += right;
+        return result;
+    }
+
+    Configuration& operator+=(Configuration& left, const Configuration& right)
+    {
+        left.merge(right);
+        return left;
+    }
+
+
     template std::optional<int> Configuration::get<int>(const std::vector<std::string>&) const;
     template std::optional<unsigned int> Configuration::get<unsigned int>(const std::vector<std::string>&) const;
     template std::optional<int64_t> Configuration::get<int64_t>(const std::vector<std::string>&) const;

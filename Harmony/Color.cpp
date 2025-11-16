@@ -3,10 +3,6 @@
 
 namespace Harmony::Utilities {
 
-    Color::Color()
-        : r(0), g(0), b(0), a(255) {
-    }
-
     Color::Color(int color)
         : r(static_cast<unsigned char>((color >> 24) & 0xFF)),
         g(static_cast<unsigned char>((color >> 16) & 0xFF)),
