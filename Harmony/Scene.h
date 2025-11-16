@@ -48,7 +48,15 @@ namespace Harmony::Scenes
 		// Hide SFML drawing - use internal method
 		void internalDraw(sf::RenderTarget& renderTarget) const;
 		
+		/// @brief Update the scene state
 		/// @param deltaTime - time since last frame in seconds
+		/// 
+		/// This method performs the following steps:
+		/// 1. Calls onPreUpdate() for all Script components
+		/// 2. Synchronizes Transform data to PhysicsBody (if PhysicsWorld exists)
+		/// 3. Steps the PhysicsWorld simulation
+		/// 4. Synchronizes PhysicsBody data back to Transform
+		/// 5. Calls onPostUpdate() for all Script components
 		void update(float deltaTime);
 
 	public:
