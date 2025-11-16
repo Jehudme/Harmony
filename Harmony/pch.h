@@ -23,5 +23,6 @@
 #include <cstddef>
 
 #include "Logger.h"
+#include "Assert.h"
 
 #endif //PCH_H
