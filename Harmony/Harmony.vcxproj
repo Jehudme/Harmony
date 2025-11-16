@@ -183,6 +183,7 @@
     <ClInclude Include="Transform.h" />
     <ClInclude Include="type_name.h" />
     <ClInclude Include="UtilityTask.h" />
+    <ClInclude Include="Vector.h" />
     <ClInclude Include="View.h" />
     <ClInclude Include="Window.h" />
   </ItemGroup>
@@ -236,6 +237,7 @@
     <None Include="cpp.hint" />
     <None Include="Logger.inl" />
     <None Include="Scene.inl" />
+    <None Include="Vector.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
