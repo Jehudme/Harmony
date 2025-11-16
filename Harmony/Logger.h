@@ -10,7 +10,7 @@ namespace Harmony::Utilities {
     class Logger final {
     public:
         static void initialize(
-            const std::string& logFile = "Harmony.log",
+            const std::string& logFile = "Engine.log",
             std::size_t maxFileSize = 10 * 1024 * 1024,
             std::size_t maxFiles = 3,
             std::size_t queueSize = 1 << 15,
@@ -43,10 +43,3 @@ namespace Harmony::Utilities {
 }
 
 #include "Logger.inl"
-
-#define HARMONY_TRACE(...)    Harmony::Utilities::Logger::trace(__VA_ARGS__)
-#define HARMONY_DEBUG(...)    Harmony::Utilities::Logger::debug(__VA_ARGS__)
-#define HARMONY_INFO(...)     Harmony::Utilities::Logger::info(__VA_ARGS__)
-#define HARMONY_WARN(...)     Harmony::Utilities::Logger::warn(__VA_ARGS__)
-#define HARMONY_ERROR(...)    Harmony::Utilities::Logger::error(__VA_ARGS__)
-#define HARMONY_CRITICAL(...) Harmony::Utilities::Logger::critical(__VA_ARGS__)

@@ -238,6 +238,7 @@
   <ItemGroup>
     <None Include="cpp.hint" />
     <None Include="Logger.inl" />
+    <None Include="OptionalReference.inl" />
     <None Include="Scene.inl" />
     <None Include="Vector.inl" />
   </ItemGroup>

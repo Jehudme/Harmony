@@ -26,6 +26,12 @@ namespace Harmony::Utilities
 		Type y;
 	};
 
+	template<typename Type>
+	inline bool operator==(const Vector2<float>& left, const Vector2<float>& right);
+
+	template<typename Type>
+	inline bool operator!=(const Vector2<float>& left, const Vector2<float>& right);
+
 	using Vector2f = Vector2<float>;
 	using Vector2i = Vector2<int>;
 	using Vector2d = Vector2<double>;

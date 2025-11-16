@@ -65,4 +65,12 @@ namespace Harmony::Utilities
 		y /= scalar;
 		return *this;
 	}
+
+	bool operator==(const Vector2<float>& left, const Vector2<float>& right){
+		return left.x == right.x && left.y == right.y;
+	}
+
+	bool operator!=(const Vector2<float>& left, const Vector2<float>& right){
+		return !(left == right);
+	}
 }
