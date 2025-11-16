@@ -127,6 +127,11 @@ namespace Harmony::Utilities {
         }
     }
 
+    template<typename Type>
+    std::optional<Type> Configuration::operator[](const std::string& key) {
+        return Configuration::get<Type>({ key });
+	}
+
     std::optional<Configuration> Configuration::subsection(const std::vector<std::string>& keys) const {
         std::lock_guard lock(mutex_);
         const auto* node = findNode(internal_->data, keys);
@@ -160,6 +165,11 @@ namespace Harmony::Utilities {
         HARMONY_INFO("Configuration::extractKeys - Extracted {} keys from {}",
                      rKeys.size(), fmt::format("[{}]", fmt::join(keys, ".")));
         return rKeys;
+    }
+
+    std::optional<Configuration> Configuration::operator[](const std::string& key)
+    {
+        return Configuration::subsection({ key });
     }
 
     Configuration operator+(const Configuration& left, const Configuration& right)
