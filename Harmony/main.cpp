@@ -11,7 +11,7 @@ int main() {
 
 
 		Harmony::Utilities::Configuration configuration;
-		configuration.load("physics_configuration.json");
+		configuration.load("physics_properties_demo_configuration.json");
 
 		Harmony::Engine engine(configuration);
 

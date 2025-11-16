@@ -164,7 +164,7 @@ namespace Harmony::Scenes
 			
 			// Step the physics world
 			Components::PhysicsWorld& physicsWorld = **physicsWorldPtr;
-			physicsWorld.step(deltaTime, 60, 20);
+			physicsWorld.step(deltaTime, 6, 3);
 			
 			// After physics step: copy PhysicsBody data back to Transform
 			for (const EntityID entity : physicsView) {
