@@ -148,7 +148,10 @@ namespace Harmony::Scenes
 				auto& physicsBody = *physicsView.get<std::unique_ptr<Components::PhysicsBody>>(entity);
 				
 				// Get position and rotation from Transform
-				sf::Vector2f position = transform.getPosition() + transform.getOrigin();
+				// The transform position is where the origin is located in world space
+				// Since fixtures are centered at the body origin and visual origins are typically
+				// set to the shape center, the body position should match the transform position
+				sf::Vector2f position = transform.getPosition();
 				float rotation = transform.getRotation();
 
 				// Convert rotation from degrees to radians
@@ -176,8 +179,9 @@ namespace Harmony::Scenes
 				float angleDegrees = angleRadians * 180.0f / 3.14159265359f;
 				
 				// Update Transform with physics data
+				// The body position is at the fixture center, which should match the transform origin location
 				transform.setRotation(angleDegrees);
-				transform.setPosition(position.x - transform.getOrigin().x, position.y - transform.getOrigin().y);
+				transform.setPosition(position.x, position.y);
 			}
 		}
 
