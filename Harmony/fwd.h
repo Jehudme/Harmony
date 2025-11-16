@@ -17,6 +17,8 @@ namespace Harmony::Components {
 	// Component classes
 	class Circle;
 	class Node;
+	class PhysicsBody;
+	class PhysicsWorld;
 	class Rectangle;
 	class Script;
 	template<typename Type> class Shape;
