@@ -43,8 +43,13 @@ namespace Harmony::Components
 
 	PhysicsWorld::PhysicsWorld(const Utilities::Configuration& configuration, Scenes::Scene& scene)
 	{
+		// Get pixels-to-meters ratio from configuration (default: 30.0)
+		// This means 30 pixels = 1 meter, which is a good scale for Box2D
+		pixelsToMeters_ = configuration.get<float>({ "pixels_to_meters" }).value_or(30.0f);
+
 		// Get gravity from configuration
-		float gravityX = 0.0f, gravityY = -10.0f;
+		// Default is Earth's gravity: 9.81 m/s² downward
+		float gravityX = 0.0f, gravityY = 9.81f;
 
 		if (std::optional<float> gx = configuration.get<float>({ "gravity", "x" }))
 			gravityX = gx.value();
@@ -54,19 +59,20 @@ namespace Harmony::Components
 		if (std::optional<float> gy = configuration.get<float>({ "gravity", "y" }))
 			gravityY = gy.value();
 		else
-			HARMONY_WARN("PhysicsWorld component missing gravity y configuration, using default -10.0");
+			HARMONY_WARN("PhysicsWorld component missing gravity y configuration, using default 9.81");
 
-		// Create the world
+		// Create the world with gravity in m/s²
 		b2Vec2 gravity(gravityX, gravityY);
 		world_ = std::unique_ptr<b2World, WorldDeleter>(new b2World(gravity));
 
-		HARMONY_INFO("PhysicsWorld component created with gravity ({}, {})", gravityX, gravityY);
+		HARMONY_INFO("PhysicsWorld component created with gravity ({}, {}) m/s², scale {} pixels/meter", 
+			gravityX, gravityY, pixelsToMeters_);
 	}
 
 	PhysicsWorld::~PhysicsWorld() = default;
 
 	PhysicsWorld::PhysicsWorld(PhysicsWorld&& other) noexcept
-		: world_(std::move(other.world_))
+		: world_(std::move(other.world_)), pixelsToMeters_(other.pixelsToMeters_)
 	{
 	}
 
@@ -75,6 +81,7 @@ namespace Harmony::Components
 		if (this != &other)
 		{
 			world_ = std::move(other.world_);
+			pixelsToMeters_ = other.pixelsToMeters_;
 		}
 		return *this;
 	}

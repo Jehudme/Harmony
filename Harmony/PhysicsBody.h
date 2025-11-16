@@ -225,6 +225,7 @@ namespace Harmony::Components
 	private:
 		b2Body* body_;
 		b2World* world_;
+		PhysicsWorld* physicsWorld_;  ///< Reference to the PhysicsWorld for scaling conversions
 		FixtureProperties fixtureProperties_;
 	};
 }

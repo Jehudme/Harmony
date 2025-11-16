@@ -75,6 +75,20 @@ namespace Harmony::Components
 		b2World* get() { return world_.get(); }
 		const b2World* get() const { return world_.get(); }
 
+		/// @brief Get pixels-to-meters ratio
+		/// @return The scale factor to convert pixels to meters
+		float getPixelsToMeters() const { return pixelsToMeters_; }
+
+		/// @brief Convert pixels to meters
+		/// @param pixels Value in pixels
+		/// @return Value in meters
+		float pixelsToMeters(float pixels) const { return pixels / pixelsToMeters_; }
+
+		/// @brief Convert meters to pixels
+		/// @param meters Value in meters
+		/// @return Value in pixels
+		float metersToPixels(float meters) const { return meters * pixelsToMeters_; }
+
 	private:
 		// Custom deleter for b2World
 		struct WorldDeleter {
@@ -84,5 +98,6 @@ namespace Harmony::Components
 		};
 
 		std::unique_ptr<b2World, WorldDeleter> world_;
+		float pixelsToMeters_;  ///< Scale factor: how many pixels equal one meter (default: 30.0)
 	};
 }
