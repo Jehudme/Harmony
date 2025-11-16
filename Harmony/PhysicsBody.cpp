@@ -11,7 +11,7 @@ HARMONY_REGISTER_COMPONENT(Harmony::Components::PhysicsBody, PhysicsBody)
 namespace Harmony::Components
 {
 	PhysicsBody::PhysicsBody(const Utilities::Configuration& configuration, Scenes::Scene& scene)
-		: body_(nullptr), world_(nullptr)
+		: body_(nullptr), world_(nullptr), physicsWorld_(nullptr)
 	{
 		// Get the PhysicsWorld component from the scene
 		// The PhysicsWorld should be a global component
@@ -19,6 +19,7 @@ namespace Harmony::Components
 		{
 			PhysicsWorld& physicsWorld = scene.getGlobalComponent<PhysicsWorld>();
 			world_ = physicsWorld.get();
+			physicsWorld_ = &physicsWorld;
 		}
 		catch (...)
 		{
@@ -110,10 +111,11 @@ namespace Harmony::Components
 	}
 
 	PhysicsBody::PhysicsBody(PhysicsBody&& other) noexcept
-		: body_(other.body_), world_(other.world_)
+		: body_(other.body_), world_(other.world_), physicsWorld_(other.physicsWorld_)
 	{
 		other.body_ = nullptr;
 		other.world_ = nullptr;
+		other.physicsWorld_ = nullptr;
 	}
 
 	PhysicsBody& PhysicsBody::operator=(PhysicsBody&& other) noexcept
@@ -128,9 +130,11 @@ namespace Harmony::Components
 
 			body_ = other.body_;
 			world_ = other.world_;
+			physicsWorld_ = other.physicsWorld_;
 
 			other.body_ = nullptr;
 			other.world_ = nullptr;
+			other.physicsWorld_ = nullptr;
 		}
 		return *this;
 	}
@@ -269,11 +273,15 @@ namespace Harmony::Components
 
 	b2Fixture* PhysicsBody::createBoxFixture(float width, float height, const FixtureProperties& properties)
 	{
-		if (body_)
+		if (body_ && physicsWorld_)
 		{
+			// Convert dimensions from pixels to meters
+			float widthMeters = physicsWorld_->pixelsToMeters(width);
+			float heightMeters = physicsWorld_->pixelsToMeters(height);
+			
 			b2PolygonShape boxShape;
 			// Box2D's SetAsBox takes half-widths, so we divide by 2
-			boxShape.SetAsBox(width / 2.0f, height / 2.0f);
+			boxShape.SetAsBox(widthMeters / 2.0f, heightMeters / 2.0f);
 			return createFixture(&boxShape, properties);
 		}
 		return nullptr;
@@ -288,11 +296,20 @@ namespace Harmony::Components
 
 	b2Fixture* PhysicsBody::createCircleFixture(float radius, const FixtureProperties& properties, const b2Vec2& center)
 	{
-		if (body_)
+		if (body_ && physicsWorld_)
 		{
+			// Convert radius from pixels to meters
+			float radiusMeters = physicsWorld_->pixelsToMeters(radius);
+			
+			// Convert center from pixels to meters
+			b2Vec2 centerMeters(
+				physicsWorld_->pixelsToMeters(center.x),
+				physicsWorld_->pixelsToMeters(center.y)
+			);
+			
 			b2CircleShape circleShape;
-			circleShape.m_radius = radius;
-			circleShape.m_p = center;
+			circleShape.m_radius = radiusMeters;
+			circleShape.m_p = centerMeters;
 			return createFixture(&circleShape, properties);
 		}
 		return nullptr;
@@ -307,7 +324,7 @@ namespace Harmony::Components
 
 	b2Fixture* PhysicsBody::createPolygonFixture(const std::vector<b2Vec2>& points, const FixtureProperties& properties)
 	{
-		if (!body_)
+		if (!body_ || !physicsWorld_)
 		{
 			return nullptr;
 		}
@@ -319,8 +336,19 @@ namespace Harmony::Components
 			return nullptr;
 		}
 
+		// Convert points from pixels to meters
+		std::vector<b2Vec2> pointsMeters;
+		pointsMeters.reserve(points.size());
+		for (const b2Vec2& point : points)
+		{
+			pointsMeters.push_back(b2Vec2(
+				physicsWorld_->pixelsToMeters(point.x),
+				physicsWorld_->pixelsToMeters(point.y)
+			));
+		}
+
 		b2PolygonShape polygonShape;
-		polygonShape.Set(points.data(), static_cast<int32>(points.size()));
+		polygonShape.Set(pointsMeters.data(), static_cast<int32>(pointsMeters.size()));
 		return createFixture(&polygonShape, properties);
 	}
 

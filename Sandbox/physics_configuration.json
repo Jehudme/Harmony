@@ -32,7 +32,7 @@
         "PhysicsWorld": {
           "gravity": {
             "x": 0,
-            "y": 981
+            "y": 9.81
           }
         }
       },
@@ -75,8 +75,8 @@
         "PhysicsBody": {
           "type": "dynamic",
           "angle": 0,
-          "linear_damping": 0.5,
-          "angular_damping": 0.5
+          "linear_damping": 0.0,
+          "angular_damping": 0.1
         }
       }
     },
@@ -110,8 +110,8 @@
         },
         "PhysicsBody": {
           "type": "dynamic",
-          "linear_damping": 0.5,
-          "angular_damping": 0.5
+          "linear_damping": 0.0,
+          "angular_damping": 0.1
         }
       }
     },
@@ -145,8 +145,8 @@
         },
         "PhysicsBody": {
           "type": "static",
-          "linear_damping": 0.5,
-          "angular_damping": 0.5
+          "linear_damping": 0.0,
+          "angular_damping": 0.0
         }
       }
     }
