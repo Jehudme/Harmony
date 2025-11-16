@@ -38,7 +38,8 @@
       },
       "entities": {
         "301": {},
-        "302": {}
+        "302": {},
+        "303": {}
       }
     }
   },
@@ -50,6 +51,42 @@
           "position": {
             "x": 512,
             "y": 0
+          },
+          "rotation": 0,
+          "scale": {
+            "x": 1,
+            "y": 1
+          },
+          "origin": {
+            "x": 25,
+            "y": 25
+          }
+        },
+        "Rectangle": {
+          "width": 50,
+          "height": 50,
+          "fill_color": {
+            "r": 0,
+            "g": 150,
+            "b": 255,
+            "a": 255
+          }
+        },
+        "PhysicsBody": {
+          "type": "dynamic",
+          "angle": 0,
+          "linear_damping": 0.5,
+          "angular_damping": 0.5
+        }
+      }
+    },
+    "303": {
+      "script": "physics_falling_box_script",
+      "components": {
+        "Transform": {
+          "position": {
+            "x": 542,
+            "y": 100
           },
           "rotation": 0,
           "scale": {
