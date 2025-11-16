@@ -23,27 +23,23 @@ Modified `Scene::initialize()` to support creating global components from config
 #### Physics Update Loop
 Modified `Scene::update(float deltaTime)` to integrate physics:
 
-**Phase 1: Pre-Physics Sync (Transform → PhysicsBody)**
-- Iterates over entities with both Transform and PhysicsBody components
-- Copies position and rotation from Transform to PhysicsBody
-- Converts rotation from SFML's degrees to Box2D's radians
-
-**Phase 2: Physics Simulation**
+**Phase 1: Physics Simulation**
 - Calls `PhysicsWorld::step(deltaTime, 6, 2)` to advance simulation
 - Uses 6 velocity iterations and 2 position iterations (Box2D defaults)
 
-**Phase 3: Post-Physics Sync (PhysicsBody → Transform)**
+**Phase 2: Post-Physics Sync (PhysicsBody → Transform)**
 - Iterates over entities with both Transform and PhysicsBody
 - Copies position and rotation from PhysicsBody to Transform
 - Converts rotation from Box2D's radians to SFML's degrees
 
+**Note**: Initial synchronization from Transform to PhysicsBody happens once during PhysicsBody construction, not every frame. This ensures physics simulation maintains control over dynamic bodies.
+
 ### 2. Scene.h Documentation
-Added comprehensive documentation for the `update()` method explaining all five steps:
+Added comprehensive documentation for the `update()` method explaining all four steps:
 1. Call onPreUpdate() for all Script components
-2. Synchronize Transform data to PhysicsBody (if PhysicsWorld exists)
-3. Step the PhysicsWorld simulation
-4. Synchronize PhysicsBody data back to Transform
-5. Call onPostUpdate() for all Script components
+2. Step the PhysicsWorld simulation
+3. Synchronize PhysicsBody data back to Transform (physics controls visuals)
+4. Call onPostUpdate() for all Script components
 
 ### 3. Physics Demo (Sandbox)
 
@@ -71,6 +67,11 @@ User documentation explaining:
 - Configuration structure examples
 
 ## Design Quality
+
+### Bug Fixes (Current Implementation)
+✅ **Fixed Critical Synchronization Bug**: Removed pre-physics Transform→PhysicsBody sync that was resetting physics state every frame
+✅ **Added Friction and Restitution**: Physics fixtures now have proper friction and restitution parameters for realistic collisions
+✅ **Physics-Driven Motion**: Dynamic bodies now properly maintain velocity and momentum between frames
 
 ### RAII Compliance
 ✅ No raw pointers leaked
