@@ -144,6 +144,7 @@
   <ItemGroup>
     <ClInclude Include="Assert.h" />
     <ClInclude Include="Circle.h" />
+    <ClInclude Include="Color.h" />
     <ClInclude Include="ComponentManagement.h" />
     <ClInclude Include="ComponentTask.h" />
     <ClInclude Include="Configuration.h" />
@@ -189,6 +190,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Circle.cpp" />
+    <ClCompile Include="Color.cpp" />
     <ClCompile Include="ComponentManagement.cpp" />
     <ClCompile Include="ComponentTask.cpp" />
     <ClCompile Include="Configuration.cpp" />

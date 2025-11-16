@@ -5,20 +5,25 @@ namespace Harmony::Utilities
 	template<typename Type>
 	struct Vector2
 	{
-		Vector2 operator+(const Vector2& other) const;
-		Vector2 operator-(const Vector2& other) const;
+		inline Vector2(Type X = 0, Type Y = 0);
 
-		Vector2 operator*(Type scalar) const;
-		Vector2 operator/(Type scalar) const;
+		template<typename U>
+		inline Vector2<Type>::Vector2(const Vector2<U>& vector);
 
-		Vector2& operator+=(const Vector2& other);
-		Vector2& operator-=(const Vector2& other);
+		inline Vector2 operator+(const Vector2& other) const;
+		inline Vector2 operator-(const Vector2& other) const;
 
-		Vector2& operator*=(Type scalar);
-		Vector2& operator/=(Type scalar);
+		inline Vector2 operator*(Type scalar) const;
+		inline Vector2 operator/(Type scalar) const;
 
-		Type x{ 0 };
-		Type y{ 0 };
+		inline Vector2& operator+=(const Vector2& other);
+		inline Vector2& operator-=(const Vector2& other);
+
+		inline Vector2& operator*=(Type scalar);
+		inline Vector2& operator/=(Type scalar);
+
+		Type x;
+		Type y;
 	};
 
 	using Vector2f = Vector2<float>;
