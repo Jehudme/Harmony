@@ -120,6 +120,21 @@
     <ClInclude Include="RandomValue.h">
       <Filter>Header Files\Utilites</Filter>
     </ClInclude>
+    <ClInclude Include="Time.h">
+      <Filter>Header Files\Utilites</Filter>
+    </ClInclude>
+    <ClInclude Include="Clock.h">
+      <Filter>Header Files\Utilites</Filter>
+    </ClInclude>
+    <ClInclude Include="Stopwatch.h">
+      <Filter>Header Files\Utilites</Filter>
+    </ClInclude>
+    <ClInclude Include="Timer.h">
+      <Filter>Header Files\Utilites</Filter>
+    </ClInclude>
+    <ClInclude Include="FPSCounter.h">
+      <Filter>Header Files\Utilites</Filter>
+    </ClInclude>
     <ClInclude Include="Circle.h">
       <Filter>Header Files\Components</Filter>
     </ClInclude>
@@ -183,6 +198,21 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Configuration.cpp">
+      <Filter>Source Files\Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="Time.cpp">
+      <Filter>Source Files\Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="Clock.cpp">
+      <Filter>Source Files\Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="Stopwatch.cpp">
+      <Filter>Source Files\Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="Timer.cpp">
+      <Filter>Source Files\Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="FPSCounter.cpp">
       <Filter>Source Files\Utilities</Filter>
     </ClCompile>
     <ClCompile Include="SceneManagement.cpp">
