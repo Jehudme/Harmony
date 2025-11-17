@@ -144,6 +144,7 @@
   <ItemGroup>
     <ClInclude Include="Assert.h" />
     <ClInclude Include="Circle.h" />
+    <ClInclude Include="Clock.h" />
     <ClInclude Include="Color.h" />
     <ClInclude Include="ComponentManagement.h" />
     <ClInclude Include="ComponentTask.h" />
@@ -153,6 +154,7 @@
     <ClInclude Include="InputManager.h" />
     <ClInclude Include="Exceptions.h" />
     <ClInclude Include="Font.h" />
+    <ClInclude Include="FPSCounter.h" />
     <ClInclude Include="fwd.h" />
     <ClInclude Include="Logger.h" />
     <ClInclude Include="Music.h" />
@@ -177,10 +179,13 @@
     <ClInclude Include="State.h" />
     <ClInclude Include="StateManagement.h" />
     <ClInclude Include="StateTask.h" />
+    <ClInclude Include="Stopwatch.h" />
     <ClInclude Include="Task.h" />
     <ClInclude Include="TaskManagement.h" />
     <ClInclude Include="Text.h" />
     <ClInclude Include="Texture.h" />
+    <ClInclude Include="Time.h" />
+    <ClInclude Include="Timer.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="type_name.h" />
     <ClInclude Include="UtilityTask.h" />
@@ -190,6 +195,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Circle.cpp" />
+    <ClCompile Include="Clock.cpp" />
     <ClCompile Include="Color.cpp" />
     <ClCompile Include="ComponentManagement.cpp" />
     <ClCompile Include="ComponentTask.cpp" />
@@ -199,6 +205,7 @@
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="Exceptions.cpp" />
     <ClCompile Include="Font.cpp" />
+    <ClCompile Include="FPSCounter.cpp" />
     <ClCompile Include="Logger.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Music.cpp" />
@@ -226,10 +233,13 @@
     <ClCompile Include="State.cpp" />
     <ClCompile Include="StateManagement.cpp" />
     <ClCompile Include="StateTask.cpp" />
+    <ClCompile Include="Stopwatch.cpp" />
     <ClCompile Include="Task.cpp" />
     <ClCompile Include="TaskManagement.cpp" />
     <ClCompile Include="Text.cpp" />
     <ClCompile Include="Texture.cpp" />
+    <ClCompile Include="Time.cpp" />
+    <ClCompile Include="Timer.cpp" />
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="UtilityTask.cpp" />
     <ClCompile Include="View.cpp" />
