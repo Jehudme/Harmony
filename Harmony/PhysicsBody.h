@@ -3,6 +3,9 @@
 #include <box2d/box2d.h>
 #include <memory>
 #include <vector>
+#include <optional>
+#include <functional>
+#include "fwd.h"
 
 namespace Harmony::Scenes {
 	class Scene;
@@ -24,6 +27,8 @@ namespace Harmony::Components
 	class PhysicsBody
 	{
 	public:
+		friend class Scenes::Scene;
+
 		PhysicsBody(const Utilities::Configuration& configuration, Scenes::Scene& scene);
 		~PhysicsBody();
 
@@ -222,10 +227,21 @@ namespace Harmony::Components
 		/// @return True if fixtures are sensors
 		bool getIsSensor() const;
 
+		/// @brief Calculate the bounding box from all fixture points
+		/// @return A b2Vec2 representing the size of the bounding box (width, height)
+		b2Vec2 getBoundingBox() const;
+
+		/// @brief Calculate the position of the body's origin inside the bounding box
+		/// The top-left corner of the bounding box is considered to be at coordinates (0, 0)
+		/// @return A b2Vec2 representing the origin position within the bounding box
+		b2Vec2 getOriginInBoundingBox() const;
+
 	private:
 		b2Body* body_;
 		b2World* world_;
 		PhysicsWorld* physicsWorld_;  ///< Reference to the PhysicsWorld for scaling conversions
 		FixtureProperties fixtureProperties_;
+		EntityID entityId_;  ///< Entity ID for accessing other components
+		std::optional<std::reference_wrapper<Scenes::Scene>> scene_;  ///< Reference to the scene for component access
 	};
 }

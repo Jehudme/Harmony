@@ -5,6 +5,11 @@
 #include "ComponentManagement.h"
 #include "Scene.h"
 #include "Logger.h"
+#include "Transform.h"
+#include "Engine.h"
+#include "TaskManagement.h"
+#include "UtilityTask.h"
+#include <limits>
 
 HARMONY_REGISTER_COMPONENT(Harmony::Components::PhysicsBody, PhysicsBody)
 
@@ -98,6 +103,37 @@ namespace Harmony::Components
 				HARMONY_ERROR("Failed to create physics body");
 				return;
 			}
+
+			// Submit a lambda task to update the Transform component origin before the next frame
+			scene.engine.taskManagement->submit(
+				std::make_unique<Tasks::LambdaTask>([this]() {
+					try {
+						// Only proceed if scene and entityId are set (should be set by Scene after construction)
+						if (!scene_.has_value()) {
+							HARMONY_ERROR("PhysicsBody: scene reference not set when trying to update Transform origin");
+							return;
+						}
+
+						// Calculate the origin position within the bounding box
+						b2Vec2 origin = getOriginInBoundingBox();
+						
+						// Get the Transform component for this entity
+						Transform& transform = scene_->get().getComponent<Transform>(entityId_);
+						
+						// Convert from meters to pixels before setting origin
+						if (physicsWorld_) {
+							float originXPixels = physicsWorld_->metersToPixels(origin.x);
+							float originYPixels = physicsWorld_->metersToPixels(origin.y);
+							transform.setOrigin(originXPixels, originYPixels);
+							
+							HARMONY_DEBUG("Updated Transform origin to ({}, {}) pixels", originXPixels, originYPixels);
+						}
+					}
+					catch (const std::exception& e) {
+						HARMONY_ERROR("Failed to update Transform origin: {}", e.what());
+					}
+				}, 1) // Priority 1 to execute before next frame
+			);
 		}
 	}
 
@@ -111,7 +147,8 @@ namespace Harmony::Components
 	}
 
 	PhysicsBody::PhysicsBody(PhysicsBody&& other) noexcept
-		: body_(other.body_), world_(other.world_), physicsWorld_(other.physicsWorld_)
+		: body_(other.body_), world_(other.world_), physicsWorld_(other.physicsWorld_),
+		  entityId_(other.entityId_), scene_(other.scene_)
 	{
 		other.body_ = nullptr;
 		other.world_ = nullptr;
@@ -131,6 +168,8 @@ namespace Harmony::Components
 			body_ = other.body_;
 			world_ = other.world_;
 			physicsWorld_ = other.physicsWorld_;
+			entityId_ = other.entityId_;
+			scene_ = other.scene_;
 
 			other.body_ = nullptr;
 			other.world_ = nullptr;
@@ -458,5 +497,180 @@ namespace Harmony::Components
 	bool PhysicsBody::getIsSensor() const
 	{
 		return fixtureProperties_.isSensor;
+	}
+
+	b2Vec2 PhysicsBody::getBoundingBox() const
+	{
+		if (!body_)
+		{
+			return b2Vec2(0.0f, 0.0f);
+		}
+
+		// Initialize min and max with extreme values
+		float minX = std::numeric_limits<float>::max();
+		float minY = std::numeric_limits<float>::max();
+		float maxX = std::numeric_limits<float>::lowest();
+		float maxY = std::numeric_limits<float>::lowest();
+
+		bool hasFixtures = false;
+
+		// Iterate through all fixtures and their shapes to find all vertices
+		for (b2Fixture* fixture = body_->GetFixtureList(); fixture != nullptr; fixture = fixture->GetNext())
+		{
+			hasFixtures = true;
+			const b2Shape* shape = fixture->GetShape();
+
+			switch (shape->GetType())
+			{
+			case b2Shape::e_circle:
+			{
+				const b2CircleShape* circle = static_cast<const b2CircleShape*>(shape);
+				b2Vec2 center = circle->m_p;
+				float radius = circle->m_radius;
+
+				minX = std::min(minX, center.x - radius);
+				minY = std::min(minY, center.y - radius);
+				maxX = std::max(maxX, center.x + radius);
+				maxY = std::max(maxY, center.y + radius);
+				break;
+			}
+			case b2Shape::e_polygon:
+			{
+				const b2PolygonShape* polygon = static_cast<const b2PolygonShape*>(shape);
+				for (int32 i = 0; i < polygon->m_count; ++i)
+				{
+					const b2Vec2& vertex = polygon->m_vertices[i];
+					minX = std::min(minX, vertex.x);
+					minY = std::min(minY, vertex.y);
+					maxX = std::max(maxX, vertex.x);
+					maxY = std::max(maxY, vertex.y);
+				}
+				break;
+			}
+			case b2Shape::e_edge:
+			{
+				const b2EdgeShape* edge = static_cast<const b2EdgeShape*>(shape);
+				minX = std::min(minX, std::min(edge->m_vertex1.x, edge->m_vertex2.x));
+				minY = std::min(minY, std::min(edge->m_vertex1.y, edge->m_vertex2.y));
+				maxX = std::max(maxX, std::max(edge->m_vertex1.x, edge->m_vertex2.x));
+				maxY = std::max(maxY, std::max(edge->m_vertex1.y, edge->m_vertex2.y));
+				break;
+			}
+			case b2Shape::e_chain:
+			{
+				const b2ChainShape* chain = static_cast<const b2ChainShape*>(shape);
+				for (int32 i = 0; i < chain->m_count; ++i)
+				{
+					const b2Vec2& vertex = chain->m_vertices[i];
+					minX = std::min(minX, vertex.x);
+					minY = std::min(minY, vertex.y);
+					maxX = std::max(maxX, vertex.x);
+					maxY = std::max(maxY, vertex.y);
+				}
+				break;
+			}
+			default:
+				break;
+			}
+		}
+
+		if (!hasFixtures)
+		{
+			// No fixtures, return zero bounding box
+			return b2Vec2(0.0f, 0.0f);
+		}
+
+		// Return the size of the bounding box
+		float width = maxX - minX;
+		float height = maxY - minY;
+		return b2Vec2(width, height);
+	}
+
+	b2Vec2 PhysicsBody::getOriginInBoundingBox() const
+	{
+		if (!body_)
+		{
+			return b2Vec2(0.0f, 0.0f);
+		}
+
+		// Initialize min and max with extreme values
+		float minX = std::numeric_limits<float>::max();
+		float minY = std::numeric_limits<float>::max();
+		float maxX = std::numeric_limits<float>::lowest();
+		float maxY = std::numeric_limits<float>::lowest();
+
+		bool hasFixtures = false;
+
+		// Iterate through all fixtures and their shapes to find all vertices
+		for (b2Fixture* fixture = body_->GetFixtureList(); fixture != nullptr; fixture = fixture->GetNext())
+		{
+			hasFixtures = true;
+			const b2Shape* shape = fixture->GetShape();
+
+			switch (shape->GetType())
+			{
+			case b2Shape::e_circle:
+			{
+				const b2CircleShape* circle = static_cast<const b2CircleShape*>(shape);
+				b2Vec2 center = circle->m_p;
+				float radius = circle->m_radius;
+
+				minX = std::min(minX, center.x - radius);
+				minY = std::min(minY, center.y - radius);
+				maxX = std::max(maxX, center.x + radius);
+				maxY = std::max(maxY, center.y + radius);
+				break;
+			}
+			case b2Shape::e_polygon:
+			{
+				const b2PolygonShape* polygon = static_cast<const b2PolygonShape*>(shape);
+				for (int32 i = 0; i < polygon->m_count; ++i)
+				{
+					const b2Vec2& vertex = polygon->m_vertices[i];
+					minX = std::min(minX, vertex.x);
+					minY = std::min(minY, vertex.y);
+					maxX = std::max(maxX, vertex.x);
+					maxY = std::max(maxY, vertex.y);
+				}
+				break;
+			}
+			case b2Shape::e_edge:
+			{
+				const b2EdgeShape* edge = static_cast<const b2EdgeShape*>(shape);
+				minX = std::min(minX, std::min(edge->m_vertex1.x, edge->m_vertex2.x));
+				minY = std::min(minY, std::min(edge->m_vertex1.y, edge->m_vertex2.y));
+				maxX = std::max(maxX, std::max(edge->m_vertex1.x, edge->m_vertex2.x));
+				maxY = std::max(maxY, std::max(edge->m_vertex1.y, edge->m_vertex2.y));
+				break;
+			}
+			case b2Shape::e_chain:
+			{
+				const b2ChainShape* chain = static_cast<const b2ChainShape*>(shape);
+				for (int32 i = 0; i < chain->m_count; ++i)
+				{
+					const b2Vec2& vertex = chain->m_vertices[i];
+					minX = std::min(minX, vertex.x);
+					minY = std::min(minY, vertex.y);
+					maxX = std::max(maxX, vertex.x);
+					maxY = std::max(maxY, vertex.y);
+				}
+				break;
+			}
+			default:
+				break;
+			}
+		}
+
+		if (!hasFixtures)
+		{
+			// No fixtures, return origin at (0, 0)
+			return b2Vec2(0.0f, 0.0f);
+		}
+
+		// The body's position is at (0, 0) in local coordinates
+		// We need to find where (0, 0) is relative to the top-left corner of the bounding box
+		// The top-left corner of the bounding box is at (minX, minY)
+		// So the origin position within the bounding box is at (-minX, -minY)
+		return b2Vec2(-minX, -minY);
 	}
 }
