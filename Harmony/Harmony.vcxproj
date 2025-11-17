@@ -181,6 +181,7 @@
     <ClInclude Include="TaskManagement.h" />
     <ClInclude Include="Text.h" />
     <ClInclude Include="Texture.h" />
+    <ClInclude Include="Time.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="type_name.h" />
     <ClInclude Include="UtilityTask.h" />

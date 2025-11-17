@@ -11,13 +11,12 @@ int main() {
 
 
 		Harmony::Utilities::Configuration configuration;
-		configuration.load("physics_configuration.json");
+		configuration.load("physics_properties_demo_configuration.json");
 
 		Harmony::Engine engine(configuration);
 
 		engine.start();
-	}
-	catch (const std::exception& e) {
+	}	catch (const std::exception& e) {
 		return EXIT_FAILURE;
 	}
 }
