@@ -137,12 +137,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Asteroid.cpp" />
-    <ClCompile Include="PhysicsDemo.cpp" />
-    <ClCompile Include="PhysicsPropertiesDemo.cpp" />
-    <ClCompile Include="main.cpp" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="configuration.json" />
     <None Include="physics_configuration.json" />
     <None Include="physics_properties_demo_configuration.json" />

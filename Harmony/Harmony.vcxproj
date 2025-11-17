@@ -143,73 +143,26 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Assert.h" />
-    <ClInclude Include="Circle.h" />
     <ClInclude Include="Clock.h" />
     <ClInclude Include="Color.h" />
-    <ClInclude Include="ComponentManagement.h" />
-    <ClInclude Include="ComponentTask.h" />
     <ClInclude Include="Configuration.h" />
-    <ClInclude Include="Engine.h" />
-    <ClInclude Include="EngineTask.h" />
-    <ClInclude Include="InputManager.h" />
     <ClInclude Include="Exceptions.h" />
-    <ClInclude Include="Font.h" />
-    <ClInclude Include="FPSCounter.h" />
-    <ClInclude Include="fwd.h" />
     <ClInclude Include="Logger.h" />
-    <ClInclude Include="Music.h" />
-    <ClInclude Include="Node.h" />
     <ClInclude Include="OptionalReference.h" />
     <ClInclude Include="pch.h" />
-    <ClInclude Include="PhysicsBody.h" />
-    <ClInclude Include="PhysicsWorld.h" />
     <ClInclude Include="RandomValue.h" />
-    <ClInclude Include="Rectangle.h" />
-    <ClInclude Include="RenderManager.h" />
-    <ClInclude Include="Resource.h" />
-    <ClInclude Include="ResourceManager.h" />
-    <ClInclude Include="ResourceTask.h" />
-    <ClInclude Include="Scene.h" />
-    <ClInclude Include="SceneManagement.h" />
-    <ClInclude Include="SceneTask.h" />
-    <ClInclude Include="Script.h" />
-    <ClInclude Include="Shader.h" />
-    <ClInclude Include="Shape.h" />
-    <ClInclude Include="Sound.h" />
-    <ClInclude Include="State.h" />
-    <ClInclude Include="StateManagement.h" />
-    <ClInclude Include="StateTask.h" />
     <ClInclude Include="Stopwatch.h" />
-    <ClInclude Include="Task.h" />
-    <ClInclude Include="TaskManagement.h" />
-    <ClInclude Include="Text.h" />
-    <ClInclude Include="Texture.h" />
     <ClInclude Include="Time.h" />
     <ClInclude Include="Timer.h" />
-    <ClInclude Include="Transform.h" />
     <ClInclude Include="type_name.h" />
-    <ClInclude Include="UtilityTask.h" />
     <ClInclude Include="Vector.h" />
-    <ClInclude Include="View.h" />
-    <ClInclude Include="Window.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Circle.cpp" />
     <ClCompile Include="Clock.cpp" />
     <ClCompile Include="Color.cpp" />
-    <ClCompile Include="ComponentManagement.cpp" />
-    <ClCompile Include="ComponentTask.cpp" />
     <ClCompile Include="Configuration.cpp" />
-    <ClCompile Include="Engine.cpp" />
-    <ClCompile Include="EngineTask.cpp" />
-    <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="Exceptions.cpp" />
-    <ClCompile Include="Font.cpp" />
-    <ClCompile Include="FPSCounter.cpp" />
     <ClCompile Include="Logger.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="Music.cpp" />
-    <ClCompile Include="Node.cpp" />
     <ClCompile Include="OptionalReference.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -217,39 +170,14 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="PhysicsBody.cpp" />
-    <ClCompile Include="PhysicsWorld.cpp" />
-    <ClCompile Include="Rectangle.cpp" />
-    <ClCompile Include="RenderManager.cpp" />
-    <ClCompile Include="Resource.cpp" />
-    <ClCompile Include="ResourceManager.cpp" />
-    <ClCompile Include="ResourceTask.cpp" />
-    <ClCompile Include="Scene.cpp" />
-    <ClCompile Include="SceneManagement.cpp" />
-    <ClCompile Include="SceneTask.cpp" />
-    <ClCompile Include="Script.cpp" />
-    <ClCompile Include="Shader.cpp" />
-    <ClCompile Include="Sound.cpp" />
-    <ClCompile Include="State.cpp" />
-    <ClCompile Include="StateManagement.cpp" />
-    <ClCompile Include="StateTask.cpp" />
     <ClCompile Include="Stopwatch.cpp" />
-    <ClCompile Include="Task.cpp" />
-    <ClCompile Include="TaskManagement.cpp" />
-    <ClCompile Include="Text.cpp" />
-    <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Time.cpp" />
     <ClCompile Include="Timer.cpp" />
-    <ClCompile Include="Transform.cpp" />
-    <ClCompile Include="UtilityTask.cpp" />
-    <ClCompile Include="View.cpp" />
-    <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="cpp.hint" />
     <None Include="Logger.inl" />
     <None Include="OptionalReference.inl" />
-    <None Include="Scene.inl" />
     <None Include="Vector.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

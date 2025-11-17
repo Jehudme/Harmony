@@ -1,6 +1,5 @@
 {
   "dependencies": [
-    "sfml",
     "spdlog",
     {
       "name": "entt",
@@ -10,8 +9,13 @@
       "name": "nlohmann-json",
       "version>=": "3.11.3"
     },
-    "fmt",
-    "box2d"
+    {
+      "name": "fmt",
+      "version>=": "10.2.1"
+    },
+    {
+      "name": "raylib",
+      "version>=": "5.0.0"
+    }
   ]
 }
-

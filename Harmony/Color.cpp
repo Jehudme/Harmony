@@ -73,5 +73,4 @@ namespace Harmony::Utilities {
         left = left * right;
         return left;
     }
-
 }

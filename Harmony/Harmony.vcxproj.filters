@@ -13,79 +13,16 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Header Files\Tasks">
-      <UniqueIdentifier>{635d7ffd-b741-48f1-9b33-659fb9720d90}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Utilites">
       <UniqueIdentifier>{9c397518-e4e7-4a47-935e-cbe8cb56033e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Scenes">
-      <UniqueIdentifier>{2b1c5198-0964-4a1b-9ed9-fe2e10b9c687}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Scenes">
-      <UniqueIdentifier>{2f5c9c58-3ecd-45e2-911a-7052c46e0280}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Tasks">
-      <UniqueIdentifier>{2096d02f-6ad7-4a95-9021-6cbb4ed41ffd}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Utilities">
       <UniqueIdentifier>{5d22b725-f5b4-4dff-b05d-9ddec505ae53}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Components">
-      <UniqueIdentifier>{cbb4c832-23af-4b65-a044-f87123e46597}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Components">
-      <UniqueIdentifier>{1beacd81-c838-4a2d-9e4e-df32e6cee4b6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Resources">
-      <UniqueIdentifier>{9d73f7f8-f895-4ea7-a75a-a855f92b5fca}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Managers">
-      <UniqueIdentifier>{2a0aea8f-63bc-476a-b91a-6ea2fa881edd}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Managers">
-      <UniqueIdentifier>{85ee2848-9d3e-47a0-96b9-04feadf49d04}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Resources">
-      <UniqueIdentifier>{1832ba2a-784d-4797-bdf7-4ec25881e26e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Configuration.h">
       <Filter>Header Files\Utilites</Filter>
-    </ClInclude>
-    <ClInclude Include="StateManagement.h">
-      <Filter>Header Files\Managers</Filter>
-    </ClInclude>
-    <ClInclude Include="SceneManagement.h">
-      <Filter>Header Files\Managers</Filter>
-    </ClInclude>
-    <ClInclude Include="fwd.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Task.h">
-      <Filter>Header Files\Tasks</Filter>
-    </ClInclude>
-    <ClInclude Include="TaskManagement.h">
-      <Filter>Header Files\Managers</Filter>
-    </ClInclude>
-    <ClInclude Include="StateTask.h">
-      <Filter>Header Files\Tasks</Filter>
-    </ClInclude>
-    <ClInclude Include="SceneTask.h">
-      <Filter>Header Files\Tasks</Filter>
-    </ClInclude>
-    <ClInclude Include="EngineTask.h">
-      <Filter>Header Files\Tasks</Filter>
-    </ClInclude>
-    <ClInclude Include="ResourceTask.h">
-      <Filter>Header Files\Tasks</Filter>
-    </ClInclude>
-    <ClInclude Include="ComponentTask.h">
-      <Filter>Header Files\Tasks</Filter>
-    </ClInclude>
-    <ClInclude Include="UtilityTask.h">
-      <Filter>Header Files\Tasks</Filter>
     </ClInclude>
     <ClInclude Include="Logger.h">
       <Filter>Header Files\Utilites</Filter>
@@ -95,27 +32,6 @@
     </ClInclude>
     <ClInclude Include="pch.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Scene.h">
-      <Filter>Header Files\Scenes</Filter>
-    </ClInclude>
-    <ClInclude Include="State.h">
-      <Filter>Header Files\Scenes</Filter>
-    </ClInclude>
-    <ClInclude Include="Transform.h">
-      <Filter>Header Files\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="Rectangle.h">
-      <Filter>Header Files\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="ComponentManagement.h">
-      <Filter>Header Files\Managers</Filter>
-    </ClInclude>
-    <ClInclude Include="Shape.h">
-      <Filter>Header Files\Components</Filter>
     </ClInclude>
     <ClInclude Include="RandomValue.h">
       <Filter>Header Files\Utilites</Filter>
@@ -132,68 +48,20 @@
     <ClInclude Include="Timer.h">
       <Filter>Header Files\Utilites</Filter>
     </ClInclude>
-    <ClInclude Include="FPSCounter.h">
-      <Filter>Header Files\Utilites</Filter>
-    </ClInclude>
-    <ClInclude Include="Circle.h">
-      <Filter>Header Files\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="Script.h">
-      <Filter>Header Files\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="Exceptions.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Resource.h">
-      <Filter>Header Files\Resources</Filter>
-    </ClInclude>
-    <ClInclude Include="Texture.h">
-      <Filter>Header Files\Resources</Filter>
-    </ClInclude>
-    <ClInclude Include="Font.h">
-      <Filter>Header Files\Resources</Filter>
-    </ClInclude>
-    <ClInclude Include="Shader.h">
-      <Filter>Header Files\Resources</Filter>
-    </ClInclude>
-    <ClInclude Include="Sound.h">
-      <Filter>Header Files\Resources</Filter>
-    </ClInclude>
-    <ClInclude Include="Music.h">
-      <Filter>Header Files\Resources</Filter>
-    </ClInclude>
-    <ClInclude Include="Text.h">
-      <Filter>Header Files\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="ResourceManager.h">
-      <Filter>Header Files\Managers</Filter>
-    </ClInclude>
-    <ClInclude Include="InputManager.h">
-      <Filter>Header Files\Managers</Filter>
-    </ClInclude>
-    <ClInclude Include="View.h">
-      <Filter>Header Files\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="RenderManager.h">
-      <Filter>Header Files\Managers</Filter>
-    </ClInclude>
-    <ClInclude Include="Window.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="type_name.h">
       <Filter>Header Files\Utilites</Filter>
-    </ClInclude>
-    <ClInclude Include="Node.h">
-      <Filter>Header Files\Components</Filter>
     </ClInclude>
     <ClInclude Include="OptionalReference.h">
       <Filter>Header Files\Utilites</Filter>
     </ClInclude>
-    <ClInclude Include="PhysicsBody.h">
-      <Filter>Header Files\Components</Filter>
+    <ClInclude Include="Color.h">
+      <Filter>Header Files\Utilites</Filter>
     </ClInclude>
-    <ClInclude Include="PhysicsWorld.h">
-      <Filter>Header Files\Components</Filter>
+    <ClInclude Include="Vector.h">
+      <Filter>Header Files\Utilites</Filter>
+    </ClInclude>
+    <ClInclude Include="Exceptions.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -206,128 +74,26 @@
     <ClCompile Include="Clock.cpp">
       <Filter>Source Files\Utilities</Filter>
     </ClCompile>
-    <ClCompile Include="Stopwatch.cpp">
-      <Filter>Source Files\Utilities</Filter>
-    </ClCompile>
     <ClCompile Include="Timer.cpp">
       <Filter>Source Files\Utilities</Filter>
-    </ClCompile>
-    <ClCompile Include="FPSCounter.cpp">
-      <Filter>Source Files\Utilities</Filter>
-    </ClCompile>
-    <ClCompile Include="SceneManagement.cpp">
-      <Filter>Source Files\Managers</Filter>
-    </ClCompile>
-    <ClCompile Include="StateManagement.cpp">
-      <Filter>Source Files\Managers</Filter>
-    </ClCompile>
-    <ClCompile Include="TaskManagement.cpp">
-      <Filter>Source Files\Managers</Filter>
     </ClCompile>
     <ClCompile Include="Logger.cpp">
       <Filter>Source Files\Utilities</Filter>
     </ClCompile>
-    <ClCompile Include="Task.cpp">
-      <Filter>Source Files\Tasks</Filter>
-    </ClCompile>
-    <ClCompile Include="State.cpp">
-      <Filter>Source Files\Scenes</Filter>
-    </ClCompile>
     <ClCompile Include="pch.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Scene.cpp">
-      <Filter>Source Files\Scenes</Filter>
-    </ClCompile>
-    <ClCompile Include="main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SceneTask.cpp">
-      <Filter>Source Files\Tasks</Filter>
-    </ClCompile>
-    <ClCompile Include="StateTask.cpp">
-      <Filter>Source Files\Tasks</Filter>
-    </ClCompile>
-    <ClCompile Include="EngineTask.cpp">
-      <Filter>Source Files\Tasks</Filter>
-    </ClCompile>
-    <ClCompile Include="ResourceTask.cpp">
-      <Filter>Source Files\Tasks</Filter>
-    </ClCompile>
-    <ClCompile Include="ComponentTask.cpp">
-      <Filter>Source Files\Tasks</Filter>
-    </ClCompile>
-    <ClCompile Include="UtilityTask.cpp">
-      <Filter>Source Files\Tasks</Filter>
-    </ClCompile>
-    <ClCompile Include="Transform.cpp">
-      <Filter>Source Files\Components</Filter>
-    </ClCompile>
-    <ClCompile Include="ComponentManagement.cpp">
-      <Filter>Source Files\Managers</Filter>
-    </ClCompile>
-    <ClCompile Include="Rectangle.cpp">
-      <Filter>Source Files\Components</Filter>
-    </ClCompile>
-    <ClCompile Include="Script.cpp">
-      <Filter>Source Files\Components</Filter>
-    </ClCompile>
-    <ClCompile Include="Exceptions.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Circle.cpp">
-      <Filter>Source Files\Components</Filter>
-    </ClCompile>
-    <ClCompile Include="Resource.cpp">
-      <Filter>Source Files\Resources</Filter>
-    </ClCompile>
-    <ClCompile Include="Texture.cpp">
-      <Filter>Source Files\Resources</Filter>
-    </ClCompile>
-    <ClCompile Include="Font.cpp">
-      <Filter>Source Files\Resources</Filter>
-    </ClCompile>
-    <ClCompile Include="Shader.cpp">
-      <Filter>Source Files\Resources</Filter>
-    </ClCompile>
-    <ClCompile Include="Sound.cpp">
-      <Filter>Source Files\Resources</Filter>
-    </ClCompile>
-    <ClCompile Include="Music.cpp">
-      <Filter>Source Files\Resources</Filter>
-    </ClCompile>
-    <ClCompile Include="Text.cpp">
-      <Filter>Source Files\Components</Filter>
-    </ClCompile>
-    <ClCompile Include="ResourceManager.cpp">
-      <Filter>Source Files\Managers</Filter>
-    </ClCompile>
-    <ClCompile Include="InputManager.cpp">
-      <Filter>Source Files\Managers</Filter>
-    </ClCompile>
-    <ClCompile Include="View.cpp">
-      <Filter>Source Files\Components</Filter>
-    </ClCompile>
-    <ClCompile Include="RenderManager.cpp">
-      <Filter>Source Files\Managers</Filter>
-    </ClCompile>
-    <ClCompile Include="Node.cpp">
-      <Filter>Source Files\Components</Filter>
-    </ClCompile>
-    <ClCompile Include="Window.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="OptionalReference.cpp">
       <Filter>Source Files\Utilities</Filter>
     </ClCompile>
-    <ClCompile Include="PhysicsBody.cpp">
-      <Filter>Source Files\Components</Filter>
+    <ClCompile Include="Color.cpp">
+      <Filter>Source Files\Utilities</Filter>
     </ClCompile>
-    <ClCompile Include="PhysicsWorld.cpp">
-      <Filter>Source Files\Components</Filter>
+    <ClCompile Include="Stopwatch.cpp">
+      <Filter>Source Files\Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="Exceptions.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -335,8 +101,11 @@
     <None Include="Logger.inl">
       <Filter>Header Files\Utilites</Filter>
     </None>
-    <None Include="Scene.inl">
-      <Filter>Header Files\Scenes</Filter>
+    <None Include="OptionalReference.inl">
+      <Filter>Header Files\Utilites</Filter>
+    </None>
+    <None Include="Vector.inl">
+      <Filter>Header Files\Utilites</Filter>
     </None>
   </ItemGroup>
 </Project>

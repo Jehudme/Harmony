@@ -7,8 +7,6 @@
 #ifndef PCH_H
 #define PCH_H
 
-#include "fwd.h"
-
 #include <nlohmann/json.hpp>
 #include <spdlog/spdlog.h>
 #include <SFML/Graphics.hpp>
