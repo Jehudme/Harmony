@@ -224,6 +224,13 @@ namespace Harmony::Scenes
 		for (const std::string& componentName : configuration.extractKeys({ "components" }))
 			Management::ComponentManager::createComponent(componentName, configuration.subsection({ "components", componentName}).value(), entity, *this);
 
+		// Initialize PhysicsBody if it exists
+		if (auto* physicsBodyPtr = impl_->registry.try_get<std::unique_ptr<Components::PhysicsBody>>(entity)) {
+			Components::PhysicsBody& physicsBody = **physicsBodyPtr;
+			physicsBody.entityId_ = entity;
+			physicsBody.scene_ = *this;
+		}
+
 		if (std::optional<std::string> scriptName = configuration.get<std::string>({ "script" })) {
 			createComponent(scriptName.value(), configuration, entity);
 
