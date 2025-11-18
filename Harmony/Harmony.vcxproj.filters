@@ -22,6 +22,9 @@
     <Filter Include="Header Files\Internals">
       <UniqueIdentifier>{e45e01a8-1a9b-4fe2-92df-42905b9fa5c7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Internals">
+      <UniqueIdentifier>{6500c78d-85e3-4622-8130-9f4c95a668c5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Configuration.h">
@@ -66,11 +69,17 @@
     <ClInclude Include="Exceptions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="WindowHandler.h">
+      <Filter>Header Files\Internals</Filter>
+    </ClInclude>
     <ClInclude Include="Engine.h">
+      <Filter>Header Files\Internals</Filter>
+    </ClInclude>
+    <ClInclude Include="Task.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Window.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="TasksHandler.h">
+      <Filter>Header Files\Internals</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -105,10 +114,16 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Engine.cpp">
+      <Filter>Source Files\Internals</Filter>
+    </ClCompile>
+    <ClCompile Include="WindowHandler.cpp">
+      <Filter>Source Files\Internals</Filter>
+    </ClCompile>
+    <ClCompile Include="Task.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Window.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="TasksHandler.cpp">
+      <Filter>Source Files\Internals</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

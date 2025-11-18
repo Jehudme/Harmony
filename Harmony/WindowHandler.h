@@ -6,11 +6,11 @@
 
 namespace Harmony::Internals {
 
-    class Window
+    class WindowHandler
     {
     public:
-        explicit Window(const Configuration& configuration);
-        ~Window();
+        explicit WindowHandler(const Configuration& configuration);
+        ~WindowHandler();
 
         void close();
         bool shouldClose() const;

@@ -28,6 +28,7 @@
 #include <memory>
 #include <iostream>
 #include <sstream>
+#include <atomic>
 
 #include "Configuration.h"
 #include "Logger.h"

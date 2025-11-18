@@ -1,6 +1,6 @@
 #include "Exceptions.h"
 
-namespace Harmony::Utilities {
+namespace Harmony {
 
     template<typename Type>
     Type& OptionalReference<Type>::get() {

@@ -1,9 +1,7 @@
-#include "main.h"
-#include "Harmony/Configuration.h"
-#include "Harmony/Engine.h"
+
+#include <Harmony/Engine.h>
 
 int main()
 {
-	Harmony::Configuration configuration;
-	Harmony::Internals::Engine(configuration).start();
+	Harmony::Internals::Engine({}).start();
 }

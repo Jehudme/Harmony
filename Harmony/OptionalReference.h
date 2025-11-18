@@ -4,7 +4,7 @@
 #include <functional>
 #include <string>
 
-namespace Harmony::Utilities {
+namespace Harmony {
 
     template<typename Type>
     class OptionalReference : public std::optional<std::reference_wrapper<Type>>
