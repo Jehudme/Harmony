@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "Color.h"
 #include "Exceptions.h"
+#include "Logger.h"
+#include "Assert.h"
 
 namespace Harmony::Utilities {
 
@@ -9,11 +11,13 @@ namespace Harmony::Utilities {
         g(static_cast<unsigned char>((color >> 16) & 0xFF)),
         b(static_cast<unsigned char>((color >> 8) & 0xFF)),
         a(static_cast<unsigned char>(color & 0xFF)) {
+        HARMONY_TRACE("Color created from integer: 0x{:08X}", color);
     }
 
     Color::Color(unsigned char red, unsigned char green, unsigned char blue, unsigned char alpha)
         : r(red), g(green), b(blue), a(alpha) {
         // Note: unsigned char is already constrained to 0-255, so no validation needed
+        HARMONY_TRACE("Color created: RGBA({}, {}, {}, {})", r, g, b, a);
     }
 
     int Color::toInteger() const {

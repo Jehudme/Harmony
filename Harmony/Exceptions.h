@@ -157,5 +157,96 @@ namespace Harmony::Exceptions
 	struct InvalidColorValueException : public ColorException {
 		explicit InvalidColorValueException(const std::string& component, int value);
 	};
+
+	// ============================================================================
+	// Task Handler Exceptions
+	// ============================================================================
+
+	/// Base exception for task handler-related errors
+	struct TaskHandlerException : public HarmonyException {
+		explicit TaskHandlerException(const std::string& message);
+	};
+
+	/// Exception thrown when task submission fails
+	struct TaskSubmissionException : public TaskHandlerException {
+		explicit TaskSubmissionException(const std::string& reason);
+	};
+
+	/// Exception thrown when a task is null or invalid
+	struct InvalidTaskException : public TaskHandlerException {
+		explicit InvalidTaskException(const std::string& reason);
+	};
+
+	/// Exception thrown when worker pool operations fail
+	struct WorkerPoolException : public TaskHandlerException {
+		explicit WorkerPoolException(const std::string& operation, const std::string& reason);
+	};
+
+	/// Exception thrown when task execution fails
+	struct TaskExecutionException : public TaskHandlerException {
+		explicit TaskExecutionException(const std::string& taskInfo, const std::string& reason);
+	};
+
+	// ============================================================================
+	// Window Handler Exceptions
+	// ============================================================================
+
+	/// Base exception for window handler-related errors
+	struct WindowHandlerException : public HarmonyException {
+		explicit WindowHandlerException(const std::string& message);
+	};
+
+	/// Exception thrown when window initialization fails
+	struct WindowInitializationException : public WindowHandlerException {
+		explicit WindowInitializationException(const std::string& reason);
+	};
+
+	/// Exception thrown when window operations fail
+	struct WindowOperationException : public WindowHandlerException {
+		explicit WindowOperationException(const std::string& operation, const std::string& reason);
+	};
+
+	/// Exception thrown when window configuration is invalid
+	struct InvalidWindowConfigurationException : public WindowHandlerException {
+		explicit InvalidWindowConfigurationException(const std::string& parameter, const std::string& reason);
+	};
+
+	// ============================================================================
+	// Engine Exceptions
+	// ============================================================================
+
+	/// Base exception for engine-related errors
+	struct EngineException : public HarmonyException {
+		explicit EngineException(const std::string& message);
+	};
+
+	/// Exception thrown when engine initialization fails
+	struct EngineInitializationException : public EngineException {
+		explicit EngineInitializationException(const std::string& reason);
+	};
+
+	/// Exception thrown when engine state is invalid for an operation
+	struct InvalidEngineStateException : public EngineException {
+		explicit InvalidEngineStateException(const std::string& operation, const std::string& currentState);
+	};
+
+	// ============================================================================
+	// Task Exceptions
+	// ============================================================================
+
+	/// Base exception for task-related errors
+	struct TaskException : public HarmonyLogicError {
+		explicit TaskException(const std::string& message);
+	};
+
+	/// Exception thrown when task priority is invalid
+	struct InvalidTaskPriorityException : public TaskException {
+		explicit InvalidTaskPriorityException(uint16_t priority, const std::string& reason);
+	};
+
+	/// Exception thrown when task mode is invalid
+	struct InvalidTaskModeException : public TaskException {
+		explicit InvalidTaskModeException(const std::string& reason);
+	};
 }
 
