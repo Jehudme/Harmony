@@ -248,5 +248,86 @@ namespace Harmony::Exceptions
 	struct InvalidTaskModeException : public TaskException {
 		explicit InvalidTaskModeException(const std::string& reason);
 	};
+
+	// ============================================================================
+	// ConfigurationHandler Exceptions
+	// ============================================================================
+
+	/// Base exception for configuration handler-related errors
+	struct ConfigurationHandlerException : public HarmonyException {
+		explicit ConfigurationHandlerException(const std::string& message);
+	};
+
+	/// Exception thrown when a configuration value is missing
+	struct MissingConfigurationValueException : public ConfigurationHandlerException {
+		explicit MissingConfigurationValueException(const std::string& key);
+	};
+
+	/// Exception thrown when configuration handler initialization fails
+	struct ConfigurationHandlerInitializationException : public ConfigurationHandlerException {
+		explicit ConfigurationHandlerInitializationException(const std::string& reason);
+	};
+
+	// ============================================================================
+	// StateStack Exceptions
+	// ============================================================================
+
+	/// Base exception for state stack-related errors
+	struct StateStackException : public HarmonyException {
+		explicit StateStackException(const std::string& message);
+	};
+
+	/// Exception thrown when attempting to pop from empty state stack
+	struct EmptyStateStackException : public StateStackException {
+		explicit EmptyStateStackException();
+	};
+
+	/// Exception thrown when state stack operation fails
+	struct StateStackOperationException : public StateStackException {
+		explicit StateStackOperationException(const std::string& operation, const std::string& reason);
+	};
+
+	/// Exception thrown when a null state is provided
+	struct NullStateException : public StateStackException {
+		explicit NullStateException(const std::string& operation);
+	};
+
+	// ============================================================================
+	// State Exceptions
+	// ============================================================================
+
+	/// Base exception for state-related errors
+	struct StateException : public HarmonyException {
+		explicit StateException(const std::string& message);
+	};
+
+	/// Exception thrown when state initialization fails
+	struct StateInitializationException : public StateException {
+		explicit StateInitializationException(const std::string& stateName, const std::string& reason);
+	};
+
+	/// Exception thrown when state operation fails
+	struct StateOperationException : public StateException {
+		explicit StateOperationException(const std::string& operation, const std::string& reason);
+	};
+
+	// ============================================================================
+	// Scene Exceptions
+	// ============================================================================
+
+	/// Base exception for scene-related errors
+	struct SceneException : public HarmonyException {
+		explicit SceneException(const std::string& message);
+	};
+
+	/// Exception thrown when scene initialization fails
+	struct SceneInitializationException : public SceneException {
+		explicit SceneInitializationException(const std::string& sceneName, const std::string& reason);
+	};
+
+	/// Exception thrown when scene operation fails
+	struct SceneOperationException : public SceneException {
+		explicit SceneOperationException(const std::string& operation, const std::string& reason);
+	};
 }
 
