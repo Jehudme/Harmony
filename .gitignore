@@ -366,3 +366,8 @@ MigrationBackup/
 FodyWeavers.xsd
 /vcpkg_installed/x64-windows/vcpkg/blds
 _codeql_detected_source_root
+
+# CMake build directories
+build/
+Build/
+[Bb]uild/

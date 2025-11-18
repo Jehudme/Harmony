@@ -147,4 +147,91 @@ namespace Harmony::Exceptions
 		HARMONY_ERROR("Invalid color {} component: {} (valid range: 0-255)", component, value);
 	}
 
+	// ============================================================================
+	// Task Handler Exceptions
+	// ============================================================================
+
+	TaskHandlerException::TaskHandlerException(const std::string& message)
+		: HarmonyException(std::format("Task Handler: {}", message)) {
+	}
+
+	TaskSubmissionException::TaskSubmissionException(const std::string& reason)
+		: TaskHandlerException(std::format("Failed to submit task: {}", reason)) {
+		HARMONY_ERROR("Task submission failed: {}", reason);
+	}
+
+	InvalidTaskException::InvalidTaskException(const std::string& reason)
+		: TaskHandlerException(std::format("Invalid task: {}", reason)) {
+		HARMONY_ERROR("Invalid task encountered: {}", reason);
+	}
+
+	WorkerPoolException::WorkerPoolException(const std::string& operation, const std::string& reason)
+		: TaskHandlerException(std::format("Worker pool operation '{}' failed: {}", operation, reason)) {
+		HARMONY_ERROR("Worker pool operation '{}' failed: {}", operation, reason);
+	}
+
+	TaskExecutionException::TaskExecutionException(const std::string& taskInfo, const std::string& reason)
+		: TaskHandlerException(std::format("Task execution failed [{}]: {}", taskInfo, reason)) {
+		HARMONY_ERROR("Task execution failed [{}]: {}", taskInfo, reason);
+	}
+
+	// ============================================================================
+	// Window Handler Exceptions
+	// ============================================================================
+
+	WindowHandlerException::WindowHandlerException(const std::string& message)
+		: HarmonyException(std::format("Window Handler: {}", message)) {
+	}
+
+	WindowInitializationException::WindowInitializationException(const std::string& reason)
+		: WindowHandlerException(std::format("Failed to initialize window: {}", reason)) {
+		HARMONY_CRITICAL("Window initialization failed: {}", reason);
+	}
+
+	WindowOperationException::WindowOperationException(const std::string& operation, const std::string& reason)
+		: WindowHandlerException(std::format("Window operation '{}' failed: {}", operation, reason)) {
+		HARMONY_ERROR("Window operation '{}' failed: {}", operation, reason);
+	}
+
+	InvalidWindowConfigurationException::InvalidWindowConfigurationException(const std::string& parameter, const std::string& reason)
+		: WindowHandlerException(std::format("Invalid window configuration parameter '{}': {}", parameter, reason)) {
+		HARMONY_WARN("Invalid window configuration for '{}': {}", parameter, reason);
+	}
+
+	// ============================================================================
+	// Engine Exceptions
+	// ============================================================================
+
+	EngineException::EngineException(const std::string& message)
+		: HarmonyException(std::format("Engine: {}", message)) {
+	}
+
+	EngineInitializationException::EngineInitializationException(const std::string& reason)
+		: EngineException(std::format("Failed to initialize engine: {}", reason)) {
+		HARMONY_CRITICAL("Engine initialization failed: {}", reason);
+	}
+
+	InvalidEngineStateException::InvalidEngineStateException(const std::string& operation, const std::string& currentState)
+		: EngineException(std::format("Invalid engine state for operation '{}': currently in state '{}'", operation, currentState)) {
+		HARMONY_ERROR("Invalid engine state for '{}': state is '{}'", operation, currentState);
+	}
+
+	// ============================================================================
+	// Task Exceptions
+	// ============================================================================
+
+	TaskException::TaskException(const std::string& message)
+		: HarmonyLogicError(std::format("Task: {}", message)) {
+	}
+
+	InvalidTaskPriorityException::InvalidTaskPriorityException(uint16_t priority, const std::string& reason)
+		: TaskException(std::format("Invalid task priority {}: {}", priority, reason)) {
+		HARMONY_ERROR("Invalid task priority {}: {}", priority, reason);
+	}
+
+	InvalidTaskModeException::InvalidTaskModeException(const std::string& reason)
+		: TaskException(std::format("Invalid task mode: {}", reason)) {
+		HARMONY_ERROR("Invalid task mode: {}", reason);
+	}
+
 } // namespace Harmony::Exceptions

@@ -22,6 +22,9 @@ namespace Harmony::Internals
 
 		void submit(std::unique_ptr<Tasks::Task_t> task);
 
+		/// Get the number of currently active worker threads
+		std::size_t getActiveWorkerCount() const;
+
 	private:
 		struct WorkerPool;
 		struct Compare
