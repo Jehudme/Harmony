@@ -1,9 +1,11 @@
+#include "Exceptions.h"
+
 namespace Harmony::Utilities {
 
     template<typename Type>
     Type& OptionalReference<Type>::get() {
         if (!this->has_value()) {
-            throw std::runtime_error("Attempted to access value of empty OptionalReference");
+            throw Exceptions::NullPointerException("OptionalReference is empty");
         }
         return this->value().get();
     }
@@ -11,7 +13,7 @@ namespace Harmony::Utilities {
     template<typename Type>
     const Type& OptionalReference<Type>::get() const {
         if (!this->has_value()) {
-            throw std::runtime_error("Attempted to access value of empty OptionalReference");
+            throw Exceptions::NullPointerException("OptionalReference is empty");
         }
         return this->value().get();
     }

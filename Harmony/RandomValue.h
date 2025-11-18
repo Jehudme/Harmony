@@ -4,12 +4,15 @@
 #include <random>
 #include <type_traits>
 #include <limits>
+#include "Assert.h"
 
 namespace Harmony::Utilities
 {
     template<typename Type>
     Type random_value(Type min, Type max) {
         static_assert(std::is_integral<Type>::value, "Type must be an integral type");
+
+        HARMONY_ASSERT(min <= max, "min must be less than or equal to max in random_value");
 
         static std::random_device rd;
         thread_local std::mt19937 gen(rd());

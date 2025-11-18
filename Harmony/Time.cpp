@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "Time.h"
+#include "Assert.h"
 
 namespace Harmony
 {
@@ -115,16 +116,22 @@ namespace Harmony
 
     Time operator/(Time left, float right)
     {
+        HARMONY_ASSERT_WARN(right != 0.0f, "Division by zero in Time operation");
+        if (right == 0.0f) return Time::Zero;
         return Time::fromSeconds(left.asSeconds() / right);
     }
 
     Time operator/(Time left, int64_t right)
     {
+        HARMONY_ASSERT_WARN(right != 0, "Division by zero in Time operation");
+        if (right == 0) return Time::Zero;
         return Time::fromMicroseconds(left.asMicroseconds() / right);
     }
 
     float operator/(Time left, Time right)
     {
+        HARMONY_ASSERT_WARN(right != Time::Zero, "Division by zero Time");
+        if (right == Time::Zero) return 0.0f;
         return left.asSeconds() / right.asSeconds();
     }
 
@@ -151,11 +158,21 @@ namespace Harmony
 
     Time& operator/=(Time& left, float right)
     {
+        HARMONY_ASSERT_WARN(right != 0.0f, "Division by zero in Time operation");
+        if (right == 0.0f) {
+            left = Time::Zero;
+            return left;
+        }
         return left = left / right;
     }
 
     Time& operator/=(Time& left, int64_t right)
     {
+        HARMONY_ASSERT_WARN(right != 0, "Division by zero in Time operation");
+        if (right == 0) {
+            left = Time::Zero;
+            return left;
+        }
         return left = left / right;
     }
 
