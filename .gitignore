@@ -371,3 +371,4 @@ _codeql_detected_source_root
 build/
 Build/
 [Bb]uild/
+/Sandbox/HarmonyLog.txt
