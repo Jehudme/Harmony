@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "Color.h"
+#include "Exceptions.h"
 
 namespace Harmony::Utilities {
 
@@ -12,6 +13,7 @@ namespace Harmony::Utilities {
 
     Color::Color(unsigned char red, unsigned char green, unsigned char blue, unsigned char alpha)
         : r(red), g(green), b(blue), a(alpha) {
+        // Note: unsigned char is already constrained to 0-255, so no validation needed
     }
 
     int Color::toInteger() const {

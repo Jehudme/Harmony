@@ -2,7 +2,6 @@
 
 #include <optional>
 #include <functional>
-#include <stdexcept>
 #include <string>
 
 namespace Harmony::Utilities {
