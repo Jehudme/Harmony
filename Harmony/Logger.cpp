@@ -1,5 +1,7 @@
 #include "pch.h"
 #include "Logger.h"
+#include "Assert.h"
+#include "Exceptions.h"
 
 #include <spdlog/spdlog.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
@@ -20,9 +22,17 @@ namespace Harmony::Utilities
 		size_t queueSize,
 		size_t workerThreads)
 	{
+		// Validate parameters
+		HARMONY_ASSERT(!logFile.empty(), "Log file path cannot be empty");
+		HARMONY_ASSERT(maxFileSize > 0, "Maximum file size must be greater than 0");
+		HARMONY_ASSERT(maxFiles > 0, "Maximum number of files must be greater than 0");
+		HARMONY_ASSERT(queueSize > 0, "Queue size must be greater than 0");
+		HARMONY_ASSERT(workerThreads > 0, "Number of worker threads must be greater than 0");
+
 		std::call_once(initFlag, [&] {
-			// Create async thread pool
-			spdlog::init_thread_pool(queueSize, workerThreads);
+			try {
+				// Create async thread pool
+				spdlog::init_thread_pool(queueSize, workerThreads);
 
 			// Console sink
 			auto console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
@@ -44,10 +54,17 @@ namespace Harmony::Utilities
 			spdlog::register_logger(globalLogger);
 			spdlog::set_default_logger(globalLogger);
 
-			// Default levels
-			spdlog::set_level(spdlog::level::trace);   // log everything
-			spdlog::flush_on(spdlog::level::warn);     // flush on warnings or higher
-			});
+				// Default levels
+				spdlog::set_level(spdlog::level::trace);   // log everything
+				spdlog::flush_on(spdlog::level::warn);     // flush on warnings or higher
+			}
+			catch (const spdlog::spdlog_ex& ex) {
+				throw Exceptions::LoggerInitializationException(ex.what());
+			}
+			catch (const std::exception& ex) {
+				throw Exceptions::LoggerInitializationException(std::string("Unexpected error: ") + ex.what());
+			}
+		});
 	}
 
 	void Logger::trace(std::string_view message) {

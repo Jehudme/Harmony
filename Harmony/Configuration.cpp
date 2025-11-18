@@ -2,6 +2,7 @@
 #include "Configuration.h"
 #include "Logger.h"
 #include "Exceptions.h"
+#include "Assert.h"
 #include <fstream>
 
 namespace Harmony::Utilities {
@@ -40,6 +41,10 @@ namespace Harmony::Utilities {
 
     void Configuration::save(const std::filesystem::path& filePath) {
         std::lock_guard lock(mutex_);
+        
+        HARMONY_ASSERT(!filePath.empty(), "Configuration file path cannot be empty");
+        HARMONY_ASSERT_NOT_NULL(internal_.get(), "Configuration internal data is null");
+
         std::ofstream file(filePath);
 
 		if (!file) throw Exceptions::OpenConfigurationFileException(filePath.string());
@@ -50,6 +55,10 @@ namespace Harmony::Utilities {
 
     void Configuration::load(const std::filesystem::path& filePath) {
         std::lock_guard lock(mutex_);
+
+        HARMONY_ASSERT(!filePath.empty(), "Configuration file path cannot be empty");
+        HARMONY_ASSERT_NOT_NULL(internal_.get(), "Configuration internal data is null");
+        
         std::ifstream file(filePath);
 
         if (!file) throw Exceptions::OpenConfigurationFileException(filePath.string());
