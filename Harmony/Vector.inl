@@ -1,4 +1,6 @@
 #include "Vector.h"
+#include "Assert.h"
+
 namespace Harmony::Utilities
 {
 	template<typename Type>
@@ -34,6 +36,10 @@ namespace Harmony::Utilities
 	template<typename Type>
 	inline Vector2<Type> Vector2<Type>::operator/(Type scalar) const
 	{
+		HARMONY_ASSERT_WARN(scalar != static_cast<Type>(0), "Division by zero in Vector2");
+		if (scalar == static_cast<Type>(0)) {
+			return { static_cast<Type>(0), static_cast<Type>(0) };
+		}
 		return { x / scalar, y / scalar };
 	}
 	template<typename Type>
@@ -61,6 +67,11 @@ namespace Harmony::Utilities
 	template<typename Type>
 	inline Vector2<Type>& Vector2<Type>::operator/=(Type scalar)
 	{
+		HARMONY_ASSERT_WARN(scalar != static_cast<Type>(0), "Division by zero in Vector2");
+		if (scalar == static_cast<Type>(0)) {
+			x = y = static_cast<Type>(0);
+			return *this;
+		}
 		x /= scalar;
 		y /= scalar;
 		return *this;

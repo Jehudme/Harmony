@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "Timer.h"
+#include "Assert.h"
 
 namespace Harmony::Utilities
 {
@@ -12,6 +13,7 @@ namespace Harmony::Utilities
         , expired_(false)
         , autoRepeat_(autoRepeat)
     {
+        HARMONY_ASSERT(duration >= Time::Zero, "Timer duration must be non-negative");
     }
 
     Timer::Timer()
@@ -134,6 +136,7 @@ namespace Harmony::Utilities
 
     void Timer::setDuration(Time duration)
     {
+        HARMONY_ASSERT(duration >= Time::Zero, "Timer duration must be non-negative");
         duration_ = duration;
     }
 
@@ -150,7 +153,10 @@ namespace Harmony::Utilities
     float Timer::getProgress() const
     {
         if (duration_ == Time::Zero)
+        {
+            HARMONY_ASSERT_WARN(duration_ != Time::Zero, "Timer duration is zero, progress is undefined");
             return 0.0f;
+        }
 
         Time elapsed = getElapsedTime();
         if (elapsed >= duration_)
