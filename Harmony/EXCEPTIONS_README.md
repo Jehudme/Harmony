@@ -20,11 +20,23 @@ std::exception
 │       ├── LoggerException
 │       │   ├── LoggerInitializationException
 │       │   └── LoggerFileException
-│       └── FileSystemException
-│           ├── FileOpenException
-│           ├── FileReadException
-│           ├── FileWriteException
-│           └── InvalidFilePathException
+│       ├── FileSystemException
+│       │   ├── FileOpenException
+│       │   ├── FileReadException
+│       │   ├── FileWriteException
+│       │   └── InvalidFilePathException
+│       ├── TaskHandlerException
+│       │   ├── TaskSubmissionException
+│       │   ├── InvalidTaskException
+│       │   ├── WorkerPoolException
+│       │   └── TaskExecutionException
+│       ├── WindowHandlerException
+│       │   ├── WindowInitializationException
+│       │   ├── WindowOperationException
+│       │   └── InvalidWindowConfigurationException
+│       └── EngineException
+│           ├── EngineInitializationException
+│           └── InvalidEngineStateException
 │
 └── std::logic_error
     └── HarmonyLogicError (Base for all logic errors)
@@ -35,8 +47,11 @@ std::exception
         ├── TimeException
         │   ├── InvalidTimeValueException
         │   └── InvalidTimerOperationException
-        └── ColorException
-            └── InvalidColorValueException
+        ├── ColorException
+        │   └── InvalidColorValueException
+        └── TaskException
+            ├── InvalidTaskPriorityException
+            └── InvalidTaskModeException
 ```
 
 ## Exception Groups
@@ -152,13 +167,84 @@ void validateColorComponent(int value) {
 }
 ```
 
+### Task Handler Exceptions
+
+Handle errors related to task handling and worker pool operations:
+
+- **TaskHandlerException**: Base exception for task handler-related errors
+- **TaskSubmissionException**: Thrown when task submission fails
+- **InvalidTaskException**: Thrown when a task is null or invalid
+- **WorkerPoolException**: Thrown when worker pool operations fail
+- **TaskExecutionException**: Thrown when task execution fails
+
+**Example Usage:**
+```cpp
+try {
+    taskHandler->submit(std::move(task));
+} catch (const Harmony::Exceptions::TaskSubmissionException& e) {
+    HARMONY_ERROR("Failed to submit task: {}", e.what());
+}
+```
+
+### Window Handler Exceptions
+
+Handle errors related to window management:
+
+- **WindowHandlerException**: Base exception for window handler-related errors
+- **WindowInitializationException**: Thrown when window initialization fails
+- **WindowOperationException**: Thrown when window operations fail
+- **InvalidWindowConfigurationException**: Thrown when window configuration is invalid
+
+**Example Usage:**
+```cpp
+try {
+    auto window = std::make_unique<WindowHandler>(config);
+} catch (const Harmony::Exceptions::WindowInitializationException& e) {
+    HARMONY_CRITICAL("Window creation failed: {}", e.what());
+}
+```
+
+### Engine Exceptions
+
+Handle errors related to the engine lifecycle:
+
+- **EngineException**: Base exception for engine-related errors
+- **EngineInitializationException**: Thrown when engine initialization fails
+- **InvalidEngineStateException**: Thrown when engine state is invalid for an operation
+
+**Example Usage:**
+```cpp
+try {
+    engine.start();
+} catch (const Harmony::Exceptions::InvalidEngineStateException& e) {
+    HARMONY_ERROR("Cannot start engine: {}", e.what());
+}
+```
+
+### Task Exceptions
+
+Handle logic errors related to tasks:
+
+- **TaskException**: Base exception for task-related logic errors
+- **InvalidTaskPriorityException**: Thrown when task priority is invalid
+- **InvalidTaskModeException**: Thrown when task mode is invalid
+
+**Example Usage:**
+```cpp
+void validateTaskMode(Task::Mode mode) {
+    if (mode < Task::Mode::SingleThreaded || mode > Task::Mode::SlowMultiThreaded) {
+        throw Harmony::Exceptions::InvalidTaskModeException("Mode value out of valid range");
+    }
+}
+```
+
 ## Features
 
 ### Automatic Logging
 
 All exceptions automatically log their error messages using the Harmony logging system:
 - Base exceptions log at ERROR level
-- Some specific exceptions may use different log levels (e.g., WARN for non-critical errors)
+- Some specific exceptions may use different log levels (e.g., WARN for non-critical errors, CRITICAL for initialization failures)
 
 ### Detailed Error Messages
 
