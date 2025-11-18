@@ -13,54 +13,63 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Header Files\Utilites">
-      <UniqueIdentifier>{9c397518-e4e7-4a47-935e-cbe8cb56033e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Utilities">
       <UniqueIdentifier>{5d22b725-f5b4-4dff-b05d-9ddec505ae53}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Utilities">
+      <UniqueIdentifier>{9c397518-e4e7-4a47-935e-cbe8cb56033e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Internals">
+      <UniqueIdentifier>{e45e01a8-1a9b-4fe2-92df-42905b9fa5c7}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Configuration.h">
-      <Filter>Header Files\Utilites</Filter>
+      <Filter>Header Files\Utilities</Filter>
     </ClInclude>
     <ClInclude Include="Logger.h">
-      <Filter>Header Files\Utilites</Filter>
+      <Filter>Header Files\Utilities</Filter>
     </ClInclude>
     <ClInclude Include="Assert.h">
-      <Filter>Header Files\Utilites</Filter>
+      <Filter>Header Files\Utilities</Filter>
     </ClInclude>
     <ClInclude Include="pch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="RandomValue.h">
-      <Filter>Header Files\Utilites</Filter>
+      <Filter>Header Files\Utilities</Filter>
     </ClInclude>
     <ClInclude Include="Time.h">
-      <Filter>Header Files\Utilites</Filter>
+      <Filter>Header Files\Utilities</Filter>
     </ClInclude>
     <ClInclude Include="Clock.h">
-      <Filter>Header Files\Utilites</Filter>
+      <Filter>Header Files\Utilities</Filter>
     </ClInclude>
     <ClInclude Include="Stopwatch.h">
-      <Filter>Header Files\Utilites</Filter>
+      <Filter>Header Files\Utilities</Filter>
     </ClInclude>
     <ClInclude Include="Timer.h">
-      <Filter>Header Files\Utilites</Filter>
+      <Filter>Header Files\Utilities</Filter>
     </ClInclude>
     <ClInclude Include="type_name.h">
-      <Filter>Header Files\Utilites</Filter>
+      <Filter>Header Files\Utilities</Filter>
     </ClInclude>
     <ClInclude Include="OptionalReference.h">
-      <Filter>Header Files\Utilites</Filter>
+      <Filter>Header Files\Utilities</Filter>
     </ClInclude>
     <ClInclude Include="Color.h">
-      <Filter>Header Files\Utilites</Filter>
+      <Filter>Header Files\Utilities</Filter>
     </ClInclude>
     <ClInclude Include="Vector.h">
-      <Filter>Header Files\Utilites</Filter>
+      <Filter>Header Files\Utilities</Filter>
     </ClInclude>
     <ClInclude Include="Exceptions.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Window.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -95,17 +104,23 @@
     <ClCompile Include="Exceptions.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Engine.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Window.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="cpp.hint" />
     <None Include="Logger.inl">
-      <Filter>Header Files\Utilites</Filter>
+      <Filter>Header Files\Utilities</Filter>
     </None>
     <None Include="OptionalReference.inl">
-      <Filter>Header Files\Utilites</Filter>
+      <Filter>Header Files\Utilities</Filter>
     </None>
     <None Include="Vector.inl">
-      <Filter>Header Files\Utilites</Filter>
+      <Filter>Header Files\Utilities</Filter>
     </None>
   </ItemGroup>
 </Project>

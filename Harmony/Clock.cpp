@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "Clock.h"
 
-namespace Harmony::Utilities
+namespace Harmony
 {
     Clock::Clock()
         : startTime_(std::chrono::steady_clock::now())

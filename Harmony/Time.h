@@ -2,7 +2,7 @@
 
 #include <cstdint>
 
-namespace Harmony::Utilities
+namespace Harmony
 {
     /// @brief Represents a time value with high precision
     /// @details Similar to sf::Time but as a native Harmony utility.

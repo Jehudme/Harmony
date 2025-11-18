@@ -1,5 +1,4 @@
 #pragma once
-#include <AccCtrl.h>
 
 namespace Harmony::Utilities
 {

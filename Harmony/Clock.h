@@ -3,7 +3,7 @@
 #include <chrono>
 #include "Time.h"
 
-namespace Harmony::Utilities
+namespace Harmony
 {
     /// @brief High-precision clock for measuring elapsed time
     /// @details Similar to sf::Clock but as a native Harmony utility.

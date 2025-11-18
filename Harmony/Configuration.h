@@ -3,7 +3,8 @@
 #include <memory>
 #include <mutex>
 
-namespace Harmony::Utilities {
+namespace Harmony {
+
     class Configuration {
     public:
         Configuration();

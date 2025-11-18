@@ -34,19 +34,19 @@ namespace Harmony::Utilities {
 
     Color operator+(const Color& left, const Color& right) {
         return Color(
-            static_cast<unsigned char>(std::min(255, left.r + right.r)),
-            static_cast<unsigned char>(std::min(255, left.g + right.g)),
-            static_cast<unsigned char>(std::min(255, left.b + right.b)),
-            static_cast<unsigned char>(std::min(255, left.a + right.a))
+            static_cast<unsigned char>((left.r + right.r > 255) ? 255 : left.r + right.r),
+            static_cast<unsigned char>((left.g + right.g > 255) ? 255 : left.g + right.g),
+            static_cast<unsigned char>((left.b + right.b > 255) ? 255 : left.b + right.b),
+            static_cast<unsigned char>((left.a + right.a > 255) ? 255 : left.a + right.a)
         );
     }
 
     Color operator-(const Color& left, const Color& right) {
         return Color(
-            static_cast<unsigned char>(std::max(0, left.r - right.r)),
-            static_cast<unsigned char>(std::max(0, left.g - right.g)),
-            static_cast<unsigned char>(std::max(0, left.b - right.b)),
-            static_cast<unsigned char>(std::max(0, left.a - right.a))
+            static_cast<unsigned char>((left.r - right.r < 0) ? 0 : left.r - right.r),
+            static_cast<unsigned char>((left.g - right.g < 0) ? 0 : left.g - right.g),
+            static_cast<unsigned char>((left.b - right.b < 0) ? 0 : left.b - right.b),
+            static_cast<unsigned char>((left.a - right.a < 0) ? 0 : left.a - right.a)
         );
     }
 

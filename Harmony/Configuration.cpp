@@ -1,10 +1,8 @@
 #include "pch.h"
 #include "Configuration.h"
-#include "Logger.h"
 #include "Exceptions.h"
-#include <fstream>
 
-namespace Harmony::Utilities {
+namespace Harmony{
 
     struct Configuration::Internal {
         nlohmann::json data;
@@ -222,4 +220,24 @@ namespace Harmony::Utilities {
     template void Configuration::set<std::vector<bool>>(const std::vector<std::string>&, const std::vector<bool>&);
     template void Configuration::set<std::vector<std::string>>(const std::vector<std::string>&, const std::vector<std::string>&);
 
-} // namespace Harmony::Utilities
+    template std::optional<int8_t>   Configuration::get<int8_t>(const std::vector<std::string>&) const;
+    template std::optional<int16_t>  Configuration::get<int16_t>(const std::vector<std::string>&) const;
+    template std::optional<int32_t>  Configuration::get<int32_t>(const std::vector<std::string>&) const;
+    template std::optional<int64_t>  Configuration::get<int64_t>(const std::vector<std::string>&) const;
+
+    template std::optional<uint8_t>  Configuration::get<uint8_t>(const std::vector<std::string>&) const;
+    template std::optional<uint16_t> Configuration::get<uint16_t>(const std::vector<std::string>&) const;
+    template std::optional<uint32_t> Configuration::get<uint32_t>(const std::vector<std::string>&) const;
+    template std::optional<uint64_t> Configuration::get<uint64_t>(const std::vector<std::string>&) const;
+
+    template void Configuration::set<int8_t>(const std::vector<std::string>&, const int8_t&);
+    template void Configuration::set<int16_t>(const std::vector<std::string>&, const int16_t&);
+    template void Configuration::set<int32_t>(const std::vector<std::string>&, const int32_t&);
+    template void Configuration::set<int64_t>(const std::vector<std::string>&, const int64_t&);
+
+    template void Configuration::set<uint8_t>(const std::vector<std::string>&, const uint8_t&);
+    template void Configuration::set<uint16_t>(const std::vector<std::string>&, const uint16_t&);
+    template void Configuration::set<uint32_t>(const std::vector<std::string>&, const uint32_t&);
+    template void Configuration::set<uint64_t>(const std::vector<std::string>&, const uint64_t&);
+
+}

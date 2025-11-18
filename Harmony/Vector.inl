@@ -1,5 +1,5 @@
 #include "Vector.h"
-namespace Harmony::Utilities
+namespace Harmony
 {
 	template<typename Type>
 	inline Vector2<Type>::Vector2(Type X, Type Y) :
@@ -8,11 +8,11 @@ namespace Harmony::Utilities
 	{
 	}
 
-	template <typename T>
+	template <typename Type>
 	template <typename U>
-	inline Vector2<T>::Vector2(const Vector2<U>& vector) :
-		x(static_cast<T>(vector.x)),
-		y(static_cast<T>(vector.y))
+	inline Vector2<Type>::Vector2(const Vector2<U>& vector) :
+		x(static_cast<Type>(vector.x)),
+		y(static_cast<Type>(vector.y))
 	{
 	}
 
@@ -66,11 +66,11 @@ namespace Harmony::Utilities
 		return *this;
 	}
 
-	bool operator==(const Vector2<float>& left, const Vector2<float>& right){
+	inline bool operator==(const Vector2<float>& left, const Vector2<float>& right){
 		return left.x == right.x && left.y == right.y;
 	}
 
-	bool operator!=(const Vector2<float>& left, const Vector2<float>& right){
+	inline bool operator!=(const Vector2<float>& left, const Vector2<float>& right){
 		return !(left == right);
 	}
 }

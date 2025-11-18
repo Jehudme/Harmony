@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "Time.h"
 
-namespace Harmony::Utilities
+namespace Harmony
 {
     // Zero time constant definition
     const Time Time::Zero = Time(0);

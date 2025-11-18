@@ -137,15 +137,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="configuration.json" />
-    <None Include="physics_configuration.json" />
-    <None Include="physics_properties_demo_configuration.json" />
+    <ClInclude Include="main.h" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="missing_textures.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Font Include="arial.ttf" />
+    <ClCompile Include="main.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
