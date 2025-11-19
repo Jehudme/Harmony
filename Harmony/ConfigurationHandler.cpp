@@ -41,7 +41,7 @@ namespace Harmony::Internals {
 			return configuration_.subsection(keys);
 		}
 		catch (const Exceptions::ConfigurationException& e) {
-			HARMONY_WARN("Failed to get configuration subsection '{}': {}", fmt::join(keys, "."), e.what());
+			HARMONY_WARN("Failed to get configuration subsection '{}': {}", fmt::format("{} : {}", fmt::join(keys, "."), e.what()));
 			return std::nullopt;
 		}
 	}
