@@ -15,7 +15,6 @@ namespace Harmony::Internals
 	{
 	public:
 		friend class Engine;
-		friend struct WorkerPool;
 
 		TasksHandler(Engine& engine);
 		~TasksHandler();
@@ -40,8 +39,13 @@ namespace Harmony::Internals
 
 		using priorityQueue = std::priority_queue<Tasks::Task_t*, std::vector<Tasks::Task_t*>, Compare>;
 
+		void start();
+		void stop();
+
 		void handleTasks();
 		void handleTask(Tasks::Task_t* task);
+
+		bool running_;
 
 		Engine& engine_;
 		std::mutex mutex_;

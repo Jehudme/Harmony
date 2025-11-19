@@ -19,11 +19,13 @@ namespace Harmony::Internals
         void submit(Tasks::Task_t* task);
         std::size_t getActiveWorkerCount() const;
 
+        void start();
+
     private:
         struct Worker;
 
         priorityQueue tasks_;
-        std::vector<Worker> workers_;
+        std::vector<std::unique_ptr<Worker>> workers_;
 
         std::mutex mutex_;
         std::condition_variable condition_;
@@ -33,7 +35,8 @@ namespace Harmony::Internals
 
         std::atomic<std::size_t> activeWorkerCount_;
 
-        bool running_ = true;
+        bool running_;
+		Engine& engine_;
     };
 
     struct TasksHandler::WorkerPool::Worker {
@@ -66,30 +69,11 @@ namespace Harmony::Internals
         std::thread thread_;
     };
 
-    TasksHandler::WorkerPool::WorkerPool(Engine& engine)
+    TasksHandler::WorkerPool::WorkerPool(Engine& engine) : 
+        activeWorkerCount_(0),
+		running_(false),
+		engine_(engine)
     {
-        HARMONY_INFO("Initializing TasksHandler WorkerPool");
-        
-        unsigned int workerCount = std::thread::hardware_concurrency();
-		if (workerCount == 0) {
-            HARMONY_WARN("Unable to detect hardware concurrency, falling back to 4 workers");
-            workerCount = 4; // Fallback to 4 workers if unable to detect
-        }
-
-        HARMONY_INFO("Creating {} worker threads", workerCount);
-        HARMONY_ASSERT(workerCount > 0 && workerCount <= 256, "Worker count must be between 1 and 256");
-
-        try {
-            for (unsigned int workerIndex = 0; workerIndex < workerCount; workerIndex++) {
-                HARMONY_DEBUG("Creating worker thread {}/{}", workerIndex + 1, workerCount);
-                workers_.emplace_back(engine, tasks_, running_, mutex_, condition_);
-            }
-            HARMONY_INFO("WorkerPool initialized successfully with {} workers", workerCount);
-        }
-        catch (const std::exception& e) {
-            HARMONY_CRITICAL("Failed to initialize WorkerPool: {}", e.what());
-            throw Exceptions::WorkerPoolException("initialization", e.what());
-        }
     }
 
     TasksHandler::WorkerPool::~WorkerPool()
@@ -108,6 +92,33 @@ namespace Harmony::Internals
         
         HARMONY_INFO("WorkerPool shutdown complete");
     }
+
+    void TasksHandler::WorkerPool::start()
+    {
+        HARMONY_INFO("Initializing TasksHandler WorkerPool");
+
+        unsigned int workerCount = std::thread::hardware_concurrency();
+        if (workerCount == 0) {
+            HARMONY_WARN("Unable to detect hardware concurrency, falling back to 4 workers");
+            workerCount = 4; // Fallback to 4 workers if unable to detect
+        }
+
+        HARMONY_INFO("Creating {} worker threads", workerCount);
+        HARMONY_ASSERT(workerCount > 0 && workerCount <= 256, "Worker count must be between 1 and 256");
+
+        try {
+            for (unsigned int workerIndex = 0; workerIndex < workerCount; workerIndex++) {
+                HARMONY_DEBUG("Creating worker thread {}/{}", workerIndex + 1, workerCount);
+                std::unique_ptr<Worker> worker = std::make_unique<Worker>(engine_, tasks_, running_, mutex_, condition_);
+                workers_.emplace_back(std::move(worker));
+            }
+            HARMONY_INFO("WorkerPool initialized successfully with {} workers", workerCount);
+        }
+        catch (const std::exception& e) {
+            HARMONY_CRITICAL("Failed to initialize WorkerPool: {}", e.what());
+            throw Exceptions::WorkerPoolException("initialization", e.what());
+        }
+	}
 
     void TasksHandler::WorkerPool::submit(Tasks::Task_t* task)
     {
@@ -152,7 +163,7 @@ namespace Harmony::Internals
         running_(running_),
         mutex_(mutex),
         condition_(condition),
-        thread_([&engine, this]() { Worker::run(engine, *this); })
+        thread_([&engine, worker = std::ref(*this)]() { Worker::run(engine, worker); })
     {
         HARMONY_TRACE("Worker thread created");
         HARMONY_ASSERT(thread_.joinable(), "Worker thread must be joinable");
@@ -191,15 +202,12 @@ namespace Harmony::Internals
 
                 HARMONY_ASSERT(!worker.tasks_.empty(), "Tasks queue should not be empty at this point");
 
-                worker.currentTask_ = worker.tasks_.top(); // move the pointer
-                worker.tasks_.pop();                       // remove it from the queue
+                worker.currentTask_ = worker.tasks_.top();
+                worker.tasks_.pop();                       
 
                 lock.unlock();
 
-                if (!worker.currentTask_) {
-                    HARMONY_WARN("Worker encountered null task in queue, skipping");
-                    continue;
-                }
+				HARMONY_ASSERT_NOT_NULL(worker.currentTask_, "Current task is null");
 
                 HARMONY_TRACE("Worker processing task with priority {} and mode {}", 
                              worker.currentTask_->priority, static_cast<int>(worker.currentTask_->mode));
@@ -291,24 +299,35 @@ namespace Harmony::Internals
     }
 
     TasksHandler::TasksHandler(Engine& engine)
-        : engine_(engine), workerPool_(nullptr) {
+        : engine_(engine), workerPool_(nullptr), running_(false) {
         HARMONY_INFO("Initializing TasksHandler");
-        
         HARMONY_ASSERT_NOT_NULL(&engine, "Engine reference is null");
-        
+
+        HARMONY_INFO("Starting TasksHandler");
         try {
-            workerPool_ = std::make_unique<WorkerPool>(engine);
+            workerPool_ = std::make_unique<WorkerPool>(engine_);
             HARMONY_INFO("TasksHandler initialized successfully");
         }
         catch (const std::exception& e) {
             HARMONY_CRITICAL("TasksHandler initialization failed: {}", e.what());
             throw;
         }
-    }
+        HARMONY_INFO("TasksHandler started successfully");
+  }
 
     TasksHandler::~TasksHandler() {
-        HARMONY_INFO("Destroying TasksHandler");
+		stop();
     }
+
+    void TasksHandler::start() {
+		workerPool_->start();
+    }
+
+    void TasksHandler::stop() {
+        HARMONY_INFO("Stopping TasksHandler");
+        workerPool_.reset();
+		HARMONY_INFO("TasksHandler stopped successfully");
+	}
 
     void TasksHandler::submit(std::unique_ptr<Tasks::Task_t> task)
     {

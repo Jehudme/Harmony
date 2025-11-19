@@ -7,7 +7,7 @@
 #include <spdlog/sinks/rotating_file_sink.h>
 #include <spdlog/async.h>
 
-namespace Harmony::Utilities 
+namespace Harmony
 {
 	 // Internal state
 	 std::once_flag initFlag;

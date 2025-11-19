@@ -5,7 +5,7 @@
 #include <cstddef>
 #include <format>
 
-namespace Harmony::Utilities {
+namespace Harmony {
 
     class Logger final {
     public:
