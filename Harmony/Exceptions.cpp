@@ -234,4 +234,249 @@ namespace Harmony::Exceptions
 		HARMONY_ERROR("Invalid task mode: {}", reason);
 	}
 
+	// ============================================================================
+	// ConfigurationHandler Exceptions
+	// ============================================================================
+
+	ConfigurationHandlerException::ConfigurationHandlerException(const std::string& message)
+		: HarmonyException(std::format("Configuration Handler: {}", message)) {
+	}
+
+	MissingConfigurationValueException::MissingConfigurationValueException(const std::string& key)
+		: ConfigurationHandlerException(std::format("Missing required configuration value: '{}'", key)) {
+		HARMONY_ERROR("Missing required configuration value: '{}'", key);
+	}
+
+	ConfigurationHandlerInitializationException::ConfigurationHandlerInitializationException(const std::string& reason)
+		: ConfigurationHandlerException(std::format("Failed to initialize configuration handler: {}", reason)) {
+		HARMONY_CRITICAL("ConfigurationHandler initialization failed: {}", reason);
+	}
+
+	// ============================================================================
+	// StateStack Exceptions
+	// ============================================================================
+
+	StateStackException::StateStackException(const std::string& message)
+		: HarmonyException(std::format("State Stack: {}", message)) {
+	}
+
+	EmptyStateStackException::EmptyStateStackException()
+		: StateStackException("Attempted to access or pop from an empty state stack") {
+		HARMONY_WARN("Attempted operation on empty state stack");
+	}
+
+	StateStackOperationException::StateStackOperationException(const std::string& operation, const std::string& reason)
+		: StateStackException(std::format("State stack operation '{}' failed: {}", operation, reason)) {
+		HARMONY_ERROR("State stack operation '{}' failed: {}", operation, reason);
+	}
+
+	NullStateException::NullStateException(const std::string& operation)
+		: StateStackException(std::format("Null state provided to operation '{}'", operation)) {
+		HARMONY_ERROR("Null state provided to operation: {}", operation);
+	}
+
+	// ============================================================================
+	// State Exceptions
+	// ============================================================================
+
+	StateException::StateException(const std::string& message)
+		: HarmonyException(std::format("State: {}", message)) {
+	}
+
+	StateInitializationException::StateInitializationException(const std::string& stateName, const std::string& reason)
+		: StateException(std::format("Failed to initialize state '{}': {}", stateName, reason)) {
+		HARMONY_ERROR("State '{}' initialization failed: {}", stateName, reason);
+	}
+
+	StateOperationException::StateOperationException(const std::string& operation, const std::string& reason)
+		: StateException(std::format("State operation '{}' failed: {}", operation, reason)) {
+		HARMONY_ERROR("State operation '{}' failed: {}", operation, reason);
+	}
+
+	// ============================================================================
+	// Scene Exceptions
+	// ============================================================================
+
+	SceneException::SceneException(const std::string& message)
+		: HarmonyException(std::format("Scene: {}", message)) {
+	}
+
+	SceneInitializationException::SceneInitializationException(const std::string& sceneName, const std::string& reason)
+		: SceneException(std::format("Failed to initialize scene '{}': {}", sceneName, reason)) {
+		HARMONY_ERROR("Scene '{}' initialization failed: {}", sceneName, reason);
+	}
+
+	SceneOperationException::SceneOperationException(const std::string& operation, const std::string& reason)
+		: SceneException(std::format("Scene operation '{}' failed: {}", operation, reason)) {
+		HARMONY_ERROR("Scene operation '{}' failed: {}", operation, reason);
+	}
+
+	// ============================================================================
+	// Resource Handler Exceptions
+	// ============================================================================
+
+	ResourceException::ResourceException(const std::string& message)
+		: HarmonyException(std::format("Resource: {}", message)) {
+	}
+
+	ResourceLoadException::ResourceLoadException(const std::string& resourceType, const std::string& filePath, const std::string& reason)
+		: ResourceException(std::format("Failed to load {} from '{}': {}", resourceType, filePath, reason)) {
+		HARMONY_ERROR("Failed to load {} from '{}': {}", resourceType, filePath, reason);
+	}
+
+	ResourceUnloadException::ResourceUnloadException(const std::string& resourceType, unsigned int resourceId, const std::string& reason)
+		: ResourceException(std::format("Failed to unload {} (ID: {}): {}", resourceType, resourceId, reason)) {
+		HARMONY_ERROR("Failed to unload {} (ID: {}): {}", resourceType, resourceId, reason);
+	}
+
+	ResourceNotFoundException::ResourceNotFoundException(const std::string& resourceType, unsigned int resourceId)
+		: ResourceException(std::format("{} with ID {} not found", resourceType, resourceId)) {
+		HARMONY_WARN("{} with ID {} not found", resourceType, resourceId);
+	}
+
+	ResourceMemoryCapExceededException::ResourceMemoryCapExceededException(std::size_t requestedSize, std::size_t currentSize, std::size_t maxSize)
+		: ResourceException(std::format("Memory cap exceeded: requested {} bytes, current {} bytes, max {} bytes", requestedSize, currentSize, maxSize)) {
+		HARMONY_ERROR("Memory cap exceeded: requested {} bytes, current {} bytes, max {} bytes", requestedSize, currentSize, maxSize);
+	}
+
+	InvalidResourceIdException::InvalidResourceIdException(unsigned int resourceId, const std::string& reason)
+		: ResourceException(std::format("Invalid resource ID {}: {}", resourceId, reason)) {
+		HARMONY_ERROR("Invalid resource ID {}: {}", resourceId, reason);
+	}
+
+	ResourceOperationException::ResourceOperationException(const std::string& operation, const std::string& reason)
+		: ResourceException(std::format("Resource operation '{}' failed: {}", operation, reason)) {
+		HARMONY_ERROR("Resource operation '{}' failed: {}", operation, reason);
+	}
+
+	// ============================================================================
+	// Texture Resource Exceptions
+	// ============================================================================
+
+	TextureResourceException::TextureResourceException(const std::string& message)
+		: ResourceException(std::format("Texture: {}", message)) {
+	}
+
+	TextureLoadException::TextureLoadException(const std::string& filePath, const std::string& reason)
+		: TextureResourceException(std::format("Failed to load texture from '{}': {}", filePath, reason)) {
+		HARMONY_ERROR("Failed to load texture from '{}': {}", filePath, reason);
+	}
+
+	// ============================================================================
+	// Image Resource Exceptions
+	// ============================================================================
+
+	ImageResourceException::ImageResourceException(const std::string& message)
+		: ResourceException(std::format("Image: {}", message)) {
+	}
+
+	ImageLoadException::ImageLoadException(const std::string& filePath, const std::string& reason)
+		: ImageResourceException(std::format("Failed to load image from '{}': {}", filePath, reason)) {
+		HARMONY_ERROR("Failed to load image from '{}': {}", filePath, reason);
+	}
+
+	// ============================================================================
+	// Font Resource Exceptions
+	// ============================================================================
+
+	FontResourceException::FontResourceException(const std::string& message)
+		: ResourceException(std::format("Font: {}", message)) {
+	}
+
+	FontLoadException::FontLoadException(const std::string& filePath, const std::string& reason)
+		: FontResourceException(std::format("Failed to load font from '{}': {}", filePath, reason)) {
+		HARMONY_ERROR("Failed to load font from '{}': {}", filePath, reason);
+	}
+
+	// ============================================================================
+	// Sound Resource Exceptions
+	// ============================================================================
+
+	SoundResourceException::SoundResourceException(const std::string& message)
+		: ResourceException(std::format("Sound: {}", message)) {
+	}
+
+	SoundLoadException::SoundLoadException(const std::string& filePath, const std::string& reason)
+		: SoundResourceException(std::format("Failed to load sound from '{}': {}", filePath, reason)) {
+		HARMONY_ERROR("Failed to load sound from '{}': {}", filePath, reason);
+	}
+
+	// ============================================================================
+	// Music Resource Exceptions
+	// ============================================================================
+
+	MusicResourceException::MusicResourceException(const std::string& message)
+		: ResourceException(std::format("Music: {}", message)) {
+	}
+
+	MusicLoadException::MusicLoadException(const std::string& filePath, const std::string& reason)
+		: MusicResourceException(std::format("Failed to load music from '{}': {}", filePath, reason)) {
+		HARMONY_ERROR("Failed to load music from '{}': {}", filePath, reason);
+	}
+
+	// ============================================================================
+	// Model Resource Exceptions
+	// ============================================================================
+
+	ModelResourceException::ModelResourceException(const std::string& message)
+		: ResourceException(std::format("Model: {}", message)) {
+	}
+
+	ModelLoadException::ModelLoadException(const std::string& filePath, const std::string& reason)
+		: ModelResourceException(std::format("Failed to load model from '{}': {}", filePath, reason)) {
+		HARMONY_ERROR("Failed to load model from '{}': {}", filePath, reason);
+	}
+
+	// ============================================================================
+	// Material Resource Exceptions
+	// ============================================================================
+
+	MaterialResourceException::MaterialResourceException(const std::string& message)
+		: ResourceException(std::format("Material: {}", message)) {
+	}
+
+	MaterialLoadException::MaterialLoadException(const std::string& reason)
+		: MaterialResourceException(std::format("Failed to load material: {}", reason)) {
+		HARMONY_ERROR("Failed to load material: {}", reason);
+	}
+
+	// ============================================================================
+	// Shader Resource Exceptions
+	// ============================================================================
+
+	ShaderResourceException::ShaderResourceException(const std::string& message)
+		: ResourceException(std::format("Shader: {}", message)) {
+	}
+
+	ShaderLoadException::ShaderLoadException(const std::string& filePath, const std::string& reason)
+		: ShaderResourceException(std::format("Failed to load shader from '{}': {}", filePath, reason)) {
+		HARMONY_ERROR("Failed to load shader from '{}': {}", filePath, reason);
+	}
+
+	// ============================================================================
+	// Mesh Resource Exceptions
+	// ============================================================================
+
+	MeshResourceException::MeshResourceException(const std::string& message)
+		: ResourceException(std::format("Mesh: {}", message)) {
+	}
+
+	MeshLoadException::MeshLoadException(const std::string& filePath, const std::string& reason)
+		: MeshResourceException(std::format("Failed to load mesh from '{}': {}", filePath, reason)) {
+		HARMONY_ERROR("Failed to load mesh from '{}': {}", filePath, reason);
+	}
+
+	// ============================================================================
+	// Texture Cubemap Resource Exceptions
+	// ============================================================================
+
+	TextureCubemapResourceException::TextureCubemapResourceException(const std::string& message)
+		: ResourceException(std::format("TextureCubemap: {}", message)) {
+	}
+
+	TextureCubemapLoadException::TextureCubemapLoadException(const std::string& reason)
+		: TextureCubemapResourceException(std::format("Failed to load texture cubemap: {}", reason)) {
+		HARMONY_ERROR("Failed to load texture cubemap: {}", reason);
+	}
+
 } // namespace Harmony::Exceptions
