@@ -2,6 +2,8 @@
 #include "Engine.h"
 #include "WindowHandler.h"
 #include "TasksHandler.h"
+#include "ResourceHandler.h"
+#include "ConfigurationHandler.h"
 #include "Logger.h"
 #include "Assert.h"
 #include "Exceptions.h"
@@ -16,6 +18,11 @@ namespace Harmony::Internals
 		HARMONY_INFO("Initializing Harmony Engine");
 		
 		try {
+			// Initialize configuration handler
+			HARMONY_DEBUG("Initializing ConfigurationHandler subsystem");
+			configurationHandler = std::make_unique<ConfigurationHandler>(configuration);
+			HARMONY_ASSERT_NOT_NULL(configurationHandler.get(), "ConfigurationHandler initialization returned null");
+
 			// Initialize tasks handler
 			HARMONY_DEBUG("Initializing TasksHandler subsystem");
 			tasksHandler = std::make_unique<TasksHandler>(*this);
@@ -23,7 +30,11 @@ namespace Harmony::Internals
 			HARMONY_ASSERT_NOT_NULL(tasksHandler.get(), "TasksHandler initialization returned null");
 			HARMONY_INFO("TasksHandler initialized successfully");
 
-			HARMONY_INFO("Harmony Engine initialized successfully");
+			// Initialize resources handler
+			HARMONY_DEBUG("Initializing ResourcesHandler subsystem");
+			resourcesHandler = std::make_unique<ResourcesHandler>(
+				configuration.subsection({ "resources" }).value_or(Configuration()));
+			HARMONY_ASSERT_NOT_NULL(resourcesHandler.get(), "ResourcesHandler initialization returned null");
 
 			// Initialize window handler
 			HARMONY_DEBUG("Initializing WindowHandler subsystem");
@@ -35,6 +46,8 @@ namespace Harmony::Internals
 
 			// Start tasks handler
 			tasksHandler->start();
+
+			HARMONY_INFO("Harmony Engine initialized successfully");
 		}
 		catch (const Exceptions::HarmonyException& e) {
 			HARMONY_CRITICAL("Engine initialization failed with HarmonyException: {}", e.what());

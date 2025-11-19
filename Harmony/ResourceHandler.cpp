@@ -6,15 +6,15 @@
 
 #include <algorithm>
 
-namespace Harmony {
+namespace Harmony::Internals {
 
-	ResourceHandler::ResourceHandler(const Configuration& configuration)
+	ResourcesHandler::ResourcesHandler(const Configuration& configuration)
 		: memoryCap_(1024 * 1024 * 1024)  // Default 1GB
 		, defaultUnloadDelay_(60.0f)       // Default 60 seconds
 		, enableLogging_(true)
 		, currentMemoryUsage_(0)
 	{
-		HARMONY_INFO("Initializing ResourceHandler");
+		HARMONY_INFO("Initializing ResourcesHandler");
 
 		// Read configuration
 		if (auto cap = configuration.get<std::size_t>({ "resources", "memoryCap" })) {
@@ -57,16 +57,16 @@ namespace Harmony {
 			}
 		}
 
-		HARMONY_INFO("ResourceHandler initialized successfully");
+		HARMONY_INFO("ResourcesHandler initialized successfully");
 	}
 
-	ResourceHandler::~ResourceHandler()
+	ResourcesHandler::~ResourcesHandler()
 	{
-		HARMONY_INFO("Shutting down ResourceHandler");
+		HARMONY_INFO("Shutting down ResourcesHandler");
 		unloadAll();
 	}
 
-	void ResourceHandler::registerResource(std::shared_ptr<Resource_t> resource)
+	void ResourcesHandler::registerResource(std::shared_ptr<Resource_t> resource)
 	{
 		HARMONY_ASSERT_NOT_NULL(resource, "Cannot register null resource");
 
@@ -99,7 +99,7 @@ namespace Harmony {
 		}
 	}
 
-	void ResourceHandler::unregisterResource(ResourceID id)
+	void ResourcesHandler::unregisterResource(ResourceID id)
 	{
 		std::unique_lock lock(resourcesMutex_);
 
@@ -123,7 +123,7 @@ namespace Harmony {
 		}
 	}
 
-	void ResourceHandler::load(ResourceID id)
+	void ResourcesHandler::load(ResourceID id)
 	{
 		try {
 			loadInternal(id);
@@ -134,7 +134,7 @@ namespace Harmony {
 		}
 	}
 
-	void ResourceHandler::loadInternal(ResourceID id)
+	void ResourcesHandler::loadInternal(ResourceID id)
 	{
 		std::shared_lock readLock(resourcesMutex_);
 
@@ -186,7 +186,7 @@ namespace Harmony {
 		}
 	}
 
-	void ResourceHandler::unload(ResourceID id)
+	void ResourcesHandler::unload(ResourceID id)
 	{
 		try {
 			unloadInternal(id);
@@ -197,7 +197,7 @@ namespace Harmony {
 		}
 	}
 
-	void ResourceHandler::unloadInternal(ResourceID id)
+	void ResourcesHandler::unloadInternal(ResourceID id)
 	{
 		std::shared_lock readLock(resourcesMutex_);
 
@@ -241,7 +241,7 @@ namespace Harmony {
 		}
 	}
 
-	std::shared_ptr<Resource_t> ResourceHandler::get(ResourceID id)
+	std::shared_ptr<Resource_t> ResourcesHandler::get(ResourceID id)
 	{
 		std::shared_lock lock(resourcesMutex_);
 
@@ -265,7 +265,7 @@ namespace Harmony {
 		return resource;
 	}
 
-	void ResourceHandler::batchLoad(const std::vector<ResourceID>& ids)
+	void ResourcesHandler::batchLoad(const std::vector<ResourceID>& ids)
 	{
 		if (enableLogging_) {
 			HARMONY_INFO("Batch loading {} resources", ids.size());
@@ -285,7 +285,7 @@ namespace Harmony {
 		}
 	}
 
-	void ResourceHandler::batchUnload(const std::vector<ResourceID>& ids)
+	void ResourcesHandler::batchUnload(const std::vector<ResourceID>& ids)
 	{
 		if (enableLogging_) {
 			HARMONY_INFO("Batch unloading {} resources", ids.size());
@@ -305,7 +305,7 @@ namespace Harmony {
 		}
 	}
 
-	void ResourceHandler::loadAll()
+	void ResourcesHandler::loadAll()
 	{
 		std::shared_lock lock(resourcesMutex_);
 		std::vector<ResourceID> ids;
@@ -323,7 +323,7 @@ namespace Harmony {
 		batchLoad(ids);
 	}
 
-	void ResourceHandler::unloadAll()
+	void ResourcesHandler::unloadAll()
 	{
 		std::shared_lock lock(resourcesMutex_);
 		std::vector<ResourceID> ids;
@@ -343,7 +343,7 @@ namespace Harmony {
 		batchUnload(ids);
 	}
 
-	void ResourceHandler::updateAutoUnload()
+	void ResourcesHandler::updateAutoUnload()
 	{
 		std::shared_lock lock(resourcesMutex_);
 		std::vector<ResourceID> toUnload;
@@ -363,7 +363,7 @@ namespace Harmony {
 		}
 	}
 
-	void ResourceHandler::updateMusicStreaming()
+	void ResourcesHandler::updateMusicStreaming()
 	{
 		// This will be implemented in MusicResource
 		// For now, just iterate through resources and update music streaming
@@ -377,7 +377,7 @@ namespace Harmony {
 		}
 	}
 
-	void ResourceHandler::setMemoryCap(std::size_t cap)
+	void ResourcesHandler::setMemoryCap(std::size_t cap)
 	{
 		if (enableLogging_) {
 			HARMONY_INFO("Changing memory cap from {} to {} bytes", memoryCap_, cap);
@@ -391,7 +391,7 @@ namespace Harmony {
 		}
 	}
 
-	void ResourceHandler::evictLeastRecentlyUsed()
+	void ResourcesHandler::evictLeastRecentlyUsed()
 	{
 		std::shared_lock lock(resourcesMutex_);
 
@@ -426,12 +426,12 @@ namespace Harmony {
 		}
 	}
 
-	std::size_t ResourceHandler::getCurrentMemoryUsage() const
+	std::size_t ResourcesHandler::getCurrentMemoryUsage() const
 	{
 		return currentMemoryUsage_.load();
 	}
 
-	std::size_t ResourceHandler::getLoadedResourceCount() const
+	std::size_t ResourcesHandler::getLoadedResourceCount() const
 	{
 		std::shared_lock lock(resourcesMutex_);
 		std::size_t count = 0;
@@ -443,7 +443,7 @@ namespace Harmony {
 		return count;
 	}
 
-	std::size_t ResourceHandler::getTotalResourceCount() const
+	std::size_t ResourcesHandler::getTotalResourceCount() const
 	{
 		std::shared_lock lock(resourcesMutex_);
 		return resources_.size();

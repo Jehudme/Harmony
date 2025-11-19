@@ -9,7 +9,7 @@
 #include <vector>
 #include <shared_mutex>
 
-namespace Harmony {
+namespace Harmony::Internals {
 
 	/// Thread-safe resource management system for Harmony engine
 	/// Handles all 2D, 3D, and Audio resources with automatic memory management
@@ -20,10 +20,10 @@ namespace Harmony {
 	/// - Thread-safe operations
 	/// - Batch operations for efficiency
 	/// - Configuration-driven behavior
-	class ResourceHandler {
+	class ResourcesHandler {
 	public:
-		explicit ResourceHandler(const Configuration& configuration);
-		~ResourceHandler();
+		explicit ResourcesHandler(const Configuration& configuration);
+		~ResourcesHandler();
 
 		// Single resource operations
 		void load(ResourceID id);

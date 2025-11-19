@@ -5,6 +5,8 @@
 namespace Harmony::Internals {
 	class WindowHandler;
 	class TasksHandler;
+	class ConfigurationHandler;
+	class ResourcesHandler;
 }
 
 namespace Harmony::Internals {
@@ -23,7 +25,9 @@ namespace Harmony::Internals {
 		void handleRendering();
 
 	public:
+		std::unique_ptr<ConfigurationHandler> configurationHandler;
 		std::unique_ptr<TasksHandler> tasksHandler;
+		std::unique_ptr<ResourcesHandler> resourcesHandler;
 		std::unique_ptr<WindowHandler> windowHandler;
 	private:
 		Clock clock_;
