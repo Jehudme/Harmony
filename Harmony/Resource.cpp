@@ -1,33 +1,63 @@
 #include "pch.h"
 #include "Resource.h"
 
-namespace Harmony {
+namespace Harmony::Resources {
+	Resource::Resource(ResourceID id, Configuration configuration)
+		: configuration_(configuration), available_(false), id_(id) {
 
-	Resource_t::Resource_t(ResourceID id, const std::string& filePath, std::size_t fileSize,
-		                   float unloadDelay, bool alwaysLoaded)
-		: id_(id)
-		, filePath_(filePath)
-		, fileSize_(fileSize)
-		, lastUsedTime_(std::chrono::steady_clock::now())
-		, unloadDelay_(unloadDelay)
-		, alwaysLoaded_(alwaysLoaded)
-	{
+		alwaysLoaded_ = configuration_.get<bool>({ "AlwaysLoaded" }).value_or(false);
+		cooledownTime_ = Time::fromSeconds(configuration_.get<int>({ "CooledownTime" }).value_or(5));
+		required_ = configuration_.get<bool>({ "Required" }).value_or(false);
 	}
 
-	void Resource_t::updateLastUsedTime()
-	{
-		lastUsedTime_ = std::chrono::steady_clock::now();
+	Resource::~Resource() = default;
+
+	ResourceID Resource::getID() const {
+		return id_;
 	}
 
-	bool Resource_t::shouldUnload() const
-	{
-		if (alwaysLoaded_) {
-			return false;
-		}
-
-		auto now = std::chrono::steady_clock::now();
-		auto elapsed = std::chrono::duration_cast<std::chrono::duration<float>>(now - lastUsedTime_);
-		return elapsed.count() >= unloadDelay_;
+	void Resource::setAvailable(bool available) {
+		std::unique_lock lock(mutex_);
+		available_ = available;
 	}
 
-} // namespace Harmony
+	bool Resource::canUnload() const
+	{
+		std::shared_lock lock(mutex_);
+		if (!available_)									return false;
+		else if (alwaysLoaded_)								return false;
+		else if (getTimeSinceLastAccess() < cooledownTime_) return false;
+		else												return true;
+	}
+
+	bool Resource::isAvailable() const {
+		std::shared_lock lock(mutex_);
+		return available_;
+	}
+
+	Time Resource::getTimeSinceLastAccess() const {
+		std::shared_lock lock(mutex_);
+		return accessClock_.getElapsedTime();
+	}
+
+	Time Resource::restartAccessClock()
+	{
+		std::unique_lock lock(mutex_);
+		return Time();
+	}
+
+
+	ResourceAcquirement::ResourceAcquirement(std::shared_lock<std::shared_mutex>&& lock, Resource& resource) :
+		resourceLock_(std::move(lock)), resource_(resource) {}
+
+	ResourceAcquirement::~ResourceAcquirement() = default;
+
+	Resource& ResourceAcquirement::getResource() const {
+		return resource_;
+	}
+
+	Resource& ResourceAcquirement::operator*() const {
+		return resource_;
+	}
+
+}

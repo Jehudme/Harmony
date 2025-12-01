@@ -102,15 +102,6 @@
     <ClInclude Include="Resource.h">
       <Filter>Header Files\Resources</Filter>
     </ClInclude>
-    <ClInclude Include="TextureResources.h">
-      <Filter>Header Files\Resources</Filter>
-    </ClInclude>
-    <ClInclude Include="AudioResources.h">
-      <Filter>Header Files\Resources</Filter>
-    </ClInclude>
-    <ClInclude Include="ModelResources.h">
-      <Filter>Header Files\Resources</Filter>
-    </ClInclude>
     <ClInclude Include="ResourceHandler.h">
       <Filter>Header Files\Internals</Filter>
     </ClInclude>
@@ -174,16 +165,7 @@
       <Filter>Source Files\Resources</Filter>
     </ClCompile>
     <ClCompile Include="ResourceHandler.cpp">
-      <Filter>Source Files\Resources</Filter>
-    </ClCompile>
-    <ClCompile Include="TextureResources.cpp">
-      <Filter>Source Files\Resources</Filter>
-    </ClCompile>
-    <ClCompile Include="AudioResources.cpp">
-      <Filter>Source Files\Resources</Filter>
-    </ClCompile>
-    <ClCompile Include="ModelResources.cpp">
-      <Filter>Source Files\Resources</Filter>
+      <Filter>Source Files\Internals</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

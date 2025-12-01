@@ -8,73 +8,67 @@
 #include <mutex>
 #include <vector>
 #include <shared_mutex>
+#include <functional>
+
+#include "Resource.h"
 
 namespace Harmony::Internals {
+	class Engine;
+}
 
-	/// Thread-safe resource management system for Harmony engine
-	/// Handles all 2D, 3D, and Audio resources with automatic memory management
-	/// Features:
-	/// - ID-based resource access
-	/// - Automatic loading/unloading
-	/// - Memory cap enforcement with LRU eviction
-	/// - Thread-safe operations
-	/// - Batch operations for efficiency
-	/// - Configuration-driven behavior
+namespace Harmony::Internals {
 	class ResourcesHandler {
-	public:
-		explicit ResourcesHandler(const Configuration& configuration);
-		~ResourcesHandler();
+		friend class Engine;
 
-		// Single resource operations
-		void load(ResourceID id);
-		void unload(ResourceID id);
-		std::shared_ptr<Resource_t> get(ResourceID id);
+		public:
+			ResourcesHandler(Engine& engine);
 
-		// Batch operations
-		void batchLoad(const std::vector<ResourceID>& ids);
-		void batchUnload(const std::vector<ResourceID>& ids);
-		void loadAll();
-		void unloadAll();
+			ResourcesHandler(const ResourcesHandler&) = delete;
+			ResourcesHandler& operator=(const ResourcesHandler&) = delete;
+			ResourcesHandler(ResourcesHandler&&) = delete;
+			ResourcesHandler& operator=(ResourcesHandler&&) = delete;
 
-		// Registration - used to register resources before loading
-		void registerResource(std::shared_ptr<Resource_t> resource);
-		void unregisterResource(ResourceID id);
+			void update();
 
-		// Memory management
-		std::size_t getCurrentMemoryUsage() const;
-		std::size_t getMemoryCap() const { return memoryCap_; }
-		void setMemoryCap(std::size_t cap);
+			void loadResource(Resources::ResourceID id);
+			void unloadResource(Resources::ResourceID id);
 
-		// Automatic cleanup - call this periodically (e.g., every frame)
-		void updateAutoUnload();
-
-		// Music streaming update - call every frame
-		void updateMusicStreaming();
-
-		// Statistics
-		std::size_t getLoadedResourceCount() const;
-		std::size_t getTotalResourceCount() const;
+			std::unique_ptr<Resources::ResourceAcquirement> acquireResource(Resources::ResourceID id);
 
 	private:
-		// Internal helper methods
-		void loadInternal(ResourceID id);
-		void unloadInternal(ResourceID id);
-		void enforceMemoryCap();
-		void evictLeastRecentlyUsed();
-
-		// Configuration
-		std::size_t memoryCap_;           // Maximum total memory in bytes
-		float defaultUnloadDelay_;        // Default idle time before unload
-		std::vector<ResourceID> preloadList_;
-		std::vector<ResourceID> alwaysLoadedList_;
-		bool enableLogging_;
-
-		// Resource storage
-		std::unordered_map<ResourceID, std::shared_ptr<Resource_t>> resources_;
-		mutable std::shared_mutex resourcesMutex_;
-
-		// Current memory usage
-		std::atomic<std::size_t> currentMemoryUsage_;
+		Engine& engine_;
+		mutable std::shared_mutex mutex_;
+		std::unordered_map<Resources::ResourceID, std::unique_ptr<Resources::Resource>> resources_;
+		std::unordered_map<std::string, std::function<std::unique_ptr<Resources::Resource>(Resources::ResourceID, Configuration)>> resourcesFactories_;
 	};
 
 } // namespace Harmony
+
+
+
+#include "pch.h"
+#include "ResourceHandler.h"
+#include "Exceptions.h"
+#include "Logger.h"
+#include "Assert.h"
+#include "Engine.h"
+#include "ConfigurationHandler.h"
+
+#include <algorithm>
+
+namespace Harmony::Internals {
+	ResourcesHandler::ResourcesHandler(Engine& engine) :
+		engine_(engine)
+	{
+		Configuration configuration = engine_.configurationHandler->getConfiguration().subsection({ "Resources" }).value_or(Configuration());
+		for (const std::string& key : configuration.extractKeys({})) {
+			const Configuration resourceConfiguration = configuration.subsection({ key }).value();
+			const Resources::ResourceID ResourceID = std::stoi(key);
+			std::string resourceType = resourceConfiguration.get<std::string>({ "Type" }).value();
+
+			std::unordered_map<std::string, std::function<std::unique_ptr<Resources::Resource>(Resources::ResourceID, Configuration)>> resourcesFactories_;
+
+		}
+	}
+	ResourcesHandler::~ResourcesHandler() = default;
+}

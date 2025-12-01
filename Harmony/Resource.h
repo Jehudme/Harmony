@@ -1,63 +1,72 @@
 #pragma once
 
 #include <string>
-#include <chrono>
 #include <cstddef>
 
-namespace Harmony {
+#include "Clock.h"
+#include "Time.h"
 
-	/// Type alias for Resource ID (simple unsigned int redefinition as requested)
-	using ResourceID = unsigned int;
+namespace Harmony::Internals {
+	class ResourcesHandler;
+}
 
-	/// Base class for all resources in the Harmony engine
-	/// Provides common interface for resource management including:
-	/// - Loading/unloading lifecycle
-	/// - Last used time tracking
-	/// - Automatic unloading based on idle time
-	/// - Always-loaded flag for permanent resources
-	/// - File size tracking for memory management
-	class Resource_t {
+namespace Harmony::Resources {
+	using ResourceID = uint64_t;
+
+	class Resource {
+		friend class ResourcesHandler;
+
 	public:
-		Resource_t(ResourceID id, const std::string& filePath, std::size_t fileSize = 0, 
-			       float unloadDelay = 60.0f, bool alwaysLoaded = false);
-		virtual ~Resource_t() = default;
+		Resource(ResourceID id, Configuration configuration);
+		virtual ~Resource();
 
-		// Core resource lifecycle
-		virtual void load() = 0;
-		virtual void unload() = 0;
-		virtual bool isLoaded() const = 0;
+		virtual std::string getType() const = 0;
 
-		// Resource metadata
-		ResourceID getId() const { return id_; }
-		const std::string& getFilePath() const { return filePath_; }
-		std::size_t getFileSize() const { return fileSize_; }
-
-		// Time tracking
-		std::chrono::steady_clock::time_point getLastUsedTime() const { return lastUsedTime_; }
-		void updateLastUsedTime();
-		float getUnloadDelay() const { return unloadDelay_; }
-		void setUnloadDelay(float delay) { unloadDelay_ = delay; }
-
-		// Always-loaded management
-		bool isAlwaysLoaded() const { return alwaysLoaded_; }
-		void setAlwaysLoaded(bool alwaysLoaded) { alwaysLoaded_ = alwaysLoaded; }
-
-		// Check if resource should be unloaded based on idle time
-		bool shouldUnload() const;
-
-		// Get type name for logging/debugging
-		virtual const char* getTypeName() const = 0;
+		ResourceID getID() const;
 
 	protected:
-		void setFileSize(std::size_t size) { fileSize_ = size; }
+		void setAvailable(bool available);
 
 	private:
+		bool canUnload() const;
+		bool isAvailable() const;
+
+		virtual void load() = 0;
+		virtual void unload() = 0;
+
+		Time getTimeSinceLastAccess() const;
+		Time restartAccessClock();
+
+	protected:
+		mutable std::shared_mutex mutex_;
+		Configuration configuration_;
+
+	private:
+		bool available_;
 		ResourceID id_;
-		std::string filePath_;
-		std::size_t fileSize_;
-		std::chrono::steady_clock::time_point lastUsedTime_;
-		float unloadDelay_;  // in seconds
+
+		Clock accessClock_;
+		Time cooledownTime_;
 		bool alwaysLoaded_;
+		bool required_;
 	};
 
+
+	class ResourceAcquirement {
+	public:
+		ResourceAcquirement(std::shared_lock<std::shared_mutex>&& lock, Resource& resource);
+		virtual ~ResourceAcquirement();
+
+		ResourceAcquirement(const ResourceAcquirement&) = delete;
+		ResourceAcquirement& operator=(const ResourceAcquirement&) = delete;
+		ResourceAcquirement(ResourceAcquirement&&) = delete;
+		ResourceAcquirement& operator=(ResourceAcquirement&&) = delete;
+
+		Resource& getResource() const;
+		Resource& operator*() const;
+
+	private:
+		std::shared_lock<std::shared_mutex> resourceLock_;
+		Resource& resource_;
+	};
 } // namespace Harmony

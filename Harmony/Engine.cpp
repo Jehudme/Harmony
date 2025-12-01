@@ -32,8 +32,7 @@ namespace Harmony::Internals
 
 			// Initialize resources handler
 			HARMONY_DEBUG("Initializing ResourcesHandler subsystem");
-			resourcesHandler = std::make_unique<ResourcesHandler>(
-				configuration.subsection({ "resources" }).value_or(Configuration()));
+			resourcesHandler = std::make_unique<ResourcesHandler>(*this);
 			HARMONY_ASSERT_NOT_NULL(resourcesHandler.get(), "ResourcesHandler initialization returned null");
 
 			// Initialize window handler
