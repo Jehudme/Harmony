@@ -22,4 +22,5 @@ namespace Harmony::Internals {
 			resources_.emplace(resourceID, std::move(resource));
 		}
 	}
+	ResourcesHandler::~ResourcesHandler() = default;
 }
