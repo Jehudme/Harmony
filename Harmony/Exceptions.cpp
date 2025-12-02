@@ -479,4 +479,43 @@ namespace Harmony::Exceptions
 		HARMONY_ERROR("Failed to load texture cubemap: {}", reason);
 	}
 
+	// ============================================================================
+	// Render Texture Resource Exceptions
+	// ============================================================================
+
+	RenderTextureResourceException::RenderTextureResourceException(const std::string& message)
+		: ResourceException(std::format("RenderTexture: {}", message)) {
+	}
+
+	RenderTextureLoadException::RenderTextureLoadException(const std::string& reason)
+		: RenderTextureResourceException(std::format("Failed to load render texture: {}", reason)) {
+		HARMONY_ERROR("Failed to load render texture: {}", reason);
+	}
+
+	// ============================================================================
+	// Wave Resource Exceptions
+	// ============================================================================
+
+	WaveResourceException::WaveResourceException(const std::string& message)
+		: ResourceException(std::format("Wave: {}", message)) {
+	}
+
+	WaveLoadException::WaveLoadException(const std::string& filePath, const std::string& reason)
+		: WaveResourceException(std::format("Failed to load wave from '{}': {}", filePath, reason)) {
+		HARMONY_ERROR("Failed to load wave from '{}': {}", filePath, reason);
+	}
+
+	// ============================================================================
+	// Model Animation Resource Exceptions
+	// ============================================================================
+
+	ModelAnimationResourceException::ModelAnimationResourceException(const std::string& message)
+		: ResourceException(std::format("ModelAnimation: {}", message)) {
+	}
+
+	ModelAnimationLoadException::ModelAnimationLoadException(const std::string& filePath, const std::string& reason)
+		: ModelAnimationResourceException(std::format("Failed to load model animation from '{}': {}", filePath, reason)) {
+		HARMONY_ERROR("Failed to load model animation from '{}': {}", filePath, reason);
+	}
+
 } // namespace Harmony::Exceptions
