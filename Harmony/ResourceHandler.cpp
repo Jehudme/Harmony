@@ -175,9 +175,9 @@ namespace Harmony::Internals {
                 throw Exceptions::ResourceOperationException("acquire", "Resource pointer is null");
             }
             
-            bool isAvailable = resource->isAvailable();
+            bool isLoaded = resource->isLoaded();
             
-            if (!isAvailable) {
+            if (!isLoaded) {
                 HARMONY_DEBUG("Resource ID {} not available, loading now", id);
                 resource->load();
             }

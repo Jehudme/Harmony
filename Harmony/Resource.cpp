@@ -3,7 +3,7 @@
 
 namespace Harmony::Resources {
 	Resource::Resource(ResourceID id, Configuration configuration)
-		: configuration_(configuration), available_(false), id_(id) {
+		: configuration_(configuration), loaded_(false), id_(id) {
 
 		alwaysLoaded_ = configuration_.get<bool>({ "AlwaysLoaded" }).value_or(false);
 		cooledownTime_ = Time::fromSeconds(configuration_.get<float>({ "CooledownTime" }).value_or(5));
@@ -16,22 +16,18 @@ namespace Harmony::Resources {
 		return id_;
 	}
 
-	void Resource::setAvailable(bool available) {
-		available_ = available;
-	}
-
 	bool Resource::canUnload() const
 	{
 		std::shared_lock lock(mutex_);
-		if (!available_)									return false;
+		if (!loaded_)										return false;
 		else if (alwaysLoaded_)								return false;
 		else if (getTimeSinceLastAccess() < cooledownTime_) return false;
 		else												return true;
 	}
 
-	bool Resource::isAvailable() const {
+	bool Resource::isLoaded() const {
 		std::shared_lock lock(mutex_);
-		return available_;
+		return loaded_;
 	}
 
 	Time Resource::getTimeSinceLastAccess() const {

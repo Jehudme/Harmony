@@ -11,20 +11,19 @@ namespace Harmony::Resources
 	ModelAnimations::ModelAnimations(ResourceID id, const Configuration& configuration) :
 		Resource(id, configuration),
 		animations_(nullptr),
-		animationCount_(0),
-		animationsLoaded_(false)
+		animationCount_(0)
 	{
 		HARMONY_DEBUG("ModelAnimations resource created with ID: {}", id);
 	}
 
 	ModelAnimations::~ModelAnimations()
 	{
-		if (animationsLoaded_ && animations_ != nullptr)
+		if (loaded_ && animations_ != nullptr)
 		{
 			UnloadModelAnimations(animations_, animationCount_);
 			animations_ = nullptr;
 			animationCount_ = 0;
-			animationsLoaded_ = false;
+			loaded_ = false;
 		}
 	}
 
@@ -56,8 +55,7 @@ namespace Harmony::Resources
 			throw Exceptions::ModelAnimationLoadException(filepath, "Raylib LoadModelAnimations returned no animations");
 		}
 
-		animationsLoaded_ = true;
-		setAvailable(true);
+		loaded_ = true;
 		HARMONY_INFO("ModelAnimations resource loaded successfully from: {} with {} animations", filepath, animationCount_);
 	}
 
@@ -67,19 +65,16 @@ namespace Harmony::Resources
 
 		HARMONY_DEBUG("Unloading model animations resource");
 
-		if (animationsLoaded_ && animations_ != nullptr)
+		if (loaded_ && animations_ != nullptr)
 		{
 			UnloadModelAnimations(animations_, animationCount_);
 			animations_ = nullptr;
 			animationCount_ = 0;
-			animationsLoaded_ = false;
-			setAvailable(false);
+			loaded_ = false;
 			HARMONY_INFO("ModelAnimations resource unloaded successfully");
 		}
-		else
-		{
-			HARMONY_WARN("Attempted to unload model animations resource that was not loaded");
-		}
+		else HARMONY_WARN("Attempted to unload model animations resource that was not loaded");
+
 	}
 
 	ModelAnimation* ModelAnimations::getAnimations() const

@@ -10,18 +10,17 @@ namespace Harmony::Resources
 
 	Shaders::Shaders(ResourceID id, const Configuration& configuration) :
 		Resource(id, configuration),
-		shader_{},
-		shaderLoaded_(false)
+		shader_{}
 	{
 		HARMONY_DEBUG("Shaders resource created with ID: {}", id);
 	}
 
 	Shaders::~Shaders()
 	{
-		if (shaderLoaded_)
+		if (loaded_)
 		{
 			UnloadShader(shader_);
-			shaderLoaded_ = false;
+			loaded_ = false;
 		}
 	}
 
@@ -73,8 +72,7 @@ namespace Harmony::Resources
 			throw Exceptions::ShaderLoadException(shaderInfo, "Raylib LoadShader returned invalid shader ID");
 		}
 
-		shaderLoaded_ = true;
-		setAvailable(true);
+		loaded_ = true;
 		HARMONY_INFO("Shaders resource loaded successfully");
 	}
 
@@ -84,12 +82,11 @@ namespace Harmony::Resources
 
 		HARMONY_DEBUG("Unloading shaders resource");
 
-		if (shaderLoaded_)
+		if (loaded_)
 		{
 			UnloadShader(shader_);
 			shader_ = Shader{};
-			shaderLoaded_ = false;
-			setAvailable(false);
+			loaded_ = false;
 			HARMONY_INFO("Shaders resource unloaded successfully");
 		}
 		else

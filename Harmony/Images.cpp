@@ -10,18 +10,17 @@ namespace Harmony::Resources
 
 	Images::Images(ResourceID id, const Configuration& configuration) :
 		Resource(id, configuration),
-		image_{},
-		imageLoaded_(false)
+		image_{}
 	{
 		HARMONY_DEBUG("Images resource created with ID: {}", id);
 	}
 
 	Images::~Images()
 	{
-		if (imageLoaded_)
+		if (loaded_)
 		{
 			UnloadImage(image_);
-			imageLoaded_ = false;
+			loaded_ = false;
 		}
 	}
 
@@ -53,8 +52,7 @@ namespace Harmony::Resources
 			throw Exceptions::ImageLoadException(filepath, "Raylib LoadImage returned null data");
 		}
 
-		imageLoaded_ = true;
-		setAvailable(true);
+		loaded_ = true;
 		HARMONY_INFO("Images resource loaded successfully from: {}", filepath);
 	}
 
@@ -64,12 +62,11 @@ namespace Harmony::Resources
 
 		HARMONY_DEBUG("Unloading images resource");
 
-		if (imageLoaded_)
+		if (loaded_)
 		{
 			UnloadImage(image_);
 			image_ = Image{};
-			imageLoaded_ = false;
-			setAvailable(false);
+			loaded_ = false;
 			HARMONY_INFO("Images resource unloaded successfully");
 		}
 		else

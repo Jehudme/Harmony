@@ -29,12 +29,9 @@ namespace Harmony::Resources {
 
 		ResourceID getID() const;
 
-	protected:
-		void setAvailable(bool available);
-
 	private:
 		bool canUnload() const;
-		bool isAvailable() const;
+		bool isLoaded() const;
 
 		virtual void load() = 0;
 		virtual void unload() = 0;
@@ -45,11 +42,10 @@ namespace Harmony::Resources {
 	protected:
 		mutable std::shared_mutex mutex_;
 		Configuration configuration_;
+		const ResourceID id_;
+		bool loaded_;
 
 	private:
-		bool available_;
-		ResourceID id_;
-
 		Clock accessClock_;
 		Time cooledownTime_;
 		bool alwaysLoaded_;

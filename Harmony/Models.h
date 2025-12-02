@@ -20,6 +20,5 @@ namespace Harmony::Resources
 
 	private:
 		Model model_;
-		bool modelLoaded_;
 	};
 }

@@ -10,18 +10,17 @@ namespace Harmony::Resources
 
 	Fonts::Fonts(ResourceID id, const Configuration& configuration) :
 		Resource(id, configuration),
-		font_{},
-		fontLoaded_(false)
+		font_{}
 	{
 		HARMONY_DEBUG("Fonts resource created with ID: {}", id);
 	}
 
 	Fonts::~Fonts()
 	{
-		if (fontLoaded_)
+		if (loaded_)
 		{
 			UnloadFont(font_);
-			fontLoaded_ = false;
+			loaded_ = false;
 		}
 	}
 
@@ -56,8 +55,7 @@ namespace Harmony::Resources
 			throw Exceptions::FontLoadException(filepath, "Raylib LoadFontEx returned invalid font texture");
 		}
 
-		fontLoaded_ = true;
-		setAvailable(true);
+		loaded_ = true;
 		HARMONY_INFO("Fonts resource loaded successfully from: {} with size: {}", filepath, fontSize);
 	}
 
@@ -67,12 +65,11 @@ namespace Harmony::Resources
 
 		HARMONY_DEBUG("Unloading fonts resource");
 
-		if (fontLoaded_)
+		if (loaded_)
 		{
 			UnloadFont(font_);
 			font_ = Font{};
-			fontLoaded_ = false;
-			setAvailable(false);
+			loaded_ = false;
 			HARMONY_INFO("Fonts resource unloaded successfully");
 		}
 		else

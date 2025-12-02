@@ -10,18 +10,17 @@ namespace Harmony::Resources
 
 	Models::Models(ResourceID id, const Configuration& configuration) :
 		Resource(id, configuration),
-		model_{},
-		modelLoaded_(false)
+		model_{}
 	{
 		HARMONY_DEBUG("Models resource created with ID: {}", id);
 	}
 
 	Models::~Models()
 	{
-		if (modelLoaded_)
+		if (loaded_)
 		{
 			UnloadModel(model_);
-			modelLoaded_ = false;
+			loaded_ = false;
 		}
 	}
 
@@ -53,8 +52,7 @@ namespace Harmony::Resources
 			throw Exceptions::ModelLoadException(filepath, "Raylib LoadModel returned no meshes");
 		}
 
-		modelLoaded_ = true;
-		setAvailable(true);
+		loaded_ = true;
 		HARMONY_INFO("Models resource loaded successfully from: {}", filepath);
 	}
 
@@ -64,12 +62,11 @@ namespace Harmony::Resources
 
 		HARMONY_DEBUG("Unloading models resource");
 
-		if (modelLoaded_)
+		if (loaded_)
 		{
 			UnloadModel(model_);
 			model_ = Model{};
-			modelLoaded_ = false;
-			setAvailable(false);
+			loaded_ = false;
 			HARMONY_INFO("Models resource unloaded successfully");
 		}
 		else

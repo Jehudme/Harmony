@@ -10,18 +10,17 @@ namespace Harmony::Resources
 
 	Sounds::Sounds(ResourceID id, const Configuration& configuration) :
 		Resource(id, configuration),
-		sound_{},
-		soundLoaded_(false)
+		sound_{}
 	{
 		HARMONY_DEBUG("Sounds resource created with ID: {}", id);
 	}
 
 	Sounds::~Sounds()
 	{
-		if (soundLoaded_)
+		if (loaded_)
 		{
 			UnloadSound(sound_);
-			soundLoaded_ = false;
+			loaded_ = false;
 		}
 	}
 
@@ -53,8 +52,7 @@ namespace Harmony::Resources
 			throw Exceptions::SoundLoadException(filepath, "Raylib LoadSound returned invalid sound data");
 		}
 
-		soundLoaded_ = true;
-		setAvailable(true);
+		loaded_ = true;
 		HARMONY_INFO("Sounds resource loaded successfully from: {}", filepath);
 	}
 
@@ -64,12 +62,11 @@ namespace Harmony::Resources
 
 		HARMONY_DEBUG("Unloading sounds resource");
 
-		if (soundLoaded_)
+		if (loaded_)
 		{
 			UnloadSound(sound_);
 			sound_ = Sound{};
-			soundLoaded_ = false;
-			setAvailable(false);
+			loaded_ = false;
 			HARMONY_INFO("Sounds resource unloaded successfully");
 		}
 		else

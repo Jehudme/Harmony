@@ -37,7 +37,7 @@ namespace Harmony::Resources
 		try
 		{
 			Configuration::load(filepath);
-			setAvailable(true);
+			loaded_ = true;
 			HARMONY_INFO("Properties resource loaded successfully from: {}", filepath);
 		}
 		catch (const std::exception& e)
@@ -57,7 +57,7 @@ namespace Harmony::Resources
 		try
 		{
 			Configuration::clear();
-			setAvailable(false);
+			loaded_ = false;
 			HARMONY_INFO("Properties resource unloaded successfully");
 		}
 		catch (const std::exception& e)

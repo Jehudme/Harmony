@@ -10,18 +10,17 @@ namespace Harmony::Resources
 
 	Meshes::Meshes(ResourceID id, const Configuration& configuration) :
 		Resource(id, configuration),
-		mesh_{},
-		meshLoaded_(false)
+		mesh_{}
 	{
 		HARMONY_DEBUG("Meshes resource created with ID: {}", id);
 	}
 
 	Meshes::~Meshes()
 	{
-		if (meshLoaded_)
+		if (loaded_)
 		{
 			UnloadMesh(mesh_);
-			meshLoaded_ = false;
+			loaded_ = false;
 		}
 	}
 
@@ -86,8 +85,7 @@ namespace Harmony::Resources
 			throw Exceptions::MeshLoadException(meshType, "Raylib mesh generation failed");
 		}
 
-		meshLoaded_ = true;
-		setAvailable(true);
+		loaded_ = true;
 		HARMONY_INFO("Meshes resource loaded successfully with type: {}", meshType);
 	}
 
@@ -97,12 +95,11 @@ namespace Harmony::Resources
 
 		HARMONY_DEBUG("Unloading meshes resource");
 
-		if (meshLoaded_)
+		if (loaded_)
 		{
 			UnloadMesh(mesh_);
 			mesh_ = Mesh{};
-			meshLoaded_ = false;
-			setAvailable(false);
+			loaded_ = false;
 			HARMONY_INFO("Meshes resource unloaded successfully");
 		}
 		else

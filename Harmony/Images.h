@@ -20,6 +20,5 @@ namespace Harmony::Resources
 
 	private:
 		Image image_;
-		bool imageLoaded_;
 	};
 }

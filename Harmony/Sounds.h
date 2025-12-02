@@ -20,6 +20,5 @@ namespace Harmony::Resources
 
 	private:
 		Sound sound_;
-		bool soundLoaded_;
 	};
 }

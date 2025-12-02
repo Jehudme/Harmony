@@ -10,18 +10,17 @@ namespace Harmony::Resources
 
 	Waves::Waves(ResourceID id, const Configuration& configuration) :
 		Resource(id, configuration),
-		wave_{},
-		waveLoaded_(false)
+		wave_{}
 	{
 		HARMONY_DEBUG("Waves resource created with ID: {}", id);
 	}
 
 	Waves::~Waves()
 	{
-		if (waveLoaded_)
+		if (loaded_)
 		{
 			UnloadWave(wave_);
-			waveLoaded_ = false;
+			loaded_ = false;
 		}
 	}
 
@@ -53,8 +52,7 @@ namespace Harmony::Resources
 			throw Exceptions::WaveLoadException(filepath, "Raylib LoadWave returned null data");
 		}
 
-		waveLoaded_ = true;
-		setAvailable(true);
+		loaded_ = true;
 		HARMONY_INFO("Waves resource loaded successfully from: {}", filepath);
 	}
 
@@ -64,12 +62,11 @@ namespace Harmony::Resources
 
 		HARMONY_DEBUG("Unloading waves resource");
 
-		if (waveLoaded_)
+		if (loaded_)
 		{
 			UnloadWave(wave_);
 			wave_ = Wave{};
-			waveLoaded_ = false;
-			setAvailable(false);
+			loaded_ = false;
 			HARMONY_INFO("Waves resource unloaded successfully");
 		}
 		else

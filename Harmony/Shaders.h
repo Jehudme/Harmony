@@ -20,6 +20,5 @@ namespace Harmony::Resources
 
 	private:
 		Shader shader_;
-		bool shaderLoaded_;
 	};
 }

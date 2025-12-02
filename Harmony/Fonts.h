@@ -20,6 +20,5 @@ namespace Harmony::Resources
 
 	private:
 		Font font_;
-		bool fontLoaded_;
 	};
 }

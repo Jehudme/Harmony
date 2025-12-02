@@ -23,6 +23,5 @@ namespace Harmony::Resources
 	private:
 		ModelAnimation* animations_;
 		int animationCount_;
-		bool animationsLoaded_;
 	};
 }

@@ -20,6 +20,5 @@ namespace Harmony::Resources
 
 	private:
 		Texture2D texture_;
-		bool textureLoaded_;
 	};
 }

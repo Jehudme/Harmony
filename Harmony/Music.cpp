@@ -10,18 +10,17 @@ namespace Harmony::Resources
 
 	Music::Music(ResourceID id, const Configuration& configuration) :
 		Resource(id, configuration),
-		music_{},
-		musicLoaded_(false)
+		music_{}
 	{
 		HARMONY_DEBUG("Music resource created with ID: {}", id);
 	}
 
 	Music::~Music()
 	{
-		if (musicLoaded_)
+		if (loaded_)
 		{
 			UnloadMusicStream(music_);
-			musicLoaded_ = false;
+			loaded_ = false;
 		}
 	}
 
@@ -53,8 +52,7 @@ namespace Harmony::Resources
 			throw Exceptions::MusicLoadException(filepath, "Raylib LoadMusicStream returned invalid music data");
 		}
 
-		musicLoaded_ = true;
-		setAvailable(true);
+		loaded_ = true;
 		HARMONY_INFO("Music resource loaded successfully from: {}", filepath);
 	}
 
@@ -64,12 +62,11 @@ namespace Harmony::Resources
 
 		HARMONY_DEBUG("Unloading music resource");
 
-		if (musicLoaded_)
+		if (loaded_)
 		{
 			UnloadMusicStream(music_);
 			music_ = ::Music{};
-			musicLoaded_ = false;
-			setAvailable(false);
+			loaded_ = false;
 			HARMONY_INFO("Music resource unloaded successfully");
 		}
 		else

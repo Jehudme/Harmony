@@ -10,18 +10,17 @@ namespace Harmony::Resources
 
 	Materials::Materials(ResourceID id, const Configuration& configuration) :
 		Resource(id, configuration),
-		material_{},
-		materialLoaded_(false)
+		material_{}
 	{
 		HARMONY_DEBUG("Materials resource created with ID: {}", id);
 	}
 
 	Materials::~Materials()
 	{
-		if (materialLoaded_)
+		if (loaded_)
 		{
 			UnloadMaterial(material_);
-			materialLoaded_ = false;
+			loaded_ = false;
 		}
 	}
 
@@ -38,8 +37,7 @@ namespace Harmony::Resources
 
 		material_ = LoadMaterialDefault();
 
-		materialLoaded_ = true;
-		setAvailable(true);
+		loaded_ = true;
 		HARMONY_INFO("Materials resource loaded successfully");
 	}
 
@@ -49,12 +47,11 @@ namespace Harmony::Resources
 
 		HARMONY_DEBUG("Unloading materials resource");
 
-		if (materialLoaded_)
+		if (loaded_)
 		{
 			UnloadMaterial(material_);
 			material_ = Material{};
-			materialLoaded_ = false;
-			setAvailable(false);
+			loaded_ = false;
 			HARMONY_INFO("Materials resource unloaded successfully");
 		}
 		else

@@ -20,6 +20,5 @@ namespace Harmony::Resources
 
 	private:
 		Material material_;
-		bool materialLoaded_;
 	};
 }

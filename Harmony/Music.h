@@ -20,6 +20,5 @@ namespace Harmony::Resources
 
 	private:
 		::Music music_;
-		bool musicLoaded_;
 	};
 }

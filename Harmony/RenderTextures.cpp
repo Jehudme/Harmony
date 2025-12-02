@@ -10,18 +10,17 @@ namespace Harmony::Resources
 
 	RenderTextures::RenderTextures(ResourceID id, const Configuration& configuration) :
 		Resource(id, configuration),
-		renderTexture_{},
-		renderTextureLoaded_(false)
+		renderTexture_{}
 	{
 		HARMONY_DEBUG("RenderTextures resource created with ID: {}", id);
 	}
 
 	RenderTextures::~RenderTextures()
 	{
-		if (renderTextureLoaded_)
+		if (loaded_)
 		{
 			UnloadRenderTexture(renderTexture_);
-			renderTextureLoaded_ = false;
+			loaded_ = false;
 		}
 	}
 
@@ -62,8 +61,7 @@ namespace Harmony::Resources
 			throw Exceptions::RenderTextureLoadException("Raylib LoadRenderTexture returned invalid texture ID");
 		}
 
-		renderTextureLoaded_ = true;
-		setAvailable(true);
+		loaded_ = true;
 		HARMONY_INFO("RenderTextures resource loaded successfully with dimensions: {}x{}", width, height);
 	}
 
@@ -73,12 +71,11 @@ namespace Harmony::Resources
 
 		HARMONY_DEBUG("Unloading render textures resource");
 
-		if (renderTextureLoaded_)
+		if (loaded_)
 		{
 			UnloadRenderTexture(renderTexture_);
 			renderTexture_ = RenderTexture2D{};
-			renderTextureLoaded_ = false;
-			setAvailable(false);
+			loaded_ = false;
 			HARMONY_INFO("RenderTextures resource unloaded successfully");
 		}
 		else

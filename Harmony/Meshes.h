@@ -20,6 +20,5 @@ namespace Harmony::Resources
 
 	private:
 		Mesh mesh_;
-		bool meshLoaded_;
 	};
 }

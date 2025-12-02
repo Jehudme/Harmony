@@ -20,6 +20,5 @@ namespace Harmony::Resources
 
 	private:
 		Wave wave_;
-		bool waveLoaded_;
 	};
 }
