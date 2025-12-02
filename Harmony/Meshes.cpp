@@ -34,32 +34,61 @@ namespace Harmony::Resources
 	{
 		std::lock_guard<std::shared_mutex> lock(Resource::mutex_);
 
-		std::optional<std::string> filepathOpt = configuration_.get<std::string>({ "filepath" });
+		std::optional<std::string> meshTypeOpt = configuration_.get<std::string>({ "meshType" });
 
-		if (!filepathOpt.has_value())
+		if (!meshTypeOpt.has_value())
 		{
-			HARMONY_ERROR("Meshes resource load failed: 'filepath' not specified in configuration");
-			throw Exceptions::ConfigurationException("'filepath' not specified in configuration");
+			HARMONY_ERROR("Meshes resource load failed: 'meshType' not specified in configuration");
+			throw Exceptions::ConfigurationException("'meshType' must be specified in configuration");
 		}
 
-		std::string filepath = filepathOpt.value();
-		HARMONY_DEBUG("Loading mesh from file: {}", filepath);
+		std::string meshType = meshTypeOpt.value();
+		HARMONY_DEBUG("Loading mesh of type: {}", meshType);
 
-		Model tempModel = LoadModel(filepath.c_str());
-
-		if (tempModel.meshCount == 0 || tempModel.meshes == nullptr)
+		if (meshType == "plane")
 		{
-			UnloadModel(tempModel);
-			HARMONY_ERROR("Failed to load mesh from file: {}", filepath);
-			throw Exceptions::MeshLoadException(filepath, "Raylib LoadModel returned no meshes");
+			float width = configuration_.get<float>({ "width" }).value_or(1.0f);
+			float length = configuration_.get<float>({ "length" }).value_or(1.0f);
+			int resX = configuration_.get<int>({ "resX" }).value_or(1);
+			int resZ = configuration_.get<int>({ "resZ" }).value_or(1);
+			mesh_ = GenMeshPlane(width, length, resX, resZ);
+		}
+		else if (meshType == "cube")
+		{
+			float width = configuration_.get<float>({ "width" }).value_or(1.0f);
+			float height = configuration_.get<float>({ "height" }).value_or(1.0f);
+			float length = configuration_.get<float>({ "length" }).value_or(1.0f);
+			mesh_ = GenMeshCube(width, height, length);
+		}
+		else if (meshType == "sphere")
+		{
+			float radius = configuration_.get<float>({ "radius" }).value_or(1.0f);
+			int rings = configuration_.get<int>({ "rings" }).value_or(16);
+			int slices = configuration_.get<int>({ "slices" }).value_or(16);
+			mesh_ = GenMeshSphere(radius, rings, slices);
+		}
+		else if (meshType == "cylinder")
+		{
+			float radius = configuration_.get<float>({ "radius" }).value_or(1.0f);
+			float height = configuration_.get<float>({ "height" }).value_or(1.0f);
+			int slices = configuration_.get<int>({ "slices" }).value_or(16);
+			mesh_ = GenMeshCylinder(radius, height, slices);
+		}
+		else
+		{
+			HARMONY_ERROR("Unsupported mesh type: {}", meshType);
+			throw Exceptions::InvalidArgumentException("meshType", std::format("Unsupported mesh type: {}", meshType));
 		}
 
-		mesh_ = tempModel.meshes[0];
-		UploadMesh(&mesh_, false);
+		if (mesh_.vertexCount == 0)
+		{
+			HARMONY_ERROR("Failed to generate mesh of type: {}", meshType);
+			throw Exceptions::MeshLoadException(meshType, "Raylib mesh generation failed");
+		}
 
 		meshLoaded_ = true;
 		setAvailable(true);
-		HARMONY_INFO("Meshes resource loaded successfully from: {}", filepath);
+		HARMONY_INFO("Meshes resource loaded successfully with type: {}", meshType);
 	}
 
 	void Meshes::unload()

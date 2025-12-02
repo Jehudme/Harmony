@@ -38,12 +38,6 @@ namespace Harmony::Resources
 
 		material_ = LoadMaterialDefault();
 
-		if (material_.maps == nullptr)
-		{
-			HARMONY_ERROR("Failed to load default material");
-			throw Exceptions::MaterialLoadException("Raylib LoadMaterialDefault returned null maps");
-		}
-
 		materialLoaded_ = true;
 		setAvailable(true);
 		HARMONY_INFO("Materials resource loaded successfully");
