@@ -36,7 +36,7 @@ namespace Harmony::Internals
         std::atomic<std::size_t> activeWorkerCount_;
 
         bool running_;
-		Engine& engine_;
+        Engine& engine_;
     };
 
     struct TasksHandler::WorkerPool::Worker {
@@ -46,14 +46,11 @@ namespace Harmony::Internals
         Worker(Engine& engine, priorityQueue& tasks, bool& running_, std::mutex& mutex, std::condition_variable& condition);
         ~Worker();
 
-        // Prevent copying
         Worker(const Worker&) = delete;
         Worker& operator=(const Worker&) = delete;
 
-        // Allow moving
         Worker(Worker&&) noexcept = default;
         Worker& operator=(Worker&&) noexcept = default;
-
 
     private:
         static void run(Engine& engine, Worker& worker);
@@ -71,8 +68,8 @@ namespace Harmony::Internals
 
     TasksHandler::WorkerPool::WorkerPool(Engine& engine) : 
         activeWorkerCount_(0),
-		running_(false),
-		engine_(engine)
+        running_(false),
+        engine_(engine)
     {
     }
 
@@ -83,12 +80,14 @@ namespace Harmony::Internals
         running_ = false;
         condition_.notify_all();
         
-        HARMONY_DEBUG("Clearing {} workers", workers_.size());
-		workers_.clear();
+        std::size_t workerCount = workers_.size();
+        HARMONY_DEBUG("Clearing {} workers", workerCount);
+        workers_.clear();
         
-		std::unique_lock<std::mutex> lock(slowTasksDeleteMutex_);
-        HARMONY_DEBUG("Waiting for active workers to complete (current count: {})", activeWorkerCount_.load());
-		slowTasksDeleteCondition_.wait(lock, [this]() { return activeWorkerCount_ == 0; });
+        std::unique_lock<std::mutex> lock(slowTasksDeleteMutex_);
+        std::size_t activeCount = activeWorkerCount_.load();
+        HARMONY_DEBUG("Waiting for active workers to complete (current count: {})", activeCount);
+        slowTasksDeleteCondition_.wait(lock, [this]() { return activeWorkerCount_ == 0; });
         
         HARMONY_INFO("WorkerPool shutdown complete");
     }
@@ -100,7 +99,7 @@ namespace Harmony::Internals
         unsigned int workerCount = std::thread::hardware_concurrency();
         if (workerCount == 0) {
             HARMONY_WARN("Unable to detect hardware concurrency, falling back to 4 workers");
-            workerCount = 4; // Fallback to 4 workers if unable to detect
+            workerCount = 4;
         }
 
         HARMONY_INFO("Creating {} worker threads", workerCount);
@@ -108,17 +107,20 @@ namespace Harmony::Internals
 
         try {
             for (unsigned int workerIndex = 0; workerIndex < workerCount; workerIndex++) {
-                HARMONY_DEBUG("Creating worker thread {}/{}", workerIndex + 1, workerCount);
+                unsigned int workerNumber = workerIndex + 1;
+                HARMONY_DEBUG("Creating worker thread {}/{}", workerNumber, workerCount);
                 std::unique_ptr<Worker> worker = std::make_unique<Worker>(engine_, tasks_, running_, mutex_, condition_);
                 workers_.emplace_back(std::move(worker));
             }
-            HARMONY_INFO("WorkerPool initialized successfully with {} workers", workerCount);
+            std::size_t finalWorkerCount = workers_.size();
+            HARMONY_INFO("WorkerPool initialized successfully with {} workers", finalWorkerCount);
         }
         catch (const std::exception& e) {
-            HARMONY_CRITICAL("Failed to initialize WorkerPool: {}", e.what());
-            throw Exceptions::WorkerPoolException("initialization", e.what());
+            std::string errorMessage = e.what();
+            HARMONY_CRITICAL("Failed to initialize WorkerPool: {}", errorMessage);
+            throw Exceptions::WorkerPoolException("initialization", errorMessage);
         }
-	}
+    }
 
     void TasksHandler::WorkerPool::submit(Tasks::Task_t* task)
     {
@@ -129,8 +131,9 @@ namespace Harmony::Internals
             throw Exceptions::InvalidTaskException("Task pointer is null");
         }
 
-        HARMONY_DEBUG("Submitting task with priority {} and mode {} to WorkerPool", 
-                     task->priority, static_cast<int>(task->mode));
+        uint16_t taskPriority = task->priority;
+        int taskMode = static_cast<int>(task->mode);
+        HARMONY_DEBUG("Submitting task with priority {} and mode {} to WorkerPool", taskPriority, taskMode);
         
         try {
             {
@@ -141,8 +144,9 @@ namespace Harmony::Internals
             HARMONY_TRACE("Task submitted successfully to WorkerPool");
         }
         catch (const std::exception& e) {
-            HARMONY_ERROR("Failed to submit task to WorkerPool: {}", e.what());
-            throw Exceptions::TaskSubmissionException(e.what());
+            std::string errorMessage = e.what();
+            HARMONY_ERROR("Failed to submit task to WorkerPool: {}", errorMessage);
+            throw Exceptions::TaskSubmissionException(errorMessage);
         }
     }
 
@@ -158,7 +162,7 @@ namespace Harmony::Internals
         std::mutex& mutex,
         std::condition_variable& condition)
         : 
-		currentTask_(nullptr),
+        currentTask_(nullptr),
         tasks_(tasks),
         running_(running_),
         mutex_(mutex),
@@ -166,7 +170,8 @@ namespace Harmony::Internals
         thread_([&engine, worker = std::ref(*this)]() { Worker::run(engine, worker); })
     {
         HARMONY_TRACE("Worker thread created");
-        HARMONY_ASSERT(thread_.joinable(), "Worker thread must be joinable");
+        bool isJoinable = thread_.joinable();
+        HARMONY_ASSERT(isJoinable, "Worker thread must be joinable");
     }
 
     TasksHandler::WorkerPool::Worker::~Worker()
@@ -181,13 +186,15 @@ namespace Harmony::Internals
     void TasksHandler::WorkerPool::Worker::run(Engine& engine, Worker& worker)
     {
         HARMONY_ASSERT_NOT_NULL(engine.tasksHandler, "Engine tasksHandler is null");
-        HARMONY_ASSERT_NOT_NULL(engine.tasksHandler->workerPool_.get(), "WorkerPool is null");
         
-        auto& activeWorkerCountRef = engine.tasksHandler->workerPool_->activeWorkerCount_;
-		auto& slowTasksDeleteCondition = engine.tasksHandler->workerPool_->slowTasksDeleteCondition_;
+        WorkerPool* workerPoolPtr = engine.tasksHandler->workerPool_.get();
+        HARMONY_ASSERT_NOT_NULL(workerPoolPtr, "WorkerPool is null");
+        
+        std::atomic<std::size_t>& activeWorkerCountRef = workerPoolPtr->activeWorkerCount_;
+        std::condition_variable& slowTasksDeleteCondition = workerPoolPtr->slowTasksDeleteCondition_;
 
         HARMONY_DEBUG("Worker thread starting");
-		activeWorkerCountRef++;
+        activeWorkerCountRef++;
         
         try {
             while (true)
@@ -195,34 +202,43 @@ namespace Harmony::Internals
                 std::unique_lock<std::mutex> lock(worker.mutex_);
                 worker.condition_.wait(lock, [&worker] { return !worker.running_ || !worker.tasks_.empty(); });
 
-                if (!worker.running_ && worker.tasks_.empty()) { 
+                bool isRunning = worker.running_;
+                bool hasNoTasks = worker.tasks_.empty();
+                
+                if (!isRunning && hasNoTasks) { 
                     HARMONY_DEBUG("Worker thread exiting gracefully");
                     break; 
                 }
 
-                HARMONY_ASSERT(!worker.tasks_.empty(), "Tasks queue should not be empty at this point");
+                bool hasTasks = !worker.tasks_.empty();
+                HARMONY_ASSERT(hasTasks, "Tasks queue should not be empty at this point");
 
                 worker.currentTask_ = worker.tasks_.top();
                 worker.tasks_.pop();                       
 
                 lock.unlock();
 
-				HARMONY_ASSERT_NOT_NULL(worker.currentTask_, "Current task is null");
+                HARMONY_ASSERT_NOT_NULL(worker.currentTask_, "Current task is null");
 
-                HARMONY_TRACE("Worker processing task with priority {} and mode {}", 
-                             worker.currentTask_->priority, static_cast<int>(worker.currentTask_->mode));
+                uint16_t taskPriority = worker.currentTask_->priority;
+                int taskMode = static_cast<int>(worker.currentTask_->mode);
+                HARMONY_TRACE("Worker processing task with priority {} and mode {}", taskPriority, taskMode);
 
-                switch (worker.currentTask_->mode) {
-			    case Tasks::Task_t::Mode::FastMultiThreaded:
+                Tasks::Task_t::Mode currentTaskMode = worker.currentTask_->mode;
+                
+                switch (currentTaskMode) {
+                case Tasks::Task_t::Mode::FastMultiThreaded:
                     try {
                         runTask(engine, worker.currentTask_);
                         HARMONY_TRACE("FastMultiThreaded task completed successfully");
                     }
                     catch (const Exceptions::HarmonyException& e) {
-                        HARMONY_ERROR("FastMultiThreaded task failed with HarmonyException: {}", e.what());
+                        std::string errorMessage = e.what();
+                        HARMONY_ERROR("FastMultiThreaded task failed with HarmonyException: {}", errorMessage);
                     }
                     catch (const std::exception& e) {
-                        HARMONY_ERROR("FastMultiThreaded task failed with exception: {}", e.what());
+                        std::string errorMessage = e.what();
+                        HARMONY_ERROR("FastMultiThreaded task failed with exception: {}", errorMessage);
                     }
                     catch (...) {
                         HARMONY_CRITICAL("FastMultiThreaded task failed with unknown exception");
@@ -232,7 +248,7 @@ namespace Harmony::Internals
                 case Tasks::Task_t::Mode::SlowMultiThreaded:
                     HARMONY_DEBUG("Spawning detached thread for SlowMultiThreaded task");
                     std::thread([&engine, &worker, &activeWorkerCountRef, &slowTasksDeleteCondition]() {
-					    activeWorkerCountRef++;
+                        activeWorkerCountRef++;
                         HARMONY_TRACE("SlowMultiThreaded task thread started");
                         
                         try { 
@@ -240,36 +256,40 @@ namespace Harmony::Internals
                             HARMONY_TRACE("SlowMultiThreaded task completed successfully");
                         }
                         catch (const Exceptions::HarmonyException& e) {
-                            HARMONY_ERROR("SlowMultiThreaded task failed with HarmonyException: {}", e.what());
+                            std::string errorMessage = e.what();
+                            HARMONY_ERROR("SlowMultiThreaded task failed with HarmonyException: {}", errorMessage);
                         }
                         catch (const std::exception& e) {
-                            HARMONY_ERROR("SlowMultiThreaded task failed with exception: {}", e.what());
+                            std::string errorMessage = e.what();
+                            HARMONY_ERROR("SlowMultiThreaded task failed with exception: {}", errorMessage);
                         }
                         catch (...) {
                             HARMONY_CRITICAL("SlowMultiThreaded task failed with unknown exception");
                         }
                         
                         activeWorkerCountRef--;
-					    slowTasksDeleteCondition.notify_all();
+                        slowTasksDeleteCondition.notify_all();
                         HARMONY_TRACE("SlowMultiThreaded task thread exiting");
                     }).detach();
                     break;
 
                 default:
-                    HARMONY_ERROR("Invalid task mode: {}", static_cast<int>(worker.currentTask_->mode));
+                    int invalidMode = static_cast<int>(worker.currentTask_->mode);
+                    HARMONY_ERROR("Invalid task mode: {}", invalidMode);
                     break;
                 }
             }
         }
         catch (const std::exception& e) {
-            HARMONY_CRITICAL("Worker thread crashed with exception: {}", e.what());
+            std::string errorMessage = e.what();
+            HARMONY_CRITICAL("Worker thread crashed with exception: {}", errorMessage);
         }
         catch (...) {
             HARMONY_CRITICAL("Worker thread crashed with unknown exception");
         }
         
-		activeWorkerCountRef--;
-		slowTasksDeleteCondition.notify_all();
+        activeWorkerCountRef--;
+        slowTasksDeleteCondition.notify_all();
         HARMONY_DEBUG("Worker thread exiting");
     }
 
@@ -281,20 +301,23 @@ namespace Harmony::Internals
             throw Exceptions::InvalidTaskException("Task pointer is null");
         }
         
-        HARMONY_TRACE("Running task with priority {}", task->priority);
+        uint16_t taskPriority = task->priority;
+        HARMONY_TRACE("Running task with priority {}", taskPriority);
         
         try {
             task->start(engine);
         }
         catch (const Exceptions::HarmonyException& e) {
-            HARMONY_ERROR("Task execution failed with HarmonyException: {}", e.what());
-            throw Exceptions::TaskExecutionException(
-                std::format("priority={}", task->priority), e.what());
+            std::string errorMessage = e.what();
+            HARMONY_ERROR("Task execution failed with HarmonyException: {}", errorMessage);
+            std::string taskInfo = std::format("priority={}", taskPriority);
+            throw Exceptions::TaskExecutionException(taskInfo, errorMessage);
         }
         catch (const std::exception& e) {
-            HARMONY_ERROR("Task execution failed with exception: {}", e.what());
-            throw Exceptions::TaskExecutionException(
-                std::format("priority={}", task->priority), e.what());
+            std::string errorMessage = e.what();
+            HARMONY_ERROR("Task execution failed with exception: {}", errorMessage);
+            std::string taskInfo = std::format("priority={}", taskPriority);
+            throw Exceptions::TaskExecutionException(taskInfo, errorMessage);
         }
     }
 
@@ -309,25 +332,26 @@ namespace Harmony::Internals
             HARMONY_INFO("TasksHandler initialized successfully");
         }
         catch (const std::exception& e) {
-            HARMONY_CRITICAL("TasksHandler initialization failed: {}", e.what());
+            std::string errorMessage = e.what();
+            HARMONY_CRITICAL("TasksHandler initialization failed: {}", errorMessage);
             throw;
         }
         HARMONY_INFO("TasksHandler started successfully");
-  }
+    }
 
     TasksHandler::~TasksHandler() {
-		stop();
+        stop();
     }
 
     void TasksHandler::start() {
-		workerPool_->start();
+        workerPool_->start();
     }
 
     void TasksHandler::stop() {
         HARMONY_INFO("Stopping TasksHandler");
         workerPool_.reset();
-		HARMONY_INFO("TasksHandler stopped successfully");
-	}
+        HARMONY_INFO("TasksHandler stopped successfully");
+    }
 
     void TasksHandler::submit(std::unique_ptr<Tasks::Task_t> task)
     {
@@ -338,23 +362,26 @@ namespace Harmony::Internals
             throw Exceptions::InvalidTaskException("Task unique_ptr is null");
         }
 
-        HARMONY_DEBUG("Submitting task with priority {}", task->priority);
+        uint16_t taskPriority = task->priority;
+        HARMONY_DEBUG("Submitting task with priority {}", taskPriority);
 
-        // Immediate execution
-        if (task->priority == 0) {
+        if (taskPriority == 0) {
             HARMONY_DEBUG("Task has priority 0, executing immediately");
-            handleTask(task.release());
+            Tasks::Task_t* taskPtr = task.release();
+            handleTask(taskPtr);
             return;
         }
 
         try {
             std::lock_guard<std::mutex> lock(mutex_);
-            tasks_.emplace(task.release());
+            Tasks::Task_t* taskPtr = task.release();
+            tasks_.emplace(taskPtr);
             HARMONY_TRACE("Task added to queue");
         }
         catch (const std::exception& e) {
-            HARMONY_ERROR("Failed to add task to queue: {}", e.what());
-            throw Exceptions::TaskSubmissionException(e.what());
+            std::string errorMessage = e.what();
+            HARMONY_ERROR("Failed to add task to queue: {}", errorMessage);
+            throw Exceptions::TaskSubmissionException(errorMessage);
         }
     }
 
@@ -366,7 +393,8 @@ namespace Harmony::Internals
             Tasks::Task_t* task;
             {
                 std::lock_guard<std::mutex> lock(mutex_);
-                if (tasks_.empty()) {
+                bool hasNoTasks = tasks_.empty();
+                if (hasNoTasks) {
                     HARMONY_TRACE("No more tasks to handle");
                     break;
                 }
@@ -380,7 +408,8 @@ namespace Harmony::Internals
                 continue;
             }
 
-            HARMONY_DEBUG("Handling task with priority {}", task->priority);
+            uint16_t taskPriority = task->priority;
+            HARMONY_DEBUG("Handling task with priority {}", taskPriority);
             handleTask(task);
         }
     }
@@ -394,16 +423,20 @@ namespace Harmony::Internals
             throw Exceptions::InvalidTaskException("Task pointer is null");
         }
 
-        HARMONY_DEBUG("Processing task with mode {}", static_cast<int>(task->mode));
+        int taskMode = static_cast<int>(task->mode);
+        HARMONY_DEBUG("Processing task with mode {}", taskMode);
 
-        switch (task->mode) {
+        Tasks::Task_t::Mode currentTaskMode = task->mode;
+        
+        switch (currentTaskMode) {
         case Tasks::Task_t::Mode::SingleThreaded:
             HARMONY_TRACE("Executing SingleThreaded task");
             try {
-			    runTask(engine_, task);
+                runTask(engine_, task);
             }
             catch (const std::exception& e) {
-                HARMONY_ERROR("SingleThreaded task execution failed: {}", e.what());
+                std::string errorMessage = e.what();
+                HARMONY_ERROR("SingleThreaded task execution failed: {}", errorMessage);
                 throw;
             }
             break;
@@ -411,26 +444,29 @@ namespace Harmony::Internals
         case Tasks::Task_t::Mode::FastMultiThreaded:
         case Tasks::Task_t::Mode::SlowMultiThreaded:
             HARMONY_TRACE("Submitting task to WorkerPool");
-            HARMONY_ASSERT_NOT_NULL(workerPool_.get(), "WorkerPool is null");
-            workerPool_->submit(task);
+            WorkerPool* workerPoolPtr = workerPool_.get();
+            HARMONY_ASSERT_NOT_NULL(workerPoolPtr, "WorkerPool is null");
+            workerPoolPtr->submit(task);
             break;
 
         default:
-            HARMONY_ERROR("Invalid task mode: {}", static_cast<int>(task->mode));
-            throw Exceptions::InvalidTaskModeException(
-                std::format("mode={}", static_cast<int>(task->mode)));
+            int invalidMode = static_cast<int>(task->mode);
+            HARMONY_ERROR("Invalid task mode: {}", invalidMode);
+            std::string modeString = std::format("mode={}", invalidMode);
+            throw Exceptions::InvalidTaskModeException(modeString);
         }
     }
 
     std::size_t TasksHandler::getActiveWorkerCount() const
     {
-        HARMONY_ASSERT_NOT_NULL(workerPool_.get(), "WorkerPool is null");
+        WorkerPool* workerPoolPtr = workerPool_.get();
+        HARMONY_ASSERT_NOT_NULL(workerPoolPtr, "WorkerPool is null");
         
-        if (!workerPool_) {
+        if (!workerPoolPtr) {
             HARMONY_ERROR("Cannot get active worker count: WorkerPool is null");
             throw Exceptions::WorkerPoolException("getActiveWorkerCount", "WorkerPool is null");
         }
         
-        return workerPool_->getActiveWorkerCount();
+        return workerPoolPtr->getActiveWorkerCount();
     }
 }

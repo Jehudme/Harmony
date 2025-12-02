@@ -11,23 +11,21 @@ namespace Harmony::Internals
     {
         HARMONY_INFO("Initializing WindowHandler");
 
-        // Read configuration values with validation
-        std::optional<int> width                    = configuration.get<uint8_t>({ "size", "width" });
-        std::optional<int> height                   = configuration.get<uint8_t>({ "size", "height" });
-        std::optional<std::string> title            = configuration.get<std::string>({ "title" });
-        std::optional<bool> fullscreen              = configuration.get<bool>({ "fullscreen" });
-        std::optional<bool> resizable               = configuration.get<bool>({ "resizable" });
-        std::optional<bool> vsync                   = configuration.get<bool>({ "vsync" });
-        std::optional<int> targetFPS                = configuration.get<int>({ "targetFPS" });
-        std::optional<bool> hidden                  = configuration.get<bool>({ "hidden" });
-        std::optional<bool> borderless              = configuration.get<bool>({ "borderless" });
-        std::optional<bool> alwaysOnTop             = configuration.get<bool>({ "alwaysOnTop" });
-        std::optional<bool> transparent             = configuration.get<bool>({ "transparent" });
-        std::optional<bool> highdpi                 = configuration.get<bool>({ "highdpi" });
-        std::optional<bool> msaa4x                  = configuration.get<bool>({ "msaa4x" });
-        std::optional<bool> interlaced              = configuration.get<bool>({ "interlaced" });
+        std::optional<int> width = configuration.get<uint8_t>({ "size", "width" });
+        std::optional<int> height = configuration.get<uint8_t>({ "size", "height" });
+        std::optional<std::string> title = configuration.get<std::string>({ "title" });
+        std::optional<bool> fullscreen = configuration.get<bool>({ "fullscreen" });
+        std::optional<bool> resizable = configuration.get<bool>({ "resizable" });
+        std::optional<bool> vsync = configuration.get<bool>({ "vsync" });
+        std::optional<int> targetFPS = configuration.get<int>({ "targetFPS" });
+        std::optional<bool> hidden = configuration.get<bool>({ "hidden" });
+        std::optional<bool> borderless = configuration.get<bool>({ "borderless" });
+        std::optional<bool> alwaysOnTop = configuration.get<bool>({ "alwaysOnTop" });
+        std::optional<bool> transparent = configuration.get<bool>({ "transparent" });
+        std::optional<bool> highdpi = configuration.get<bool>({ "highdpi" });
+        std::optional<bool> msaa4x = configuration.get<bool>({ "msaa4x" });
+        std::optional<bool> interlaced = configuration.get<bool>({ "interlaced" });
 
-        // Validate window size
         int windowWidth = width.value_or(800);
         int windowHeight = height.value_or(600);
 
@@ -44,14 +42,14 @@ namespace Harmony::Internals
             windowHeight = std::clamp(windowHeight, 1, 4320);
         }
 
-        // Store title
         if (title.has_value()) {
-            title_ = title.value();
+            std::string titleValue = title.value();
+            title_ = titleValue;
         }
 
-        // Store target FPS
         if (targetFPS.has_value()) {
-            targetFPS_ = targetFPS.value();
+            int fpsValue = targetFPS.value();
+            targetFPS_ = fpsValue;
             HARMONY_ASSERT_RANGE(targetFPS_, 1, 1000, "Target FPS out of valid range");
             if (targetFPS_ < 1 || targetFPS_ > 1000) {
                 HARMONY_WARN("Invalid target FPS {}, clamping to valid range [1, 1000]", targetFPS_);
@@ -61,35 +59,35 @@ namespace Harmony::Internals
 
         HARMONY_INFO("Creating window: {}x{}, title: '{}'", windowWidth, windowHeight, title_);
 
-        // Set window flags before initialization
         unsigned int flags = 0;
-        if (resizable.value_or(false))              flags |= FLAG_WINDOW_RESIZABLE;
-        if (borderless.value_or(false))             flags |= FLAG_WINDOW_UNDECORATED;
-        if (hidden.value_or(false))                 flags |= FLAG_WINDOW_HIDDEN;
-        if (transparent.value_or(false))            flags |= FLAG_WINDOW_TRANSPARENT;
-        if (highdpi.value_or(false))                flags |= FLAG_WINDOW_HIGHDPI;
-        if (alwaysOnTop.value_or(false))            flags |= FLAG_WINDOW_TOPMOST;
-        if (vsync.value_or(false))                  flags |= FLAG_VSYNC_HINT;
-        if (msaa4x.value_or(false))                 flags |= FLAG_MSAA_4X_HINT;
-        if (interlaced.value_or(false))             flags |= FLAG_INTERLACED_HINT;
+        if (resizable.value_or(false)) flags |= FLAG_WINDOW_RESIZABLE;
+        if (borderless.value_or(false)) flags |= FLAG_WINDOW_UNDECORATED;
+        if (hidden.value_or(false)) flags |= FLAG_WINDOW_HIDDEN;
+        if (transparent.value_or(false)) flags |= FLAG_WINDOW_TRANSPARENT;
+        if (highdpi.value_or(false)) flags |= FLAG_WINDOW_HIGHDPI;
+        if (alwaysOnTop.value_or(false)) flags |= FLAG_WINDOW_TOPMOST;
+        if (vsync.value_or(false)) flags |= FLAG_VSYNC_HINT;
+        if (msaa4x.value_or(false)) flags |= FLAG_MSAA_4X_HINT;
+        if (interlaced.value_or(false)) flags |= FLAG_INTERLACED_HINT;
 
         if (flags != 0) {
             HARMONY_DEBUG("Setting window flags: 0x{:X}", flags);
             SetConfigFlags(flags);
         }
 
-        // Initialize window
         try {
-            InitWindow(windowWidth, windowHeight, title_.c_str());
+            const char* titleCStr = title_.c_str();
+            InitWindow(windowWidth, windowHeight, titleCStr);
             
-            if (!IsWindowReady()) {
+            bool windowReady = IsWindowReady();
+            if (!windowReady) {
                 throw Exceptions::WindowInitializationException("Window failed to initialize (IsWindowReady returned false)");
             }
 
             HARMONY_INFO("Window initialized successfully");
 
-            // Apply post-initialization settings
-            if (fullscreen.value_or(false)) {
+            bool shouldBeFullscreen = fullscreen.value_or(false);
+            if (shouldBeFullscreen) {
                 HARMONY_DEBUG("Toggling fullscreen mode");
                 ToggleFullscreen();
             }
@@ -103,14 +101,17 @@ namespace Harmony::Internals
             throw;
         }
         catch (const std::exception& e) {
-            HARMONY_CRITICAL("Window initialization failed with exception: {}", e.what());
-            throw Exceptions::WindowInitializationException(e.what());
+            std::string errorMessage = e.what();
+            HARMONY_CRITICAL("Window initialization failed with exception: {}", errorMessage);
+            throw Exceptions::WindowInitializationException(errorMessage);
         }
     }
 
     WindowHandler::~WindowHandler() {
         HARMONY_INFO("Destroying WindowHandler");
-        if (!WindowShouldClose() && IsWindowReady()) {
+        bool shouldClose = WindowShouldClose();
+        bool isReady = IsWindowReady();
+        if (!shouldClose && isReady) {
             CloseWindow();
             HARMONY_DEBUG("Window closed");
         }
@@ -133,7 +134,9 @@ namespace Harmony::Internals
     }
 
     Vector2i WindowHandler::getSize() const {
-        return { GetScreenWidth(), GetScreenHeight() };
+        int screenWidth = GetScreenWidth();
+        int screenHeight = GetScreenHeight();
+        return { screenWidth, screenHeight };
     }
 
     void WindowHandler::setMinSize(Vector2i minSize) {
@@ -156,14 +159,17 @@ namespace Harmony::Internals
     }
 
     Vector2f WindowHandler::getPosition() const {
-        return { GetWindowPosition().x, GetWindowPosition().y };
+        Vector2 windowPosition = GetWindowPosition();
+        return { windowPosition.x, windowPosition.y };
     }
 
     void WindowHandler::setTitle(const std::string& title) {
-        HARMONY_ASSERT(!title.empty(), "Window title cannot be empty");
+        bool titleEmpty = title.empty();
+        HARMONY_ASSERT(!titleEmpty, "Window title cannot be empty");
         HARMONY_DEBUG("Setting window title to '{}'", title);
         title_ = title;
-        SetWindowTitle(title.c_str());
+        const char* titleCStr = title.c_str();
+        SetWindowTitle(titleCStr);
     }
 
     std::string WindowHandler::getTitle() const {
@@ -195,11 +201,13 @@ namespace Harmony::Internals
     }
 
     bool WindowHandler::isResizable() const {
-        return IsWindowState(FLAG_WINDOW_RESIZABLE);
+        unsigned int resizableFlag = FLAG_WINDOW_RESIZABLE;
+        return IsWindowState(resizableFlag);
     }
 
     bool WindowHandler::isVSyncEnabled() const {
-        return IsWindowState(FLAG_VSYNC_HINT);
+        unsigned int vsyncFlag = FLAG_VSYNC_HINT;
+        return IsWindowState(vsyncFlag);
     }
 
     void WindowHandler::toggleFullscreen() {
@@ -224,46 +232,51 @@ namespace Harmony::Internals
 
     void WindowHandler::setResizable(bool resizable) {
         HARMONY_DEBUG("Setting window resizable: {}", resizable);
+        unsigned int resizableFlag = FLAG_WINDOW_RESIZABLE;
         if (resizable) {
-            SetWindowState(FLAG_WINDOW_RESIZABLE);
+            SetWindowState(resizableFlag);
         } else {
-            ClearWindowState(FLAG_WINDOW_RESIZABLE);
+            ClearWindowState(resizableFlag);
         }
     }
 
     void WindowHandler::setVSync(bool vsync) {
         HARMONY_DEBUG("Setting VSync: {}", vsync);
+        unsigned int vsyncFlag = FLAG_VSYNC_HINT;
         if (vsync) {
-            SetWindowState(FLAG_VSYNC_HINT);
+            SetWindowState(vsyncFlag);
         } else {
-            ClearWindowState(FLAG_VSYNC_HINT);
+            ClearWindowState(vsyncFlag);
         }
     }
 
     void WindowHandler::setBorderless(bool borderless) {
         HARMONY_DEBUG("Setting borderless: {}", borderless);
+        unsigned int borderlessFlag = FLAG_WINDOW_UNDECORATED;
         if (borderless) {
-            SetWindowState(FLAG_WINDOW_UNDECORATED);
+            SetWindowState(borderlessFlag);
         } else {
-            ClearWindowState(FLAG_WINDOW_UNDECORATED);
+            ClearWindowState(borderlessFlag);
         }
     }
 
     void WindowHandler::setAlwaysOnTop(bool alwaysOnTop) {
         HARMONY_DEBUG("Setting always on top: {}", alwaysOnTop);
+        unsigned int topMostFlag = FLAG_WINDOW_TOPMOST;
         if (alwaysOnTop) {
-            SetWindowState(FLAG_WINDOW_TOPMOST);
+            SetWindowState(topMostFlag);
         } else {
-            ClearWindowState(FLAG_WINDOW_TOPMOST);
+            ClearWindowState(topMostFlag);
         }
     }
 
     void WindowHandler::setTransparent(bool transparent) {
         HARMONY_DEBUG("Setting transparent: {}", transparent);
+        unsigned int transparentFlag = FLAG_WINDOW_TRANSPARENT;
         if (transparent) {
-            SetWindowState(FLAG_WINDOW_TRANSPARENT);
+            SetWindowState(transparentFlag);
         } else {
-            ClearWindowState(FLAG_WINDOW_TRANSPARENT);
+            ClearWindowState(transparentFlag);
         }
     }
 
@@ -321,7 +334,11 @@ namespace Harmony::Internals
     }
 
     Vector2i WindowHandler::getMonitorSize(int monitor) const {
-        HARMONY_ASSERT_RANGE(monitor, 0, GetMonitorCount() - 1, "Monitor index out of range");
-        return { GetMonitorWidth(monitor), GetMonitorHeight(monitor) };
+        int monitorCount = GetMonitorCount();
+        int maxMonitorIndex = monitorCount - 1;
+        HARMONY_ASSERT_RANGE(monitor, 0, maxMonitorIndex, "Monitor index out of range");
+        int monitorWidth = GetMonitorWidth(monitor);
+        int monitorHeight = GetMonitorHeight(monitor);
+        return { monitorWidth, monitorHeight };
     }
 }
