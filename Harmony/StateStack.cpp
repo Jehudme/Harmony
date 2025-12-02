@@ -7,178 +7,226 @@
 
 namespace Harmony::Internals {
 
-	StateStack::StateStack(Engine& engine, const Configuration& configuration)
-		: engine_(engine), configuration_(configuration) {
-		HARMONY_INFO("Initializing StateStack");
+    StateStack::StateStack(Engine& engine, const Configuration& configuration)
+        : engine_(engine), configuration_(configuration) {
+        HARMONY_INFO("Initializing StateStack");
 
-		try {
-			HARMONY_ASSERT_NOT_NULL(&engine, "Engine reference cannot be null");
-			HARMONY_ASSERT_NOT_NULL(&configuration, "Configuration reference cannot be null");
+        try {
+            HARMONY_ASSERT_NOT_NULL(&engine, "Engine reference cannot be null");
+            HARMONY_ASSERT_NOT_NULL(&configuration, "Configuration reference cannot be null");
 
-			HARMONY_DEBUG("StateStack initialized successfully");
-		}
-		catch (const Exceptions::HarmonyException& e) {
-			HARMONY_CRITICAL("StateStack initialization failed with HarmonyException: {}", e.what());
-			throw Exceptions::StateStackOperationException("initialization", e.what());
-		}
-		catch (const std::exception& e) {
-			HARMONY_CRITICAL("StateStack initialization failed with exception: {}", e.what());
-			throw Exceptions::StateStackOperationException("initialization", e.what());
-		}
+            HARMONY_DEBUG("StateStack initialized successfully");
+        }
+        catch (const Exceptions::HarmonyException& e) {
+            std::string errorMessage = e.what();
+            HARMONY_CRITICAL("StateStack initialization failed with HarmonyException: {}", errorMessage);
+            throw Exceptions::StateStackOperationException("initialization", errorMessage);
+        }
+        catch (const std::exception& e) {
+            std::string errorMessage = e.what();
+            HARMONY_CRITICAL("StateStack initialization failed with exception: {}", errorMessage);
+            throw Exceptions::StateStackOperationException("initialization", errorMessage);
+        }
 
-		HARMONY_INFO("StateStack initialized successfully");
-	}
+        HARMONY_INFO("StateStack initialized successfully");
+    }
 
-	StateStack::~StateStack() {
-		HARMONY_INFO("Destroying StateStack");
-		std::lock_guard lock(mutex_);
-		
-		// Clear all states
-		HARMONY_DEBUG("Clearing {} states from stack", states_.size());
-		while (!states_.empty()) {
-			auto& state = states_.top();
-			if (state) {
-				state->onExit();
-			}
-			states_.pop();
-		}
-	}
+    StateStack::~StateStack() {
+        HARMONY_INFO("Destroying StateStack");
+        std::lock_guard lock(mutex_);
+        
+        std::size_t stateCount = states_.size();
+        HARMONY_DEBUG("Clearing {} states from stack", stateCount);
+        
+        while (!states_.empty()) {
+            std::unique_ptr<State>& state = states_.top();
+            if (state) {
+                try {
+                    state->onExit();
+                }
+                catch (const std::exception& e) {
+                    std::string errorMessage = e.what();
+                    std::string stateName = state->getName();
+                    HARMONY_ERROR("Error exiting state '{}': {}", stateName, errorMessage);
+                }
+            }
+            states_.pop();
+        }
+    }
 
-	void StateStack::push(std::unique_ptr<State> state) {
-		std::lock_guard lock(mutex_);
+    void StateStack::push(std::unique_ptr<State> state) {
+        std::lock_guard lock(mutex_);
 
-		HARMONY_ASSERT_NOT_NULL(state.get(), "Cannot push null state onto stack");
-		
-		if (!state) {
-			HARMONY_ERROR("Attempted to push null state onto StateStack");
-			throw Exceptions::NullStateException("push");
-		}
+        State* statePtr = state.get();
+        HARMONY_ASSERT_NOT_NULL(statePtr, "Cannot push null state onto stack");
+        
+        if (!state) {
+            HARMONY_ERROR("Attempted to push null state onto StateStack");
+            throw Exceptions::NullStateException("push");
+        }
 
-		try {
-			// Pause the current top state if it exists
-			if (!states_.empty() && states_.top()) {
-				HARMONY_DEBUG("Pausing current state: '{}'", states_.top()->getName());
-				states_.top()->onPause();
-			}
+        try {
+            bool hasStates = !states_.empty();
+            if (hasStates) {
+                State* topState = states_.top().get();
+                if (topState) {
+                    std::string topStateName = topState->getName();
+                    HARMONY_DEBUG("Pausing current state: '{}'", topStateName);
+                    topState->onPause();
+                }
+            }
 
-			// Push the new state
-			std::string stateName = state->getName();
-			states_.push(std::move(state));
-			
-			// Enter the new state
-			HARMONY_INFO("Pushing state '{}' onto stack (stack size: {})", stateName, states_.size());
-			states_.top()->onEnter();
-		}
-		catch (const Exceptions::StateException& e) {
-			HARMONY_ERROR("Failed to push state onto stack: {}", e.what());
-			throw Exceptions::StateStackOperationException("push", e.what());
-		}
-	}
+            std::string stateName = state->getName();
+            states_.push(std::move(state));
+            
+            std::size_t stackSize = states_.size();
+            HARMONY_INFO("Pushing state '{}' onto stack (stack size: {})", stateName, stackSize);
+            
+            State* newTopState = states_.top().get();
+            if (newTopState) {
+                newTopState->onEnter();
+            }
+        }
+        catch (const Exceptions::StateException& e) {
+            std::string errorMessage = e.what();
+            HARMONY_ERROR("Failed to push state onto stack: {}", errorMessage);
+            throw Exceptions::StateStackOperationException("push", errorMessage);
+        }
+    }
 
-	std::unique_ptr<State> StateStack::pop() {
-		std::lock_guard lock(mutex_);
+    std::unique_ptr<State> StateStack::pop() {
+        std::lock_guard lock(mutex_);
 
-		if (states_.empty()) {
-			HARMONY_WARN("Attempted to pop from empty StateStack");
-			throw Exceptions::EmptyStateStackException();
-		}
+        bool stackEmpty = states_.empty();
+        if (stackEmpty) {
+            HARMONY_WARN("Attempted to pop from empty StateStack");
+            throw Exceptions::EmptyStateStackException();
+        }
 
-		try {
-			// Get and exit the current state
-			auto state = std::move(states_.top());
-			states_.pop();
+        try {
+            std::unique_ptr<State> state = std::move(states_.top());
+            states_.pop();
 
-			std::string stateName = state ? state->getName() : "null";
-			HARMONY_INFO("Popping state '{}' from stack (stack size: {})", stateName, states_.size());
+            std::string stateName = state ? state->getName() : "null";
+            std::size_t stackSize = states_.size();
+            HARMONY_INFO("Popping state '{}' from stack (stack size: {})", stateName, stackSize);
 
-			if (state) {
-				state->onExit();
-			}
+            if (state) {
+                state->onExit();
+            }
 
-			// Resume the new top state if it exists
-			if (!states_.empty() && states_.top()) {
-				HARMONY_DEBUG("Resuming state: '{}'", states_.top()->getName());
-				states_.top()->onResume();
-			}
+            bool hasRemainingStates = !states_.empty();
+            if (hasRemainingStates) {
+                State* topState = states_.top().get();
+                if (topState) {
+                    std::string topStateName = topState->getName();
+                    HARMONY_DEBUG("Resuming state: '{}'", topStateName);
+                    topState->onResume();
+                }
+            }
 
-			return state;
-		}
-		catch (const Exceptions::StateException& e) {
-			HARMONY_ERROR("Failed to pop state from stack: {}", e.what());
-			throw Exceptions::StateStackOperationException("pop", e.what());
-		}
-	}
+            return state;
+        }
+        catch (const Exceptions::StateException& e) {
+            std::string errorMessage = e.what();
+            HARMONY_ERROR("Failed to pop state from stack: {}", errorMessage);
+            throw Exceptions::StateStackOperationException("pop", errorMessage);
+        }
+    }
 
-	State* StateStack::peek() const {
-		std::lock_guard lock(mutex_);
+    State* StateStack::peek() const {
+        std::lock_guard lock(mutex_);
 
-		if (states_.empty()) {
-			HARMONY_TRACE("StateStack is empty, peek returns nullptr");
-			return nullptr;
-		}
+        bool stackEmpty = states_.empty();
+        if (stackEmpty) {
+            HARMONY_TRACE("StateStack is empty, peek returns nullptr");
+            return nullptr;
+        }
 
-		HARMONY_TRACE("Peeking at top state: '{}'", states_.top()->getName());
-		return states_.top().get();
-	}
+        State* topState = states_.top().get();
+        if (topState) {
+            std::string topStateName = topState->getName();
+            HARMONY_TRACE("Peeking at top state: '{}'", topStateName);
+        }
+        return topState;
+    }
 
-	void StateStack::clear() {
-		std::lock_guard lock(mutex_);
+    void StateStack::clear() {
+        std::lock_guard lock(mutex_);
 
-		HARMONY_INFO("Clearing StateStack ({} states)", states_.size());
+        std::size_t stateCount = states_.size();
+        HARMONY_INFO("Clearing StateStack ({} states)", stateCount);
 
-		try {
-			while (!states_.empty()) {
-				auto& state = states_.top();
-				if (state) {
-					HARMONY_DEBUG("Exiting and removing state: '{}'", state->getName());
-					state->onExit();
-				}
-				states_.pop();
-			}
+        try {
+            while (!states_.empty()) {
+                std::unique_ptr<State>& state = states_.top();
+                if (state) {
+                    std::string stateName = state->getName();
+                    HARMONY_DEBUG("Exiting and removing state: '{}'", stateName);
+                    state->onExit();
+                }
+                states_.pop();
+            }
 
-			HARMONY_INFO("StateStack cleared successfully");
-		}
-		catch (const Exceptions::StateException& e) {
-			HARMONY_ERROR("Error during StateStack clear: {}", e.what());
-			throw Exceptions::StateStackOperationException("clear", e.what());
-		}
-	}
+            HARMONY_INFO("StateStack cleared successfully");
+        }
+        catch (const Exceptions::StateException& e) {
+            std::string errorMessage = e.what();
+            HARMONY_ERROR("Error during StateStack clear: {}", errorMessage);
+            throw Exceptions::StateStackOperationException("clear", errorMessage);
+        }
+    }
 
-	std::size_t StateStack::size() const {
-		std::lock_guard lock(mutex_);
-		return states_.size();
-	}
+    std::size_t StateStack::size() const {
+        std::lock_guard lock(mutex_);
+        return states_.size();
+    }
 
-	bool StateStack::isEmpty() const {
-		std::lock_guard lock(mutex_);
-		return states_.empty();
-	}
+    bool StateStack::isEmpty() const {
+        std::lock_guard lock(mutex_);
+        return states_.empty();
+    }
 
-	void StateStack::update(float deltaTime) {
-		std::lock_guard lock(mutex_);
+    void StateStack::update(float deltaTime) {
+        std::lock_guard lock(mutex_);
 
-		if (!states_.empty() && states_.top()) {
-			HARMONY_TRACE("Updating current state: '{}'", states_.top()->getName());
-			states_.top()->update(deltaTime);
-		}
-	}
+        bool hasStates = !states_.empty();
+        if (hasStates) {
+            State* topState = states_.top().get();
+            if (topState) {
+                std::string stateName = topState->getName();
+                HARMONY_TRACE("Updating current state: '{}'", stateName);
+                topState->update(deltaTime);
+            }
+        }
+    }
 
-	void StateStack::render() {
-		std::lock_guard lock(mutex_);
+    void StateStack::render() {
+        std::lock_guard lock(mutex_);
 
-		if (!states_.empty() && states_.top()) {
-			HARMONY_TRACE("Rendering current state: '{}'", states_.top()->getName());
-			states_.top()->render();
-		}
-	}
+        bool hasStates = !states_.empty();
+        if (hasStates) {
+            State* topState = states_.top().get();
+            if (topState) {
+                std::string stateName = topState->getName();
+                HARMONY_TRACE("Rendering current state: '{}'", stateName);
+                topState->render();
+            }
+        }
+    }
 
-	void StateStack::handleEvents() {
-		std::lock_guard lock(mutex_);
+    void StateStack::handleEvents() {
+        std::lock_guard lock(mutex_);
 
-		if (!states_.empty() && states_.top()) {
-			HARMONY_TRACE("Handling events for current state: '{}'", states_.top()->getName());
-			states_.top()->handleEvents();
-		}
-	}
+        bool hasStates = !states_.empty();
+        if (hasStates) {
+            State* topState = states_.top().get();
+            if (topState) {
+                std::string stateName = topState->getName();
+                HARMONY_TRACE("Handling events for current state: '{}'", stateName);
+                topState->handleEvents();
+            }
+        }
+    }
 
 } // namespace Harmony::Internals
