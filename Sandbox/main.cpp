@@ -8,5 +8,8 @@ using namespace Harmony::Internals;
 int main()
 {
 	Harmony::Logger::initialize();
-	Engine(Configuration()).start();
+	Configuration config;
+	config.load("properties.json");
+
+	Engine(config).start();
 }

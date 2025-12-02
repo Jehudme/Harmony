@@ -102,8 +102,11 @@
     <ClInclude Include="Resource.h">
       <Filter>Header Files\Resources</Filter>
     </ClInclude>
+    <ClInclude Include="Properties.h">
+      <Filter>Header Files\Resources</Filter>
+    </ClInclude>
     <ClInclude Include="ResourceHandler.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Internals</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -166,6 +169,9 @@
     </ClCompile>
     <ClCompile Include="ResourceHandler.cpp">
       <Filter>Source Files\Internals</Filter>
+    </ClCompile>
+    <ClCompile Include="Properties.cpp">
+      <Filter>Source Files\Resources</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

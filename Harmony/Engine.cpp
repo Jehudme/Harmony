@@ -104,12 +104,13 @@ namespace Harmony::Internals
 	void Engine::handleUpdates()
 	{
 		HARMONY_TRACE("Handling updates");
-		// Update logic implementation goes here
-		
-		// Handle pending tasks
-		if (tasksHandler) {
-			tasksHandler->handleTasks();
-		}
+		resourcesHandler->update();
+		tasksHandler->handleTasks();
+
+		static bool runOnce = [this]() -> bool {
+			resourcesHandler->acquireResource(48767);
+			return true;
+			}();
 	}
 
 	void Engine::handleRendering()

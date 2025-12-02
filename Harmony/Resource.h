@@ -11,16 +11,21 @@ namespace Harmony::Internals {
 }
 
 namespace Harmony::Resources {
+	class ResourceAcquirement;
+}
+
+namespace Harmony::Resources {
 	using ResourceID = uint64_t;
 
 	class Resource {
 		friend class Harmony::Internals::ResourcesHandler;
+		friend class ResourceAcquirement;
 
 	public:
 		Resource(ResourceID id, Configuration configuration);
 		virtual ~Resource();
 
-		virtual std::string getType() const = 0;
+		virtual const char* getType() const = 0;
 
 		ResourceID getID() const;
 

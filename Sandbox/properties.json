@@ -1,0 +1,16 @@
+{
+  "properties": {
+    "exampleProperty": {
+      "type": "string",
+      "default": "defaultValue",
+      "description": "An example property for demonstration purposes."
+    }
+  },
+
+  "Resources": {
+    "48767": {
+      "type": "properties",
+      "filepath": "properties.json"
+    }
+  }
+}

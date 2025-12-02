@@ -2,11 +2,11 @@
 #include "Resource.h"
 #include "Configuration.h"
 
-namespace Harmony::Internals {
-	class Properties : public Resource_t, public Configuration
+namespace Harmony::Resources {
+	class Properties : public Resource, public Configuration
 	{
 	public:
-		Properties(ResourceID id, ResourcesHandler& resourcesHandler, const Configuration& configuration);
+		Properties(ResourceID id, const Configuration& configuration);
 
 		const char* getType() const override;
 
@@ -15,7 +15,6 @@ namespace Harmony::Internals {
 
 	private:
 		using Configuration::subsection;
-		using Configuration::unload;
 		using Configuration::merge;
 		using Configuration::save;
 		using Configuration::load;

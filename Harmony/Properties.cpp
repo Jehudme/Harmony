@@ -1,26 +1,36 @@
 #include "pch.h"
 #include "Properties.h"
 #include "Exceptions.h"
+#include "ResourceHandler.h"
 
-namespace Harmony::Internals {
-    Properties::Properties(ResourceID id, ResourcesHandler& resourcesHandler, const Configuration& configuration) :
-		Resource_t(id, resourcesHandler, configuration) {}
+HARMONY_REGISTER_RESOURCE(properties, Harmony::Resources::Properties)
 
-	const char* Properties::getType() const { return "Properties"; }
+
+namespace Harmony::Resources
+{
+
+	Properties::Properties(ResourceID id, const Configuration& configuration) :
+		Resource(id, configuration) {}
+
+	const char* Properties::getType() const  { 
+		return "properties"; 
+	}
 
 	void Properties::load()
 	{
-		std::lock_guard lock(Resource_t::mutex_);
-		if (std::optional<std::string> filepath = configuration.get<std::string>({ "filepath" })) { Configuration::load(*filepath); }
+		std::lock_guard lock(Resource::mutex_);
+		if (std::optional<std::string> filepath = configuration_.get<std::string>({ "filepath" })) { Configuration::load(*filepath); }
 		else { throw Exceptions::ConfigurationException("'filepath' not specified in configuration"); }
 
-		setLoaded(true);
+		setAvailable(true);
 	}
 
 	void Properties::unload()
 	{
-		std::lock_guard lock(Resource_t::mutex_);
-		Configuration::unload();
+		std::lock_guard lock(Resource::mutex_);
+		Configuration::clear();
+
+		setAvailable(false);
 	}
 
 }

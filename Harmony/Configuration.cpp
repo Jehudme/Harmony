@@ -71,6 +71,11 @@ namespace Harmony{
         }
     }
 
+    void Configuration::clear() {
+        std::lock_guard lock(mutex_);
+		internal_->data.clear();
+    }
+
     void Configuration::debugPrint() const
     {
         std::lock_guard lock(mutex_);

@@ -17,7 +17,6 @@ namespace Harmony::Resources {
 	}
 
 	void Resource::setAvailable(bool available) {
-		std::unique_lock lock(mutex_);
 		available_ = available;
 	}
 
@@ -42,7 +41,6 @@ namespace Harmony::Resources {
 
 	Time Resource::restartAccessClock()
 	{
-		std::unique_lock lock(mutex_);
 		return Time();
 	}
 
@@ -50,7 +48,9 @@ namespace Harmony::Resources {
 	ResourceAcquirement::ResourceAcquirement(std::shared_lock<std::shared_mutex>&& lock, Resource& resource) :
 		resourceLock_(std::move(lock)), resource_(resource) {}
 
-	ResourceAcquirement::~ResourceAcquirement() = default;
+	ResourceAcquirement::~ResourceAcquirement() {
+		resource_.restartAccessClock();
+	}
 
 	Resource& ResourceAcquirement::getResource() const {
 		return resource_;
