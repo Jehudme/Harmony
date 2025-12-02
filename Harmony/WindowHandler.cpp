@@ -11,8 +11,8 @@ namespace Harmony::Internals
     {
         HARMONY_INFO("Initializing WindowHandler");
 
-        std::optional<int> width = configuration.get<uint8_t>({ "size", "width" });
-        std::optional<int> height = configuration.get<uint8_t>({ "size", "height" });
+        std::optional<uint8_t> width = configuration.get<uint8_t>({ "size", "width" });
+        std::optional<uint8_t> height = configuration.get<uint8_t>({ "size", "height" });
         std::optional<std::string> title = configuration.get<std::string>({ "title" });
         std::optional<bool> fullscreen = configuration.get<bool>({ "fullscreen" });
         std::optional<bool> resizable = configuration.get<bool>({ "resizable" });

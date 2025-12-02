@@ -75,7 +75,9 @@ namespace Harmony::Internals {
     {
         std::shared_lock lock(mutex_);
         
-        for (std::pair<const Resources::ResourceID, std::unique_ptr<Resources::Resource>>& resourcePair : resources_) {
+        using ResourceMapEntry = std::pair<const Resources::ResourceID, std::unique_ptr<Resources::Resource>>;
+        
+        for (ResourceMapEntry& resourcePair : resources_) {
             Resources::Resource* resource = resourcePair.second.get();
             
             if (!resource) {
