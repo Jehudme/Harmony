@@ -53,7 +53,7 @@ namespace Harmony::Resources
 		if (animations_ == nullptr || animationCount_ == 0)
 		{
 			HARMONY_ERROR("Failed to load model animations from file: {}", filepath);
-			throw Exceptions::ResourceLoadException("ModelAnimation", filepath, "Raylib LoadModelAnimations returned no animations");
+			throw Exceptions::ModelAnimationLoadException(filepath, "Raylib LoadModelAnimations returned no animations");
 		}
 
 		animationsLoaded_ = true;

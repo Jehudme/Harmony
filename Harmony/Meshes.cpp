@@ -47,7 +47,7 @@ namespace Harmony::Resources
 
 		Model tempModel = LoadModel(filepath.c_str());
 
-		if (tempModel.meshCount == 0)
+		if (tempModel.meshCount == 0 || tempModel.meshes == nullptr)
 		{
 			UnloadModel(tempModel);
 			HARMONY_ERROR("Failed to load mesh from file: {}", filepath);
@@ -55,10 +55,7 @@ namespace Harmony::Resources
 		}
 
 		mesh_ = tempModel.meshes[0];
-		
-		tempModel.meshes = nullptr;
-		tempModel.meshCount = 0;
-		UnloadModel(tempModel);
+		UploadMesh(&mesh_, false);
 
 		meshLoaded_ = true;
 		setAvailable(true);

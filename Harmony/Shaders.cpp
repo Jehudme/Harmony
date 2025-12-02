@@ -64,7 +64,13 @@ namespace Harmony::Resources
 		if (shader_.id == 0)
 		{
 			HARMONY_ERROR("Failed to load shader");
-			throw Exceptions::ShaderLoadException("Shader", "Raylib LoadShader returned invalid shader ID");
+			
+			std::string shaderInfo = "vertex: ";
+			shaderInfo += (vsPath != nullptr) ? vsPathStr : "default";
+			shaderInfo += ", fragment: ";
+			shaderInfo += (fsPath != nullptr) ? fsPathStr : "default";
+			
+			throw Exceptions::ShaderLoadException(shaderInfo, "Raylib LoadShader returned invalid shader ID");
 		}
 
 		shaderLoaded_ = true;

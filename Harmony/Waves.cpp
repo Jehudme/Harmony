@@ -50,7 +50,7 @@ namespace Harmony::Resources
 		if (wave_.data == nullptr)
 		{
 			HARMONY_ERROR("Failed to load wave from file: {}", filepath);
-			throw Exceptions::ResourceLoadException("Wave", filepath, "Raylib LoadWave returned null data");
+			throw Exceptions::WaveLoadException(filepath, "Raylib LoadWave returned null data");
 		}
 
 		waveLoaded_ = true;

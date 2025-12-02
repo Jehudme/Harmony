@@ -59,7 +59,7 @@ namespace Harmony::Resources
 		if (renderTexture_.id == 0)
 		{
 			HARMONY_ERROR("Failed to create render texture with dimensions: {}x{}", width, height);
-			throw Exceptions::TextureLoadException("RenderTexture", "Raylib LoadRenderTexture returned invalid texture ID");
+			throw Exceptions::RenderTextureLoadException("Raylib LoadRenderTexture returned invalid texture ID");
 		}
 
 		renderTextureLoaded_ = true;

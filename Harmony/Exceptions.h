@@ -508,5 +508,47 @@ namespace Harmony::Exceptions
 	struct TextureCubemapLoadException : public TextureCubemapResourceException {
 		explicit TextureCubemapLoadException(const std::string& reason);
 	};
+
+	// ============================================================================
+	// Render Texture Resource Exceptions
+	// ============================================================================
+
+	/// Base exception for render texture resource errors
+	struct RenderTextureResourceException : public ResourceException {
+		explicit RenderTextureResourceException(const std::string& message);
+	};
+
+	/// Exception thrown when render texture loading fails
+	struct RenderTextureLoadException : public RenderTextureResourceException {
+		explicit RenderTextureLoadException(const std::string& reason);
+	};
+
+	// ============================================================================
+	// Wave Resource Exceptions
+	// ============================================================================
+
+	/// Base exception for wave resource errors
+	struct WaveResourceException : public ResourceException {
+		explicit WaveResourceException(const std::string& message);
+	};
+
+	/// Exception thrown when wave loading fails
+	struct WaveLoadException : public WaveResourceException {
+		explicit WaveLoadException(const std::string& filePath, const std::string& reason);
+	};
+
+	// ============================================================================
+	// Model Animation Resource Exceptions
+	// ============================================================================
+
+	/// Base exception for model animation resource errors
+	struct ModelAnimationResourceException : public ResourceException {
+		explicit ModelAnimationResourceException(const std::string& message);
+	};
+
+	/// Exception thrown when model animation loading fails
+	struct ModelAnimationLoadException : public ModelAnimationResourceException {
+		explicit ModelAnimationLoadException(const std::string& filePath, const std::string& reason);
+	};
 }
 
