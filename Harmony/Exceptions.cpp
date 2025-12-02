@@ -324,12 +324,12 @@ namespace Harmony::Exceptions
 		HARMONY_ERROR("Failed to load {} from '{}': {}", resourceType, filePath, reason);
 	}
 
-	ResourceUnloadException::ResourceUnloadException(const std::string& resourceType, unsigned int resourceId, const std::string& reason)
+	ResourceUnloadException::ResourceUnloadException(const std::string& resourceType, uint64_t resourceId, const std::string& reason)
 		: ResourceException(std::format("Failed to unload {} (ID: {}): {}", resourceType, resourceId, reason)) {
 		HARMONY_ERROR("Failed to unload {} (ID: {}): {}", resourceType, resourceId, reason);
 	}
 
-	ResourceNotFoundException::ResourceNotFoundException(const std::string& resourceType, unsigned int resourceId)
+	ResourceNotFoundException::ResourceNotFoundException(const std::string& resourceType, uint64_t resourceId)
 		: ResourceException(std::format("{} with ID {} not found", resourceType, resourceId)) {
 		HARMONY_WARN("{} with ID {} not found", resourceType, resourceId);
 	}
@@ -339,7 +339,7 @@ namespace Harmony::Exceptions
 		HARMONY_ERROR("Memory cap exceeded: requested {} bytes, current {} bytes, max {} bytes", requestedSize, currentSize, maxSize);
 	}
 
-	InvalidResourceIdException::InvalidResourceIdException(unsigned int resourceId, const std::string& reason)
+	InvalidResourceIdException::InvalidResourceIdException(uint64_t resourceId, const std::string& reason)
 		: ResourceException(std::format("Invalid resource ID {}: {}", resourceId, reason)) {
 		HARMONY_ERROR("Invalid resource ID {}: {}", resourceId, reason);
 	}

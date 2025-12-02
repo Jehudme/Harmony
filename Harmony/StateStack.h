@@ -57,8 +57,8 @@ namespace Harmony::Internals {
 		bool isEmpty() const;
 
 		/// Update the current state
-		/// @param deltaTime Time elapsed since last update
-		void update(float deltaTime);
+		/// @param deltaTime Time elapsed since last handleResources
+		void handleResources(float deltaTime);
 
 		/// Render the current state
 		void render();

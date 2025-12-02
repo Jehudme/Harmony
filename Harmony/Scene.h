@@ -40,8 +40,8 @@ namespace Harmony::Internals {
 		virtual void cleanup();
 
 		/// Update the scene
-		/// @param deltaTime Time elapsed since last update
-		virtual void update(float deltaTime);
+		/// @param deltaTime Time elapsed since last handleResources
+		virtual void handleResources(float deltaTime);
 
 		/// Render the scene
 		virtual void render();

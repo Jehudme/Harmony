@@ -12,7 +12,7 @@ namespace Harmony::Internals {
     ResourcesHandler::ResourcesHandler(Engine& engine) :
         engine_(engine)
     {
-        ConfigurationHandler* configHandler = engine_.configurationHandler;
+        ConfigurationHandler* configHandler = engine_.configurationHandler.get();
         HARMONY_ASSERT_NOT_NULL(configHandler, "ConfigurationHandler is null");
         
         const Configuration& engineConfig = configHandler->getConfiguration();
@@ -71,7 +71,7 @@ namespace Harmony::Internals {
 
     ResourcesHandler::~ResourcesHandler() = default;
 
-    void ResourcesHandler::update()
+    void ResourcesHandler::handleResources()
     {
         std::shared_lock lock(mutex_);
         

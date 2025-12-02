@@ -98,19 +98,14 @@ namespace Harmony::Internals
 	void Engine::handleEvents()
 	{
 		HARMONY_TRACE("Handling events");
-		// Event handling implementation goes here
+
 	}
 
 	void Engine::handleUpdates()
 	{
 		HARMONY_TRACE("Handling updates");
-		resourcesHandler->update();
+		resourcesHandler->handleResources();
 		tasksHandler->handleTasks();
-
-		static bool runOnce = [this]() -> bool {
-			resourcesHandler->acquireResource(48767);
-			return true;
-			}();
 	}
 
 	void Engine::handleRendering()
@@ -119,7 +114,6 @@ namespace Harmony::Internals
 		
 		BeginDrawing();
 		ClearBackground(RAYWHITE);
-		// Rendering logic implementation goes here
 		EndDrawing();
 	}
 

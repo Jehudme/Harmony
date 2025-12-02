@@ -8,7 +8,7 @@ namespace Harmony
         inline Vector2(Type X = 0, Type Y = 0);
 
         template<typename U>
-        Vector2(const Vector2<U>& vector);
+        inline Vector2(const Vector2<U>& vector);
 
         inline Vector2 operator+(const Vector2& other) const;
         inline Vector2 operator-(const Vector2& other) const;

@@ -346,12 +346,12 @@ namespace Harmony::Exceptions
 
 	/// Exception thrown when resource unloading fails
 	struct ResourceUnloadException : public ResourceException {
-		explicit ResourceUnloadException(const std::string& resourceType, unsigned int resourceId, const std::string& reason);
+		explicit ResourceUnloadException(const std::string& resourceType, uint64_t resourceId, const std::string& reason);
 	};
 
 	/// Exception thrown when resource is not found
 	struct ResourceNotFoundException : public ResourceException {
-		explicit ResourceNotFoundException(const std::string& resourceType, unsigned int resourceId);
+		explicit ResourceNotFoundException(const std::string& resourceType, uint64_t resourceId);
 	};
 
 	/// Exception thrown when memory cap is exceeded
@@ -361,7 +361,7 @@ namespace Harmony::Exceptions
 
 	/// Exception thrown when resource ID is invalid
 	struct InvalidResourceIdException : public ResourceException {
-		explicit InvalidResourceIdException(unsigned int resourceId, const std::string& reason);
+		explicit InvalidResourceIdException(uint64_t resourceId, const std::string& reason);
 	};
 
 	/// Exception thrown when resource operation fails

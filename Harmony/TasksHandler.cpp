@@ -443,12 +443,13 @@ namespace Harmony::Internals
 
         case Tasks::Task_t::Mode::FastMultiThreaded:
         case Tasks::Task_t::Mode::SlowMultiThreaded:
+        {
             HARMONY_TRACE("Submitting task to WorkerPool");
             WorkerPool* workerPoolPtr = workerPool_.get();
             HARMONY_ASSERT_NOT_NULL(workerPoolPtr, "WorkerPool is null");
             workerPoolPtr->submit(task);
             break;
-
+        }
         default:
             int invalidMode = static_cast<int>(task->mode);
             HARMONY_ERROR("Invalid task mode: {}", invalidMode);

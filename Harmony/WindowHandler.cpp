@@ -159,8 +159,10 @@ namespace Harmony::Internals
     }
 
     Vector2f WindowHandler::getPosition() const {
-        Vector2 windowPosition = GetWindowPosition();
-        return { windowPosition.x, windowPosition.y };
+        auto windowPosition = GetWindowPosition();
+        Vector2 position = Vector2(windowPosition.x, windowPosition.y);
+        
+        return position;
     }
 
     void WindowHandler::setTitle(const std::string& title) {

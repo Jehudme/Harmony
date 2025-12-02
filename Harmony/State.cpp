@@ -62,9 +62,9 @@ namespace Harmony::Internals {
         active_ = true;
     }
 
-    void State::update(float deltaTime) {
+    void State::handleResources(float deltaTime) {
         std::lock_guard lock(mutex_);
-        HARMONY_TRACE("State '{}' update - deltaTime: {}", name_, deltaTime);
+        HARMONY_TRACE("State '{}' handleResources - deltaTime: {}", name_, deltaTime);
     }
 
     void State::render() {

@@ -187,7 +187,7 @@ namespace Harmony::Internals {
         return states_.empty();
     }
 
-    void StateStack::update(float deltaTime) {
+    void StateStack::handleResources(float deltaTime) {
         std::lock_guard lock(mutex_);
 
         bool hasStates = !states_.empty();
@@ -196,7 +196,7 @@ namespace Harmony::Internals {
             if (topState) {
                 std::string stateName = topState->getName();
                 HARMONY_TRACE("Updating current state: '{}'", stateName);
-                topState->update(deltaTime);
+                topState->handleResources(deltaTime);
             }
         }
     }

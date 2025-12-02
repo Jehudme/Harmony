@@ -29,7 +29,7 @@ namespace Harmony::Internals {
 			ResourcesHandler(ResourcesHandler&&) = delete;
 			ResourcesHandler& operator=(ResourcesHandler&&) = delete;
 
-			void update();
+			void handleResources();
 
 			void loadResource(Resources::ResourceID id);
 			void unloadResource(Resources::ResourceID id);
@@ -46,7 +46,6 @@ namespace Harmony::Internals {
 
 } // namespace Harmony
 
-// Mets ça dans ton fichier d'en-tête (ResourceHandler.h ou similaire)
 #define HARMONY_REGISTER_RESOURCE(typeName, className) \
     namespace { \
         struct ResourceRegistrar_##typeName { \
@@ -57,6 +56,5 @@ namespace Harmony::Internals {
                     }); \
             } \
         }; \
-        /* Instanciation statique qui déclenche le constructeur au démarrage */ \
         static ResourceRegistrar_##typeName global_registry_##typeName; \
     }

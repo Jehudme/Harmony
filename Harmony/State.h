@@ -47,8 +47,8 @@ namespace Harmony::Internals {
 		virtual void onResume();
 
 		/// Update the state
-		/// @param deltaTime Time elapsed since last update
-		virtual void update(float deltaTime);
+		/// @param deltaTime Time elapsed since last handleResources
+		virtual void handleResources(float deltaTime);
 
 		/// Render the state
 		virtual void render();

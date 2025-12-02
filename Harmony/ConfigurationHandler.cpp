@@ -38,7 +38,7 @@ namespace Harmony::Internals {
         bool keysEmpty = keys.empty();
         HARMONY_ASSERT(!keysEmpty, "Configuration subsection keys cannot be empty");
         
-        std::string joinedKeys = fmt::join(keys, ".");
+        std::string joinedKeys = fmt::format("{}", fmt::join(keys, "."));
         HARMONY_TRACE("Getting configuration subsection: {}", joinedKeys);
 
         try {

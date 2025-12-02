@@ -62,7 +62,7 @@ namespace Harmony::Utilities
         expired_ = false;
     }
 
-    void Timer::update()
+    void Timer::handleResources()
     {
         if (!running_ || paused_ || expired_)
             return;

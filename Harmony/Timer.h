@@ -38,7 +38,7 @@ namespace Harmony::Utilities
 
         /// @brief Update the timer (should be called each frame)
         /// @details Checks if timer has expired and invokes callback if set
-        void update();
+        void handleResources();
 
         /// @brief Check if the timer has expired
         /// @return true if expired, false otherwise

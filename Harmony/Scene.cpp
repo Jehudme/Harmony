@@ -57,9 +57,9 @@ namespace Harmony::Internals {
 		// Base implementation - override in derived classes
 	}
 
-	void Scene::update(float deltaTime) {
+	void Scene::handleResources(float deltaTime) {
 		std::lock_guard lock(mutex_);
-		HARMONY_TRACE("Scene '{}' update - deltaTime: {}", name_, deltaTime);
+		HARMONY_TRACE("Scene '{}' handleResources - deltaTime: {}", name_, deltaTime);
 		// Base implementation does nothing - override in derived classes
 	}
 
