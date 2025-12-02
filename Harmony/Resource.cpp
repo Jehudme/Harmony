@@ -6,7 +6,7 @@ namespace Harmony::Resources {
 		: configuration_(configuration), available_(false), id_(id) {
 
 		alwaysLoaded_ = configuration_.get<bool>({ "AlwaysLoaded" }).value_or(false);
-		cooledownTime_ = Time::fromSeconds(configuration_.get<int>({ "CooledownTime" }).value_or(5));
+		cooledownTime_ = Time::fromSeconds(configuration_.get<float>({ "CooledownTime" }).value_or(5));
 		required_ = configuration_.get<bool>({ "Required" }).value_or(false);
 	}
 

@@ -22,5 +22,34 @@ namespace Harmony::Internals {
 			resources_.emplace(resourceID, std::move(resource));
 		}
 	}
+
 	ResourcesHandler::~ResourcesHandler() = default;
+
+	void ResourcesHandler::update()
+	{
+		std::shared_lock lock(mutex_);
+		for (auto& [id, resource] : resources_) {
+			if (resource->canUnload()) {
+				resource->unload();
+			}
+		}
+	}
+
+	void ResourcesHandler::loadResource(Resources::ResourceID id)
+	{
+		if (!resources_.contains(id)) throw Exceptions::ResourceNotFoundException("Resource", id);
+		resources_.at(id)->load();
+	}
+
+	void ResourcesHandler::unloadResource(Resources::ResourceID id)
+	{
+		if (!resources_.contains(id)) throw Exceptions::ResourceNotFoundException("Resource", id);
+		resources_.at(id)->unload();
+	}
+	
+	std::unique_ptr<Resources::ResourceAcquirement> ResourcesHandler::acquireResource(Resources::ResourceID id)
+	{
+		if (!resources_.contains(id)) throw Exceptions::ResourceNotFoundException("Resource", id);
+		return std::make_unique<Resources::ResourceAcquirement>(std::shared_lock<std::shared_mutex>(resources_.at(id)->mutex_), *resources_.at(id));
+	}
 }

@@ -14,7 +14,7 @@ namespace Harmony::Resources {
 	using ResourceID = uint64_t;
 
 	class Resource {
-		friend class ResourcesHandler;
+		friend class Harmony::Internals::ResourcesHandler;
 
 	public:
 		Resource(ResourceID id, Configuration configuration);
