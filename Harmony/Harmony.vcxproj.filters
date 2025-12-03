@@ -90,15 +90,6 @@
     <ClInclude Include="ConfigurationHandler.h">
       <Filter>Header Files\Internals</Filter>
     </ClInclude>
-    <ClInclude Include="State.h">
-      <Filter>Header Files\Internals</Filter>
-    </ClInclude>
-    <ClInclude Include="StateStack.h">
-      <Filter>Header Files\Internals</Filter>
-    </ClInclude>
-    <ClInclude Include="Scene.h">
-      <Filter>Header Files\Internals</Filter>
-    </ClInclude>
     <ClInclude Include="Resource.h">
       <Filter>Header Files\Resources</Filter>
     </ClInclude>
@@ -189,15 +180,6 @@
       <Filter>Source Files\Internals</Filter>
     </ClCompile>
     <ClCompile Include="ConfigurationHandler.cpp">
-      <Filter>Source Files\Internals</Filter>
-    </ClCompile>
-    <ClCompile Include="State.cpp">
-      <Filter>Source Files\Internals</Filter>
-    </ClCompile>
-    <ClCompile Include="StateStack.cpp">
-      <Filter>Source Files\Internals</Filter>
-    </ClCompile>
-    <ClCompile Include="Scene.cpp">
       <Filter>Source Files\Internals</Filter>
     </ClCompile>
     <ClCompile Include="Resource.cpp">

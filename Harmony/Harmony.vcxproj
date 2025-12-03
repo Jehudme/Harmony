@@ -171,9 +171,6 @@
     <ClInclude Include="RandomValue.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="ResourceHandler.h" />
-    <ClInclude Include="Scene.h" />
-    <ClInclude Include="State.h" />
-    <ClInclude Include="StateStack.h" />
     <ClInclude Include="Stopwatch.h" />
     <ClInclude Include="Task.h" />
     <ClInclude Include="TasksHandler.h" />
@@ -216,9 +213,6 @@
     <ClCompile Include="Shaders.cpp" />
     <ClCompile Include="Resource.cpp" />
     <ClCompile Include="ResourceHandler.cpp" />
-    <ClCompile Include="Scene.cpp" />
-    <ClCompile Include="State.cpp" />
-    <ClCompile Include="StateStack.cpp" />
     <ClCompile Include="Stopwatch.cpp" />
     <ClCompile Include="Task.cpp" />
     <ClCompile Include="TasksHandler.cpp" />
