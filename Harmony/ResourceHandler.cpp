@@ -4,7 +4,6 @@
 #include "Logger.h"
 #include "Assert.h"
 #include "Engine.h"
-#include "ConfigurationHandler.h"
 
 #include <algorithm>
 
@@ -12,24 +11,13 @@ namespace Harmony::Internals {
     ResourcesHandler::ResourcesHandler(Engine& engine) :
         engine_(engine)
     {
-        ConfigurationHandler* configHandler = engine_.configurationHandler.get();
-        HARMONY_ASSERT_NOT_NULL(configHandler, "ConfigurationHandler is null");
-        
-        const Configuration& engineConfig = configHandler->getConfiguration();
-        std::optional<Configuration> resourcesConfig = engineConfig.subsection({ "Resources" });
-        Configuration configuration = resourcesConfig.value_or(Configuration());
+        Configuration configuration = engine_.configuration->subsection({ "resources" }).value_or(Configuration());
         
         std::vector<std::string> keys = configuration.extractKeys({});
         
         for (const std::string& key : keys) {
-            std::optional<Configuration> resourceConfigOpt = configuration.subsection({ key });
-            
-            if (!resourceConfigOpt.has_value()) {
-                HARMONY_WARN("Failed to get resource configuration for key: {}", key);
-                continue;
-            }
-            
-            const Configuration resourceConfiguration = resourceConfigOpt.value();
+            std::optional<Configuration> resourceConfigurationOpt = configuration.subsection({ key });
+            const Configuration resourceConfiguration = resourceConfigurationOpt.value();
             
             try {
                 const Resources::ResourceID resourceID = std::stoi(key);

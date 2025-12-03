@@ -3,44 +3,39 @@
 #include "WindowHandler.h"
 #include "TasksHandler.h"
 #include "ResourceHandler.h"
-#include "ConfigurationHandler.h"
 #include "Logger.h"
 #include "Assert.h"
 #include "Exceptions.h"
-
+#include "Configuration.h"
 
 namespace Harmony::Internals
 {
-	Engine::Engine(const Configuration& configuration) : 
+	Engine::Engine(const Configuration configuration) : 
 		windowHandler(nullptr),
 		tasksHandler(nullptr)
 	{
 		HARMONY_INFO("Initializing Harmony Engine");
 		
 		try {
-			// Initialize configuration handler
-			HARMONY_DEBUG("Initializing ConfigurationHandler subsystem");
-			configurationHandler = std::make_unique<ConfigurationHandler>(configuration);
-			HARMONY_ASSERT_NOT_NULL(configurationHandler.get(), "ConfigurationHandler initialization returned null");
+			// Initialize configuration
+			HARMONY_DEBUG("Initializing Configuration subsystem");
+			this->configuration = std::make_unique<Configuration>();
 
 			// Initialize tasks handler
 			HARMONY_DEBUG("Initializing TasksHandler subsystem");
 			tasksHandler = std::make_unique<TasksHandler>(*this);
 
-			HARMONY_ASSERT_NOT_NULL(tasksHandler.get(), "TasksHandler initialization returned null");
 			HARMONY_INFO("TasksHandler initialized successfully");
 
 			// Initialize resources handler
 			HARMONY_DEBUG("Initializing ResourcesHandler subsystem");
 			resourcesHandler = std::make_unique<ResourcesHandler>(*this);
-			HARMONY_ASSERT_NOT_NULL(resourcesHandler.get(), "ResourcesHandler initialization returned null");
 
 			// Initialize window handler
 			HARMONY_DEBUG("Initializing WindowHandler subsystem");
 			windowHandler = std::make_unique<WindowHandler>(
 				configuration.subsection({"window"}).value_or(Configuration()));
 			
-			HARMONY_ASSERT_NOT_NULL(windowHandler.get(), "WindowHandler initialization returned null");
 			HARMONY_INFO("WindowHandler initialized successfully");
 
 			// Start tasks handler

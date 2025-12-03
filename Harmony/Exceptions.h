@@ -250,7 +250,7 @@ namespace Harmony::Exceptions
 	};
 
 	// ============================================================================
-	// ConfigurationHandler Exceptions
+	// Configuration Exceptions
 	// ============================================================================
 
 	/// Base exception for configuration handler-related errors

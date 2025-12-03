@@ -5,7 +5,6 @@
 namespace Harmony::Internals {
 	class WindowHandler;
 	class TasksHandler;
-	class ConfigurationHandler;
 	class ResourcesHandler;
 }
 
@@ -13,7 +12,7 @@ namespace Harmony::Internals {
 	class Engine
 	{
 	public:
-		Engine(const Configuration& configuration);
+		Engine(const Configuration configuration);
 		~Engine();
 
 		void start();
@@ -25,7 +24,7 @@ namespace Harmony::Internals {
 		void handleRendering();
 
 	public:
-		std::unique_ptr<ConfigurationHandler> configurationHandler;
+		std::unique_ptr<Configuration> configuration;
 		std::unique_ptr<TasksHandler> tasksHandler;
 		std::unique_ptr<ResourcesHandler> resourcesHandler;
 		std::unique_ptr<WindowHandler> windowHandler;

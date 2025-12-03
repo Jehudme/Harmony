@@ -87,9 +87,6 @@
     <ClInclude Include="TasksHandler.h">
       <Filter>Header Files\Internals</Filter>
     </ClInclude>
-    <ClInclude Include="ConfigurationHandler.h">
-      <Filter>Header Files\Internals</Filter>
-    </ClInclude>
     <ClInclude Include="Resource.h">
       <Filter>Header Files\Resources</Filter>
     </ClInclude>
@@ -135,6 +132,9 @@
     <ClInclude Include="ResourceHandler.h">
       <Filter>Header Files\Internals</Filter>
     </ClInclude>
+    <ClInclude Include="fwd.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Configuration.cpp">
@@ -175,12 +175,6 @@
     </ClCompile>
     <ClCompile Include="Task.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="TasksHandler.cpp">
-      <Filter>Source Files\Internals</Filter>
-    </ClCompile>
-    <ClCompile Include="ConfigurationHandler.cpp">
-      <Filter>Source Files\Internals</Filter>
     </ClCompile>
     <ClCompile Include="Resource.cpp">
       <Filter>Source Files\Resources</Filter>

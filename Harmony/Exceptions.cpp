@@ -235,7 +235,7 @@ namespace Harmony::Exceptions
 	}
 
 	// ============================================================================
-	// ConfigurationHandler Exceptions
+	// Configuration Exceptions
 	// ============================================================================
 
 	ConfigurationHandlerException::ConfigurationHandlerException(const std::string& message)
@@ -249,7 +249,7 @@ namespace Harmony::Exceptions
 
 	ConfigurationHandlerInitializationException::ConfigurationHandlerInitializationException(const std::string& reason)
 		: ConfigurationHandlerException(std::format("Failed to initialize configuration handler: {}", reason)) {
-		HARMONY_CRITICAL("ConfigurationHandler initialization failed: {}", reason);
+		HARMONY_CRITICAL("Configuration initialization failed: {}", reason);
 	}
 
 	// ============================================================================
