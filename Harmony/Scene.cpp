@@ -6,6 +6,7 @@
 #include "Configuration.h"
 #include "ComponentsHandler.h"
 #include "Script.h"
+#include "View3D.h"
 
 
 namespace Harmony::Internals
@@ -38,6 +39,11 @@ namespace Harmony::Internals
 
 		initializeEntities();
 		initializeComponents();
+
+		if (!containsGlobalComponent<Components::View3D>()) {
+			HARMONY_DEBUG("Scene {} does not have View3D global component, creating default one", sceneId);
+			createGlobalComponent<Components::View3D, Components::View3D>(Configuration(), *this);
+		}
 
 		if (containsGlobalComponent<Components::Script>()) {
 			getGlobalComponent<Components::Script>().onCreate();
@@ -126,11 +132,15 @@ namespace Harmony::Internals
 		const auto view = getComponentsView<Components::Script>();
 		const bool containsScript = containsGlobalComponent<Components::Script>();
 
+		BeginMode3D(getGlobalComponent<Components::View3D>());
+		
 		if (containsScript) { getGlobalComponent<Components::Script>().onPreRender(); }
 		for (const auto& [entity, script] : view.each()) { script->onPreRender(); }
 		
 		for (const auto& [entity, script] : view.each()) { script->onPostRender(); }
 		if (containsScript) { getGlobalComponent<Components::Script>().onPostRender(); }
+
+		EndMode3D();
 	}
 
 	void Scene::update()

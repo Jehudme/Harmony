@@ -2,7 +2,7 @@
 #include "Script.h"
 
 namespace Harmony::Components {
-
+	Script::Script() = default;
 	Script::~Script() = default;
 
 	void Harmony::Components::Script::onCreate() {}

@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "View3D.h"
 
+HARMONY_REGISTER_COMPONENT(Harmony::Components::View3D, view3d)
+
 namespace Harmony::Components {
 	Harmony::Components::View3D::View3D(HARMONY_COMPONENTS_CONSTRUCTOR_ARGUMENTS) :
 		Camera3D()
@@ -58,5 +60,8 @@ namespace Harmony::Components {
 			Camera3D::projection = CAMERA_PERSPECTIVE;
 		}
 
+	}
+	View3D::~View3D()
+	{
 	}
 }

@@ -12,6 +12,8 @@
 
 namespace Harmony::Internals
 {
+	static std::unique_ptr<Scene> sceneInstance = nullptr;
+
 	Engine::Engine(const Configuration configuration) : 
 		windowHandler(nullptr),
 		tasksHandler(nullptr)
@@ -42,6 +44,8 @@ namespace Harmony::Internals
 
 			// Start tasks handler
 			tasksHandler->start();
+
+			sceneInstance = std::make_unique<Scene>(*this, 101);
 
 			HARMONY_INFO("Harmony Engine initialized successfully");
 		}
@@ -101,10 +105,9 @@ namespace Harmony::Internals
 	void Engine::handleUpdates()
 	{
 		HARMONY_TRACE("Handling updates");
+		sceneInstance->update();
 		resourcesHandler->handleResources();
 		tasksHandler->handleTasks();
-
-		static Scene scene(*this, 101);
 	}
 
 	void Engine::handleRendering()
@@ -113,6 +116,7 @@ namespace Harmony::Internals
 		
 		BeginDrawing();
 		ClearBackground(RAYWHITE);
+		sceneInstance->render();
 		EndDrawing();
 	}
 

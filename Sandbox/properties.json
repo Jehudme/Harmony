@@ -1,6 +1,9 @@
 {
   "scenes": {
     "101": {
+      "components": {
+        "script": {}
+      },
       "entities": [ 101 ]
     }
   },

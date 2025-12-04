@@ -8,7 +8,7 @@ namespace Harmony::Internals {
         getComponentConstructorFactories()[name] =
             [](const Configuration& configuration, EntityID entityId, Scene& scene)
             {
-                if (entityId == entt::null) scene.createGlobalComponent<Type>(configuration, scene);
+                if (entityId == entt::null) scene.createGlobalComponent<Base, Type>(configuration, scene);
                 else scene.createComponent<Base, Type>(entityId, configuration, scene);
             };
 

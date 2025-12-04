@@ -5,7 +5,7 @@ namespace Harmony::Components {
 	class Script
 	{
 	public:
-		Script(HARMONY_COMPONENTS_CONSTRUCTOR_ARGUMENTS);
+		Script();
 		virtual ~Script();
 
 		virtual void onCreate();

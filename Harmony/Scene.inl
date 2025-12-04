@@ -61,7 +61,7 @@ namespace Harmony::Internals
 	}
 
 	template<typename Type>
-	inline auto Scene::getComponentsView() {
+	inline auto Scene::getComponentsView(){
 		return registry_.view<std::unique_ptr<Type>>();
 	}
 

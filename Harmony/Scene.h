@@ -1,4 +1,7 @@
 #pragma once
+#include "Configuration.h"
+#include <entt/entt.hpp>
+#include <vector>
 
 namespace Harmony::Internals {
 	class Engine;
@@ -17,6 +20,8 @@ namespace Harmony::Internals {
 
 	class Scene
 	{
+		friend class Engine;
+
 	public:
 		Scene(Engine& engine,const SceneID sceneId);
 		~Scene();
