@@ -1,9 +1,12 @@
 #include "pch.h"
 #include "Transform.h"
 #include "raymath.h"
+#include "ComponentsHandler.h"
+
+HARMONY_REGISTER_COMPONENT(Harmony::Components::Transform, transform);
 
 namespace Harmony::Components {
-	Transform::Transform(HARMONY_COMPONENTS_CONSTRUCTOR_ARGUMENTS) : 
+	Transform::Transform(const Harmony::Configuration& configuration, Harmony::Internals::Scene& scene) :
 		Utilities::Transformable()
 	{
 		std::optional<float> posX = configuration.get<float>({ "position", "x" });
@@ -36,4 +39,6 @@ namespace Harmony::Components {
 			scaleZ.value_or(1.0f)
 		));
 	}
+
+	Transform::~Transform() = default;
 }

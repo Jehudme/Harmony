@@ -13,6 +13,8 @@ namespace Harmony::Utilities {
     {
     }
 
+	Transformable::~Transformable() = default;
+
     Transformable& Transformable::translate(const Vector3& translation)
     {
         position_ = Vector3Add(position_, translation);

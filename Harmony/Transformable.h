@@ -5,6 +5,7 @@ namespace Harmony::Utilities {
     {
     public:
         Transformable();
+        virtual ~Transformable();
 
         Transformable& translate(const Vector3& translation);
         Transformable& rotate(const Quaternion& rotation);
