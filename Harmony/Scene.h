@@ -4,6 +4,10 @@ namespace Harmony::Internals {
 	class Engine;
 }
 
+namespace Harmony::Components {
+	class Script;
+}
+
 namespace Harmony::Internals {
 	using ComponentID = entt::entity;
 	using EntityID = uint32_t;
@@ -46,6 +50,18 @@ namespace Harmony::Internals {
 		void createComponent(const std::string& componentName, const Configuration& configuration, EntityID entityId);
 		void deleteComponent(const std::string& componentName, EntityID entityId);
 
+		bool containsComponent(const std::string& componentName, EntityID entityId) const;
+		bool containsGlobalComponent(const std::string& componentName) const;
+
+		template<typename Type>
+		auto getComponentsView();
+
+		template<typename Type>
+		bool containsComponent(EntityID entityId) const;
+
+		template<typename Type>
+		bool containsGlobalComponent() const;
+
 		template<typename Type>
 		Type& getGlobalComponent();
 		template<typename Type>
@@ -77,6 +93,9 @@ namespace Harmony::Internals {
 	private:
 		void render();
 		void update();
+
+		void initializeComponents();
+		void initializeEntities();
 
 	private:
 		Configuration configuration_;

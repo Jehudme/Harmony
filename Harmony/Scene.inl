@@ -9,7 +9,7 @@ namespace Harmony::Internals
 {
 	template<typename Type, typename Registry>
 	static Type& getComponentReferenceImpl(Registry& registry, EntityID entityId) {
-		if (auto* component = registry.template try_get<std::unique_ptr<Type>>(entityId))
+		if (auto* component = registry.try_get<std::unique_ptr<Type>>(static_cast<entt::entity>(entityId)))
 			return *component->get();
 	}
 
@@ -58,6 +58,21 @@ namespace Harmony::Internals
 	template<typename Type>
 	inline void Scene::deleteGlobalComponent() {
 		registry_.ctx().erase<std::unique_ptr<Type>>();
+	}
+
+	template<typename Type>
+	inline auto Scene::getComponentsView() {
+		return registry_.view<std::unique_ptr<Type>>();
+	}
+
+	template<typename Type>
+	inline bool Scene::containsComponent(EntityID entityId) const {
+		return registry_.all_of<std::unique_ptr<Type>>(static_cast<entt::entity>(entityId));
+	}
+
+	template<typename Type>
+	inline bool Scene::containsGlobalComponent() const {
+		return registry_.ctx().contains<std::unique_ptr<Type>>();
 	}
 
 	template<typename Type>

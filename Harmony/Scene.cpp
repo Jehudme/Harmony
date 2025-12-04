@@ -5,6 +5,7 @@
 #include "Logger.h"
 #include "Configuration.h"
 #include "ComponentsHandler.h"
+#include "Script.h"
 
 
 namespace Harmony::Internals
@@ -19,14 +20,28 @@ namespace Harmony::Internals
 		initialize();
 	}
 
-	Scene::~Scene() = default;
+	Scene::~Scene() {
+		if (containsGlobalComponent<Components::Script>()) {
+			getGlobalComponent<Components::Script>().onDestroy();
+		}
+
+		auto view = registry_.view<entt::entity>();
+		std::vector<entt::entity> entities(view.begin(), view.end());
+		for (entt::entity entity : entities) {
+			destroyEntity(static_cast<EntityID>(entity));
+		}
+	}
 
 	void Scene::initialize()
 	{
 		registry_.clear();
 
-		Configuration entitiesConfiguration = configuration_.subsection({ "entities" }).value_or(Configuration());
-		createEntities(entitiesConfiguration);
+		initializeEntities();
+		initializeComponents();
+
+		if (containsGlobalComponent<Components::Script>()) {
+			getGlobalComponent<Components::Script>().onCreate();
+		}
 	}
 
 	void Scene::createComponent(const std::string& componentName, const Configuration& configuration, EntityID entity) {
@@ -35,6 +50,16 @@ namespace Harmony::Internals
 
 	void Scene::deleteComponent(const std::string& componentName, EntityID entityId) {
 		Harmony::Internals::ComponentsHandler::deleteComponent(componentName, entityId, *this);
+	}
+
+	bool Scene::containsComponent(const std::string& componentName, EntityID entityId) const {
+		return Harmony::Internals::ComponentsHandler::containsComponent(componentName, entityId, *this);
+	}
+
+	bool Scene::containsGlobalComponent(const std::string& componentName) const
+	{
+		return Harmony::Internals::ComponentsHandler::containsComponent(componentName, entt::null, *this);
+
 	}
 
 	void Scene::createGlobalComponent(const std::string& componentName, const Configuration& configuration) {
@@ -69,6 +94,9 @@ namespace Harmony::Internals
 		for (const std::string& componentName : configuration.extractKeys({ "components" }))
 			ComponentsHandler::createComponent(componentName, configuration.subsection({ "components", componentName }).value(), entity, *this);
 
+		if (containsComponent<Components::Script>(entity))
+			getComponent<Components::Script>(entity).onCreate();
+
 		HARMONY_DEBUG("Entity {} created", entity);
 		return static_cast<EntityID>(entity);
 	}
@@ -86,16 +114,44 @@ namespace Harmony::Internals
 
 	void Scene::destroyEntity(EntityID entityId)
 	{
+		if (containsComponent<Components::Script>(entityId))
+			getComponent<Components::Script>(entityId).onDestroy();
+
 		registry_.destroy(static_cast<entt::entity>(entityId));
 		HARMONY_DEBUG("Entity {} destroyed", entityId);
 	}
 
 	void Scene::render()
 	{
+		const auto view = getComponentsView<Components::Script>();
+		const bool containsScript = containsGlobalComponent<Components::Script>();
+
+		if (containsScript) { getGlobalComponent<Components::Script>().onPreRender(); }
+		for (const auto& [entity, script] : view.each()) { script->onPreRender(); }
+		
+		for (const auto& [entity, script] : view.each()) { script->onPostRender(); }
+		if (containsScript) { getGlobalComponent<Components::Script>().onPostRender(); }
 	}
 
 	void Scene::update()
 	{
+		const bool containsScript = containsGlobalComponent<Components::Script>();
+		if (containsScript) { getGlobalComponent<Components::Script>().onPreUpdate(); }
+		if (containsScript) { getGlobalComponent<Components::Script>().onPostUpdate(); }
+	}
+
+	void Scene::initializeComponents()
+	{
+		Configuration componentsConfiguration = configuration_.subsection({ "components" }).value_or(Configuration());
+		for (const std::string& componentName : componentsConfiguration.extractKeys({})) {
+			createGlobalComponent(componentName, componentsConfiguration.subsection({ componentName }).value());
+		}
+	}
+
+	void Scene::initializeEntities()
+	{
+		Configuration entitiesConfiguration = configuration_.subsection({ "entities" }).value_or(Configuration());
+		createEntities(entitiesConfiguration);
 	}
 
 	bool Scene::isActiveRendering() const {

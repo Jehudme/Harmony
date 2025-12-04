@@ -23,6 +23,7 @@ namespace Harmony::Internals
 
         template<typename Base, typename Type>
         static void registerComponent(const std::string& name);
+		static bool containsComponent(const std::string& name, EntityID entityId, const Scene& scene);
         static void createComponent(const std::string& name, const Configuration& configuation, EntityID entityId, Scene& scene);
         static void deleteComponent(const std::string& name, EntityID entityId, Scene& scene);
 
@@ -30,6 +31,7 @@ namespace Harmony::Internals
         static std::mutex& getMutex();
         static std::unordered_map<std::string, std::function<void(const Configuration&, EntityID, Scene&)>>& getComponentConstructorFactories();
         static std::unordered_map<std::string, std::function<void(EntityID, Scene& scene)>>& getComponentDestructorFactories();
+        static std::unordered_map<std::string, std::function<bool(EntityID, const Scene& scene)>>& getComponentContainsFactories();
 
         Engine& engine_;
     };

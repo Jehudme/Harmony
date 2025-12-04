@@ -18,5 +18,12 @@ namespace Harmony::Internals {
                 if (entityId == entt::null) scene.deleteGlobalComponent<Type>();
                 else scene.deleteComponent<Type>(entityId);
             };
+
+        getComponentContainsFactories()[name] =
+            [](EntityID entityId, const Scene& scene) -> bool
+            {
+                if (entityId == entt::null) return scene.containsGlobalComponent<Type>();
+                else return scene.containsComponent<Type>(entityId);
+			};
     }
 }

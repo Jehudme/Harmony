@@ -158,6 +158,7 @@
     <ClInclude Include="Properties.h" />
     <ClInclude Include="Images.h" />
     <ClInclude Include="Scene.h" />
+    <ClInclude Include="Script.h" />
     <ClInclude Include="Textures.h" />
     <ClInclude Include="RenderTextures.h" />
     <ClInclude Include="Fonts.h" />
@@ -165,6 +166,7 @@
     <ClInclude Include="Music.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="Transformable.h" />
+    <ClInclude Include="View3D.h" />
     <ClInclude Include="Waves.h" />
     <ClInclude Include="Meshes.h" />
     <ClInclude Include="Materials.h" />
@@ -204,6 +206,7 @@
     <ClCompile Include="Properties.cpp" />
     <ClCompile Include="Images.cpp" />
     <ClCompile Include="Scene.cpp" />
+    <ClCompile Include="Script.cpp" />
     <ClCompile Include="TasksHandler.cpp" />
     <ClCompile Include="Textures.cpp" />
     <ClCompile Include="RenderTextures.cpp" />
@@ -212,6 +215,7 @@
     <ClCompile Include="Music.cpp" />
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="Transformable.cpp" />
+    <ClCompile Include="View3D.cpp" />
     <ClCompile Include="Waves.cpp" />
     <ClCompile Include="Meshes.cpp" />
     <ClCompile Include="Materials.cpp" />
