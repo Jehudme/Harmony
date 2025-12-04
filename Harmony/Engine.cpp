@@ -8,6 +8,8 @@
 #include "Exceptions.h"
 #include "Configuration.h"
 
+#include "Scene.h"
+
 namespace Harmony::Internals
 {
 	Engine::Engine(const Configuration configuration) : 
@@ -19,7 +21,7 @@ namespace Harmony::Internals
 		try {
 			// Initialize configuration
 			HARMONY_DEBUG("Initializing Configuration subsystem");
-			this->configuration = std::make_unique<Configuration>();
+			this->configuration = std::make_unique<Configuration>(configuration);
 
 			// Initialize tasks handler
 			HARMONY_DEBUG("Initializing TasksHandler subsystem");
@@ -101,6 +103,8 @@ namespace Harmony::Internals
 		HARMONY_TRACE("Handling updates");
 		resourcesHandler->handleResources();
 		tasksHandler->handleTasks();
+
+		static Scene scene(*this, 101);
 	}
 
 	void Engine::handleRendering()

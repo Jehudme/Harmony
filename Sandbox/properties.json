@@ -1,14 +1,14 @@
 {
   "scenes": {
     "101": {
-      "entities": [101]
+      "entities": [ 101 ]
     }
   },
   "entities": {
     "101": {
       "name": "Sample Entity",
       "components": {
-        "Transform": {
+        "transform": {
           "position": {
             "x": 0.0,
             "y": 0.0,
@@ -25,6 +25,7 @@
             "z": 0.0
           }
         }
+      }
     },
     "102": {
       "name": "Camera Entity",

@@ -9,9 +9,9 @@
 
 namespace Harmony
 {
-	 // Internal state
-	 std::once_flag initFlag;
-	 std::shared_ptr<spdlog::logger> globalLogger;
+	// Internal state
+	std::once_flag initFlag;
+	std::shared_ptr<spdlog::logger> globalLogger;
 
 	void Logger::initialize(const std::string& logFile,
 		size_t maxFileSize,
@@ -28,32 +28,38 @@ namespace Harmony
 
 		std::call_once(initFlag, [&] {
 			try {
-				// Create async thread pool
+				auto console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
+				console_sink->set_pattern("[%H:%M:%S.%e] [%^%l%$] %v");
+
+				auto file_sink = std::make_shared<spdlog::sinks::rotating_file_sink_mt>(
+					std::string{ logFile }, maxFileSize, maxFiles);
+
+				std::vector<spdlog::sink_ptr> sinks{ console_sink, file_sink };
+				#ifdef _DEBUG
+				globalLogger = std::make_shared<spdlog::logger>(
+					"Harmony",
+					sinks.begin(),
+					sinks.end()
+				);
+
+				globalLogger->flush_on(spdlog::level::trace);
+
+				#else
 				spdlog::init_thread_pool(queueSize, workerThreads);
 
-			// Console sink
-			auto console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
-			console_sink->set_pattern("[%H:%M:%S.%e] [%^%l%$] %v");
+				globalLogger = std::make_shared<spdlog::async_logger>(
+					"Harmony",
+					sinks.begin(), sinks.end(),
+					spdlog::thread_pool(),
+					spdlog::async_overflow_policy::block);
 
-			// Rotating file sink
-			auto file_sink = std::make_shared<spdlog::sinks::rotating_file_sink_mt>(
-				std::string{ logFile }, maxFileSize, maxFiles);
+				globalLogger->flush_on(spdlog::level::warn);
+				#endif
 
-			std::vector<spdlog::sink_ptr> sinks{ console_sink, file_sink };
+				spdlog::register_logger(globalLogger);
+				spdlog::set_default_logger(globalLogger);
 
-			// Create async logger
-			globalLogger = std::make_shared<spdlog::async_logger>(
-				"Harmony",
-				sinks.begin(), sinks.end(),
-				spdlog::thread_pool(),
-				spdlog::async_overflow_policy::block);
-
-			spdlog::register_logger(globalLogger);
-			spdlog::set_default_logger(globalLogger);
-
-				// Default levels
-				spdlog::set_level(spdlog::level::trace);   // log everything
-				spdlog::flush_on(spdlog::level::warn);     // flush on warnings or higher
+				spdlog::set_level(spdlog::level::trace);
 			}
 			catch (const spdlog::spdlog_ex& ex) {
 				throw Exceptions::LoggerInitializationException(ex.what());
@@ -61,7 +67,7 @@ namespace Harmony
 			catch (const std::exception& ex) {
 				throw Exceptions::LoggerInitializationException(std::string("Unexpected error: ") + ex.what());
 			}
-		});
+			});
 	}
 
 	void Logger::trace(std::string_view message) {
@@ -91,5 +97,4 @@ namespace Harmony
 	void Logger::shutdown() {
 		spdlog::shutdown();
 	}
-
 }

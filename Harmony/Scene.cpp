@@ -9,10 +9,13 @@
 
 namespace Harmony::Internals
 {
-	Scene::Scene(const Configuration& configuration, const SceneID sceneId, Engine& engine) :
-		configuration_(configuration),
+	Scene::Scene(Engine& engine, const SceneID sceneId) :
 		sceneId(sceneId),
-		engine(engine) {
+		engine(engine) 
+	{
+		const std::string key = std::to_string(static_cast<uint32_t>(sceneId));
+		configuration_ = engine.configuration->subsection({ "scenes", key }).value();
+
 		initialize();
 	}
 
@@ -61,10 +64,10 @@ namespace Harmony::Internals
 
 	EntityID Scene::createEntity(const Configuration& configuration)
 	{
-		const EntityID entity = registry_.create();
+		const EntityID entity = static_cast<EntityID>(registry_.create());
 
-		for (const std::string& componentName : configuration.extractKeys({}))
-			ComponentsHandler::createComponent(componentName, configuration.subsection({ componentName }).value(), entity, *this);
+		for (const std::string& componentName : configuration.extractKeys({ "components" }))
+			ComponentsHandler::createComponent(componentName, configuration.subsection({ "components", componentName }).value(), entity, *this);
 
 		HARMONY_DEBUG("Entity {} created", entity);
 		return static_cast<EntityID>(entity);
@@ -83,7 +86,7 @@ namespace Harmony::Internals
 
 	void Scene::destroyEntity(EntityID entityId)
 	{
-		registry_.destroy(entityId);
+		registry_.destroy(static_cast<entt::entity>(entityId));
 		HARMONY_DEBUG("Entity {} destroyed", entityId);
 	}
 

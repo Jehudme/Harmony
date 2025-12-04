@@ -79,7 +79,8 @@ namespace Harmony{
     void Configuration::debugPrint() const
     {
         std::lock_guard lock(mutex_);
-		HARMONY_DEBUG("Configuration Data:\n{}", internal_->data.dump(6));
+		std::string data = internal_->data.dump(2);
+		HARMONY_INFO("Configuration Data:\n{}", data);
     }
 
     // Helpers

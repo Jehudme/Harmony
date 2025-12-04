@@ -272,5 +272,8 @@
     <None Include="Scene.inl">
       <Filter>Header Files\Internals</Filter>
     </None>
+    <None Include="ComponentsHandler.inl">
+      <Filter>Header Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

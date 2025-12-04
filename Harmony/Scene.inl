@@ -31,19 +31,14 @@ namespace Harmony::Internals
 	template<typename Base, typename Type, typename ...Args>
 	inline Type& Scene::createComponent(EntityID entityId, Args&&... args)
 	{
-		extern entt::registry& getRegistryFromScene(Scene & scene);
-		static_assert(std::is_base_of_v<Base, Type>, "Type must be derived from Base");
-
-		auto& ptr = getRegistryFromScene(*this)
-			.emplace_or_replace<std::unique_ptr<Base>>(entityId, std::make_unique<Type>(std::forward<Args>(args)...));
+		auto& ptr = registry_.emplace_or_replace<std::unique_ptr<Base>>(static_cast<entt::entity>(entityId), std::make_unique<Type>(std::forward<Args>(args)...));
 
 		return static_cast<Type&>(*ptr);
 	}
 
 	template<typename Type>
 	inline void Scene::deleteComponent(EntityID entityId) {
-		extern entt::registry& getRegistryFromScene(Scene & scene);
-		getRegistryFromScene(*this).remove<std::unique_ptr<Type>>(static_cast<EntityID>(entityId));
+		registry_.remove<std::unique_ptr<Type>>(static_cast<entt::entity>(entityId));
 	}
 
 	template<typename Type, typename... Args>
@@ -53,8 +48,7 @@ namespace Harmony::Internals
 
 	template<typename Base, typename Type, typename... Args>
 	inline Type& Scene::createGlobalComponent(Args&&... args) {
-		extern entt::registry& getRegistryFromScene(Scene & scene);
-		auto& ptr = getRegistryFromScene(*this)
+		auto& ptr = registry_
 			.ctx()
 			.emplace<std::unique_ptr<Base>>(std::make_unique<Type>(std::forward<Args>(args)...));
 
@@ -63,21 +57,18 @@ namespace Harmony::Internals
 
 	template<typename Type>
 	inline void Scene::deleteGlobalComponent() {
-		extern entt::registry& getRegistryFromScene(Scene & scene);
-		getRegistryFromScene(*this).ctx().erase<std::unique_ptr<Type>>();
+		registry_.ctx().erase<std::unique_ptr<Type>>();
 	}
 
 	template<typename Type>
 	inline Type& Scene::getGlobalComponent() {
-		extern entt::registry& getRegistryFromScene(Scene & scene);
-		auto* ptr = getRegistryFromScene(*this).ctx().find<std::unique_ptr<Type>>();
+		auto* ptr = registry_.ctx().find<std::unique_ptr<Type>>();
 		return **ptr;
 	}
 
 	template<typename Type>
 	inline const Type& Scene::getGlobalComponent() const {
-		extern const entt::registry& getRegistryFromScene(const Scene & scene);
-		auto* ptr = getRegistryFromScene(*this).ctx().find<std::unique_ptr<Type>>();
+		auto* ptr = registry_.ctx().find<std::unique_ptr<Type>>();
 		return **ptr;
 	}
 }

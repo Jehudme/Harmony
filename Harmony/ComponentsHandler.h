@@ -34,30 +34,6 @@ namespace Harmony::Internals
         Engine& engine_;
     };
 
-    template<typename Base, typename Type>
-    inline void ComponentsHandler::registerComponent(const std::string& name) {
-        //static_assert(std::is_constructible_v<Type, const Configuration&, Scene&>,
-        //    "Type must have a constructor taking const Harmony::Configuration& and Harmony::Scene&"
-        //    );
-
-        getComponentConstructorFactories()[name] =
-            [](const Configuration& configuration, EntityID entityId, Scene& scene)
-            {
-                std::unique_ptr<Base> component = std::make_unique<Type>(configuration, scene);
-
-                if (entityId == entt::null) scene.createGlobalComponent<Type>(configuration, scene);
-                else scene.createComponent<Base, Type>(entityId, configuration, scene);
-            };
-
-        getComponentDestructorFactories()[name] =
-            [](EntityID entityId, Scene& scene)
-            {
-                if (entityId == entt::null) scene.deleteGlobalComponent<Type>();
-                else scene.deleteComponent<Type>(entityId);
-            };
-    }
-}
-
 // Automatic component registration macro with base class
 #define HARMONY_REGISTER_COMPONENT_WITH_BASE(ComponentBase, ComponentType, ComponentName)							\
 namespace Harmony::Components::Registrations::details {																\
@@ -75,3 +51,7 @@ namespace Harmony::Components::Registrations::details {																\
 
 #define HARMONY_COMPONENTS_CONSTRUCTOR_ARGUMENTS \
 const Harmony::Configuration& configuration, Harmony::Internals::Scene& scene
+
+} // namespace Harmony::Internals
+
+#include "ComponentsHandler.inl"

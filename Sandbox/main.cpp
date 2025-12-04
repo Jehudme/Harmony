@@ -10,6 +10,7 @@ int main()
 	Harmony::Logger::initialize();
 	Configuration config;
 	config.load("properties.json");
+	config.debugPrint();
 
 	Engine(config).start();
 }

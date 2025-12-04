@@ -6,15 +6,15 @@ namespace Harmony::Internals {
 
 namespace Harmony::Internals {
 	using ComponentID = entt::entity;
-	using EntityID = entt::entity;
-	using EntityIDs = std::vector<EntityID>;
+	using EntityID = uint32_t;
+	using EntityIDs = std::vector<uint32_t>;
 	using SceneID = unsigned int;
 	using PrefabID = unsigned int;
 
 	class Scene
 	{
 	public:
-		Scene(const Configuration& configuration, const SceneID sceneId, Engine& engine);
+		Scene(Engine& engine,const SceneID sceneId);
 		~Scene();
 
 		void initialize();
