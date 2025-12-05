@@ -7,7 +7,7 @@
 #include "ComponentsHandler.h"
 #include "Script.h"
 #include "View3D.h"
-
+#include "Renderable.h"
 
 namespace Harmony::Internals
 {
@@ -66,6 +66,10 @@ namespace Harmony::Internals
 	{
 		return Harmony::Internals::ComponentsHandler::containsComponent(componentName, entt::null, *this);
 
+	}
+
+	auto Scene::getView() {
+		return registry_.view<entt::entity>();
 	}
 
 	void Scene::createGlobalComponent(const std::string& componentName, const Configuration& configuration) {
@@ -129,18 +133,21 @@ namespace Harmony::Internals
 
 	void Scene::render()
 	{
-		const auto view = getComponentsView<Components::Script>();
+		const bool sceneContainsScript = containsGlobalComponent<Components::Script>();
+		const auto view = getComponentsView<Components::Renderable>();
 		const bool containsScript = containsGlobalComponent<Components::Script>();
-
+		
+		if (sceneContainsScript) { getGlobalComponent<Components::Script>().onPreRender(); }
 		BeginMode3D(getGlobalComponent<Components::View3D>());
-		
-		if (containsScript) { getGlobalComponent<Components::Script>().onPreRender(); }
-		for (const auto& [entity, script] : view.each()) { script->onPreRender(); }
-		
-		for (const auto& [entity, script] : view.each()) { script->onPostRender(); }
-		if (containsScript) { getGlobalComponent<Components::Script>().onPostRender(); }
+
+		for (auto [entity, renderable] : view.each()) {
+			renderable->preRender();
+			renderable->onRender();
+			renderable->postRender();
+		}
 
 		EndMode3D();
+		if (sceneContainsScript) { getGlobalComponent<Components::Script>().onPostRender(); }
 	}
 
 	void Scene::update()

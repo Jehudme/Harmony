@@ -31,7 +31,7 @@ namespace Harmony::Internals
 	template<typename Base, typename Type, typename ...Args>
 	inline Type& Scene::createComponent(EntityID entityId, Args&&... args)
 	{
-		auto& ptr = registry_.emplace_or_replace<std::unique_ptr<Base>>(static_cast<entt::entity>(entityId), std::make_unique<Type>(std::forward<Args>(args)...));
+		auto& ptr = registry_.emplace_or_replace<std::unique_ptr<Base>>(static_cast<entt::entity>(entityId), std::make_unique<Type>(entityId, std::forward<Args>(args)...));
 
 		return static_cast<Type&>(*ptr);
 	}
@@ -50,7 +50,7 @@ namespace Harmony::Internals
 	inline Type& Scene::createGlobalComponent(Args&&... args) {
 		auto& ptr = registry_
 			.ctx()
-			.emplace<std::unique_ptr<Base>>(std::make_unique<Type>(std::forward<Args>(args)...));
+			.emplace<std::unique_ptr<Base>>(std::make_unique<Type>(static_cast<EntityID>(entt::null), std::forward<Args>(args)...));
 
 		return static_cast<Type&>(*ptr);
 	}

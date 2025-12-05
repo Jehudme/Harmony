@@ -199,61 +199,143 @@ namespace Harmony{
         return left;
     }
 
+    // =====================================================================================
+    // 1. SCALARS - GET
+    // =====================================================================================
 
-    template std::optional<int> Configuration::get<int>(const std::vector<std::string>&) const;
-    template std::optional<unsigned int> Configuration::get<unsigned int>(const std::vector<std::string>&) const;
-    template std::optional<int64_t> Configuration::get<int64_t>(const std::vector<std::string>&) const;
-    template std::optional<uint64_t> Configuration::get<uint64_t>(const std::vector<std::string>&) const;
-    template std::optional<float> Configuration::get<float>(const std::vector<std::string>&) const;
-    template std::optional<double> Configuration::get<double>(const std::vector<std::string>&) const;
-    template std::optional<bool> Configuration::get<bool>(const std::vector<std::string>&) const;
+    // Boolean & String
+    template std::optional<bool>        Configuration::get<bool>(const std::vector<std::string>&) const;
     template std::optional<std::string> Configuration::get<std::string>(const std::vector<std::string>&) const;
 
-    template void Configuration::set<int>(const std::vector<std::string>&, const int&);
-    template void Configuration::set<unsigned int>(const std::vector<std::string>&, const unsigned int&);
-    template void Configuration::set<int64_t>(const std::vector<std::string>&, const int64_t&);
-    template void Configuration::set<uint64_t>(const std::vector<std::string>&, const uint64_t&);
-    template void Configuration::set<float>(const std::vector<std::string>&, const float&);
-    template void Configuration::set<double>(const std::vector<std::string>&, const double&);
+    // Char Types (8-bit)
+    template std::optional<char>           Configuration::get<char>(const std::vector<std::string>&) const;
+    template std::optional<signed char>    Configuration::get<signed char>(const std::vector<std::string>&) const;   // int8_t
+    template std::optional<unsigned char>  Configuration::get<unsigned char>(const std::vector<std::string>&) const; // uint8_t
+
+    // Short Types (16-bit)
+    template std::optional<short>          Configuration::get<short>(const std::vector<std::string>&) const;          // int16_t
+    template std::optional<unsigned short> Configuration::get<unsigned short>(const std::vector<std::string>&) const; // uint16_t
+
+    // Integer Types (32-bit usually)
+    template std::optional<int>            Configuration::get<int>(const std::vector<std::string>&) const;            // int32_t
+    template std::optional<unsigned int>   Configuration::get<unsigned int>(const std::vector<std::string>&) const;   // uint32_t
+
+    // Long Types (32-bit or 64-bit depending on OS)
+    template std::optional<long>           Configuration::get<long>(const std::vector<std::string>&) const;
+    template std::optional<unsigned long>  Configuration::get<unsigned long>(const std::vector<std::string>&) const;
+
+    // Long Long Types (64-bit)
+    template std::optional<long long>          Configuration::get<long long>(const std::vector<std::string>&) const;          // int64_t
+    template std::optional<unsigned long long> Configuration::get<unsigned long long>(const std::vector<std::string>&) const; // uint64_t
+
+    // Floating Point Types
+    template std::optional<float>       Configuration::get<float>(const std::vector<std::string>&) const;
+    template std::optional<double>      Configuration::get<double>(const std::vector<std::string>&) const;
+    template std::optional<long double> Configuration::get<long double>(const std::vector<std::string>&) const;
+
+
+    // =====================================================================================
+    // 2. SCALARS - SET
+    // =====================================================================================
+
+    // Boolean & String
     template void Configuration::set<bool>(const std::vector<std::string>&, const bool&);
     template void Configuration::set<std::string>(const std::vector<std::string>&, const std::string&);
 
-    template std::optional<std::vector<int>> Configuration::get<std::vector<int>>(const std::vector<std::string>&) const;
-    template std::optional<std::vector<unsigned int>> Configuration::get<std::vector<unsigned int>>(const std::vector<std::string>&) const;
-    template std::optional<std::vector<int64_t>> Configuration::get<std::vector<int64_t>>(const std::vector<std::string>&) const;
-    template std::optional<std::vector<uint64_t>> Configuration::get<std::vector<uint64_t>>(const std::vector<std::string>&) const;
-    template std::optional<std::vector<float>> Configuration::get<std::vector<float>>(const std::vector<std::string>&) const;
-    template std::optional<std::vector<double>>  Configuration::get<std::vector<double>>(const std::vector<std::string>&) const;
-    template std::optional<std::vector<bool>> Configuration::get<std::vector<bool>>(const std::vector<std::string>&) const;
+    // Char Types
+    template void Configuration::set<char>(const std::vector<std::string>&, const char&);
+    template void Configuration::set<signed char>(const std::vector<std::string>&, const signed char&);
+    template void Configuration::set<unsigned char>(const std::vector<std::string>&, const unsigned char&);
+
+    // Short Types
+    template void Configuration::set<short>(const std::vector<std::string>&, const short&);
+    template void Configuration::set<unsigned short>(const std::vector<std::string>&, const unsigned short&);
+
+    // Integer Types
+    template void Configuration::set<int>(const std::vector<std::string>&, const int&);
+    template void Configuration::set<unsigned int>(const std::vector<std::string>&, const unsigned int&);
+
+    // Long Types
+    template void Configuration::set<long>(const std::vector<std::string>&, const long&);
+    template void Configuration::set<unsigned long>(const std::vector<std::string>&, const unsigned long&);
+
+    // Long Long Types
+    template void Configuration::set<long long>(const std::vector<std::string>&, const long long&);
+    template void Configuration::set<unsigned long long>(const std::vector<std::string>&, const unsigned long long&);
+
+    // Floating Point Types
+    template void Configuration::set<float>(const std::vector<std::string>&, const float&);
+    template void Configuration::set<double>(const std::vector<std::string>&, const double&);
+    template void Configuration::set<long double>(const std::vector<std::string>&, const long double&);
+
+
+    // =====================================================================================
+    // 3. VECTORS - GET
+    // =====================================================================================
+
+    // Boolean & String
+    template std::optional<std::vector<bool>>        Configuration::get<std::vector<bool>>(const std::vector<std::string>&) const;
     template std::optional<std::vector<std::string>> Configuration::get<std::vector<std::string>>(const std::vector<std::string>&) const;
 
-    template void Configuration::set<std::vector<int>>(const std::vector<std::string>&, const std::vector<int>&);
-    template void Configuration::set<std::vector<unsigned int>>(const std::vector<std::string>&, const std::vector<unsigned int>&);
-    template void Configuration::set<std::vector<int64_t>>(const std::vector<std::string>&, const std::vector<int64_t>&);
-    template void Configuration::set<std::vector<uint64_t>>(const std::vector<std::string>&, const std::vector<uint64_t>&);
-    template void Configuration::set<std::vector<float>>(const std::vector<std::string>&, const std::vector<float>&);
-    template void Configuration::set<std::vector<double>>(const std::vector<std::string>&, const std::vector<double>&);
+    // Char Types
+    template std::optional<std::vector<char>>           Configuration::get<std::vector<char>>(const std::vector<std::string>&) const;
+    template std::optional<std::vector<signed char>>    Configuration::get<std::vector<signed char>>(const std::vector<std::string>&) const;
+    template std::optional<std::vector<unsigned char>>  Configuration::get<std::vector<unsigned char>>(const std::vector<std::string>&) const;
+
+    // Short Types
+    template std::optional<std::vector<short>>          Configuration::get<std::vector<short>>(const std::vector<std::string>&) const;
+    template std::optional<std::vector<unsigned short>> Configuration::get<std::vector<unsigned short>>(const std::vector<std::string>&) const;
+
+    // Integer Types
+    template std::optional<std::vector<int>>            Configuration::get<std::vector<int>>(const std::vector<std::string>&) const;
+    template std::optional<std::vector<unsigned int>>   Configuration::get<std::vector<unsigned int>>(const std::vector<std::string>&) const;
+
+    // Long Types
+    template std::optional<std::vector<long>>           Configuration::get<std::vector<long>>(const std::vector<std::string>&) const;
+    template std::optional<std::vector<unsigned long>>  Configuration::get<std::vector<unsigned long>>(const std::vector<std::string>&) const;
+
+    // Long Long Types
+    template std::optional<std::vector<long long>>          Configuration::get<std::vector<long long>>(const std::vector<std::string>&) const;
+    template std::optional<std::vector<unsigned long long>> Configuration::get<std::vector<unsigned long long>>(const std::vector<std::string>&) const;
+
+    // Floating Point Types
+    template std::optional<std::vector<float>>       Configuration::get<std::vector<float>>(const std::vector<std::string>&) const;
+    template std::optional<std::vector<double>>      Configuration::get<std::vector<double>>(const std::vector<std::string>&) const;
+    template std::optional<std::vector<long double>> Configuration::get<std::vector<long double>>(const std::vector<std::string>&) const;
+
+
+    // =====================================================================================
+    // 4. VECTORS - SET
+    // =====================================================================================
+
+    // Boolean & String
     template void Configuration::set<std::vector<bool>>(const std::vector<std::string>&, const std::vector<bool>&);
     template void Configuration::set<std::vector<std::string>>(const std::vector<std::string>&, const std::vector<std::string>&);
 
-    template std::optional<int8_t>   Configuration::get<int8_t>(const std::vector<std::string>&) const;
-    template std::optional<int16_t>  Configuration::get<int16_t>(const std::vector<std::string>&) const;
-    template std::optional<int32_t>  Configuration::get<int32_t>(const std::vector<std::string>&) const;
-    template std::optional<int64_t>  Configuration::get<int64_t>(const std::vector<std::string>&) const;
+    // Char Types
+    template void Configuration::set<std::vector<char>>(const std::vector<std::string>&, const std::vector<char>&);
+    template void Configuration::set<std::vector<signed char>>(const std::vector<std::string>&, const std::vector<signed char>&);
+    template void Configuration::set<std::vector<unsigned char>>(const std::vector<std::string>&, const std::vector<unsigned char>&);
 
-    template std::optional<uint8_t>  Configuration::get<uint8_t>(const std::vector<std::string>&) const;
-    template std::optional<uint16_t> Configuration::get<uint16_t>(const std::vector<std::string>&) const;
-    template std::optional<uint32_t> Configuration::get<uint32_t>(const std::vector<std::string>&) const;
-    template std::optional<uint64_t> Configuration::get<uint64_t>(const std::vector<std::string>&) const;
+    // Short Types
+    template void Configuration::set<std::vector<short>>(const std::vector<std::string>&, const std::vector<short>&);
+    template void Configuration::set<std::vector<unsigned short>>(const std::vector<std::string>&, const std::vector<unsigned short>&);
 
-    template void Configuration::set<int8_t>(const std::vector<std::string>&, const int8_t&);
-    template void Configuration::set<int16_t>(const std::vector<std::string>&, const int16_t&);
-    template void Configuration::set<int32_t>(const std::vector<std::string>&, const int32_t&);
-    template void Configuration::set<int64_t>(const std::vector<std::string>&, const int64_t&);
+    // Integer Types
+    template void Configuration::set<std::vector<int>>(const std::vector<std::string>&, const std::vector<int>&);
+    template void Configuration::set<std::vector<unsigned int>>(const std::vector<std::string>&, const std::vector<unsigned int>&);
 
-    template void Configuration::set<uint8_t>(const std::vector<std::string>&, const uint8_t&);
-    template void Configuration::set<uint16_t>(const std::vector<std::string>&, const uint16_t&);
-    template void Configuration::set<uint32_t>(const std::vector<std::string>&, const uint32_t&);
-    template void Configuration::set<uint64_t>(const std::vector<std::string>&, const uint64_t&);
+    // Long Types
+    template void Configuration::set<std::vector<long>>(const std::vector<std::string>&, const std::vector<long>&);
+    template void Configuration::set<std::vector<unsigned long>>(const std::vector<std::string>&, const std::vector<unsigned long>&);
+
+    // Long Long Types
+    template void Configuration::set<std::vector<long long>>(const std::vector<std::string>&, const std::vector<long long>&);
+    template void Configuration::set<std::vector<unsigned long long>>(const std::vector<std::string>&, const std::vector<unsigned long long>&);
+
+    // Floating Point Types
+    template void Configuration::set<std::vector<float>>(const std::vector<std::string>&, const std::vector<float>&);
+    template void Configuration::set<std::vector<double>>(const std::vector<std::string>&, const std::vector<double>&);
+    template void Configuration::set<std::vector<long double>>(const std::vector<std::string>&, const std::vector<long double>&);
 
 }

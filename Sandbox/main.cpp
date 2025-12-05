@@ -24,31 +24,12 @@ namespace Sandbox {
 	class Script : public Harmony::Components::Script {
 	public:
 		Script(HARMONY_COMPONENTS_CONSTRUCTOR_ARGUMENTS) :
-			scene_(scene)
-		{
-		}
+			scene_(scene) {}
 
 		~Script() override {}
 
-		void onCreate() override {}
-
-		void onDestroy() override {}
-
-		void onPreUpdate() override {}
-
-		void onPostUpdate() override {
-		
-		}
-
 		void onPreRender() override {
 			UpdateCamera(&scene_.getGlobalComponent<Components::View3D>(), CAMERA_FREE);
-
-		}
-
-		void onPostRender() override {
-			DrawCube(Vector3(0.0f, 0.0f, 0.0f), 2.0f, 2.0f, 2.0f, RED);   // Solid cube
-			DrawCubeWires(Vector3(0.0f, 0.0f, 0.0f), 2.0f, 2.0f, 2.0f, MAROON); // Wireframe
-			DrawGrid(10, 1.0f); // Grid for reference
 		}
 
 	private:

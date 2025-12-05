@@ -52,7 +52,7 @@ namespace Harmony::Components::Registrations::details {																\
     HARMONY_REGISTER_COMPONENT_WITH_BASE(ComponentType, ComponentType, ComponentName)
 
 #define HARMONY_COMPONENTS_CONSTRUCTOR_ARGUMENTS \
-const Harmony::Configuration& configuration, Harmony::Internals::Scene& scene
+const Harmony::Internals::EntityID entityId, const Harmony::Configuration& configuration, Harmony::Internals::Scene& scene
 
 } // namespace Harmony::Internals
 

@@ -6,7 +6,7 @@
 HARMONY_REGISTER_COMPONENT(Harmony::Components::Transform, transform);
 
 namespace Harmony::Components {
-	Transform::Transform(const Harmony::Configuration& configuration, Harmony::Internals::Scene& scene) :
+	Transform::Transform(HARMONY_COMPONENTS_CONSTRUCTOR_ARGUMENTS) :
 		Utilities::Transformable()
 	{
 		std::optional<float> posX = configuration.get<float>({ "position", "x" });

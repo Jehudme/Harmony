@@ -60,6 +60,7 @@ namespace Harmony::Internals {
 
 		template<typename Type>
 		auto getComponentsView();
+		auto getView();
 
 		template<typename Type>
 		bool containsComponent(EntityID entityId) const;

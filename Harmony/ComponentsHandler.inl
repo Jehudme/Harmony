@@ -1,7 +1,7 @@
 namespace Harmony::Internals {
     template<typename Base, typename Type>
     inline void ComponentsHandler::registerComponent(const std::string& name) {
-        static_assert(std::is_constructible_v<Type, const Configuration&, Scene&>,
+        static_assert(std::is_constructible_v<Type, const Harmony::Internals::EntityID, const Configuration&, Scene&>,
             "Type must have a constructor taking const Harmony::Configuration& and Harmony::Scene&"
             );
 
