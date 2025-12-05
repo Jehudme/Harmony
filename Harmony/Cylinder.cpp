@@ -39,8 +39,9 @@ namespace Harmony::Components {
 			float h = heightOpt.value_or(100.0f);
 			int slc = slicesOpt.value_or(16);
 			
-			HARMONY_ASSERT(rt > 0.0f, "Cylinder radius top must be positive");
-			HARMONY_ASSERT(rb > 0.0f, "Cylinder radius bottom must be positive");
+			HARMONY_ASSERT(rt >= 0.0f, "Cylinder radius top must be non-negative");
+			HARMONY_ASSERT(rb >= 0.0f, "Cylinder radius bottom must be non-negative");
+			HARMONY_ASSERT(rt > 0.0f || rb > 0.0f, "Cylinder must have at least one non-zero radius");
 			HARMONY_ASSERT(h > 0.0f, "Cylinder height must be positive");
 			HARMONY_ASSERT(slc > 0, "Cylinder slices must be positive");
 			

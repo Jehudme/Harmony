@@ -70,8 +70,9 @@ namespace Harmony::Components {
 	void Pyramid::onRender()
 	{
 		try {
-			// Draw pyramid using raylib's DrawMesh or manual triangle drawing
-			// For simplicity, using a cone-like shape with 4 sides
+			// Draw pyramid as a 4-sided cone
+			// Note: Uses size.x for base diameter. size.y is height. size.z is currently not used
+			// as DrawCylinder with 4 slices creates a square base.
 			DrawCylinder(Vector3{ 0.0f, 0.0f, 0.0f }, 0.0f, size.x / 2.0f, size.y, 4, color);
 			DrawCylinderWires(Vector3{ 0.0f, 0.0f, 0.0f }, 0.0f, size.x / 2.0f, size.y, 4, frameColor);
 		}
