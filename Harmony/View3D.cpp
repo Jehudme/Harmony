@@ -54,6 +54,7 @@ namespace Harmony::Components {
 			if (projection == "perspective") {
 				Camera3D::projection = CAMERA_PERSPECTIVE;
 			}
+			// Accept both "orthographic" and "orthogonal" for user convenience
 			else if (projection == "orthographic" || projection == "orthogonal") {
 				Camera3D::projection = CAMERA_ORTHOGRAPHIC;
 			}
