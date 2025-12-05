@@ -19,13 +19,13 @@ namespace Harmony::Internals
 
 	template<typename Type>
 	inline Type& Scene::getComponent(EntityID entityId) {
-		std::lock_guard<std::mutex> lock(registryMutex_);
+		std::lock_guard<std::recursive_mutex> lock(registryMutex_);
 		return getComponentReferenceImpl<Type>(registry_, entityId);
 	}
 
 	template<typename Type>
 	inline Type& Scene::getComponent(EntityID entityId) const {
-		std::lock_guard<std::mutex> lock(registryMutex_);
+		std::lock_guard<std::recursive_mutex> lock(registryMutex_);
 		return getComponentReferenceImpl<Type>(registry_, entityId);
 	}
 
@@ -39,7 +39,7 @@ namespace Harmony::Internals
 	{
 		HARMONY_ASSERT(entityId != entt::null, "Cannot create component on null entity");
 		
-		std::lock_guard<std::mutex> lock(registryMutex_);
+		std::lock_guard<std::recursive_mutex> lock(registryMutex_);
 		
 		try {
 			auto& ptr = registry_.emplace_or_replace<std::unique_ptr<Base>>(
@@ -61,7 +61,7 @@ namespace Harmony::Internals
 	inline void Scene::deleteComponent(EntityID entityId) {
 		HARMONY_ASSERT(entityId != entt::null, "Cannot delete component from null entity");
 		
-		std::lock_guard<std::mutex> lock(registryMutex_);
+		std::lock_guard<std::recursive_mutex> lock(registryMutex_);
 		
 		if (!registry_.all_of<std::unique_ptr<Type>>(static_cast<entt::entity>(entityId))) {
 			HARMONY_WARN("Attempted to delete non-existent component of type '{}' from entity {}", 
@@ -80,7 +80,7 @@ namespace Harmony::Internals
 
 	template<typename Base, typename Type, typename... Args>
 	inline Type& Scene::createGlobalComponent(Args&&... args) {
-		std::lock_guard<std::mutex> lock(registryMutex_);
+		std::lock_guard<std::recursive_mutex> lock(registryMutex_);
 		
 		try {
 			auto& ptr = registry_
@@ -101,7 +101,7 @@ namespace Harmony::Internals
 
 	template<typename Type>
 	inline void Scene::deleteGlobalComponent() {
-		std::lock_guard<std::mutex> lock(registryMutex_);
+		std::lock_guard<std::recursive_mutex> lock(registryMutex_);
 		
 		if (!registry_.ctx().contains<std::unique_ptr<Type>>()) {
 			HARMONY_WARN("Attempted to delete non-existent global component of type '{}'", 
@@ -115,25 +115,25 @@ namespace Harmony::Internals
 
 	template<typename Type>
 	inline auto Scene::getComponentsView(){
-		std::lock_guard<std::mutex> lock(registryMutex_);
+		std::lock_guard<std::recursive_mutex> lock(registryMutex_);
 		return registry_.view<std::unique_ptr<Type>>();
 	}
 
 	template<typename Type>
 	inline bool Scene::containsComponent(EntityID entityId) const {
-		std::lock_guard<std::mutex> lock(registryMutex_);
+		std::lock_guard<std::recursive_mutex> lock(registryMutex_);
 		return registry_.all_of<std::unique_ptr<Type>>(static_cast<entt::entity>(entityId));
 	}
 
 	template<typename Type>
 	inline bool Scene::containsGlobalComponent() const {
-		std::lock_guard<std::mutex> lock(registryMutex_);
+		std::lock_guard<std::recursive_mutex> lock(registryMutex_);
 		return registry_.ctx().contains<std::unique_ptr<Type>>();
 	}
 
 	template<typename Type>
 	inline Type& Scene::getGlobalComponent() {
-		std::lock_guard<std::mutex> lock(registryMutex_);
+		std::lock_guard<std::recursive_mutex> lock(registryMutex_);
 		
 		auto* ptr = registry_.ctx().find<std::unique_ptr<Type>>();
 		HARMONY_ASSERT_NOT_NULL(ptr, "Global component not found");
@@ -144,7 +144,7 @@ namespace Harmony::Internals
 
 	template<typename Type>
 	inline const Type& Scene::getGlobalComponent() const {
-		std::lock_guard<std::mutex> lock(registryMutex_);
+		std::lock_guard<std::recursive_mutex> lock(registryMutex_);
 		
 		auto* ptr = registry_.ctx().find<std::unique_ptr<Type>>();
 		HARMONY_ASSERT_NOT_NULL(ptr, "Global component not found");

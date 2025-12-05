@@ -105,8 +105,9 @@ namespace Harmony::Internals {
 		void initializeComponents();
 		void initializeEntities();
 
-		// Mutex for protecting registry access (mutable for const methods)
-		mutable std::mutex registryMutex_;
+		// Recursive mutex for protecting registry access (mutable for const methods)
+		// Using recursive_mutex to allow methods to call other methods that also lock
+		mutable std::recursive_mutex registryMutex_;
 
 	private:
 		Configuration configuration_;

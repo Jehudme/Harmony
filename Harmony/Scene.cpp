@@ -48,7 +48,7 @@ namespace Harmony::Internals
 		HARMONY_DEBUG("Destroying Scene {}", sceneId);
 		
 		try {
-			std::lock_guard<std::mutex> lock(registryMutex_);
+			std::lock_guard<std::recursive_mutex> lock(registryMutex_);
 			
 			if (containsGlobalComponent<Components::Script>()) {
 				getGlobalComponent<Components::Script>().onDestroy();
@@ -72,7 +72,7 @@ namespace Harmony::Internals
 		HARMONY_DEBUG("Scene {} initialize() called", sceneId);
 		
 		try {
-			std::lock_guard<std::mutex> lock(registryMutex_);
+			std::lock_guard<std::recursive_mutex> lock(registryMutex_);
 			registry_.clear();
 
 			initializeEntities();
@@ -135,7 +135,7 @@ namespace Harmony::Internals
 	}
 
 	auto Scene::getView() {
-		std::lock_guard<std::mutex> lock(registryMutex_);
+		std::lock_guard<std::recursive_mutex> lock(registryMutex_);
 		return registry_.view<entt::entity>();
 	}
 
@@ -195,7 +195,7 @@ namespace Harmony::Internals
 	EntityID Scene::createEntity(const Configuration& configuration)
 	{
 		try {
-			std::lock_guard<std::mutex> lock(registryMutex_);
+			std::lock_guard<std::recursive_mutex> lock(registryMutex_);
 			const EntityID entity = static_cast<EntityID>(registry_.create());
 
 			for (const std::string& componentName : configuration.extractKeys({ "components" })) {
@@ -235,7 +235,7 @@ namespace Harmony::Internals
 		HARMONY_ASSERT(entityId != entt::null, "Cannot destroy null entity");
 		
 		try {
-			std::lock_guard<std::mutex> lock(registryMutex_);
+			std::lock_guard<std::recursive_mutex> lock(registryMutex_);
 			
 			if (!registry_.valid(static_cast<entt::entity>(entityId))) {
 				HARMONY_WARN("Attempted to destroy invalid entity {} in Scene {}", entityId, sceneId);

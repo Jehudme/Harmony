@@ -6,7 +6,8 @@ namespace Harmony::Internals {
             );
 
         // Thread-safe write access when registering component
-        std::lock_guard<std::mutex> lock(getMutex());
+        // Using regular lock since registration is a write operation
+        std::lock_guard<std::shared_mutex> lock(getSharedMutex());
 
         getComponentConstructorFactories()[name] =
             [](const Configuration& configuration, EntityID entityId, Scene& scene)
