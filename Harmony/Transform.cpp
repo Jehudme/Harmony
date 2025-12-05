@@ -45,9 +45,9 @@ namespace Harmony::Components {
 			float sy = scaleY.value_or(1.0f);
 			float sz = scaleZ.value_or(1.0f);
 			
-			HARMONY_ASSERT(sx > 0.0f, "Transform scale X must be positive");
-			HARMONY_ASSERT(sy > 0.0f, "Transform scale Y must be positive");
-			HARMONY_ASSERT(sz > 0.0f, "Transform scale Z must be positive");
+			HARMONY_ASSERT(sx >= 0.0f, "Transform scale X must be positive");
+			HARMONY_ASSERT(sy >= 0.0f, "Transform scale Y must be positive");
+			HARMONY_ASSERT(sz >= 0.0f, "Transform scale Z must be positive");
 			
 			Vector3 scale(sx, sy, sz);
 			setScale(scale);
