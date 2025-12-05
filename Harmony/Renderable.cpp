@@ -12,7 +12,6 @@ namespace Harmony::Components{
 		entityId_(entityId),
 		scene_(scene) 
 	{
-		HARMONY_ASSERT_NOT_NULL(&scene != nullptr, "Scene reference cannot be null");
 		HARMONY_TRACE("Renderable component created for entity {}", static_cast<uint32_t>(entityId));
 	}
 

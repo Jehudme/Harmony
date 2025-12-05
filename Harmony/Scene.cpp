@@ -21,8 +21,6 @@ namespace Harmony::Internals
 		updateOrder_(0),
 		renderOrder_(0)
 	{
-		HARMONY_ASSERT_NOT_NULL(&engine != nullptr, "Engine reference cannot be null");
-		
 		HARMONY_DEBUG("Initializing Scene with ID {}", sceneId);
 		
 		try {
@@ -270,7 +268,7 @@ namespace Harmony::Internals
 			BeginMode3D(getGlobalComponent<Components::View3D>());
 
 			for (auto [entity, renderable] : view.each()) {
-				HARMONY_ASSERT_NOT_NULL(renderable.get() != nullptr, "Renderable component pointer is null");
+				HARMONY_ASSERT_NOT_NULL(renderable.get(), "Renderable component pointer is null");
 				renderable->preRender();
 				renderable->onRender();
 				renderable->postRender();

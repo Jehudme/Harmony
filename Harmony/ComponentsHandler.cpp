@@ -22,7 +22,7 @@ namespace Harmony::Internals
 
 	bool ComponentsHandler::containsComponent(const std::string& name, EntityID entityId, const Scene& scene)
 	{
-		HARMONY_ASSERT_NOT_NULL(!name.empty(), "Component name cannot be empty");
+		HARMONY_ASSERT(!name.empty(), "Component name cannot be empty");
 		
 		// Thread-safe read access to the contains factories
 		std::shared_lock<std::shared_mutex> lock(getSharedMutex());
@@ -42,7 +42,7 @@ namespace Harmony::Internals
 
 	void ComponentsHandler::createComponent(const std::string& name, const Configuration& configuration, const EntityID entityId, Scene& scene)
 	{
-		HARMONY_ASSERT_NOT_NULL(!name.empty(), "Component name cannot be empty");
+		HARMONY_ASSERT(!name.empty(), "Component name cannot be empty");
 		
 		// Thread-safe read access to the constructor factories
 		std::shared_lock<std::shared_mutex> lock(getSharedMutex());
@@ -69,7 +69,7 @@ namespace Harmony::Internals
 
 	void ComponentsHandler::deleteComponent(const std::string& name, EntityID entityId, Scene& scene)
 	{
-		HARMONY_ASSERT_NOT_NULL(!name.empty(), "Component name cannot be empty");
+		HARMONY_ASSERT(!name.empty(), "Component name cannot be empty");
 		
 		// Thread-safe read access to the destructor factories
 		std::shared_lock<std::shared_mutex> lock(getSharedMutex());

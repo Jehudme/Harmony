@@ -12,8 +12,8 @@ namespace Harmony::Internals
 	template<typename Type, typename Registry>
 	static Type& getComponentReferenceImpl(Registry& registry, EntityID entityId) {
 		auto* component = registry.try_get<std::unique_ptr<Type>>(static_cast<entt::entity>(entityId));
-		HARMONY_ASSERT_NOT_NULL(component != nullptr, "Component not found on entity");
-		HARMONY_ASSERT_NOT_NULL(component->get() != nullptr, "Component pointer is null");
+		HARMONY_ASSERT_NOT_NULL(component, "Component not found on entity");
+		HARMONY_ASSERT_NOT_NULL(component->get(), "Component pointer is null");
 		return *component->get();
 	}
 
@@ -136,8 +136,8 @@ namespace Harmony::Internals
 		std::lock_guard<std::mutex> lock(registryMutex_);
 		
 		auto* ptr = registry_.ctx().find<std::unique_ptr<Type>>();
-		HARMONY_ASSERT_NOT_NULL(ptr != nullptr, "Global component not found");
-		HARMONY_ASSERT_NOT_NULL(ptr->get() != nullptr, "Global component pointer is null");
+		HARMONY_ASSERT_NOT_NULL(ptr, "Global component not found");
+		HARMONY_ASSERT_NOT_NULL(ptr->get(), "Global component pointer is null");
 		
 		return **ptr;
 	}
@@ -147,8 +147,8 @@ namespace Harmony::Internals
 		std::lock_guard<std::mutex> lock(registryMutex_);
 		
 		auto* ptr = registry_.ctx().find<std::unique_ptr<Type>>();
-		HARMONY_ASSERT_NOT_NULL(ptr != nullptr, "Global component not found");
-		HARMONY_ASSERT_NOT_NULL(ptr->get() != nullptr, "Global component pointer is null");
+		HARMONY_ASSERT_NOT_NULL(ptr, "Global component not found");
+		HARMONY_ASSERT_NOT_NULL(ptr->get(), "Global component pointer is null");
 		
 		return **ptr;
 	}
