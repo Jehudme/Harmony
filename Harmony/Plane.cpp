@@ -51,7 +51,7 @@ namespace Harmony::Components {
 				frameColorA.value_or(255)
 			};
 			
-			HARMONY_TRACE("Plane component initialized - Size: ({}, {})", size.x, size.y);
+			HARMONY_TRACE("Plane component initialized - Width: {}, Depth: {}", size.x, size.y);
 		}
 		catch (const std::exception& e) {
 			HARMONY_ERROR("Failed to initialize Plane component: {}", e.what());

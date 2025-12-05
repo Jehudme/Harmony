@@ -74,12 +74,12 @@ namespace Harmony::Components {
 	void Hemisphere::onRender()
 	{
 		try {
-			// Draw hemisphere using sphere with clipped geometry
-			// For simplicity, using cylinder + sphere cap or custom mesh approach
+			// Note: Currently renders a full sphere. 
+			// Rendering a true hemisphere would require custom mesh generation with clipping
+			// or using GenMeshHemiSphere if available in the raylib version.
+			// For now, this provides a placeholder implementation.
 			DrawSphere(Vector3{ 0.0f, 0.0f, 0.0f }, radius, color);
 			DrawSphereWires(Vector3{ 0.0f, 0.0f, 0.0f }, radius, rings, slices, frameColor);
-			// Note: This draws a full sphere. A true hemisphere would require custom mesh generation
-			// or using DrawMesh with a hemisphere model. For now, keeping it simple.
 		}
 		catch (const std::exception& e) {
 			HARMONY_ERROR("Exception during Hemisphere render for entity {}: {}", 
