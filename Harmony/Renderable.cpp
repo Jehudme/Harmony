@@ -2,34 +2,55 @@
 #include "Renderable.h"
 #include "Script.h"
 #include "Transform.h"
+#include "Logger.h"
+#include "Assert.h"
+#include "Exceptions.h"
 #include <rlgl.h>
 
 namespace Harmony::Components{
 	Renderable::Renderable(Internals::Scene& scene, Internals::EntityID entityId) :
 		entityId_(entityId),
-		scene_(scene) {}
+		scene_(scene) 
+	{
+		HARMONY_TRACE("Renderable component created for entity {}", static_cast<uint32_t>(entityId));
+	}
 
-	Renderable::~Renderable() = default;
+	Renderable::~Renderable() 
+	{
+		HARMONY_TRACE("Renderable component destroyed for entity {}", static_cast<uint32_t>(entityId_));
+	}
 
 	void Renderable::preRender()
 	{
-		//rlPushMatrix();
+		try {
+			//rlPushMatrix();
 
-		if (scene_.containsComponent<Transform>(entityId_)) {
-			//rlMultMatrixf(&scene_.getComponent<Transform>(entityId_).getMatrix().m0);
+			if (scene_.containsComponent<Transform>(entityId_)) {
+				//rlMultMatrixf(&scene_.getComponent<Transform>(entityId_).getMatrix().m0);
+			}
+
+			if (scene_.containsComponent<Components::Script>(entityId_)) {
+				scene_.getComponent<Components::Script>(entityId_).onPreRender();
+			}
 		}
-
-		if (scene_.containsComponent<Components::Script>(entityId_)) {
-			scene_.getComponent<Components::Script>(entityId_).onPreRender();
+		catch (const std::exception& e) {
+			HARMONY_ERROR("Exception in Renderable::preRender for entity {}: {}", 
+				static_cast<uint32_t>(entityId_), e.what());
 		}
 	}
 
 	void Renderable::postRender()
 	{
-		if (scene_.containsComponent<Components::Script>(entityId_)) {
-			scene_.getComponent<Components::Script>(entityId_).onPostRender();
-		}
+		try {
+			if (scene_.containsComponent<Components::Script>(entityId_)) {
+				scene_.getComponent<Components::Script>(entityId_).onPostRender();
+			}
 
-		//rlPopMatrix();
+			//rlPopMatrix();
+		}
+		catch (const std::exception& e) {
+			HARMONY_ERROR("Exception in Renderable::postRender for entity {}: {}", 
+				static_cast<uint32_t>(entityId_), e.what());
+		}
 	}
 }

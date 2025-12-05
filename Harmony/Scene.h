@@ -2,6 +2,8 @@
 #include "Configuration.h"
 #include <entt/entt.hpp>
 #include <vector>
+#include <mutex>
+#include <atomic>
 
 namespace Harmony::Internals {
 	class Engine;
@@ -102,6 +104,10 @@ namespace Harmony::Internals {
 
 		void initializeComponents();
 		void initializeEntities();
+
+		// Recursive mutex for protecting registry access (mutable for const methods)
+		// Using recursive_mutex to allow methods to call other methods that also lock
+		mutable std::recursive_mutex registryMutex_;
 
 	private:
 		Configuration configuration_;

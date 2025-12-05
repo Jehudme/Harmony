@@ -29,6 +29,7 @@ namespace Harmony::Internals
 
     private:
         static std::mutex& getMutex();
+        static std::shared_mutex& getSharedMutex();
         static std::unordered_map<std::string, std::function<void(const Configuration&, EntityID, Scene&)>>& getComponentConstructorFactories();
         static std::unordered_map<std::string, std::function<void(EntityID, Scene& scene)>>& getComponentDestructorFactories();
         static std::unordered_map<std::string, std::function<bool(EntityID, const Scene& scene)>>& getComponentContainsFactories();
