@@ -330,6 +330,45 @@ namespace Harmony::Exceptions
 		explicit SceneOperationException(const std::string& operation, const std::string& reason);
 	};
 
+	/// Exception thrown when entity is invalid or not found
+	struct InvalidEntityException : public SceneException {
+		explicit InvalidEntityException(uint32_t entityId, const std::string& reason);
+	};
+
+	// ============================================================================
+	// Component Exceptions
+	// ============================================================================
+
+	/// Base exception for component-related errors
+	struct ComponentException : public HarmonyException {
+		explicit ComponentException(const std::string& message);
+	};
+
+	/// Exception thrown when component initialization fails
+	struct ComponentInitializationException : public ComponentException {
+		explicit ComponentInitializationException(const std::string& componentName, const std::string& reason);
+	};
+
+	/// Exception thrown when component creation fails
+	struct ComponentCreationException : public ComponentException {
+		explicit ComponentCreationException(const std::string& componentName, uint32_t entityId, const std::string& reason);
+	};
+
+	/// Exception thrown when component is not found
+	struct ComponentNotFoundException : public ComponentException {
+		explicit ComponentNotFoundException(const std::string& componentName, uint32_t entityId);
+	};
+
+	/// Exception thrown when component type is not registered
+	struct ComponentNotRegisteredException : public ComponentException {
+		explicit ComponentNotRegisteredException(const std::string& componentName);
+	};
+
+	/// Exception thrown when component operation fails
+	struct ComponentOperationException : public ComponentException {
+		explicit ComponentOperationException(const std::string& operation, const std::string& reason);
+	};
+
 	// ============================================================================
 	// Resource Handler Exceptions
 	// ============================================================================

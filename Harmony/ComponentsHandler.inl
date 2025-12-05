@@ -5,6 +5,9 @@ namespace Harmony::Internals {
             "Type must have a constructor taking const Harmony::Configuration& and Harmony::Scene&"
             );
 
+        // Thread-safe write access when registering component
+        std::lock_guard<std::mutex> lock(getMutex());
+
         getComponentConstructorFactories()[name] =
             [](const Configuration& configuration, EntityID entityId, Scene& scene)
             {

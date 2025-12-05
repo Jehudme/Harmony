@@ -2,6 +2,8 @@
 #include "Configuration.h"
 #include <entt/entt.hpp>
 #include <vector>
+#include <mutex>
+#include <atomic>
 
 namespace Harmony::Internals {
 	class Engine;
@@ -102,6 +104,9 @@ namespace Harmony::Internals {
 
 		void initializeComponents();
 		void initializeEntities();
+
+		// Mutex for protecting registry access
+		mutable std::mutex registryMutex_;
 
 	private:
 		Configuration configuration_;

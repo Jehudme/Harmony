@@ -311,6 +311,44 @@ namespace Harmony::Exceptions
 		HARMONY_ERROR("Scene operation '{}' failed: {}", operation, reason);
 	}
 
+	InvalidEntityException::InvalidEntityException(uint32_t entityId, const std::string& reason)
+		: SceneException(std::format("Invalid entity {}: {}", entityId, reason)) {
+		HARMONY_ERROR("Invalid entity {}: {}", entityId, reason);
+	}
+
+	// ============================================================================
+	// Component Exceptions
+	// ============================================================================
+
+	ComponentException::ComponentException(const std::string& message)
+		: HarmonyException(std::format("Component: {}", message)) {
+	}
+
+	ComponentInitializationException::ComponentInitializationException(const std::string& componentName, const std::string& reason)
+		: ComponentException(std::format("Failed to initialize component '{}': {}", componentName, reason)) {
+		HARMONY_ERROR("Component '{}' initialization failed: {}", componentName, reason);
+	}
+
+	ComponentCreationException::ComponentCreationException(const std::string& componentName, uint32_t entityId, const std::string& reason)
+		: ComponentException(std::format("Failed to create component '{}' for entity {}: {}", componentName, entityId, reason)) {
+		HARMONY_ERROR("Component '{}' creation failed for entity {}: {}", componentName, entityId, reason);
+	}
+
+	ComponentNotFoundException::ComponentNotFoundException(const std::string& componentName, uint32_t entityId)
+		: ComponentException(std::format("Component '{}' not found on entity {}", componentName, entityId)) {
+		HARMONY_WARN("Component '{}' not found on entity {}", componentName, entityId);
+	}
+
+	ComponentNotRegisteredException::ComponentNotRegisteredException(const std::string& componentName)
+		: ComponentException(std::format("Component type '{}' is not registered", componentName)) {
+		HARMONY_ERROR("Component type '{}' is not registered", componentName);
+	}
+
+	ComponentOperationException::ComponentOperationException(const std::string& operation, const std::string& reason)
+		: ComponentException(std::format("Component operation '{}' failed: {}", operation, reason)) {
+		HARMONY_ERROR("Component operation '{}' failed: {}", operation, reason);
+	}
+
 	// ============================================================================
 	// Resource Handler Exceptions
 	// ============================================================================
