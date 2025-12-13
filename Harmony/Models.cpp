@@ -8,8 +8,8 @@ HARMONY_REGISTER_RESOURCE(model, Harmony::Resources::Models)
 namespace Harmony::Resources
 {
 
-	Models::Models(ResourceID id, const Configuration& configuration) :
-		Resource(id, configuration),
+	Models::Models(ResourceID id, const Configuration& configuration, Harmony::Internals::ResourcesHandler& handler) :
+		Resource(id, configuration, handler),
 		model_{}
 	{
 		HARMONY_DEBUG("Models resource created with ID: {}", id);

@@ -8,8 +8,8 @@ HARMONY_REGISTER_RESOURCE(texture, Harmony::Resources::Textures)
 namespace Harmony::Resources
 {
 
-	Textures::Textures(ResourceID id, const Configuration& configuration) :
-		Resource(id, configuration),
+	Textures::Textures(ResourceID id, const Configuration& configuration, Harmony::Internals::ResourcesHandler& handler) :
+		Resource(id, configuration, handler),
 		texture_{}
 	{
 		HARMONY_DEBUG("Textures resource created with ID: {}", id);

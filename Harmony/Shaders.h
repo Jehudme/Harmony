@@ -8,7 +8,7 @@ namespace Harmony::Resources
 	class Shaders : public Resource
 	{
 	public:
-		Shaders(ResourceID id, const Configuration& configuration);
+		Shaders(ResourceID id, const Configuration& configuration, Harmony::Internals::ResourcesHandler& handler);
 		~Shaders();
 
 		const char* getType() const override;

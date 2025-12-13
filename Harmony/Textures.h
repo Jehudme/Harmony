@@ -8,7 +8,7 @@ namespace Harmony::Resources
 	class Textures : public Resource
 	{
 	public:
-		Textures(ResourceID id, const Configuration& configuration);
+		Textures(ResourceID id, const Configuration& configuration, Harmony::Internals::ResourcesHandler& handler);
 		~Textures();
 
 		const char* getType() const override;

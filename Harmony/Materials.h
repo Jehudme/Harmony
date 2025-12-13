@@ -8,7 +8,7 @@ namespace Harmony::Resources
 	class Materials : public Resource
 	{
 	public:
-		Materials(ResourceID id, const Configuration& configuration);
+		Materials(ResourceID id, const Configuration& configuration, Harmony::Internals::ResourcesHandler& handler);
 		~Materials();
 
 		const char* getType() const override;

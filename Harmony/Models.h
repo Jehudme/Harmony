@@ -8,7 +8,7 @@ namespace Harmony::Resources
 	class Models : public Resource
 	{
 	public:
-		Models(ResourceID id, const Configuration& configuration);
+		Models(ResourceID id, const Configuration& configuration, Harmony::Internals::ResourcesHandler& handler);
 		~Models();
 
 		const char* getType() const override;

@@ -8,8 +8,8 @@ HARMONY_REGISTER_RESOURCE(shader, Harmony::Resources::Shaders)
 namespace Harmony::Resources
 {
 
-	Shaders::Shaders(ResourceID id, const Configuration& configuration) :
-		Resource(id, configuration),
+	Shaders::Shaders(ResourceID id, const Configuration& configuration, Harmony::Internals::ResourcesHandler& handler) :
+		Resource(id, configuration, handler),
 		shader_{}
 	{
 		HARMONY_DEBUG("Shaders resource created with ID: {}", id);

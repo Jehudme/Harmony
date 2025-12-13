@@ -8,8 +8,8 @@ HARMONY_REGISTER_RESOURCE(modelanimation, Harmony::Resources::ModelAnimations)
 namespace Harmony::Resources
 {
 
-	ModelAnimations::ModelAnimations(ResourceID id, const Configuration& configuration) :
-		Resource(id, configuration),
+	ModelAnimations::ModelAnimations(ResourceID id, const Configuration& configuration, Harmony::Internals::ResourcesHandler& handler) :
+		Resource(id, configuration, handler),
 		animations_(nullptr),
 		animationCount_(0)
 	{

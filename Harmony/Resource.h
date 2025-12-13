@@ -22,7 +22,7 @@ namespace Harmony::Resources {
 		friend class ResourceAcquirement;
 
 	public:
-		Resource(ResourceID id, Configuration configuration);
+		Resource(ResourceID id, Configuration configuration, Harmony::Internals::ResourcesHandler& handler);
 		virtual ~Resource();
 
 		virtual const char* getType() const = 0;
@@ -44,6 +44,7 @@ namespace Harmony::Resources {
 		Configuration configuration_;
 		const ResourceID id_;
 		bool loaded_;
+		Harmony::Internals::ResourcesHandler& handler_;
 
 	private:
 		Clock accessClock_;

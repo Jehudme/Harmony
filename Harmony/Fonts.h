@@ -8,7 +8,7 @@ namespace Harmony::Resources
 	class Fonts : public Resource
 	{
 	public:
-		Fonts(ResourceID id, const Configuration& configuration);
+		Fonts(ResourceID id, const Configuration& configuration, Harmony::Internals::ResourcesHandler& handler);
 		~Fonts();
 
 		const char* getType() const override;

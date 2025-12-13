@@ -8,7 +8,7 @@ namespace Harmony::Resources
 	class Waves : public Resource
 	{
 	public:
-		Waves(ResourceID id, const Configuration& configuration);
+		Waves(ResourceID id, const Configuration& configuration, Harmony::Internals::ResourcesHandler& handler);
 		~Waves();
 
 		const char* getType() const override;

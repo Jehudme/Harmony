@@ -8,7 +8,7 @@ namespace Harmony::Resources
 	class RenderTextures : public Resource
 	{
 	public:
-		RenderTextures(ResourceID id, const Configuration& configuration);
+		RenderTextures(ResourceID id, const Configuration& configuration, Harmony::Internals::ResourcesHandler& handler);
 		~RenderTextures();
 
 		const char* getType() const override;

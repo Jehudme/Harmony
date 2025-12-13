@@ -2,8 +2,8 @@
 #include "Resource.h"
 
 namespace Harmony::Resources {
-	Resource::Resource(ResourceID id, Configuration configuration)
-		: configuration_(configuration), loaded_(false), id_(id) {
+	Resource::Resource(ResourceID id, Configuration configuration, Harmony::Internals::ResourcesHandler& handler)
+		: configuration_(configuration), loaded_(false), id_(id), handler_(handler) {
 
 		alwaysLoaded_ = configuration_.get<bool>({ "AlwaysLoaded" }).value_or(false);
 		cooledownTime_ = Time::fromSeconds(configuration_.get<float>({ "CooledownTime" }).value_or(5));

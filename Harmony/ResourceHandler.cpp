@@ -36,8 +36,8 @@ namespace Harmony::Internals {
                     throw Exceptions::ResourceOperationException("load", std::format("Unknown resource type: {}", resourceType));
                 }
                 
-                std::function<std::unique_ptr<Resources::Resource>(Resources::ResourceID, Configuration)> factoryFunction = resourcesFactories_[resourceType];
-                std::unique_ptr<Resources::Resource> resource = factoryFunction(resourceID, resourceConfiguration);
+                std::function<std::unique_ptr<Resources::Resource>(Resources::ResourceID, Configuration, ResourcesHandler&)> factoryFunction = resourcesFactories_[resourceType];
+                std::unique_ptr<Resources::Resource> resource = factoryFunction(resourceID, resourceConfiguration, *this);
                 
                 resources_.emplace(resourceID, std::move(resource));
                 HARMONY_DEBUG("Loaded resource ID {} of type {}", resourceID, resourceType);
@@ -187,7 +187,7 @@ namespace Harmony::Internals {
         }
     }
     
-    void ResourcesHandler::registerResourceType(const std::string& typeName, std::function<std::unique_ptr<Resources::Resource>(Resources::ResourceID, Configuration)> factoryFunction) {
+    void ResourcesHandler::registerResourceType(const std::string& typeName, std::function<std::unique_ptr<Resources::Resource>(Resources::ResourceID, Configuration, ResourcesHandler&)> factoryFunction) {
         HARMONY_ASSERT(!typeName.empty(), "Resource type name cannot be empty");
         
         if (typeName.empty()) {

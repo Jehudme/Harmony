@@ -36,12 +36,12 @@ namespace Harmony::Internals {
 
 			std::unique_ptr<Resources::ResourceAcquirement> acquireResource(Resources::ResourceID id);
 
-			static void registerResourceType(const std::string& typeName, std::function<std::unique_ptr<Resources::Resource>(Resources::ResourceID, Configuration)> factoryFunction);
+			static void registerResourceType(const std::string& typeName, std::function<std::unique_ptr<Resources::Resource>(Resources::ResourceID, Configuration, ResourcesHandler&)> factoryFunction);
 	private:
 		Engine& engine_;
 		mutable std::shared_mutex mutex_;
 		std::unordered_map<Resources::ResourceID, std::unique_ptr<Resources::Resource>> resources_;
-		static inline std::unordered_map<std::string, std::function<std::unique_ptr<Resources::Resource>(Resources::ResourceID, Configuration)>> resourcesFactories_;
+		static inline std::unordered_map<std::string, std::function<std::unique_ptr<Resources::Resource>(Resources::ResourceID, Configuration, ResourcesHandler&)>> resourcesFactories_;
 	};
 
 } // namespace Harmony
@@ -51,8 +51,8 @@ namespace Harmony::Internals {
         struct ResourceRegistrar_##typeName { \
             ResourceRegistrar_##typeName() { \
                 Harmony::Internals::ResourcesHandler::registerResourceType(#typeName, \
-                    [](Harmony::Resources::ResourceID id, Harmony::Configuration config) { \
-                        return std::make_unique<className>(id, config); \
+                    [](Harmony::Resources::ResourceID id, Harmony::Configuration config, Harmony::Internals::ResourcesHandler& handler) { \
+                        return std::make_unique<className>(id, config, handler); \
                     }); \
             } \
         }; \
