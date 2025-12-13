@@ -8,8 +8,8 @@ HARMONY_REGISTER_RESOURCE(mesh, Harmony::Resources::Meshes)
 namespace Harmony::Resources
 {
 
-	Meshes::Meshes(ResourceID id, const Configuration& configuration) :
-		Resource(id, configuration),
+	Meshes::Meshes(ResourceID id, const Configuration& configuration, Harmony::Internals::ResourcesHandler& handler) :
+		Resource(id, configuration, handler),
 		mesh_{}
 	{
 		HARMONY_DEBUG("Meshes resource created with ID: {}", id);

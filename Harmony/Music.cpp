@@ -8,8 +8,8 @@ HARMONY_REGISTER_RESOURCE(music, Harmony::Resources::Music)
 namespace Harmony::Resources
 {
 
-	Music::Music(ResourceID id, const Configuration& configuration) :
-		Resource(id, configuration),
+	Music::Music(ResourceID id, const Configuration& configuration, Harmony::Internals::ResourcesHandler& handler) :
+		Resource(id, configuration, handler),
 		music_{}
 	{
 		HARMONY_DEBUG("Music resource created with ID: {}", id);

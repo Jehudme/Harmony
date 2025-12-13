@@ -8,7 +8,7 @@ namespace Harmony::Resources
 	class Images : public Resource
 	{
 	public:
-		Images(ResourceID id, const Configuration& configuration);
+		Images(ResourceID id, const Configuration& configuration, Harmony::Internals::ResourcesHandler& handler);
 		~Images();
 
 		const char* getType() const override;

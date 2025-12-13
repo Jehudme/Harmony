@@ -8,7 +8,7 @@ namespace Harmony::Resources
 	class Meshes : public Resource
 	{
 	public:
-		Meshes(ResourceID id, const Configuration& configuration);
+		Meshes(ResourceID id, const Configuration& configuration, Harmony::Internals::ResourcesHandler& handler);
 		~Meshes();
 
 		const char* getType() const override;

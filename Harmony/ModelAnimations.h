@@ -9,7 +9,7 @@ namespace Harmony::Resources
 	class ModelAnimations : public Resource
 	{
 	public:
-		ModelAnimations(ResourceID id, const Configuration& configuration);
+		ModelAnimations(ResourceID id, const Configuration& configuration, Harmony::Internals::ResourcesHandler& handler);
 		~ModelAnimations();
 
 		const char* getType() const override;

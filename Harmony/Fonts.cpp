@@ -8,8 +8,8 @@ HARMONY_REGISTER_RESOURCE(font, Harmony::Resources::Fonts)
 namespace Harmony::Resources
 {
 
-	Fonts::Fonts(ResourceID id, const Configuration& configuration) :
-		Resource(id, configuration),
+	Fonts::Fonts(ResourceID id, const Configuration& configuration, Harmony::Internals::ResourcesHandler& handler) :
+		Resource(id, configuration, handler),
 		font_{}
 	{
 		HARMONY_DEBUG("Fonts resource created with ID: {}", id);

@@ -8,8 +8,8 @@ HARMONY_REGISTER_RESOURCE(image, Harmony::Resources::Images)
 namespace Harmony::Resources
 {
 
-	Images::Images(ResourceID id, const Configuration& configuration) :
-		Resource(id, configuration),
+	Images::Images(ResourceID id, const Configuration& configuration, Harmony::Internals::ResourcesHandler& handler) :
+		Resource(id, configuration, handler),
 		image_{}
 	{
 		HARMONY_DEBUG("Images resource created with ID: {}", id);

@@ -8,8 +8,8 @@ HARMONY_REGISTER_RESOURCE(wave, Harmony::Resources::Waves)
 namespace Harmony::Resources
 {
 
-	Waves::Waves(ResourceID id, const Configuration& configuration) :
-		Resource(id, configuration),
+	Waves::Waves(ResourceID id, const Configuration& configuration, Harmony::Internals::ResourcesHandler& handler) :
+		Resource(id, configuration, handler),
 		wave_{}
 	{
 		HARMONY_DEBUG("Waves resource created with ID: {}", id);

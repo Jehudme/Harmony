@@ -6,7 +6,7 @@ namespace Harmony::Resources {
 	class Properties : public Resource, public Configuration
 	{
 	public:
-		Properties(ResourceID id, const Configuration& configuration);
+		Properties(ResourceID id, const Configuration& configuration, Harmony::Internals::ResourcesHandler& handler);
 
 		const char* getType() const override;
 

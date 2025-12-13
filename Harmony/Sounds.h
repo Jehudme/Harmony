@@ -8,7 +8,7 @@ namespace Harmony::Resources
 	class Sounds : public Resource
 	{
 	public:
-		Sounds(ResourceID id, const Configuration& configuration);
+		Sounds(ResourceID id, const Configuration& configuration, Harmony::Internals::ResourcesHandler& handler);
 		~Sounds();
 
 		const char* getType() const override;
