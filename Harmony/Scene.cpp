@@ -9,7 +9,6 @@
 #include "ComponentsHandler.h"
 #include "Script.h"
 #include "View3D.h"
-#include "Renderable.h"
 
 namespace Harmony::Internals
 {
@@ -259,7 +258,6 @@ namespace Harmony::Internals
 	{
 		try {
 			const bool sceneContainsScript = containsGlobalComponent<Components::Script>();
-			const auto view = getComponentsView<Components::Renderable>();
 			
 			if (sceneContainsScript) { 
 				getGlobalComponent<Components::Script>().onPreRender(); 
@@ -267,12 +265,7 @@ namespace Harmony::Internals
 			
 			BeginMode3D(getGlobalComponent<Components::View3D>());
 
-			for (auto [entity, renderable] : view.each()) {
-				HARMONY_ASSERT_NOT_NULL(renderable.get(), "Renderable component pointer is null");
-				renderable->preRender();
-				renderable->onRender();
-				renderable->postRender();
-			}
+			// Renderable system removed - use alternative rendering system
 
 			EndMode3D();
 			
