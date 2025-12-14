@@ -14,10 +14,10 @@ namespace Harmony::Resources
 		virtual void unload() override;
 		virtual bool loaded() const override;
 
-		Model& model();
+		R3D_Model& model();
 
 	private:
-		Model m_model;
+		R3D_Model m_model;
 	};
 }
 

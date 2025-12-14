@@ -6,7 +6,6 @@
 #include "ResourceHandler.h"
 #include "Engine.h"
 #include "ModelResource.h"
-#include <rlgl.h> 
 
 HARMONY_REGISTER_COMPONENT_WITH_BASE(Harmony::Components::IRenderableComponent, Harmony::Components::ModelRenderableComponent, modelRenderable);
 
@@ -21,23 +20,21 @@ namespace Harmony::Components
 
 	void ModelRenderableComponent::onRender()
 	{
-		rlPushMatrix();
+		Matrix transform = MatrixIdentity();
 
 		if (m_scene.containsComponent<TransformComponent>(m_entityId))
-			rlMultMatrixf((float*)&m_scene.getComponent<TransformComponent>(m_entityId).getMatrix().m0);
+			transform = m_scene.getComponent<TransformComponent>(m_entityId).getMatrix();
 
 		if (m_scene.containsComponent<ModelID>(m_entityId))
 		{
 			Resources::ResourceID modelResourceId = m_scene.getComponent<ModelID>(m_entityId).resourceId();
 			auto resourceAccess = m_scene.engine.resourcesHandler->acquireResource(modelResourceId);
 
-			DrawModel(resourceAccess->resource<Resources::ModelResource>().model(), {0.0f, 0.0f, 0.0f}, 1.0f, WHITE);
+			R3D_DrawModelPro(&resourceAccess->resource<Resources::ModelResource>().model(), transform);
 		}
 
 		if (m_scene.containsComponent<ScriptComponent>(m_entityId))
 			m_scene.getComponent<ScriptComponent>(m_entityId).onRender();
-		
-		rlPopMatrix();
 	}
 
 	void ModelRenderableComponent::onPreRender()

@@ -268,7 +268,7 @@ namespace Harmony::Internals
 				component->onPreRender();
 			}
 			
-			BeginMode3D(getGlobalComponent<Components::View3DComponent>());
+			R3D_Begin(getGlobalComponent<Components::View3DComponent>());
 
 			for (auto [entity, component] : this->getComponentsView<Components::IRenderableComponent>().each()) {
 				component->onRender();
@@ -278,7 +278,7 @@ namespace Harmony::Internals
 				getGlobalComponent<Components::ScriptComponent>().onRender();
 			}
 
-			EndMode3D();
+			R3D_End();
 			
 			for (auto [entity, component] : this->getComponentsView<Components::IRenderableComponent>().each()) {
 				component->onPostRender();
