@@ -8,6 +8,8 @@
 #include "ModelResource.h"
 #include <rlgl.h> 
 
+HARMONY_REGISTER_COMPONENT_WITH_BASE(Harmony::Components::IRenderableComponent, Harmony::Components::ModelRenderableComponent, modelRenderable);
+
 namespace Harmony::Components
 {
 	ModelRenderableComponent::ModelRenderableComponent(HARMONY_COMPONENTS_CONSTRUCTOR_ARGUMENTS) :

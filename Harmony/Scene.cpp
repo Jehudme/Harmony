@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "Scene.h"
+#include "IRenderableComponent.h"
 
 #include "Engine.h"
 #include "Logger.h"
@@ -262,13 +263,15 @@ namespace Harmony::Internals
 			if (sceneContainsScript) { 
 				getGlobalComponent<Components::ScriptComponent>().onPreRender(); 
 			}
+
+			for (auto [entity, component] : this->getComponentsView<Components::IRenderableComponent>().each()) {
+				component->onPreRender();
+			}
 			
 			BeginMode3D(getGlobalComponent<Components::View3DComponent>());
 
-			for (auto [entity] : this->getView().each()) {
-				if (containsComponent<Components::ScriptComponent>(static_cast<EntityID>(entity))) {
-					getComponent<Components::ScriptComponent>(static_cast<EntityID>(entity)).onRender();
-				}
+			for (auto [entity, component] : this->getComponentsView<Components::IRenderableComponent>().each()) {
+				component->onRender();
 			}
 
 			if (sceneContainsScript) {
@@ -277,6 +280,10 @@ namespace Harmony::Internals
 
 			EndMode3D();
 			
+			for (auto [entity, component] : this->getComponentsView<Components::IRenderableComponent>().each()) {
+				component->onPostRender();
+			}
+
 			if (sceneContainsScript) { 
 				getGlobalComponent<Components::ScriptComponent>().onPostRender(); 
 			}

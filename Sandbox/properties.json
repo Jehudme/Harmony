@@ -1,4 +1,10 @@
 {
+  "resources": {
+    "1": {
+      "type": "Model",
+      "filename": "car.glb"
+    }
+  },
   "scenes": {
     "101": {
       "components": {
@@ -9,7 +15,7 @@
   },
   "entities": {
     "101": {
-      "name": "Sample Entity",
+      "name": "Car Entity",
       "components": {
         "transform": {
           "position": {
@@ -23,11 +29,13 @@
             "z": 0.0
           },
           "scale": {
-            "x": 0.0,
-            "y": 0.0,
-            "z": 0.0
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0
           }
-        }
+        },
+        "model": 1,
+        "modelRenderable": {}
       }
     }
   }
