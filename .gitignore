@@ -372,3 +372,4 @@ build/
 Build/
 [Bb]uild/
 /Sandbox/HarmonyLog.txt
+_codeql_build_dir/
