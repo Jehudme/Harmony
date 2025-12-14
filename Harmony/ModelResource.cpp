@@ -42,6 +42,7 @@ namespace Harmony::Resources
 		if (!loaded()) { return; }
 		std::unique_lock lock(m_mutex);
 		UnloadModel(m_model);
+		m_model = { 0 };
 	}
 
 	bool ModelResource::loaded() const

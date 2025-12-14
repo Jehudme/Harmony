@@ -301,6 +301,23 @@ namespace Harmony::Internals
 			if (containsScript) { 
 				getGlobalComponent<Components::ScriptComponent>().onPreUpdate(); 
 			}
+
+			for (auto [entity, component] : this->getComponentsView<Components::ScriptComponent>().each()) {
+				component->onPreUpdate();
+			}
+
+			if (containsScript) {
+				getGlobalComponent<Components::ScriptComponent>().onUpdate();
+			}
+
+			for (auto [entity, component] : this->getComponentsView<Components::ScriptComponent>().each()) {
+				component->onUpdate();
+			}
+
+			for (auto [entity, component] : this->getComponentsView<Components::ScriptComponent>().each()) {
+				component->onPostUpdate();
+			}
+
 			if (containsScript) { 
 				getGlobalComponent<Components::ScriptComponent>().onPostUpdate(); 
 			}

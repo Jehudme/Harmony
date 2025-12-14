@@ -36,8 +36,24 @@ namespace Sandbox {
 			DrawGrid(10, 1.0f);
 		}
 
+		void onUpdate() override {
+			static int id;
+			if (IsKeyPressed(KEY_SPACE) && !m_exist) {
+				id = scene_.createEntity(101);
+				m_exist = true;
+				HARMONY_INFO("Car created");
+			}
+			else if (IsKeyPressed(KEY_LEFT_SHIFT) && m_exist)
+			{
+				scene_.destroyEntity(id);	
+				m_exist = false;
+				HARMONY_INFO("Car deleted");
+			}
+		}
+
 	private:
 		Scene& scene_;
+		bool m_exist = false;
 	};
 }
 
