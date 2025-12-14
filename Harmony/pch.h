@@ -7,6 +7,7 @@
 
 #ifndef NO_RAYLIB
 #include <raylib.h>
+#include <r3d.h>
 #endif
 
 #include <nlohmann/json.hpp>

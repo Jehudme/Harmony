@@ -11,5 +11,17 @@ endif()
 
 project ("Harmony")
 
-# Include sub-projects.
-add_subdirectory ("Sandbox")
+# Configure R3D to use vendored dependencies
+set(R3D_ASSIMP_VENDORED ON CACHE BOOL "Use vendored assimp for R3D")
+set(R3D_RAYLIB_VENDORED ON CACHE BOOL "Use vendored raylib for R3D")
+set(R3D_BUILD_EXAMPLES OFF CACHE BOOL "Build R3D examples")
+set(R3D_BUILD_DOCS OFF CACHE BOOL "Build R3D documentation")
+
+# Include R3D subdirectory
+add_subdirectory("Harmony/External/r3d")
+
+# Include Harmony library
+add_subdirectory("Harmony")
+
+# Include Sandbox application
+add_subdirectory("Sandbox")

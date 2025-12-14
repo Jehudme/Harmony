@@ -86,6 +86,10 @@ namespace Harmony::Internals
 
             HARMONY_INFO("Window initialized successfully");
 
+            // Initialize R3D renderer
+            R3D_Init(windowWidth, windowHeight, 0);
+            HARMONY_INFO("R3D renderer initialized successfully");
+
             bool shouldBeFullscreen = fullscreen.value_or(false);
             if (shouldBeFullscreen) {
                 HARMONY_DEBUG("Toggling fullscreen mode");
@@ -112,6 +116,8 @@ namespace Harmony::Internals
         bool shouldClose = WindowShouldClose();
         bool isReady = IsWindowReady();
         if (!shouldClose && isReady) {
+            R3D_Close();
+            HARMONY_DEBUG("R3D renderer closed");
             CloseWindow();
             HARMONY_DEBUG("Window closed");
         }
@@ -119,6 +125,8 @@ namespace Harmony::Internals
 
     void WindowHandler::close() {
         HARMONY_INFO("Closing window");
+        R3D_Close();
+        HARMONY_DEBUG("R3D renderer closed");
         CloseWindow();
     }
 
