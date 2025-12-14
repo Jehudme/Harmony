@@ -1,16 +1,16 @@
 #include "pch.h"
-#include "View3D.h"
+#include "View3DComponent.h"
 #include "Logger.h"
 #include "Assert.h"
 #include "Exceptions.h"
 
-HARMONY_REGISTER_COMPONENT(Harmony::Components::View3D, view3d)
+HARMONY_REGISTER_COMPONENT(Harmony::Components::View3DComponent, view3d)
 
 namespace Harmony::Components {
-	Harmony::Components::View3D::View3D(HARMONY_COMPONENTS_CONSTRUCTOR_ARGUMENTS) :
+	Harmony::Components::View3DComponent::View3DComponent(HARMONY_COMPONENTS_CONSTRUCTOR_ARGUMENTS) :
 		Camera3D()
 	{
-		HARMONY_DEBUG("Initializing View3D component for entity {}", static_cast<uint32_t>(entityId));
+		HARMONY_DEBUG("Initializing View3DComponent component for entity {}", static_cast<uint32_t>(entityId));
 		
 		try {
 			std::optional<float> posX = configuration.get<float>({ "position", "x" });
@@ -63,19 +63,19 @@ namespace Harmony::Components {
 				Camera3D::projection = CAMERA_PERSPECTIVE;
 			}
 			
-			HARMONY_TRACE("View3D component initialized - Position: ({}, {}, {}), Target: ({}, {}, {}), FOV: {}", 
+			HARMONY_TRACE("View3DComponent component initialized - Position: ({}, {}, {}), Target: ({}, {}, {}), FOV: {}", 
 				Camera3D::position.x, Camera3D::position.y, Camera3D::position.z,
 				Camera3D::target.x, Camera3D::target.y, Camera3D::target.z,
 				Camera3D::fovy);
 		}
 		catch (const std::exception& e) {
-			HARMONY_ERROR("Failed to initialize View3D component: {}", e.what());
-			throw Harmony::Exceptions::ComponentInitializationException("View3D", e.what());
+			HARMONY_ERROR("Failed to initialize View3DComponent component: {}", e.what());
+			throw Harmony::Exceptions::ComponentInitializationException("View3DComponent", e.what());
 		}
 	}
 	
-	View3D::~View3D()
+	View3DComponent::~View3DComponent()
 	{
-		HARMONY_TRACE("View3D component destroyed");
+		HARMONY_TRACE("View3DComponent component destroyed");
 	}
 }

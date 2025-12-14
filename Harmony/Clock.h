@@ -2,6 +2,7 @@
 
 #include <chrono>
 #include "Time.h"
+#include <shared_mutex>
 
 namespace Harmony
 {
@@ -13,6 +14,7 @@ namespace Harmony
     public:
         /// @brief Constructor - starts the clock automatically
         Clock();
+		~Clock();
 
         /// @brief Get the elapsed time since the clock started or last restart
         /// @return Time elapsed
@@ -23,7 +25,8 @@ namespace Harmony
         Time restart();
 
     private:
-        std::chrono::steady_clock::time_point startTime_; ///< Clock start time point
+		mutable std::shared_mutex m_mutex;                      ///< Mutex for thread-safe access
+        std::chrono::steady_clock::time_point m_startTime; ///< Clock start time point
     };
 
 } // namespace Harmony::Utilities

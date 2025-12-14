@@ -7,8 +7,8 @@
 #include "Exceptions.h"
 #include "Configuration.h"
 #include "ComponentsHandler.h"
-#include "Script.h"
-#include "View3D.h"
+#include "ScriptComponent.h"
+#include "View3DComponent.h"
 
 namespace Harmony::Internals
 {
@@ -28,9 +28,9 @@ namespace Harmony::Internals
 			
 			if (!configSection.has_value()) {
 				HARMONY_WARN("No configuration found for scene {}, using default configuration", sceneId);
-				configuration_ = Configuration();
+				m_configuration = Configuration();
 			} else {
-				configuration_ = configSection.value();
+				m_configuration = configSection.value();
 			}
 			
 			initialize();
@@ -49,8 +49,8 @@ namespace Harmony::Internals
 		try {
 			std::lock_guard<std::recursive_mutex> lock(registryMutex_);
 			
-			if (containsGlobalComponent<Components::Script>()) {
-				getGlobalComponent<Components::Script>().onDestroy();
+			if (containsGlobalComponent<Components::ScriptComponent>()) {
+				getGlobalComponent<Components::ScriptComponent>().onDestroy();
 			}
 
 			auto view = registry_.view<entt::entity>();
@@ -77,13 +77,13 @@ namespace Harmony::Internals
 			initializeEntities();
 			initializeComponents();
 
-			if (!containsGlobalComponent<Components::View3D>()) {
-				HARMONY_DEBUG("Scene {} does not have View3D global component, creating default one", sceneId);
-				createGlobalComponent<Components::View3D, Components::View3D>(Configuration(), *this);
+			if (!containsGlobalComponent<Components::View3DComponent>()) {
+				HARMONY_DEBUG("Scene {} does not have View3DComponent global component, creating default one", sceneId);
+				createGlobalComponent<Components::View3DComponent, Components::View3DComponent>(Configuration(), *this);
 			}
 
-			if (containsGlobalComponent<Components::Script>()) {
-				getGlobalComponent<Components::Script>().onCreate();
+			if (containsGlobalComponent<Components::ScriptComponent>()) {
+				getGlobalComponent<Components::ScriptComponent>().onCreate();
 			}
 			
 			HARMONY_DEBUG("Scene {} initialization complete", sceneId);
@@ -204,8 +204,8 @@ namespace Harmony::Internals
 				}
 			}
 
-			if (containsComponent<Components::Script>(entity)) {
-				getComponent<Components::Script>(entity).onCreate();
+			if (containsComponent<Components::ScriptComponent>(entity)) {
+				getComponent<Components::ScriptComponent>(entity).onCreate();
 			}
 
 			HARMONY_DEBUG("Entity {} created in Scene {}", entity, sceneId);
@@ -241,8 +241,8 @@ namespace Harmony::Internals
 				throw Exceptions::InvalidEntityException(entityId, "Entity is not valid");
 			}
 			
-			if (containsComponent<Components::Script>(entityId)) {
-				getComponent<Components::Script>(entityId).onDestroy();
+			if (containsComponent<Components::ScriptComponent>(entityId)) {
+				getComponent<Components::ScriptComponent>(entityId).onDestroy();
 			}
 
 			registry_.destroy(static_cast<entt::entity>(entityId));
@@ -257,20 +257,28 @@ namespace Harmony::Internals
 	void Scene::render()
 	{
 		try {
-			const bool sceneContainsScript = containsGlobalComponent<Components::Script>();
+			const bool sceneContainsScript = containsGlobalComponent<Components::ScriptComponent>();
 			
 			if (sceneContainsScript) { 
-				getGlobalComponent<Components::Script>().onPreRender(); 
+				getGlobalComponent<Components::ScriptComponent>().onPreRender(); 
 			}
 			
-			BeginMode3D(getGlobalComponent<Components::View3D>());
+			BeginMode3D(getGlobalComponent<Components::View3DComponent>());
 
-			// Renderable system removed - use alternative rendering system
+			for (auto [entity] : this->getView().each()) {
+				if (containsComponent<Components::ScriptComponent>(static_cast<EntityID>(entity))) {
+					getComponent<Components::ScriptComponent>(static_cast<EntityID>(entity)).onRender();
+				}
+			}
+
+			if (sceneContainsScript) {
+				getGlobalComponent<Components::ScriptComponent>().onRender();
+			}
 
 			EndMode3D();
 			
 			if (sceneContainsScript) { 
-				getGlobalComponent<Components::Script>().onPostRender(); 
+				getGlobalComponent<Components::ScriptComponent>().onPostRender(); 
 			}
 		}
 		catch (const std::exception& e) {
@@ -282,12 +290,12 @@ namespace Harmony::Internals
 	void Scene::update()
 	{
 		try {
-			const bool containsScript = containsGlobalComponent<Components::Script>();
+			const bool containsScript = containsGlobalComponent<Components::ScriptComponent>();
 			if (containsScript) { 
-				getGlobalComponent<Components::Script>().onPreUpdate(); 
+				getGlobalComponent<Components::ScriptComponent>().onPreUpdate(); 
 			}
 			if (containsScript) { 
-				getGlobalComponent<Components::Script>().onPostUpdate(); 
+				getGlobalComponent<Components::ScriptComponent>().onPostUpdate(); 
 			}
 		}
 		catch (const std::exception& e) {
@@ -300,7 +308,7 @@ namespace Harmony::Internals
 	{
 		HARMONY_TRACE("Initializing components for Scene {}", sceneId);
 		
-		Configuration componentsConfiguration = configuration_.subsection({ "components" }).value_or(Configuration());
+		Configuration componentsConfiguration = m_configuration.subsection({ "components" }).value_or(Configuration());
 		for (const std::string& componentName : componentsConfiguration.extractKeys({})) {
 			try {
 				auto componentConfig = componentsConfiguration.subsection({ componentName });
@@ -320,7 +328,7 @@ namespace Harmony::Internals
 	{
 		HARMONY_TRACE("Initializing entities for Scene {}", sceneId);
 		
-		Configuration entitiesConfiguration = configuration_.subsection({ "entities" }).value_or(Configuration());
+		Configuration entitiesConfiguration = m_configuration.subsection({ "entities" }).value_or(Configuration());
 		createEntities(entitiesConfiguration);
 	}
 

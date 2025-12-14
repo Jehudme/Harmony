@@ -3,57 +3,46 @@
 
 namespace Harmony::Resources {
 	Resource::Resource(ResourceID id, Configuration configuration, Harmony::Internals::ResourcesHandler& handler)
-		: configuration_(configuration), loaded_(false), id_(id), handler_(handler) {
+		: m_configuration(configuration), m_id(id), m_handler(handler) {
 
-		alwaysLoaded_ = configuration_.get<bool>({ "AlwaysLoaded" }).value_or(false);
-		cooledownTime_ = Time::fromSeconds(configuration_.get<float>({ "CooledownTime" }).value_or(5));
-		required_ = configuration_.get<bool>({ "Required" }).value_or(false);
+		m_permanently_loaded = m_configuration.get<bool>({ "alwaysLoaded" }).value_or(false);
+		m_lifespan = Time::fromSeconds(m_configuration.get<float>({ "lifespan" }).value_or(5));
 	}
 
 	Resource::~Resource() = default;
 
-	ResourceID Resource::getID() const {
-		return id_;
-	}
-
-	bool Resource::canUnload() const
+	ResourceID Resource::resourceId() const 
 	{
-		std::shared_lock lock(mutex_);
-		if (!loaded_)										return false;
-		else if (alwaysLoaded_)								return false;
-		else if (getTimeSinceLastAccess() < cooledownTime_) return false;
-		else												return true;
+		return m_id;
 	}
 
-	bool Resource::isLoaded() const {
-		std::shared_lock lock(mutex_);
-		return loaded_;
+	bool Resource::unloadable() const
+	{
+		std::shared_lock lock(m_mutex);
+
+		if (loaded() && !m_permanently_loaded && timeSinceLastAccess() >= m_lifespan)
+			return true;
+
+		return false;
 	}
 
-	Time Resource::getTimeSinceLastAccess() const {
-		std::shared_lock lock(mutex_);
-		return accessClock_.getElapsedTime();
+	Time Resource::timeSinceLastAccess() const 
+	{
+		return m_access_clock.getElapsedTime();
 	}
 
 	Time Resource::restartAccessClock()
 	{
-		return Time();
+		return m_access_clock.restart();
 	}
 
-
-	ResourceAcquirement::ResourceAcquirement(std::shared_lock<std::shared_mutex>&& lock, Resource& resource) :
-		resourceLock_(std::move(lock)), resource_(resource) {}
-
-	ResourceAcquirement::~ResourceAcquirement() {
-		resource_.restartAccessClock();
+	ScopedResourceAccess::ScopedResourceAccess(std::shared_lock<std::shared_mutex>&& lock, Resource& resource) :
+		m_sharedLock(std::move(lock)), m_resource(resource) 
+	{
 	}
 
-	Resource& ResourceAcquirement::getResource() const {
-		return resource_;
+	ScopedResourceAccess::~ScopedResourceAccess() 
+	{
+		m_resource.restartAccessClock();
 	}
-
-	Resource& ResourceAcquirement::operator*() const {
-		return resource_;
-	}
-
 }

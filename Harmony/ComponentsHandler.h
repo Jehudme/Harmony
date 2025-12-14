@@ -55,6 +55,8 @@ namespace Harmony::Components::Registrations::details {																\
 #define HARMONY_COMPONENTS_CONSTRUCTOR_ARGUMENTS \
 const Harmony::Internals::EntityID entityId, const Harmony::Configuration& configuration, Harmony::Internals::Scene& scene
 
+#define HARMONY_COMPONENTS_CONSTRUCTOR_PARAMETER_NAMES \
+	entityId, configuration, scene
 } // namespace Harmony::Internals
 
 #include "ComponentsHandler.inl"

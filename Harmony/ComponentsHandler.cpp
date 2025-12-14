@@ -96,8 +96,8 @@ namespace Harmony::Internals
 
 	std::mutex& ComponentsHandler::getMutex()
 	{
-		static std::mutex mutex_;
-		return mutex_;
+		static std::mutex m_mutex;
+		return m_mutex;
 	}
 
 	std::shared_mutex& ComponentsHandler::getSharedMutex()

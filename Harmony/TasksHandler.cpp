@@ -27,7 +27,7 @@ namespace Harmony::Internals
         priorityQueue tasks_;
         std::vector<std::unique_ptr<Worker>> workers_;
 
-        std::mutex mutex_;
+        std::mutex m_mutex;
         std::condition_variable condition_;
 
         std::mutex slowTasksDeleteMutex_;
@@ -59,7 +59,7 @@ namespace Harmony::Internals
         priorityQueue& tasks_;
         Tasks::Task_t* currentTask_;
 
-        std::mutex& mutex_;
+        std::mutex& m_mutex;
         std::condition_variable& condition_;
 
         bool& running_;
@@ -109,7 +109,7 @@ namespace Harmony::Internals
             for (unsigned int workerIndex = 0; workerIndex < workerCount; workerIndex++) {
                 unsigned int workerNumber = workerIndex + 1;
                 HARMONY_DEBUG("Creating worker thread {}/{}", workerNumber, workerCount);
-                std::unique_ptr<Worker> worker = std::make_unique<Worker>(engine_, tasks_, running_, mutex_, condition_);
+                std::unique_ptr<Worker> worker = std::make_unique<Worker>(engine_, tasks_, running_, m_mutex, condition_);
                 workers_.emplace_back(std::move(worker));
             }
             std::size_t finalWorkerCount = workers_.size();
@@ -137,7 +137,7 @@ namespace Harmony::Internals
         
         try {
             {
-                std::lock_guard<std::mutex> lock(mutex_);
+                std::lock_guard<std::mutex> lock(m_mutex);
                 tasks_.emplace(std::move(task));
             }
             condition_.notify_one();
@@ -165,7 +165,7 @@ namespace Harmony::Internals
         currentTask_(nullptr),
         tasks_(tasks),
         running_(running_),
-        mutex_(mutex),
+        m_mutex(mutex),
         condition_(condition),
         thread_([&engine, worker = std::ref(*this)]() { Worker::run(engine, worker); })
     {
@@ -199,7 +199,7 @@ namespace Harmony::Internals
         try {
             while (true)
             {
-                std::unique_lock<std::mutex> lock(worker.mutex_);
+                std::unique_lock<std::mutex> lock(worker.m_mutex);
                 worker.condition_.wait(lock, [&worker] { return !worker.running_ || !worker.tasks_.empty(); });
 
                 bool isRunning = worker.running_;
@@ -373,7 +373,7 @@ namespace Harmony::Internals
         }
 
         try {
-            std::lock_guard<std::mutex> lock(mutex_);
+            std::lock_guard<std::mutex> lock(m_mutex);
             Tasks::Task_t* taskPtr = task.release();
             tasks_.emplace(taskPtr);
             HARMONY_TRACE("Task added to queue");
@@ -392,7 +392,7 @@ namespace Harmony::Internals
         while (true) {
             Tasks::Task_t* task;
             {
-                std::lock_guard<std::mutex> lock(mutex_);
+                std::lock_guard<std::mutex> lock(m_mutex);
                 bool hasNoTasks = tasks_.empty();
                 if (hasNoTasks) {
                     HARMONY_TRACE("No more tasks to handle");

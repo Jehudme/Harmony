@@ -34,18 +34,19 @@ namespace Harmony::Internals {
 			void loadResource(Resources::ResourceID id);
 			void unloadResource(Resources::ResourceID id);
 
-			std::unique_ptr<Resources::ResourceAcquirement> acquireResource(Resources::ResourceID id);
+			std::unique_ptr<Resources::ScopedResourceAccess> acquireResource(Resources::ResourceID id);
 
 			static void registerResourceType(const std::string& typeName, std::function<std::unique_ptr<Resources::Resource>(Resources::ResourceID, Configuration, ResourcesHandler&)> factoryFunction);
 	private:
 		Engine& engine_;
-		mutable std::shared_mutex mutex_;
+		mutable std::shared_mutex m_mutex;
 		std::unordered_map<Resources::ResourceID, std::unique_ptr<Resources::Resource>> resources_;
 		static inline std::unordered_map<std::string, std::function<std::unique_ptr<Resources::Resource>(Resources::ResourceID, Configuration, ResourcesHandler&)>> resourcesFactories_;
 	};
 
 } // namespace Harmony
 
+// Macro to register a resource type with the ResourcesHandler
 #define HARMONY_REGISTER_RESOURCE(typeName, className) \
     namespace { \
         struct ResourceRegistrar_##typeName { \

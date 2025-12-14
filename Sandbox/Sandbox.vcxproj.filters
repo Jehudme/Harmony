@@ -23,5 +23,6 @@
     <None Include="properties.json">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="car.glb" />
   </ItemGroup>
 </Project>

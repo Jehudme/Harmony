@@ -10,7 +10,7 @@ namespace Harmony::Internals {
 }
 
 namespace Harmony::Components {
-	class Script;
+	class ScriptComponent;
 }
 
 namespace Harmony::Internals {
@@ -110,7 +110,7 @@ namespace Harmony::Internals {
 		mutable std::recursive_mutex registryMutex_;
 
 	private:
-		Configuration configuration_;
+		Configuration m_configuration;
 		entt::registry registry_;
 
 		std::atomic_bool activeRender;

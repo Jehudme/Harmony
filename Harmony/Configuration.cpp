@@ -17,14 +17,14 @@ namespace Harmony{
     Configuration::~Configuration() = default;
 
     Configuration::Configuration(const Configuration& other) {
-        std::lock_guard lock(other.mutex_);
+        std::lock_guard lock(other.m_mutex);
         internal_ = std::make_unique<Internal>();
         internal_->data = other.internal_->data;
     }
 
     Configuration& Configuration::operator=(const Configuration& other) {
         if (this != &other) {
-            std::scoped_lock lock(mutex_, other.mutex_);
+            std::scoped_lock lock(m_mutex, other.m_mutex);
             if (!internal_) {
                 internal_ = std::make_unique<Internal>();
             }
@@ -34,12 +34,12 @@ namespace Harmony{
     }
 
     void Configuration::merge(const Configuration& configuration) {
-        std::scoped_lock lock(mutex_, configuration.mutex_);
+        std::scoped_lock lock(m_mutex, configuration.m_mutex);
         internal_->data.merge_patch(configuration.internal_->data);
     }
 
     void Configuration::save(const std::filesystem::path& filePath) {
-        std::lock_guard lock(mutex_);
+        std::lock_guard lock(m_mutex);
         
         HARMONY_ASSERT(!filePath.empty(), "Configuration file path cannot be empty");
         HARMONY_ASSERT_NOT_NULL(internal_.get(), "Configuration internal data is null");
@@ -53,7 +53,7 @@ namespace Harmony{
     }
 
     void Configuration::load(const std::filesystem::path& filePath) {
-        std::lock_guard lock(mutex_);
+        std::lock_guard lock(m_mutex);
 
         HARMONY_ASSERT(!filePath.empty(), "Configuration file path cannot be empty");
         HARMONY_ASSERT_NOT_NULL(internal_.get(), "Configuration internal data is null");
@@ -72,13 +72,13 @@ namespace Harmony{
     }
 
     void Configuration::clear() {
-        std::lock_guard lock(mutex_);
+        std::lock_guard lock(m_mutex);
 		internal_->data.clear();
     }
 
     void Configuration::debugPrint() const
     {
-        std::lock_guard lock(mutex_);
+        std::lock_guard lock(m_mutex);
 		std::string data = internal_->data.dump(2);
 		HARMONY_INFO("Configuration Data:\n{}", data);
     }
@@ -104,7 +104,7 @@ namespace Harmony{
 
     template<typename Type>
     std::optional<Type> Configuration::get(const std::vector<std::string>& keys) const {
-        std::lock_guard lock(mutex_);
+        std::lock_guard lock(m_mutex);
         const auto* node = findNode(internal_->data, keys);
         if (!node) {
             HARMONY_WARN("Configuration::get - Key path not found: {}",
@@ -126,7 +126,7 @@ namespace Harmony{
 
     template<typename Type>
     void Configuration::set(const std::vector<std::string>& keys, const Type& value) {
-        std::lock_guard lock(mutex_);
+        std::lock_guard lock(m_mutex);
         auto* node = findOrCreateNode(internal_->data, keys);
 
         bool existed = !node->is_null();
@@ -147,7 +147,7 @@ namespace Harmony{
 	}
 
     std::optional<Configuration> Configuration::subsection(const std::vector<std::string>& keys) const {
-        std::lock_guard lock(mutex_);
+        std::lock_guard lock(m_mutex);
         const auto* node = findNode(internal_->data, keys);
         if (node) {
             Configuration configuration;
@@ -160,7 +160,7 @@ namespace Harmony{
     }
 
     std::vector<std::string> Configuration::extractKeys(const std::vector<std::string>& keys) const {
-        std::lock_guard lock(mutex_);
+        std::lock_guard lock(m_mutex);
         const auto* node = findNode(internal_->data, keys);
         if (!node) {
             HARMONY_WARN("Configuration::extractKeys - Node not found: {}", fmt::format("[{}]", fmt::join(keys, ".")));

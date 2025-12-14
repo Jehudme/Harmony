@@ -46,7 +46,7 @@ namespace Harmony::Internals
 		bool running_;
 
 		Engine& engine_;
-		std::mutex mutex_;
+		std::mutex m_mutex;
 		priorityQueue tasks_;
 		std::unique_ptr<WorkerPool> workerPool_;
 	};

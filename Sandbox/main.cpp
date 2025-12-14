@@ -1,11 +1,11 @@
 
 #include <Harmony/Engine.h>
 #include <Harmony/Logger.h>
-#include <Harmony/Script.h>
+#include <Harmony/ScriptComponent.h>
 #include <Harmony/Scene.h>
 #include <raylib.h>
 #include <raymath.h>
-#include <Harmony/View3D.h>
+#include <Harmony/View3DComponent.h>
 
 using namespace Harmony;
 using namespace Harmony::Internals;
@@ -21,15 +21,19 @@ int main()
 }
 
 namespace Sandbox {
-	class Script : public Harmony::Components::Script {
+	class ScriptComponent : public Harmony::Components::ScriptComponent {
 	public:
-		Script(HARMONY_COMPONENTS_CONSTRUCTOR_ARGUMENTS) :
+		ScriptComponent(HARMONY_COMPONENTS_CONSTRUCTOR_ARGUMENTS) :
 			scene_(scene) {}
 
-		~Script() override {}
+		~ScriptComponent() override {}
 
 		void onPreRender() override {
-			UpdateCamera(&scene_.getGlobalComponent<Components::View3D>(), CAMERA_FREE);
+			UpdateCamera(&scene_.getGlobalComponent<Components::View3DComponent>(), CAMERA_FREE);
+		}
+
+		void onRender() override {
+			DrawGrid(10, 1.0f);
 		}
 
 	private:
@@ -37,4 +41,4 @@ namespace Sandbox {
 	};
 }
 
-HARMONY_REGISTER_SCRIPT(Sandbox::Script, script)
+HARMONY_REGISTER_SCRIPT(Sandbox::ScriptComponent, script)

@@ -33,7 +33,7 @@ namespace Harmony {
 
     private:
         struct Internal;
-        mutable std::mutex mutex_;
+        mutable std::mutex m_mutex;
         std::unique_ptr<Internal> internal_;
     };
 

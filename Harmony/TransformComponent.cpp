@@ -1,18 +1,18 @@
 #include "pch.h"
-#include "Transform.h"
+#include "TransformComponent.h"
 #include "raymath.h"
 #include "ComponentsHandler.h"
 #include "Logger.h"
 #include "Assert.h"
 #include "Exceptions.h"
 
-HARMONY_REGISTER_COMPONENT(Harmony::Components::Transform, transform);
+HARMONY_REGISTER_COMPONENT(Harmony::Components::TransformComponent, transform);
 
 namespace Harmony::Components {
-	Transform::Transform(HARMONY_COMPONENTS_CONSTRUCTOR_ARGUMENTS) :
+	TransformComponent::TransformComponent(HARMONY_COMPONENTS_CONSTRUCTOR_ARGUMENTS) :
 		Utilities::Transformable()
 	{
-		HARMONY_DEBUG("Initializing Transform component for entity {}", static_cast<uint32_t>(entityId));
+		HARMONY_DEBUG("Initializing TransformComponent component for entity {}", static_cast<uint32_t>(entityId));
 		
 		try {
 			std::optional<float> posX = configuration.get<float>({ "position", "x" });
@@ -45,24 +45,24 @@ namespace Harmony::Components {
 			float sy = scaleY.value_or(1.0f);
 			float sz = scaleZ.value_or(1.0f);
 			
-			HARMONY_ASSERT(sx >= 0.0f, "Transform scale X must be positive");
-			HARMONY_ASSERT(sy >= 0.0f, "Transform scale Y must be positive");
-			HARMONY_ASSERT(sz >= 0.0f, "Transform scale Z must be positive");
+			HARMONY_ASSERT(sx >= 0.0f, "TransformComponent scale X must be positive");
+			HARMONY_ASSERT(sy >= 0.0f, "TransformComponent scale Y must be positive");
+			HARMONY_ASSERT(sz >= 0.0f, "TransformComponent scale Z must be positive");
 			
 			Vector3 scale(sx, sy, sz);
 			setScale(scale);
 			
-			HARMONY_TRACE("Transform component initialized - Position: ({}, {}, {}), Scale: ({}, {}, {})", 
+			HARMONY_TRACE("TransformComponent component initialized - Position: ({}, {}, {}), Scale: ({}, {}, {})", 
 				position.x, position.y, position.z, sx, sy, sz);
 		}
 		catch (const std::exception& e) {
-			HARMONY_ERROR("Failed to initialize Transform component: {}", e.what());
-			throw Harmony::Exceptions::ComponentInitializationException("Transform", e.what());
+			HARMONY_ERROR("Failed to initialize TransformComponent component: {}", e.what());
+			throw Harmony::Exceptions::ComponentInitializationException("TransformComponent", e.what());
 		}
 	}
 
-	Transform::~Transform() 
+	TransformComponent::~TransformComponent() 
 	{
-		HARMONY_TRACE("Transform component destroyed");
+		HARMONY_TRACE("TransformComponent component destroyed");
 	}
 }

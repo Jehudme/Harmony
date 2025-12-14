@@ -61,7 +61,7 @@ namespace Harmony::Internals {
 
     void ResourcesHandler::handleResources()
     {
-        std::shared_lock lock(mutex_);
+        std::shared_lock lock(m_mutex);
         
         using ResourceMapEntry = std::pair<const Resources::ResourceID, std::unique_ptr<Resources::Resource>>;
         
@@ -73,8 +73,8 @@ namespace Harmony::Internals {
                 continue;
             }
             
-            bool canUnload = resource->canUnload();
-            if (canUnload) {
+            bool unloadable = resource->unloadable();
+            if (unloadable) {
                 try {
                     resource->unload();
                     HARMONY_TRACE("Unloaded resource ID: {}", resourcePair.first);
@@ -146,7 +146,7 @@ namespace Harmony::Internals {
             throw Exceptions::ResourceUnloadException("Resource", id, errorMessage);
         }
     }
-    std::unique_ptr<Resources::ResourceAcquirement> ResourcesHandler::acquireResource(Resources::ResourceID id)
+    std::unique_ptr<Resources::ScopedResourceAccess> ResourcesHandler::acquireResource(Resources::ResourceID id)
     {
         bool resourceExists = resources_.contains(id);
         
@@ -163,16 +163,16 @@ namespace Harmony::Internals {
                 throw Exceptions::ResourceOperationException("acquire", "Resource pointer is null");
             }
             
-            bool isLoaded = resource->isLoaded();
+            bool loaded = resource->loaded();
             
-            if (!isLoaded) {
+            if (!loaded) {
                 HARMONY_DEBUG("Resource ID {} not available, loading now", id);
                 resource->load();
             }
 
-            std::shared_mutex& resourceMutex = resource->mutex_;
+            std::shared_mutex& resourceMutex = resource->m_mutex;
             std::shared_lock<std::shared_mutex> resourceLock(resourceMutex);
-            std::unique_ptr<Resources::ResourceAcquirement> acquirement = std::make_unique<Resources::ResourceAcquirement>(std::move(resourceLock), *resource);
+            std::unique_ptr<Resources::ScopedResourceAccess> acquirement = std::make_unique<Resources::ScopedResourceAccess>(std::move(resourceLock), *resource);
             
             HARMONY_TRACE("Resource ID {} acquired successfully", id);
             return acquirement;
