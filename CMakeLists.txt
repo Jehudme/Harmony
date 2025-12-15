@@ -1,5 +1,29 @@
 cmake_minimum_required (VERSION 3.20)
 
+# --- EXECUTE FIRST ---
+find_program(GIT_EXECUTABLE git)
+
+if(GIT_EXECUTABLE AND EXISTS "${CMAKE_SOURCE_DIR}/.git")
+    message(STATUS "PRE-BUILD: Updating git submodules...")
+    
+    execute_process(
+        COMMAND ${GIT_EXECUTABLE} submodule update --init --recursive --force
+        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+        RESULT_VARIABLE git_result
+        OUTPUT_VARIABLE git_out    # Capture output to variable
+        ERROR_VARIABLE git_err     # Capture error to variable
+    )
+
+    # Print output so we can see it in VS Output window
+    message(STATUS "Git Output: ${git_out}")
+
+    if(NOT git_result EQUAL "0")
+        # Print the actual error message
+        message(FATAL_ERROR "Git failed with error: ${git_err}") 
+    endif()
+endif()
+# ---------------------
+
 # --- 1. SETUP PATHS ---
 set(VCPKG_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/vcpkg")
 
@@ -12,8 +36,16 @@ else()
     set(BOOTSTRAP_CMD "${VCPKG_ROOT}/bootstrap-vcpkg.sh")
 endif()
 
-# --- 3. AUTO-BOOTSTRAP IF MISSING ---
-if (NOT EXISTS "${VCPKG_EXEC}")
+# --- 3. AUTO-BOOTSTRAP IF MISSING OR OUTDATED ---
+if (EXISTS "${VCPKG_EXEC}")
+    # If the bootstrap script is newer than the executable, it means we did a git update.
+    # We must rebuild vcpkg.exe to match the new scripts.
+    if ("${BOOTSTRAP_CMD}" IS_NEWER_THAN "${VCPKG_EXEC}")
+        message(STATUS "Vcpkg scripts have changed. Re-bootstrapping vcpkg...")
+        execute_process(COMMAND "${BOOTSTRAP_CMD}" -disableMetrics WORKING_DIRECTORY "${VCPKG_ROOT}")
+    endif()
+else()
+    # If executable doesn't exist at all, build it.
     message(STATUS "Bootstrapping vcpkg...")
     execute_process(COMMAND "${BOOTSTRAP_CMD}" -disableMetrics WORKING_DIRECTORY "${VCPKG_ROOT}")
 endif()
