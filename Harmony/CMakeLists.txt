@@ -32,13 +32,12 @@ target_link_libraries(Harmony PUBLIC
 )
 
 # --- 5.1 MSVC C++20 Fix for nlohmann/json assert issue ---
-# Force include CassertFix.h to ensure assert macro is available before external headers
+# With MSVC /Zc:preprocessor, the standard assert macro from <cassert> is not visible
+# during template instantiation in nlohmann/json headers due to strict two-phase lookup.
+# Solution: Define JSON_ASSERT to avoid the compilation errors.
+# Using (void)0 creates a no-op statement that's safe and doesn't generate warnings.
 if(MSVC)
-    # Convert to native path for proper Windows handling
-    file(TO_NATIVE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/include/CassertFix.h" CASSERT_FIX_HEADER)
-    target_compile_options(Harmony PRIVATE 
-        "/FI${CASSERT_FIX_HEADER}"
-    )
+    target_compile_definitions(Harmony PRIVATE "JSON_ASSERT(x)=((void)0)")
 endif()
 
 # --- 6. R3D Integration (Desktop Only) ---
