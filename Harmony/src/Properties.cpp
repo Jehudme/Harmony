@@ -1,5 +1,5 @@
 
-#include <cassert> // must be first to avoid errors on some platforms
+#include <cassert> // Standard header, kept for compatibility
 
 #include "Properties.h"
 #include "Exceptions.h"
