@@ -14,11 +14,11 @@
 
 namespace Harmony {
 
-    class EngineException : public std::runtime_error {
+    class Exception : public std::runtime_error {
     public:
         // Constructor accepts file and line (can be null/0 if disabled)
         template<typename... Args>
-        EngineException(const char* file, int line, std::string_view fmt, Args&&... args)
+        Exception(const char* file, int line, std::string_view fmt, Args&&... args)
             : std::runtime_error(FormatMessage(file, line, fmt, std::forward<Args>(args)...)) {}
 
     private:
@@ -43,9 +43,10 @@ namespace Harmony {
 // ============================================================================
 
 #if HARMONY_SHOW_EXCEPTION_LOCATION
+    // MSVC Trick: "##__VA_ARGS__" automatically removes the comma if args are empty
 #define HARMONY_THROW(fmt, ...) \
-        throw Harmony::EngineException(__FILE__, __LINE__, fmt, ##__VA_ARGS__)
+        throw Harmony::Exception(__FILE__, __LINE__, fmt, ##__VA_ARGS__)
 #else
 #define HARMONY_THROW(fmt, ...) \
-        throw Harmony::EngineException(nullptr, 0, fmt, ##__VA_ARGS__)
+        throw Harmony::Exception(nullptr, 0, fmt, ##__VA_ARGS__)
 #endif

@@ -1,5 +1,7 @@
 cmake_minimum_required (VERSION 3.20)
 
+add_compile_definitions(JSON_NOASSERT)
+
 # --- EXECUTE FIRST ---
 find_program(GIT_EXECUTABLE git)
 
@@ -84,10 +86,16 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
-# If using MSVC (Visual Studio), manually force the latest experimental features
+# --- FIX: STRICT MSVC COMPATIBILITY ---
+
+# Force include <cassert> ONLY for C++ files.
+# This fixes nlohmann/json crashing in strict C++20 mode 
+# without breaking the C code in R3D.
 if(MSVC)
-    add_compile_options($<$<COMPILE_LANGUAGE:CXX>:/std:c++latest>)
+    add_compile_options($<$<COMPILE_LANGUAGE:CXX>:/FIcassert>)
 endif()
+
+# ---------------------------------------
 
 add_subdirectory ("Harmony")
 add_subdirectory ("Sandbox")
