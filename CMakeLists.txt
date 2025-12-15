@@ -60,9 +60,13 @@ project ("HarmonyProject")
 # ==============================================================================
 
 # FIX: MSVC C++20 Strictness vs nlohmann/json
-# We force include <cassert> ONLY for C++ files to prevent the JSON crash.
+# The nlohmann/json library uses assert() which requires <cassert>.
+# With MSVC C++20/latest mode, the two-phase name lookup is stricter.
+# The assert macro must be visible before template instantiation in external headers.
+# Solution: Force-include a wrapper header that properly sets up assert and JSON_ASSERT.
 if(MSVC)
-    add_compile_options($<$<COMPILE_LANGUAGE:CXX>:/FIcassert>)
+    # Add conformant preprocessor for proper macro expansion
+    add_compile_options($<$<COMPILE_LANGUAGE:CXX>:/Zc:preprocessor>)
 endif()
 
 # ==============================================================================

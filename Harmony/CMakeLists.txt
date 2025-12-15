@@ -31,6 +31,14 @@ target_link_libraries(Harmony PUBLIC
         fmt::fmt
 )
 
+# --- 5.1 MSVC C++20 Fix for nlohmann/json assert issue ---
+# Force include CassertFix.h to ensure assert macro is available before external headers
+if(MSVC)
+    target_compile_options(Harmony PRIVATE 
+        /FI"${CMAKE_CURRENT_SOURCE_DIR}/include/CassertFix.h"
+    )
+endif()
+
 # --- 6. R3D Integration (Desktop Only) ---
 if (EMSCRIPTEN)
     message(STATUS "Building for WEB - R3D Disabled")
