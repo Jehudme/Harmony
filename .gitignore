@@ -372,3 +372,11 @@ build/
 Build/
 [Bb]uild/
 /Sandbox/HarmonyLog.txt
+!/cmake-build-debug/
+
+# Ignore local vcpkg build files
+/vcpkg/downloads/
+/vcpkg/installed/
+/vcpkg/packages/
+/vcpkg/buildtrees/
+/vcpkg_installed/
