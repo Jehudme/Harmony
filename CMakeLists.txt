@@ -38,14 +38,13 @@ endif()
 
 # --- 3. AUTO-BOOTSTRAP IF MISSING OR OUTDATED ---
 if (EXISTS "${VCPKG_EXEC}")
-    # If the bootstrap script is newer than the executable, it means we did a git update.
-    # We must rebuild vcpkg.exe to match the new scripts.
+    # Check if the bootstrap script (which comes from git) is newer than the executable.
     if ("${BOOTSTRAP_CMD}" IS_NEWER_THAN "${VCPKG_EXEC}")
-        message(STATUS "Vcpkg scripts have changed. Re-bootstrapping vcpkg...")
+        message(STATUS "Vcpkg scripts updated. Re-building vcpkg.exe...")
         execute_process(COMMAND "${BOOTSTRAP_CMD}" -disableMetrics WORKING_DIRECTORY "${VCPKG_ROOT}")
     endif()
 else()
-    # If executable doesn't exist at all, build it.
+    # Executable missing completely? Build it.
     message(STATUS "Bootstrapping vcpkg...")
     execute_process(COMMAND "${BOOTSTRAP_CMD}" -disableMetrics WORKING_DIRECTORY "${VCPKG_ROOT}")
 endif()

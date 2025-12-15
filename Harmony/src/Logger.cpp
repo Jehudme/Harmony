@@ -1,6 +1,6 @@
-#include "../include/Logger.h"
+#include "Logger.h"
 #include "Assert.h"
-#include "../include/Exceptions.h"
+#include "Exceptions.h"
 
 #include <spdlog/spdlog.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
@@ -61,13 +61,11 @@ namespace Harmony
 
 				spdlog::set_level(spdlog::level::trace);
 			}
-			catch (const spdlog::spdlog_ex& ex) {
-				throw Exceptions::LoggerInitializationException(ex.what());
-			}
+
 			catch (const std::exception& ex) {
-				throw Exceptions::LoggerInitializationException(std::string("Unexpected error: ") + ex.what());
+				HARMONY_THROW("Logger initialization failed: {}", ex.what());
 			}
-			});
+		});
 	}
 
 	void Logger::trace(std::string_view message) {
