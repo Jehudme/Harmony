@@ -5,7 +5,10 @@
 
 #include <cassert>
 
-// Ensure JSON_ASSERT is properly defined for nlohmann/json
+// Define JSON_ASSERT before nlohmann/json is included.
+// The nlohmann/json library checks for this macro and uses it if defined,
+// otherwise it includes <cassert> and defines its own. By defining it here,
+// we ensure the assert macro is visible during template instantiation.
 #ifndef JSON_ASSERT
 #define JSON_ASSERT(x) assert(x)
 #endif

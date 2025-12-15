@@ -34,8 +34,10 @@ target_link_libraries(Harmony PUBLIC
 # --- 5.1 MSVC C++20 Fix for nlohmann/json assert issue ---
 # Force include CassertFix.h to ensure assert macro is available before external headers
 if(MSVC)
+    # Convert to native path for proper Windows handling
+    file(TO_NATIVE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/include/CassertFix.h" CASSERT_FIX_HEADER)
     target_compile_options(Harmony PRIVATE 
-        /FI"${CMAKE_CURRENT_SOURCE_DIR}/include/CassertFix.h"
+        "/FI${CASSERT_FIX_HEADER}"
     )
 endif()
 
