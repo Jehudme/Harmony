@@ -42,11 +42,13 @@ In any source file that uses nlohmann/json:
 ## Testing
 
 This fix has been tested on:
-- Linux (GCC/Clang) with C++20 ✓
-- Expected to work on MSVC with C++20/latest (requires Windows build to verify)
+- ✓ Linux (GCC) with C++20 - all tests pass
+- ⚠ MSVC with C++20/latest - requires Windows build environment for verification
+  - This fix directly addresses the MSVC compilation error by ensuring assert is available
+  - The approach follows standard practices for configuring nlohmann/json
 
 ## References
 
 - Original issue: MSVC C++20 compilation errors with nlohmann/json
 - Related files: `Harmony/src/Properties.cpp`
-- See also: `Harmony/include/CassertFix.h` (deprecated approach)
+- Historical: `Harmony/include/CassertFix.h` contains notes about a previous (unsuccessful) approach
