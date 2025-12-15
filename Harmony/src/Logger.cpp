@@ -1,3 +1,5 @@
+#include <cassert> // must be first to avoid errors on some platforms
+
 #include "Logger.h"
 #include "Assert.h"
 #include "Exceptions.h"

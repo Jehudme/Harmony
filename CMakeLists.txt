@@ -1,35 +1,33 @@
 cmake_minimum_required (VERSION 3.20)
 
-add_compile_definitions(JSON_NOASSERT)
-
-# --- EXECUTE FIRST ---
+# ==============================================================================
+# 1. EXECUTE FIRST: GIT SUBMODULE UPDATE
+# ==============================================================================
 find_program(GIT_EXECUTABLE git)
 
 if(GIT_EXECUTABLE AND EXISTS "${CMAKE_SOURCE_DIR}/.git")
     message(STATUS "PRE-BUILD: Updating git submodules...")
-    
     execute_process(
         COMMAND ${GIT_EXECUTABLE} submodule update --init --recursive --force
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
         RESULT_VARIABLE git_result
-        OUTPUT_VARIABLE git_out    # Capture output to variable
-        ERROR_VARIABLE git_err     # Capture error to variable
+        OUTPUT_VARIABLE git_out
+        ERROR_VARIABLE git_err
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+        ERROR_STRIP_TRAILING_WHITESPACE
     )
-
-    # Print output so we can see it in VS Output window
-    message(STATUS "Git Output: ${git_out}")
-
     if(NOT git_result EQUAL "0")
-        # Print the actual error message
-        message(FATAL_ERROR "Git failed with error: ${git_err}") 
+        message(FATAL_ERROR "Git failed: ${git_err}")
+    else()
+        message(STATUS "Git Updated Successfully.")
     endif()
 endif()
-# ---------------------
 
-# --- 1. SETUP PATHS ---
+# ==============================================================================
+# 2. VCPKG SETUP
+# ==============================================================================
 set(VCPKG_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/vcpkg")
 
-# --- 2. DETECT OS & SCRIPTS ---
 if (WIN32)
     set(VCPKG_EXEC "${VCPKG_ROOT}/vcpkg.exe")
     set(BOOTSTRAP_CMD "${VCPKG_ROOT}/bootstrap-vcpkg.bat")
@@ -38,64 +36,67 @@ else()
     set(BOOTSTRAP_CMD "${VCPKG_ROOT}/bootstrap-vcpkg.sh")
 endif()
 
-# --- 3. AUTO-BOOTSTRAP IF MISSING OR OUTDATED ---
 if (EXISTS "${VCPKG_EXEC}")
-    # Check if the bootstrap script (which comes from git) is newer than the executable.
     if ("${BOOTSTRAP_CMD}" IS_NEWER_THAN "${VCPKG_EXEC}")
         message(STATUS "Vcpkg scripts updated. Re-building vcpkg.exe...")
         execute_process(COMMAND "${BOOTSTRAP_CMD}" -disableMetrics WORKING_DIRECTORY "${VCPKG_ROOT}")
     endif()
 else()
-    # Executable missing completely? Build it.
     message(STATUS "Bootstrapping vcpkg...")
     execute_process(COMMAND "${BOOTSTRAP_CMD}" -disableMetrics WORKING_DIRECTORY "${VCPKG_ROOT}")
 endif()
 
-# --- 4. FORCE VCPKG TOOLCHAIN ---
 if(NOT DEFINED CMAKE_TOOLCHAIN_FILE)
     set(CMAKE_TOOLCHAIN_FILE "${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake" CACHE STRING "Vcpkg toolchain file")
 endif()
 
-# --- 5. DEFINE PROJECT ---
+# ==============================================================================
+# 3. DEFINE PROJECT (CRITICAL: Must be before checking MSVC)
+# ==============================================================================
 project ("HarmonyProject")
 
-# --- 6. DEPENDENCIES ---
+# ==============================================================================
+# 4. GLOBAL FIXES (Now correctly placed)
+# ==============================================================================
 
-# FIX A: Python (Required for R3D)
+# FIX: MSVC C++20 Strictness vs nlohmann/json
+# We force include <cassert> ONLY for C++ files to prevent the JSON crash.
+if(MSVC)
+    add_compile_options($<$<COMPILE_LANGUAGE:CXX>:/FIcassert>)
+endif()
+
+# ==============================================================================
+# 5. DEPENDENCIES
+# ==============================================================================
+
 find_package(Python COMPONENTS Interpreter REQUIRED)
 set(PYTHON_EXECUTABLE "${Python_EXECUTABLE}" CACHE FILEPATH "Python executable" FORCE)
 
-# FIX B: Link Assimp Manually
 find_package(assimp CONFIG REQUIRED)
-
-# Alias Assimp so R3D can see it
 if(TARGET assimp::assimp)
     if(NOT TARGET assimp)
         add_library(assimp ALIAS assimp::assimp)
     endif()
 endif()
 
-# --- 7. R3D CONFIGURATION ---
-# Use the System (Vcpkg) libraries.
+# ==============================================================================
+# 6. COMPILER SETTINGS
+# ==============================================================================
+
 set(R3D_ASSIMP_VENDORED OFF CACHE BOOL "Use system assimp" FORCE)
 set(R3D_RAYLIB_VENDORED OFF CACHE BOOL "Use system raylib" FORCE)
 
-# --- 8. STANDARD SETUP ---
-# Change your standard setup to this:
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
-# --- FIX: STRICT MSVC COMPATIBILITY ---
-
-# Force include <cassert> ONLY for C++ files.
-# This fixes nlohmann/json crashing in strict C++20 mode 
-# without breaking the C code in R3D.
+# Enable C++ Latest features ONLY for C++ files (Avoids C8016 error in C files)
 if(MSVC)
-    add_compile_options($<$<COMPILE_LANGUAGE:CXX>:/FIcassert>)
+    add_compile_options($<$<COMPILE_LANGUAGE:CXX>:/std:c++latest>)
 endif()
 
-# ---------------------------------------
-
+# ==============================================================================
+# 7. ADD SUBDIRECTORIES
+# ==============================================================================
 add_subdirectory ("Harmony")
 add_subdirectory ("Sandbox")

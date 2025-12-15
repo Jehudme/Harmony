@@ -1,8 +1,10 @@
+
+#include <cassert> // must be first to avoid errors on some platforms
+
 #include "Properties.h"
 #include "Exceptions.h"
 #include "Assert.h"
 
-#include <cassert> 
 #include <nlohmann/json.hpp>
 #include <fmt/ranges.h>
 #include <fstream>
