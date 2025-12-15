@@ -1,4 +1,13 @@
 #pragma once
+//
+// Configuration API for Harmony Engine
+// 
+// IMPLEMENTATION NOTE: This class uses nlohmann/json internally.
+// When implementing .cpp files, always include "json_config.h" BEFORE
+// including nlohmann/json.hpp to ensure proper configuration.
+// See Harmony/src/README_json_config.md for details.
+//
+
 #include <filesystem>
 #include <memory>
 #include <mutex>
