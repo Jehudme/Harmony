@@ -14,7 +14,7 @@ file(GLOB_RECURSE SOURCES "src/*.cpp" "src/*.c")
 file(GLOB_RECURSE HEADERS "include/*.h" "src/*.h")
 
 # --- 3. Define the Library ---
-add_library(Harmony STATIC ${SOURCES} ${HEADERS} "include/Properties.h" "src/Properties.cpp")
+add_library(Harmony STATIC ${SOURCES} ${HEADERS})
 
 # --- 4. Setup Includes ---
 target_include_directories(Harmony

@@ -51,23 +51,9 @@ if(NOT DEFINED CMAKE_TOOLCHAIN_FILE)
 endif()
 
 # ==============================================================================
-# 3. DEFINE PROJECT (CRITICAL: Must be before checking MSVC)
+# 3. DEFINE PROJECT 
 # ==============================================================================
 project ("HarmonyProject")
-
-# ==============================================================================
-# 4. GLOBAL FIXES (Now correctly placed)
-# ==============================================================================
-
-# FIX: MSVC C++20 Strictness vs nlohmann/json
-# The nlohmann/json library uses assert() which requires <cassert>.
-# With MSVC C++20/latest mode, the two-phase name lookup is stricter.
-# The assert macro must be visible before template instantiation in external headers.
-# Solution: Force-include a wrapper header that properly sets up assert and JSON_ASSERT.
-if(MSVC)
-    # Add conformant preprocessor for proper macro expansion
-    add_compile_options($<$<COMPILE_LANGUAGE:CXX>:/Zc:preprocessor>)
-endif()
 
 # ==============================================================================
 # 5. DEPENDENCIES
@@ -90,14 +76,9 @@ endif()
 set(R3D_ASSIMP_VENDORED OFF CACHE BOOL "Use system assimp" FORCE)
 set(R3D_RAYLIB_VENDORED OFF CACHE BOOL "Use system raylib" FORCE)
 
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
-
-# Enable C++ Latest features ONLY for C++ files (Avoids C8016 error in C files)
-if(MSVC)
-    add_compile_options($<$<COMPILE_LANGUAGE:CXX>:/std:c++latest>)
-endif()
 
 # ==============================================================================
 # 7. ADD SUBDIRECTORIES

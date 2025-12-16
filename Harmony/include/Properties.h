@@ -1,38 +1,30 @@
 #pragma once
-//
-// Configuration API for Harmony Engine
-// 
-// IMPLEMENTATION NOTE: This class uses nlohmann/json internally.
-// In ANY source file that uses nlohmann/json (including implementations of this class),
-// always include "json_config.h" BEFORE including nlohmann/json.hpp to ensure proper
-// configuration and avoid MSVC C++20 compilation errors.
-// See Harmony/src/README_json_config.md for details.
-//
 
 #include <filesystem>
 #include <memory>
 #include <mutex>
+#include <optional>
+#include <string>
 
 namespace Harmony {
 
-    class Configuration {
+    class Properties {
     public:
-        Configuration();
-        ~Configuration();
+        Properties();
+        ~Properties();
 
-        Configuration(const Configuration& other);
-        Configuration& operator=(const Configuration& other);
+        Properties(const Properties& other);
+        Properties& operator=(const Properties& other);
 
-        void merge(const Configuration& configuration);
+        void merge(const Properties& configuration);
         void save(const std::filesystem::path& filePath);
         void load(const std::filesystem::path& filePath);
         void clear();
         void debugPrint() const;
 
-        std::optional<Configuration> subsection(const std::vector<std::string>& keys) const;
+        std::optional<Properties> subsection(const std::vector<std::string>& keys) const;
         std::vector<std::string> extractKeys(const std::vector<std::string>& keys) const;
-        std::optional<Configuration> operator[](const std::string& key);
-
+        std::optional<Properties> operator[](const std::string& key);
 
         template<typename Type>
         inline std::optional<Type> get(const std::vector<std::string>& keys) const;
@@ -43,11 +35,12 @@ namespace Harmony {
 
     private:
         struct Internal;
+
         mutable std::mutex m_mutex;
         std::unique_ptr<Internal> internal_;
     };
 
-    Configuration operator+(const Configuration& left, const Configuration& right);
-    Configuration& operator+=(Configuration& left, const Configuration& right);
+    Properties operator+(const Properties& left, const Properties& right);
+    Properties& operator+=(Properties& left, const Properties& right);
 
 } // namespace Harmony
