@@ -1,5 +1,5 @@
 
-#include <cassert> // Standard header, kept for compatibility
+#include "json_config.h" // MUST be first - configures nlohmann/json
 
 #include "Properties.h"
 #include "Exceptions.h"
