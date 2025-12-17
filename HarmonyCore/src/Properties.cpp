@@ -1,9 +1,7 @@
 #include "internal/json_config.h"
-#include <nlohmann/json.hpp>
-
-#include "Properties.h"
-#include "Exceptions.h"
-#include "Assert.h"
+#include "Harmony/Properties.h"
+#include "Harmony/Exceptions.h"
+#include "Harmony/Assert.h"
 
 #include <nlohmann/json.hpp>
 #include <fmt/ranges.h>

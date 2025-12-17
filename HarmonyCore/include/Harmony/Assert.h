@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Logger.h"
+#include "Harmony/Logger.h"
 #include <cstdlib>
 
 namespace Harmony::Utilities {

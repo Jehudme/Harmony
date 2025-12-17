@@ -119,9 +119,6 @@ endif()
 # 6. COMPILER SETTINGS
 # ==============================================================================
 
-set(R3D_ASSIMP_VENDORED OFF CACHE BOOL "Use system assimp" FORCE)
-set(R3D_RAYLIB_VENDORED OFF CACHE BOOL "Use system raylib" FORCE)
-
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
@@ -129,5 +126,7 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 # ==============================================================================
 # 7. ADD SUBDIRECTORIES
 # ==============================================================================
-add_subdirectory ("Harmony")
-add_subdirectory ("Sandbox")
+
+add_subdirectory ("HarmonyDev")
+add_subdirectory ("HarmonyCore")
+add_subdirectory ("RendererPlugins")

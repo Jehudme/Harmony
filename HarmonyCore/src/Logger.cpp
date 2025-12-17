@@ -1,8 +1,8 @@
 #include <cassert> // must be first to avoid errors on some platforms
 
-#include "Logger.h"
-#include "Assert.h"
-#include "Exceptions.h"
+#include "Harmony/Assert.h"
+#include "Harmony/Logger.h"
+#include "Harmony/Exceptions.h"
 
 #include <spdlog/spdlog.h>
 #include <spdlog/sinks/stdout_color_sinks.h>

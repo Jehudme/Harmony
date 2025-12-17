@@ -1,6 +1,6 @@
 [submodule "vcpkg"]
 	path = vcpkg
 	url = https://github.com/microsoft/vcpkg.git
-[submodule "Harmony/external/R3D"]
-	path = Harmony/external/R3D
+[submodule "RendererPlugins/RaylibRenderer/external/r3d"]
+	path = RendererPlugins/RaylibRenderer/external/r3d
 	url = https://github.com/Bigfoot71/r3d.git
