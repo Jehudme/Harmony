@@ -4,9 +4,4 @@
 
 namespace Harmony::RendererPlugins
 {
-	class RaylibRenderer : public Harmony::IRenderer
-	{
-	public:	
-		
-	};
 }

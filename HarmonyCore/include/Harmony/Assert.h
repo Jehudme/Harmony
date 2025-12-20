@@ -74,7 +74,7 @@ namespace Harmony::Utilities {
     }
 }
 
-// Main assertion macros
+// MainThreadMode assertion macros
 
 // Standard assertion - aborts in debug builds only
 #define HARMONY_ASSERT(condition, ...) \

@@ -1,6 +1,7 @@
 #include "Harmony/Engine.h"
 #include "Harmony/Assert.h"
 #include "Harmony/IRenderer.h"
+#include "Harmony/TaskDispatcher.h"
 
 #include <mutex>
 #include <memory>
@@ -9,16 +10,12 @@
 
 namespace Harmony 
 {
-	class TaskDispatcher {};
-	class ResourceRegistry {};
-	class ComponentRegistry {};
+
 
 	struct Engine::Internal 
 	{
 		std::unique_ptr<IRenderer> renderer;
 		std::unique_ptr<TaskDispatcher> taskDispatcher;
-		std::unique_ptr<ResourceRegistry> resourceRegistry;
-		std::unique_ptr<ComponentRegistry> componentRegistry;
 
 		std::condition_variable pauseCondition;
 		std::mutex pauseMutex;
@@ -33,6 +30,7 @@ namespace Harmony
 		m_internal(std::make_unique<Internal>()) 
 	{
 		m_internal->properties = properties;
+		m_internal->taskDispatcher = std::make_unique<TaskDispatcher>();
 	}
 
 	Engine::~Engine() = default;
@@ -42,6 +40,7 @@ namespace Harmony
 		HARMONY_ASSERT(!m_internal->running, "Engine is already running");
 		
 		m_internal->running.store(true);
+		m_internal->taskDispatcher->startPool();
 
 		while (m_internal->running) {
 			if (m_internal->paused) {
@@ -52,6 +51,8 @@ namespace Harmony
 			update();
 			render();
 		}
+
+		m_internal->taskDispatcher->stopPool();
 	}
 
 	void Engine::stop()

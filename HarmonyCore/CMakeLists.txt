@@ -10,7 +10,7 @@ file(GLOB_RECURSE SOURCES "src/*.cpp" "src/*.c")
 file(GLOB_RECURSE HEADERS "include/*.h" "src/*.h")
 
 # --- 3. Define the Library ---
-add_library(HarmonyCore STATIC ${SOURCES} ${HEADERS})
+add_library(HarmonyCore STATIC ${SOURCES} ${HEADERS} "include/Harmony/TaskDispatcher.h" "include/Harmony/ITask.h" "src/TaskDispatcher.cpp" "src/internal/PrivateAccess.h")
 
 # --- 4. Setup Includes ---
 target_include_directories(HarmonyCore 
