@@ -1,14 +1,16 @@
 #pragma once
+#include "Harmony/EngineContext.h"
+
 #include <memory>
 #include <atomic>
 #include <functional>
 #include <vector>
 #include <string>
 #include <chrono>
+#include <optional>
 #include <any>
 
 namespace Harmony {
-	class EngineContext;
 
 	enum class ExecutionMode {
 		UndedicatedThreadMode,
@@ -30,7 +32,7 @@ namespace Harmony {
 		virtual ~ITask() = default;
 
 	public:
-		EngineContext* context;
+		std::optional<EngineContext> context;
 		const ExecutionMode mode;
 		const unsigned char priority;
 

@@ -12,11 +12,11 @@ namespace Harmony {
 		EngineContext(Engine& engine, TaskDispatcher& TaskDispatcher);
 
 	public:
-		EngineContext(const EngineContext&) = default;
-		EngineContext& operator=(const EngineContext&) = default;
+		EngineContext(const EngineContext& instance);
+		EngineContext& operator=(const EngineContext& instance);
 
-		Engine& engine;
-		TaskDispatcher& taskDispatcher;
+		Engine* engine;
+		TaskDispatcher* taskDispatcher;
 	};
 
 } // namespace Harmony

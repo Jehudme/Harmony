@@ -266,7 +266,7 @@ namespace Harmony
 	void TaskDispatcher::submit(std::unique_ptr<ITask> task)
 	{
 		if (!m_internal) return;
-		task->context = &m_internal->engine->context();
+		task->context = m_internal->engine->context();
 
 		if (task->priority == static_cast<unsigned char>(ExecutionPriority::Imediate)) {
 			return execute(std::move(task));
