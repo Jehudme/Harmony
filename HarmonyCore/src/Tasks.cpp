@@ -143,7 +143,23 @@ namespace Harmony {
 		}
 
 		std::streamsize size = file.tellg();
+		if (size < 0) {
+			// tellg() failed, call callback with empty data
+			if (m_callback) {
+				m_callback(std::vector<uint8_t>());
+			}
+			return;
+		}
+		
 		file.seekg(0, std::ios::beg);
+
+		// Handle empty files
+		if (size == 0) {
+			if (m_callback) {
+				m_callback(std::vector<uint8_t>());
+			}
+			return;
+		}
 
 		std::vector<uint8_t> buffer(size);
 		if (file.read(reinterpret_cast<char*>(buffer.data()), size)) {
@@ -258,8 +274,9 @@ namespace Harmony {
 
 	void WaitSignalTask::run() {
 		// Wait for signal to become true
+		// Use a reasonable polling interval to balance responsiveness and CPU usage
 		while (!m_signal.load(std::memory_order_acquire)) {
-			std::this_thread::sleep_for(std::chrono::milliseconds(1));
+			std::this_thread::sleep_for(std::chrono::milliseconds(10));
 		}
 
 		// Execute the task
