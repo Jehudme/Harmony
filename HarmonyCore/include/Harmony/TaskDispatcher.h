@@ -1,6 +1,6 @@
 #pragma once
 #include "Harmony/Properties.h"
-#include "Harmony/ITask.h"
+#include "Harmony/Tasks.h"
 #include <memory>
 
 namespace Harmony {
@@ -10,7 +10,7 @@ namespace Harmony {
 		friend class Engine;
 
 	public:
-		TaskDispatcher();
+		TaskDispatcher(Engine& engine);
 		~TaskDispatcher();
 
 		template<typename Task, typename... Args>

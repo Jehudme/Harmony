@@ -2,6 +2,7 @@
 #include "Harmony/Assert.h"
 #include "Harmony/IRenderer.h"
 #include "Harmony/TaskDispatcher.h"
+#include "Harmony/EngineContext.h"
 
 #include <mutex>
 #include <memory>
@@ -30,7 +31,7 @@ namespace Harmony
 		m_internal(std::make_unique<Internal>()) 
 	{
 		m_internal->properties = properties;
-		m_internal->taskDispatcher = std::make_unique<TaskDispatcher>();
+		m_internal->taskDispatcher = std::make_unique<TaskDispatcher>(*this);
 	}
 
 	Engine::~Engine() = default;
@@ -53,6 +54,11 @@ namespace Harmony
 		}
 
 		m_internal->taskDispatcher->stopPool();
+	}
+
+	EngineContext Harmony::Engine::context()
+	{
+		return EngineContext(*this, *m_internal->taskDispatcher);
 	}
 
 	void Engine::stop()

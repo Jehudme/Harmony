@@ -5,6 +5,7 @@
 #include <memory>
 
 namespace Harmony {
+	struct EngineContext;
 
 	class Engine {
 	public:
@@ -19,6 +20,8 @@ namespace Harmony {
 
 		bool running() const;
 		bool paused() const;
+
+		EngineContext context();
 
 	private:
 		void event();

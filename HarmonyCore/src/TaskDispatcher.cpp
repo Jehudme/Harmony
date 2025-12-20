@@ -1,5 +1,7 @@
 #include "Harmony/TaskDispatcher.h"
 #include "internal/PrivateAccess.h"
+#include "Harmony/EngineContext.h"
+#include "Harmony/Engine.h"
 #include <mutex>
 #include <queue>
 #include <memory>
@@ -78,6 +80,7 @@ namespace Harmony
 
 	struct TaskDispatcher::Internal {
 		WorkerPool workerPool;
+		Engine* engine;
 
 		std::mutex queueMutex;
 		SafePriorityQueue queue;
@@ -249,9 +252,10 @@ namespace Harmony
 
 	// --- TaskDispatcher Implementation ---
 
-	TaskDispatcher::TaskDispatcher() :
+	TaskDispatcher::TaskDispatcher(Engine& engine) :
 		m_internal(std::make_unique<Internal>())
 	{
+		m_internal->engine = &engine;
 	}
 
 	TaskDispatcher::~TaskDispatcher()
@@ -262,6 +266,7 @@ namespace Harmony
 	void TaskDispatcher::submit(std::unique_ptr<ITask> task)
 	{
 		if (!m_internal) return;
+		task->context = &m_internal->engine->context();
 
 		if (task->priority == static_cast<unsigned char>(ExecutionPriority::Imediate)) {
 			return execute(std::move(task));
