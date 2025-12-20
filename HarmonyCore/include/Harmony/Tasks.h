@@ -102,7 +102,7 @@ namespace Harmony {
 		std::unique_ptr<ITask> m_task;
 	};
 
-	// --- ENTRÉES / SORTIES & RÉSEAU ---
+	// --- ENTRï¿½ES / SORTIES & Rï¿½SEAU ---
 
 	class RawReadTask : public ITask {
 	public:
@@ -180,3 +180,5 @@ namespace Harmony {
 		bool m_value;
 	};
 }
+
+#include "Tasks.inl"
