@@ -234,8 +234,9 @@ namespace Harmony {
 		// Launch all tasks in parallel
 		for (auto& task : m_tasks) {
 			if (task) {
-				futures.push_back(std::async(std::launch::async, [&task]() {
-					executeTask(*task);
+				ITask* taskPtr = task.get();
+				futures.push_back(std::async(std::launch::async, [taskPtr]() {
+					executeTask(*taskPtr);
 					}));
 			}
 		}
@@ -258,7 +259,7 @@ namespace Harmony {
 	void WaitSignalTask::run() {
 		// Wait for signal to become true
 		while (!m_signal.load(std::memory_order_acquire)) {
-			std::this_thread::yield();
+			std::this_thread::sleep_for(std::chrono::milliseconds(1));
 		}
 
 		// Execute the task

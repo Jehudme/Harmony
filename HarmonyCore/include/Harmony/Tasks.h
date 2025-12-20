@@ -19,7 +19,7 @@ namespace Harmony {
 	};
 
 	enum class ExecutionPriority : unsigned char {
-		Imediate = 255,
+		Immediate = 255,
 		High = 170,
 		Normal = 85,
 		Low = 0
