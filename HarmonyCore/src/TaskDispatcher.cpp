@@ -268,7 +268,7 @@ namespace Harmony
 		if (!m_internal) return;
 		task->context = m_internal->engine->context();
 
-		if (task->priority == static_cast<unsigned char>(ExecutionPriority::Imediate)) {
+		if (task->priority == static_cast<unsigned char>(ExecutionPriority::Immediate)) {
 			return execute(std::move(task));
 		}
 

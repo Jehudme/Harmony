@@ -19,7 +19,7 @@ namespace Harmony {
 	};
 
 	enum class ExecutionPriority : unsigned char {
-		Imediate = 255,
+		Immediate = 255,
 		High = 170,
 		Normal = 85,
 		Low = 0
@@ -102,7 +102,7 @@ namespace Harmony {
 		std::unique_ptr<ITask> m_task;
 	};
 
-	// --- ENTRÉES / SORTIES & RÉSEAU ---
+	// --- ENTRï¿½ES / SORTIES & Rï¿½SEAU ---
 
 	class RawReadTask : public ITask {
 	public:
@@ -180,3 +180,5 @@ namespace Harmony {
 		bool m_value;
 	};
 }
+
+#include "Tasks.inl"
