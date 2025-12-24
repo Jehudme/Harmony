@@ -1,132 +1,106 @@
-cmake_minimum_required (VERSION 3.20)
+cmake_minimum_required(VERSION 3.20)
 
 # ==============================================================================
-# 1. SMART GIT UPDATE (Checks if 'vcpkg' folder is empty)
+# 1. PRE-PROJECT SETUP (Git & Vcpkg)
 # ==============================================================================
+
+# --- A. Smart Git Submodule Update ---
 find_package(Git QUIET)
+set(VCPKG_DIR "${CMAKE_CURRENT_SOURCE_DIR}/vcpkg")
 
-set(VCPKG_SUBMODULE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/vcpkg")
+# Check if vcpkg appears empty (count files)
+file(GLOB VCPKG_FILES "${VCPKG_DIR}/*")
+list(LENGTH VCPKG_FILES VCPKG_FILE_COUNT)
 
-# Check if the vcpkg folder is empty or missing content
-# We look for *any* file inside the folder.
-file(GLOB VCPKG_CONTENT "${VCPKG_SUBMODULE_DIR}/*")
-list(LENGTH VCPKG_CONTENT VCPKG_CONTENT_COUNT)
-
-# Logic: "Is it empty?"
-if(VCPKG_CONTENT_COUNT EQUAL 0)
-    set(VCPKG_IS_EMPTY TRUE)
-else()
-    set(VCPKG_IS_EMPTY FALSE)
-endif()
-
-if(GIT_FOUND AND EXISTS "${CMAKE_SOURCE_DIR}/.git")
-    # --- SCENARIO A: Native Build (Windows/Local Linux) ---
-    # If the folder is empty OR Cache is missing, we run the update.
-    
-    if(NOT VCPKG_IS_EMPTY AND GIT_INITIALIZED AND NOT FORCE_SUBMODULE_UPDATE)
-        message(STATUS "Git: Optimization Active - Skipping update (Submodules detected).")
-    else()
-        message(STATUS "Git: Repository detected or 'vcpkg' is empty. Updating submodules...")
+if(GIT_FOUND AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/.git")
+    # Native Git Environment
+    if(VCPKG_FILE_COUNT EQUAL 0)
+        message(STATUS "Git: 'vcpkg' folder is empty. Initializing submodules...")
         execute_process(
             COMMAND ${GIT_EXECUTABLE} submodule update --init --recursive
-            WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-            RESULT_VARIABLE git_result
-            OUTPUT_VARIABLE git_out
-            ERROR_VARIABLE git_err
-            OUTPUT_STRIP_TRAILING_WHITESPACE
-            ERROR_STRIP_TRAILING_WHITESPACE
+            WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+            RESULT_VARIABLE GIT_RESULT
         )
-
-        if(NOT git_result EQUAL "0")
-            message(FATAL_ERROR "Git failed: ${git_err}")
-        else()
-            message(STATUS "Git: Submodules updated successfully.")
-            set(GIT_INITIALIZED ON CACHE INTERNAL "Git state")
+        if(NOT GIT_RESULT EQUAL "0")
+            message(FATAL_ERROR "Git submodule update failed.")
         endif()
     endif()
+elseif(VCPKG_FILE_COUNT EQUAL 0)
+    # Remote Build / No Git Environment (Critical Error)
+    message(FATAL_ERROR 
+        "CRITICAL: 'vcpkg' folder is empty and no Git repository found.\n"
+        "If you are using VS Remote Build, ensure submodules are updated LOCALLY first."
+    )
+endif()
 
+# --- B. Vcpkg Bootstrapping ---
+if(WIN32)
+    set(VCPKG_EXEC "${VCPKG_DIR}/vcpkg.exe")
+    set(VCPKG_BOOTSTRAP "${VCPKG_DIR}/bootstrap-vcpkg.bat")
 else()
-    # --- SCENARIO B: Remote Build (VS Remote / CLion Remote) ---
-    # The .git folder is missing, so we can't run git commands.
-    
-    if(NOT VCPKG_IS_EMPTY)
-        message(STATUS "Git: Remote build detected. Vcpkg files found. Proceeding.")
-    else()
-        # CRITICAL WARNING: The folder is empty, but we can't fix it here.
-        message(WARNING "----------------------------------------------------------------")
-        message(WARNING "CRITICAL ERROR: 'vcpkg' folder is empty on the remote machine!")
-        message(WARNING "Visual Studio did not copy the submodule files because they were missing locally.")
-        message(WARNING "SOLUTION: Run 'git submodule update --init --recursive' on WINDOWS and rebuild.")
-        message(WARNING "----------------------------------------------------------------")
-        message(FATAL_ERROR "Stopping build because dependencies are missing.")
-    endif()
+    set(VCPKG_EXEC "${VCPKG_DIR}/vcpkg")
+    set(VCPKG_BOOTSTRAP "${VCPKG_DIR}/bootstrap-vcpkg.sh")
 endif()
 
-# ==============================================================================
-# 2. VCPKG SETUP
-# ==============================================================================
-set(VCPKG_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/vcpkg")
-
-if (WIN32)
-    set(VCPKG_EXEC "${VCPKG_ROOT}/vcpkg.exe")
-    set(BOOTSTRAP_CMD "${VCPKG_ROOT}/bootstrap-vcpkg.bat")
-else()
-    set(VCPKG_EXEC "${VCPKG_ROOT}/vcpkg")
-    set(BOOTSTRAP_CMD "${VCPKG_ROOT}/bootstrap-vcpkg.sh")
+# Run bootstrap if vcpkg.exe is missing or older than the script
+if(NOT EXISTS "${VCPKG_EXEC}" OR "${VCPKG_BOOTSTRAP}" IS_NEWER_THAN "${VCPKG_EXEC}")
+    message(STATUS "Vcpkg: Bootstrapping executable...")
+    execute_process(COMMAND "${VCPKG_BOOTSTRAP}" -disableMetrics WORKING_DIRECTORY "${VCPKG_DIR}")
 endif()
 
-if (NOT EXISTS "${VCPKG_EXEC}" OR "${BOOTSTRAP_CMD}" IS_NEWER_THAN "${VCPKG_EXEC}")
-    message(STATUS "Bootstrapping vcpkg...")
-    execute_process(COMMAND "${BOOTSTRAP_CMD}" -disableMetrics WORKING_DIRECTORY "${VCPKG_ROOT}")
-endif()
-
+# --- C. Toolchain Setup ---
 if(NOT DEFINED CMAKE_TOOLCHAIN_FILE)
-    set(CMAKE_TOOLCHAIN_FILE "${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake" CACHE STRING "Vcpkg toolchain file")
+    set(CMAKE_TOOLCHAIN_FILE "${VCPKG_DIR}/scripts/buildsystems/vcpkg.cmake" CACHE STRING "Vcpkg toolchain file")
 endif()
 
 # ==============================================================================
-# 3. VCPKG INSTALL (Runs ONLY if Cache is Missing/Cleaned)
+# 2. PROJECT DEFINITION
 # ==============================================================================
-if(VCPKG_INITIALIZED)
-    set(VCPKG_MANIFEST_INSTALL OFF)
-    message(STATUS "Vcpkg: Optimization Active - Skipping dependency check (Cache exists).")
-else()
-    set(VCPKG_MANIFEST_INSTALL ON)
-    message(STATUS "Vcpkg: Cache missing. Enabling dependency check...")
-    set(VCPKG_INITIALIZED ON CACHE INTERNAL "Vcpkg dependencies checked")
-endif()
+project("HarmonyProject")
 
 # ==============================================================================
-# 4. DEFINE PROJECT 
-# ==============================================================================
-project ("HarmonyProject")
-
-# ==============================================================================
-# 5. DEPENDENCIES
-# ==============================================================================
-
-find_package(Python COMPONENTS Interpreter REQUIRED)
-set(PYTHON_EXECUTABLE "${Python_EXECUTABLE}" CACHE FILEPATH "Python executable" FORCE)
-
-find_package(assimp CONFIG REQUIRED)
-if(TARGET assimp::assimp)
-    if(NOT TARGET assimp)
-        add_library(assimp ALIAS assimp::assimp)
-    endif()
-endif()
-
-# ==============================================================================
-# 6. COMPILER SETTINGS
+# 3. GLOBAL COMPILER SETTINGS
 # ==============================================================================
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+set_property(GLOBAL PROPERTY USE_FOLDERS ON) # Enables folders in VS Solution Explorer
+
+# --- CRITICAL: Output Directory Setup ---
+# Forces both the Engine (.exe) and Plugins (.dll) to build into the same /bin folder.
+# This solves the issue of the Engine not finding the Plugin DLLs at runtime.
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib")
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
+
+# This controls the build mode for EVERY sub-project
+option(HARMONY_STATIC_LINK "Build fully static for Web/Release" OFF)
+
+# Pass this CMake option to the C++ Code as a Preprocessor Definition
+# This ensures '#ifdef HARMONY_STATIC_LINK' works in Base.h and your C++ files.
+if(HARMONY_STATIC_LINK)
+    add_compile_definitions(HARMONY_STATIC_LINK)
+endif()
 
 # ==============================================================================
-# 7. ADD SUBDIRECTORIES
+# 4. EXTERNAL DEPENDENCIES (Common)
 # ==============================================================================
 
-add_subdirectory ("HarmonyDev")
-add_subdirectory ("HarmonyCore")
-add_subdirectory ("RendererPlugins")
+# Python (Often needed for scripts/tools)
+find_package(Python COMPONENTS Interpreter REQUIRED)
+
+# Assimp (Asset Import Library)
+find_package(assimp CONFIG REQUIRED)
+# Fix for Assimp target naming inconsistencies in some Vcpkg versions
+if(TARGET assimp::assimp AND NOT TARGET assimp)
+    add_library(assimp ALIAS assimp::assimp)
+endif()
+
+# ==============================================================================
+# 5. PROJECT SUBDIRECTORIES
+# ==============================================================================
+
+add_subdirectory("Core")
+
+add_subdirectory("Harmony")
+add_subdirectory("Plugins")
