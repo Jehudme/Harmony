@@ -22,10 +22,6 @@ target_precompile_headers(HarmonyCore PRIVATE
     "$<$<COMPILE_LANGUAGE:CXX>:${CMAKE_CURRENT_SOURCE_DIR}/src/pch.h>"
 )
 
-set(CMAKE_CXX_STANDARD 23)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set_property(GLOBAL PROPERTY USE_FOLDERS ON) # Enables folders in VS Solution Explorer
-
 # --- 4. Setup Includes ---
 target_include_directories(HarmonyCore 
     PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include"

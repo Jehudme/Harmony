@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Base.h"
 #include "Properties.h"
 #include "EngineContext.h"
 

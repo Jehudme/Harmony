@@ -1,6 +1,5 @@
 #pragma once
-#include "Utilities/Base.h"
-#include "Utilities/Properties.h"
+#include "Properties.h"
 #include "EngineContext.h"
 #include "IPlugins.h"
 

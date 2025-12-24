@@ -1,4 +1,3 @@
-//#include "internal/json_config.h"
 #include "Harmony/Properties.h"
 #include "Harmony/Exceptions.h"
 #include "Harmony/Assert.h"
@@ -6,7 +5,10 @@
 #include <nlohmann/json.hpp>
 #include <fmt/ranges.h>
 #include <type_traits>
+#include <filesystem>
 #include <fstream>
+#include <mutex>
+#include <optional>
 
 namespace Harmony {
 

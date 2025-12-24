@@ -1,7 +1,5 @@
 #pragma once
 
-#include "Harmony/Base.h"
-
 #include <string>
 #include <string_view>
 #include <cstddef>

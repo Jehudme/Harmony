@@ -1,5 +1,4 @@
 #pragma once
-#include "Base.h"
 #include "Properties.h"
 
 #include <string>
@@ -23,9 +22,9 @@ namespace Harmony {
         virtual void Shutdown() = 0;
 
         // --- Attributes (Getters) ---
-        virtual uint32 GetWidth() const = 0;
-        virtual uint32 GetHeight() const = 0;
-        virtual std::pair<uint32, uint32> GetSize() const = 0;
+        virtual uint32_t GetWidth() const = 0;
+        virtual uint32_t GetHeight() const = 0;
+        virtual std::pair<uint32_t, uint32_t> GetSize() const = 0;
         virtual std::string GetTitle() const = 0;
 
         // --- Attributes (Setters) ---
