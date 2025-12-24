@@ -1,9 +1,9 @@
 #include "Harmony/Utilities/Color.h"
-#include "Harmony/Exceptions.h"
-#include "Harmony/Logger.h"
+#include "Exceptions.h"
+#include "Harmony/LogLogger.h"
 #include "Harmony/Assert.h"
 
-namespace Harmony {
+namespace Harmony::Utilities {
 
     Color::Color(int color)
         : r(static_cast<unsigned char>((color >> 24) & 0xFF)),

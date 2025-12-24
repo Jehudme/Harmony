@@ -1,6 +1,5 @@
-#include "Harmony/Properties.h"
+#include "Harmony/Utilities/Properties"
 #include "Harmony/Exceptions.h"
-#include "Harmony/Assert.h"
 
 #include <nlohmann/json.hpp>
 #include <fmt/ranges.h>

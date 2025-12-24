@@ -1,12 +1,10 @@
 #pragma once
 
-#include "Properties.h"
-#include "EngineContext.h"
-#include "IPlugins.h"
+#include "Harmony/Context.h"
+#include "Harmony/Properties.h"
+#include "Harmony/Interfaces/IPlugins.h"
 
 namespace Harmony {
-	class EngineContext;
-
 	class IEngine {
 	public:
 		enum class State {
@@ -20,7 +18,7 @@ namespace Harmony {
 	public:
 		virtual ~IEngine() = default;
 
-		virtual void Initialize(Properties properties) = 0;
+		virtual void Initialize(const Properties& properties) = 0;
 		virtual void Shutdown() = 0;
 
 		virtual void Run() = 0;
@@ -29,7 +27,7 @@ namespace Harmony {
 		virtual void Resume() = 0;
 		
 		virtual State GetState() const = 0;
-		virtual EngineContext& GetContext() = 0;
+		virtual Context& GetContext() = 0;
 
 	private:
 		virtual void Update() = 0;

@@ -2,7 +2,7 @@
 
 #include "Harmony/Assert.h"
 #include "Harmony/Exceptions.h"
-#include "Harmony/Utilities/Logger.h"
+#include "Harmony/Logger.h"
 
 #include <spdlog/spdlog.h>
 #include <spdlog/sinks/stdout_color_sinks.h>

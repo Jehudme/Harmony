@@ -14,7 +14,7 @@ file(GLOB_RECURSE HEADERS "include/*.h" "src/*.h")
 
 # --- 3. Define the Library ---
 # Note: Position Independent Code is required to link this Static Lib into a Shared DLL later
-add_library(HarmonyCore STATIC ${SOURCES} ${HEADERS} "include/Harmony/PluginsFactoriesRegistry.h" "include/Harmony/PluginsRegistry.h" "include/Harmony/Exceptions.h")
+add_library(HarmonyCore STATIC ${SOURCES} ${HEADERS} "include/Harmony/PluginsFactoriesRegistry.h" "include/Harmony/Interfaces/IPluginsRegistry.h" "include/Harmony/Exceptions.h" "include/Harmony/Utilities/Color.h" "src/Color.cpp")
 set_target_properties(HarmonyCore PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
 # Plugins will not inherit it (they should define their own).
