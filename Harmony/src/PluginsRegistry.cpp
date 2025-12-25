@@ -1,64 +1,124 @@
 #include "PluginsRegistry.h"
 #include "Harmony/PluginsFactoriesRegistry.h"
+#include "Harmony/Logger.h"
+#include "Harmony/Assert.h"
 
-namespace Harmony {
+namespace Harmony 
+{
+    // ========================================================
+    // PluginsRegistry Constructor and Destructor
+    // ========================================================
 
-	PluginsRegistry::PluginsRegistry(const Harmony::Context& context, const Harmony::Properties& properties) :
-		m_context(const_cast<Harmony::Context&>(context))
-	{
-		for (const std::string& tag : properties.extractKeys({})) {
-			if (auto pluginNameOpt = properties.get<std::string>({ tag, "name" })) {
-				AddPlugin(tag, properties.subsection({tag}).value());
-			}
-			//log error: plugin name not found in properties
-		}
-	}
+    PluginsRegistry::PluginsRegistry(const Harmony::Context& context, const Harmony::Properties& properties) :
+        m_context(const_cast<Harmony::Context&>(context))
+    {
+        std::vector<std::string> pluginTags = properties.ExtractKeys({});
+        
+        HARMONY_INFO("PluginsRegistry - Initializing with {} plugin(s)", pluginTags.size());
 
-	PluginsRegistry::~PluginsRegistry() = default;
+        for (const std::string& tag : pluginTags) 
+        {
+            std::optional<std::string> pluginNameOptional = properties.Get<std::string>({ tag, "name" });
+            
+            if (!pluginNameOptional.has_value()) 
+            {
+                HARMONY_ERROR("PluginsRegistry - Plugin name not found in properties for tag: {}", tag);
+                continue;
+            }
 
-	IPlugins* PluginsRegistry::GetPlugin(const std::string& tag) const
-	{
-		if (m_plugins.contains(tag))
-			return  m_plugins.at(tag).get();
+            std::optional<Properties> pluginSubsection = properties.Subsection({tag});
+            
+            if (pluginSubsection.has_value())
+            {
+                AddPlugin(tag, pluginSubsection.value());
+            }
+            else
+            {
+                HARMONY_ERROR("PluginsRegistry - Failed to get subsection for plugin tag: {}", tag);
+            }
+        }
+    }
 
-		// log error: plugin not found for tag
-		return nullptr;
-	}
+    PluginsRegistry::~PluginsRegistry() 
+    {
+        HARMONY_INFO("PluginsRegistry - Destroying registry with {} plugin(s)", m_plugins.size());
+    }
 
-	IPlugins* PluginsRegistry::operator[](const std::string& tag) const
-	{
-		return GetPlugin(tag);
-	}
-	bool PluginsRegistry::Contains(const std::string& tag) const
-	{
-		std::shared_lock lock(m_mutex);
-		return m_plugins.contains(tag);
-	}
-	void PluginsRegistry::AddPlugin(const std::string& tag, const Properties& properties)
-	{
-		std::lock_guard lock(m_mutex);
-		if (m_plugins.contains(tag)) {
-			return; // log error : plugin with tag already exists
-		}
+    // ========================================================
+    // PluginsRegistry Public Methods
+    // ========================================================
 
-		std::optional<std::string> pluginNameOpt;
-		if (pluginNameOpt = properties.get<std::string>({ "name" }); !pluginNameOpt.has_value()) {
-			return; // log error: plugin name not found in properties
-		}
+    IPlugins* PluginsRegistry::GetPlugin(const std::string& tag) const
+    {
+        std::shared_lock lock(m_mutex);
+        
+        if (!m_plugins.contains(tag))
+        {
+            HARMONY_ERROR("PluginsRegistry::GetPlugin - Plugin not found for tag: {}", tag);
+            return nullptr;
+        }
 
-		if (auto plugin = PluginsFactoriesRegistry::Create(pluginNameOpt.value(), m_context, properties)) {
-			m_plugins[tag] = std::move(plugin);
-		}
+        return m_plugins.at(tag).get();
+    }
 
-		// log error: failed to create plugin with name
-	}
+    IPlugins* PluginsRegistry::operator[](const std::string& tag) const
+    {
+        return GetPlugin(tag);
+    }
 
-	void PluginsRegistry::RemovePlugin(const std::string& tag)
-	{
-		std::lock_guard lock(m_mutex);
-		if (!m_plugins.contains(tag)) {
-			return; // log warn: plugin with tag does not exist
-		}
-		m_plugins.erase(tag);
-	}
-}
+    bool PluginsRegistry::Contains(const std::string& tag) const
+    {
+        std::shared_lock lock(m_mutex);
+        return m_plugins.contains(tag);
+    }
+
+    // ========================================================
+    // PluginsRegistry Private Methods
+    // ========================================================
+
+    void PluginsRegistry::AddPlugin(const std::string& tag, const Properties& properties)
+    {
+        std::unique_lock lock(m_mutex);
+        
+        if (m_plugins.contains(tag)) 
+        {
+            HARMONY_ERROR("PluginsRegistry::AddPlugin - Plugin with tag '{}' already exists", tag);
+            return;
+        }
+
+        std::optional<std::string> pluginNameOptional = properties.Get<std::string>({ "name" });
+        
+        if (!pluginNameOptional.has_value()) 
+        {
+            HARMONY_ERROR("PluginsRegistry::AddPlugin - Plugin name not found in properties for tag: {}", tag);
+            return;
+        }
+
+        std::string pluginName = pluginNameOptional.value();
+        std::unique_ptr<IPlugins> plugin = PluginsFactoriesRegistry::Create(pluginName, m_context, properties);
+        
+        if (!plugin) 
+        {
+            HARMONY_ERROR("PluginsRegistry::AddPlugin - Failed to create plugin '{}' for tag: {}", pluginName, tag);
+            return;
+        }
+
+        m_plugins[tag] = std::move(plugin);
+        HARMONY_INFO("PluginsRegistry::AddPlugin - Successfully added plugin '{}' with tag: {}", pluginName, tag);
+    }
+
+    void PluginsRegistry::RemovePlugin(const std::string& tag)
+    {
+        std::unique_lock lock(m_mutex);
+        
+        if (!m_plugins.contains(tag)) 
+        {
+            HARMONY_WARN("PluginsRegistry::RemovePlugin - Plugin with tag '{}' does not exist", tag);
+            return;
+        }
+
+        m_plugins.erase(tag);
+        HARMONY_INFO("PluginsRegistry::RemovePlugin - Removed plugin with tag: {}", tag);
+    }
+
+} // namespace Harmony

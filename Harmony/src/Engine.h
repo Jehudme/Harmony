@@ -3,28 +3,34 @@
 
 #include "PluginsRegistry.h"
 
-namespace Harmony {
-	class Engine : public IEngine {
-	public:
-		Engine(const Properties& properties);
-		~Engine();
+namespace Harmony 
+{
+    // ========================================================
+    // Main Engine Class
+    // ========================================================
 
-		void Run() override;
+    class Engine : public IEngine 
+    {
+    public:
+        Engine(const Properties& properties);
+        ~Engine();
 
-		void Pause() override;
-		void Resume() override;
+        void Run() override;
 
-		State GetState() const override;
-		Context& GetContext() override;
+        void Pause() override;
+        void Resume() override;
 
-	private:
-		void inline handleUpdate();
-		void inline handleRender();
-		void inline handleEvents();
+        State GetState() const override;
+        Context& GetContext() override;
 
-		void inline waitIfPaused();
+    private:
+        void HandleUpdate();
+        void HandleRender();
+        void HandleEvents();
+        void WaitIfPaused();
 
-		struct Internal;
-		std::unique_ptr<Internal> m_internal;
-	};
+        struct Internal;
+        std::unique_ptr<Internal> m_internal;
+    };
+
 } // namespace Harmony
