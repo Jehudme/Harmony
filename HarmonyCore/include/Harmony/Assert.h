@@ -1,12 +1,12 @@
 #pragma once
 
-#include "Harmony/Utilities/Logger.h"
+#include "Harmony/Logger.h"
 #include <cstdlib>
 
 namespace Harmony::Utilities {
 
     // Internal assertion handler that logs and optionally aborts
-    inline void assertHandler(
+    inline void AssertHandler(
         bool condition,
         const char* conditionStr,
         const char* message,
@@ -16,11 +16,11 @@ namespace Harmony::Utilities {
     ) {
         if (!condition) {
             if (message && message[0] != '\0') {
-				Logger::error("Assertion failed: {} | {} | File: {} | Line: {}",
+				HARMONY_ERROR("Assertion failed: {} | {} | File: {} | Line: {}",
                     conditionStr, message, file, line);
             }
             else {
-                Logger::error("Assertion failed: {} | File: {} | Line: {}",
+                HARMONY_ERROR("Assertion failed: {} | File: {} | Line: {}",
                     conditionStr, file, line);
             }
 
@@ -36,7 +36,7 @@ namespace Harmony::Utilities {
     }
 
     // Warning assertion handler that logs but never aborts
-    inline void assertWarnHandler(
+    inline void AssertWarnHandler(
         bool condition,
         const char* conditionStr,
         const char* message,
@@ -45,18 +45,18 @@ namespace Harmony::Utilities {
     ) {
         if (!condition) {
             if (message && message[0] != '\0') {
-                Logger::warn("Assertion warning: {} | {} | File: {} | Line: {}",
+                HARMONY_WARN("Assertion warning: {} | {} | File: {} | Line: {}",
                     conditionStr, message, file, line);
             }
             else {
-                Logger::warn("Assertion warning: {} | File: {} | Line: {}",
+                HARMONY_WARN("Assertion warning: {} | File: {} | Line: {}",
                     conditionStr, file, line);
             }
         }
     }
 
     // Critical assertion handler that always aborts on failure
-    inline void assertCriticalHandler(
+    inline void AssertCriticalHandler(
         bool condition,
         const char* conditionStr,
         const char* message,
@@ -65,11 +65,11 @@ namespace Harmony::Utilities {
     ) {
         if (!condition) {
             if (message && message[0] != '\0') {
-                Logger::critical("Critical assertion failed: {} | {} | File: {} | Line: {}",
+                HARMONY_CRITICAL("Critical assertion failed: {} | {} | File: {} | Line: {}",
                     conditionStr, message, file, line);
             }
             else {
-                Logger::critical("Critical assertion failed: {} | File: {} | Line: {}",
+                HARMONY_CRITICAL("Critical assertion failed: {} | File: {} | Line: {}",
                     conditionStr, file, line);
             }
             std::abort();
@@ -81,20 +81,20 @@ namespace Harmony::Utilities {
 
 // Standard assertion - aborts in debug builds only
 #define HARMONY_ASSERT(condition, ...) \
-    Harmony::Utilities::assertHandler((condition), #condition, "" __VA_ARGS__, __FILE__, __LINE__, false)
+    Harmony::Utilities::AssertHandler((condition), #condition, "" __VA_ARGS__, __FILE__, __LINE__, false)
 
 // Warning assertion - only logs, never aborts
 #define HARMONY_ASSERT_WARN(condition, ...) \
-    Harmony::Utilities::assertWarnHandler((condition), #condition, "" __VA_ARGS__, __FILE__, __LINE__)
+    Harmony::Utilities::AssertWarnHandler((condition), #condition, "" __VA_ARGS__, __FILE__, __LINE__)
 
 // Critical assertion - always aborts on failure (even in release builds)
 #define HARMONY_ASSERT_CRITICAL(condition, ...) \
-    Harmony::Utilities::assertCriticalHandler((condition), #condition, "" __VA_ARGS__, __FILE__, __LINE__)
+    Harmony::Utilities::AssertCriticalHandler((condition), #condition, "" __VA_ARGS__, __FILE__, __LINE__)
 
 // Debug-only assertion - completely removed in release builds
 #if defined(_DEBUG) || defined(DEBUG)
 #define HARMONY_ASSERT_DEBUG(condition, ...) \
-        Harmony::Utilities::assertHandler((condition), #condition, "" __VA_ARGS__, __FILE__, __LINE__, false)
+        Harmony::Utilities::AssertHandler((condition), #condition, "" __VA_ARGS__, __FILE__, __LINE__, false)
 #else
 #define HARMONY_ASSERT_DEBUG(condition, ...) ((void)0)
 #endif

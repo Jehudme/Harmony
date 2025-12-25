@@ -100,7 +100,6 @@ endif()
 # 5. PROJECT SUBDIRECTORIES
 # ==============================================================================
 
-add_subdirectory("Core")
-
 add_subdirectory("Harmony")
-add_subdirectory("Plugins")
+add_subdirectory("HarmonyCore")
+add_subdirectory("HarmonyPlugins")

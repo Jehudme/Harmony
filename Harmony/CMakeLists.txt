@@ -3,7 +3,7 @@ file(GLOB_RECURSE SOURCES "src/*.cpp" "src/*.c")
 file(GLOB_RECURSE HEADERS "include/*.h" "src/*.h")
 
 # --- 4. Define the Executable ---
-add_executable(Harmony ${SOURCES} ${HEADERS})
+add_executable(Harmony ${SOURCES} ${HEADERS} "src/Engine.h" "src/PluginsRegistry.h" "src/PluginsRegistry.cpp")
 
 # --- 5. Configure Preprocessor ---
 if(HARMONY_STATIC_LINK)

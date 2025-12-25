@@ -2,9 +2,10 @@
 
 #include "Harmony/Context.h"
 #include "Harmony/Properties.h"
-#include "Harmony/Interfaces/IPlugins.h"
 
 namespace Harmony {
+	struct Context;
+
 	class IEngine {
 	public:
 		enum class State {
@@ -22,16 +23,11 @@ namespace Harmony {
 		virtual void Shutdown() = 0;
 
 		virtual void Run() = 0;
-		virtual void Stop() = 0;
+
 		virtual void Pause() = 0;
 		virtual void Resume() = 0;
 		
 		virtual State GetState() const = 0;
 		virtual Context& GetContext() = 0;
-
-	private:
-		virtual void Update() = 0;
-		virtual void Render() = 0;
-		virtual void Events() = 0;
 	};
 } // namespace Harmony

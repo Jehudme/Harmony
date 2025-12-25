@@ -1,5 +1,7 @@
-#include "Harmony/Utilities/Properties"
+#include "Harmony/Properties.h"
 #include "Harmony/Exceptions.h"
+#include "Harmony/Logger.h"
+#include "Harmony/Assert.h"
 
 #include <nlohmann/json.hpp>
 #include <fmt/ranges.h>
@@ -164,11 +166,6 @@ namespace Harmony {
         }
     }
 
-    template<typename Type>
-    std::optional<Type> Properties::operator[](const std::string& key) {
-        return Properties::get<Type>({ key });
-    }
-
     std::optional<Properties> Properties::subsection(const std::vector<std::string>& keys) const {
         std::lock_guard lock(m_mutex);
         const auto* node = findNode(internal_->data, keys);
@@ -204,9 +201,13 @@ namespace Harmony {
         return rKeys;
     }
 
-    std::optional<Properties> Properties::operator[](const std::string& key)
+    Properties Properties::operator[](const std::string& key) const
     {
-        return Properties::subsection({ key });
+        if (auto subsectionOpt = subsection({ key }); subsectionOpt.has_value())
+            return subsectionOpt.value();
+
+        // Log warning with key: subsection not found, returning empty Properties
+        return Properties();
     }
 
     Properties operator+(const Properties& left, const Properties& right)

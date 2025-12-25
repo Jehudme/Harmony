@@ -8,7 +8,8 @@ namespace Harmony
         Color(int color);
         Color(unsigned char red = 255, unsigned char green = 255, unsigned char blue = 255, unsigned char alpha = 255);
 
-        int toInteger() const;
+        int GetInterger() const;
+		void SetInteger(int color);
 
         unsigned char r;
         unsigned char g;

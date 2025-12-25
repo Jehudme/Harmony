@@ -25,14 +25,12 @@ namespace Harmony {
 
         std::optional<Properties> subsection(const std::vector<std::string>& keys) const;
         std::vector<std::string> extractKeys(const std::vector<std::string>& keys) const;
-        std::optional<Properties> operator[](const std::string& key);
+        Properties operator[](const std::string& key) const;
 
         template<typename Type>
         inline std::optional<Type> get(const std::vector<std::string>& keys) const;
         template<typename Type>
         inline void set(const std::vector<std::string>& keys, const Type& value);
-        template<typename Type>
-        inline std::optional<Type> operator[](const std::string& key);
 
     private:
         struct Internal;

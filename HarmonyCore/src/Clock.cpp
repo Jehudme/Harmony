@@ -1,12 +1,12 @@
 #include "Harmony/Utilities/Color.h"
-#include "Exceptions.h"
-#include "Harmony/LogLogger.h"
+#include "Harmony/Exceptions.h"
+#include "Harmony/Logger.h"
 #include "Harmony/Assert.h"
 
-namespace Harmony::Utilities {
+namespace Harmony {
 
-    Color::Color(int color)
-        : r(static_cast<unsigned char>((color >> 24) & 0xFF)),
+    Color::Color(int color) : 
+        r(static_cast<unsigned char>((color >> 24) & 0xFF)),
         g(static_cast<unsigned char>((color >> 16) & 0xFF)),
         b(static_cast<unsigned char>((color >> 8) & 0xFF)),
         a(static_cast<unsigned char>(color & 0xFF)) {
@@ -17,13 +17,6 @@ namespace Harmony::Utilities {
         : r(red), g(green), b(blue), a(alpha) {
         // Note: unsigned char is already constrained to 0-255, so no validation needed
         HARMONY_TRACE("Color created: RGBA({}, {}, {}, {})", r, g, b, a);
-    }
-
-    int Color::toInteger() const {
-        return (static_cast<int>(r) << 24) |
-            (static_cast<int>(g) << 16) |
-            (static_cast<int>(b) << 8) |
-            static_cast<int>(a);
     }
 
     bool operator==(const Color& left, const Color& right) {
