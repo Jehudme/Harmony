@@ -7,9 +7,14 @@
 #include <string>
 #include <vector>
 
-namespace Harmony {
+namespace Harmony 
+{
+    // ========================================================
+    // Properties Configuration Class
+    // ========================================================
 
-    class Properties {
+    class Properties 
+    {
     public:
         Properties();
         ~Properties();
@@ -17,20 +22,21 @@ namespace Harmony {
         Properties(const Properties& other);
         Properties& operator=(const Properties& other);
 
-        void merge(const Properties& configuration);
-        void save(const std::filesystem::path& filePath);
-        void load(const std::filesystem::path& filePath);
-        void clear();
-        void debugPrint() const;
+        void Merge(const Properties& configuration);
+        void Save(const std::filesystem::path& filePath);
+        void Load(const std::filesystem::path& filePath);
+        void Clear();
+        void DebugPrint() const;
 
-        std::optional<Properties> subsection(const std::vector<std::string>& keys) const;
-        std::vector<std::string> extractKeys(const std::vector<std::string>& keys) const;
+        std::optional<Properties> Subsection(const std::vector<std::string>& keys) const;
+        std::vector<std::string> ExtractKeys(const std::vector<std::string>& keys) const;
         Properties operator[](const std::string& key) const;
 
         template<typename Type>
-        inline std::optional<Type> get(const std::vector<std::string>& keys) const;
+        inline std::optional<Type> Get(const std::vector<std::string>& keys) const;
+        
         template<typename Type>
-        inline void set(const std::vector<std::string>& keys, const Type& value);
+        inline void Set(const std::vector<std::string>& keys, const Type& value);
 
     private:
         struct Internal;

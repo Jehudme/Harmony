@@ -3,8 +3,15 @@
 
 namespace Harmony
 {
-    // Zero time constant definition
+    // ========================================================
+    // Time Constants
+    // ========================================================
+    
     const Time Time::Zero = Time(0);
+
+    // ========================================================
+    // Time Constructors
+    // ========================================================
 
     Time::Time()
         : microseconds_(0)
@@ -16,91 +23,101 @@ namespace Harmony
     {
     }
 
-    float Time::asSeconds() const
+    // ========================================================
+    // Time Conversion Functions
+    // ========================================================
+
+    float Time::AsSeconds() const
     {
         return microseconds_ / 1000000.0f;
     }
 
-    int32_t Time::asMilliseconds() const
+    int32_t Time::AsMilliseconds() const
     {
         return static_cast<int32_t>(microseconds_ / 1000);
     }
 
-    int64_t Time::asMicroseconds() const
+    int64_t Time::AsMicroseconds() const
     {
         return microseconds_;
     }
 
-    Time Time::fromSeconds(float seconds)
+    Time Time::FromSeconds(float seconds)
     {
         return Time(static_cast<int64_t>(seconds * 1000000.0f));
     }
 
-    Time Time::fromMilliseconds(int32_t milliseconds)
+    Time Time::FromMilliseconds(int32_t milliseconds)
     {
         return Time(static_cast<int64_t>(milliseconds) * 1000);
     }
 
-    Time Time::fromMicroseconds(int64_t microseconds)
+    Time Time::FromMicroseconds(int64_t microseconds)
     {
         return Time(microseconds);
     }
 
-    // Comparison operators
+    // ========================================================
+    // Time Comparison Operators
+    // ========================================================
+
     bool operator==(Time left, Time right)
     {
-        return left.asMicroseconds() == right.asMicroseconds();
+        return left.AsMicroseconds() == right.AsMicroseconds();
     }
 
     bool operator!=(Time left, Time right)
     {
-        return left.asMicroseconds() != right.asMicroseconds();
+        return left.AsMicroseconds() != right.AsMicroseconds();
     }
 
     bool operator<(Time left, Time right)
     {
-        return left.asMicroseconds() < right.asMicroseconds();
+        return left.AsMicroseconds() < right.AsMicroseconds();
     }
 
     bool operator>(Time left, Time right)
     {
-        return left.asMicroseconds() > right.asMicroseconds();
+        return left.AsMicroseconds() > right.AsMicroseconds();
     }
 
     bool operator<=(Time left, Time right)
     {
-        return left.asMicroseconds() <= right.asMicroseconds();
+        return left.AsMicroseconds() <= right.AsMicroseconds();
     }
 
     bool operator>=(Time left, Time right)
     {
-        return left.asMicroseconds() >= right.asMicroseconds();
+        return left.AsMicroseconds() >= right.AsMicroseconds();
     }
 
-    // Arithmetic operators
+    // ========================================================
+    // Time Arithmetic Operators
+    // ========================================================
+
     Time operator-(Time right)
     {
-        return Time::fromMicroseconds(-right.asMicroseconds());
+        return Time::FromMicroseconds(-right.AsMicroseconds());
     }
 
     Time operator+(Time left, Time right)
     {
-        return Time::fromMicroseconds(left.asMicroseconds() + right.asMicroseconds());
+        return Time::FromMicroseconds(left.AsMicroseconds() + right.AsMicroseconds());
     }
 
     Time operator-(Time left, Time right)
     {
-        return Time::fromMicroseconds(left.asMicroseconds() - right.asMicroseconds());
+        return Time::FromMicroseconds(left.AsMicroseconds() - right.AsMicroseconds());
     }
 
     Time operator*(Time left, float right)
     {
-        return Time::fromSeconds(left.asSeconds() * right);
+        return Time::FromSeconds(left.AsSeconds() * right);
     }
 
     Time operator*(Time left, int64_t right)
     {
-        return Time::fromMicroseconds(left.asMicroseconds() * right);
+        return Time::FromMicroseconds(left.AsMicroseconds() * right);
     }
 
     Time operator*(float left, Time right)
@@ -116,25 +133,40 @@ namespace Harmony
     Time operator/(Time left, float right)
     {
         HARMONY_ASSERT_WARN(right != 0.0f, "Division by zero in Time operation");
-        if (right == 0.0f) return Time::Zero;
-        return Time::fromSeconds(left.asSeconds() / right);
+        if (right == 0.0f) 
+        {
+            HARMONY_ERROR("Time division by zero detected, returning Time::Zero");
+            return Time::Zero;
+        }
+        return Time::FromSeconds(left.AsSeconds() / right);
     }
 
     Time operator/(Time left, int64_t right)
     {
         HARMONY_ASSERT_WARN(right != 0, "Division by zero in Time operation");
-        if (right == 0) return Time::Zero;
-        return Time::fromMicroseconds(left.asMicroseconds() / right);
+        if (right == 0) 
+        {
+            HARMONY_ERROR("Time division by zero detected, returning Time::Zero");
+            return Time::Zero;
+        }
+        return Time::FromMicroseconds(left.AsMicroseconds() / right);
     }
 
     float operator/(Time left, Time right)
     {
         HARMONY_ASSERT_WARN(right != Time::Zero, "Division by zero Time");
-        if (right == Time::Zero) return 0.0f;
-        return left.asSeconds() / right.asSeconds();
+        if (right == Time::Zero) 
+        {
+            HARMONY_ERROR("Time division by Time::Zero detected, returning 0.0f");
+            return 0.0f;
+        }
+        return left.AsSeconds() / right.AsSeconds();
     }
 
-    // Compound assignment operators
+    // ========================================================
+    // Time Compound Assignment Operators
+    // ========================================================
+
     Time& operator+=(Time& left, Time right)
     {
         return left = left + right;
@@ -158,7 +190,9 @@ namespace Harmony
     Time& operator/=(Time& left, float right)
     {
         HARMONY_ASSERT_WARN(right != 0.0f, "Division by zero in Time operation");
-        if (right == 0.0f) {
+        if (right == 0.0f) 
+        {
+            HARMONY_ERROR("Time division by zero detected, setting to Time::Zero");
             left = Time::Zero;
             return left;
         }
@@ -168,7 +202,9 @@ namespace Harmony
     Time& operator/=(Time& left, int64_t right)
     {
         HARMONY_ASSERT_WARN(right != 0, "Division by zero in Time operation");
-        if (right == 0) {
+        if (right == 0) 
+        {
+            HARMONY_ERROR("Time division by zero detected, setting to Time::Zero");
             left = Time::Zero;
             return left;
         }

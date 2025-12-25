@@ -4,6 +4,10 @@
 
 namespace Harmony
 {
+    // ========================================================
+    // Time Value with High Precision
+    // ========================================================
+    
     /// @brief Represents a time value with high precision
     /// @details Similar to sf::Time but as a native Harmony utility.
     /// Supports construction from and conversion to various time units.
@@ -15,30 +19,30 @@ namespace Harmony
 
         /// @brief Get the time value in seconds
         /// @return Time in seconds as a float
-        float asSeconds() const;
+        float AsSeconds() const;
 
         /// @brief Get the time value in milliseconds
         /// @return Time in milliseconds as an int32_t
-        int32_t asMilliseconds() const;
+        int32_t AsMilliseconds() const;
 
         /// @brief Get the time value in microseconds
         /// @return Time in microseconds as an int64_t
-        int64_t asMicroseconds() const;
+        int64_t AsMicroseconds() const;
 
         /// @brief Create a Time value from seconds
         /// @param seconds The time value in seconds
         /// @return Time object representing the given seconds
-        static Time fromSeconds(float seconds);
+        static Time FromSeconds(float seconds);
 
         /// @brief Create a Time value from milliseconds
         /// @param milliseconds The time value in milliseconds
         /// @return Time object representing the given milliseconds
-        static Time fromMilliseconds(int32_t milliseconds);
+        static Time FromMilliseconds(int32_t milliseconds);
 
         /// @brief Create a Time value from microseconds
         /// @param microseconds The time value in microseconds
         /// @return Time object representing the given microseconds
-        static Time fromMicroseconds(int64_t microseconds);
+        static Time FromMicroseconds(int64_t microseconds);
 
         /// @brief Zero time constant
         static const Time Zero;
@@ -49,10 +53,13 @@ namespace Harmony
         explicit Time(int64_t microseconds);
 
     private:
-        int64_t microseconds_; ///< Time value stored in microseconds
+        int64_t microseconds_;
     };
 
-    // Comparison operators
+    // ========================================================
+    // Time Comparison Operators
+    // ========================================================
+    
     bool operator==(Time left, Time right);
     bool operator!=(Time left, Time right);
     bool operator<(Time left, Time right);
@@ -60,7 +67,10 @@ namespace Harmony
     bool operator<=(Time left, Time right);
     bool operator>=(Time left, Time right);
 
-    // Arithmetic operators
+    // ========================================================
+    // Time Arithmetic Operators
+    // ========================================================
+    
     Time operator-(Time right);
     Time operator+(Time left, Time right);
     Time operator-(Time left, Time right);
@@ -72,7 +82,10 @@ namespace Harmony
     Time operator/(Time left, int64_t right);
     float operator/(Time left, Time right);
 
-    // Compound assignment operators
+    // ========================================================
+    // Time Compound Assignment Operators
+    // ========================================================
+    
     Time& operator+=(Time& left, Time right);
     Time& operator-=(Time& left, Time right);
     Time& operator*=(Time& left, float right);
@@ -80,4 +93,4 @@ namespace Harmony
     Time& operator/=(Time& left, float right);
     Time& operator/=(Time& left, int64_t right);
 
-} // namespace Harmony::Utilities
+} // namespace Harmony
