@@ -1,5 +1,4 @@
 #include "Harmony/Properties.h"
-#include "Harmony/Exceptions.h"
 #include "Harmony/Logger.h"
 #include "Harmony/Assert.h"
 
@@ -11,28 +10,43 @@
 #include <mutex>
 #include <optional>
 
-namespace Harmony {
+namespace Harmony 
+{
+    // ========================================================
+    // Properties Internal Structure
+    // ========================================================
 
-    struct Properties::Internal {
+    struct Properties::Internal 
+    {
         nlohmann::json data;
     };
 
+    // ========================================================
+    // Properties Constructors and Destructor
+    // ========================================================
+
     Properties::Properties()
-        : internal_(std::make_unique<Internal>()) {
+        : internal_(std::make_unique<Internal>()) 
+    {
     }
 
     Properties::~Properties() = default;
 
-    Properties::Properties(const Properties& other) {
+    Properties::Properties(const Properties& other) 
+    {
         std::lock_guard lock(other.m_mutex);
         internal_ = std::make_unique<Internal>();
         internal_->data = other.internal_->data;
     }
 
-    Properties& Properties::operator=(const Properties& other) {
-        if (this != &other) {
+    Properties& Properties::operator=(const Properties& other) 
+    {
+        if (this != &other) 
+        {
             std::scoped_lock lock(m_mutex, other.m_mutex);
-            if (!internal_) {
+            
+            if (!internal_) 
+            {
                 internal_ = std::make_unique<Internal>();
             }
             internal_->data = other.internal_->data;
@@ -40,12 +54,18 @@ namespace Harmony {
         return *this;
     }
 
-    void Properties::merge(const Properties& configuration) {
+    // ========================================================
+    // Properties Public Methods
+    // ========================================================
+
+    void Properties::Merge(const Properties& configuration) 
+    {
         std::scoped_lock lock(m_mutex, configuration.m_mutex);
         internal_->data.merge_patch(configuration.internal_->data);
     }
 
-    void Properties::save(const std::filesystem::path& filePath) {
+    void Properties::Save(const std::filesystem::path& filePath) 
+    {
         std::lock_guard lock(m_mutex);
 
         HARMONY_ASSERT(!filePath.empty(), "Properties file path cannot be empty");
@@ -53,13 +73,18 @@ namespace Harmony {
 
         std::ofstream file(filePath);
 
-        if (!file) HARMONY_ERROR("Failed to open properties file for writing: {}", filePath.string());
+        if (!file) 
+        {
+            HARMONY_ERROR("Failed to open properties file for writing: {}", filePath.string());
+            return;
+        }
 
         file << internal_->data.dump(1);
         HARMONY_INFO("Properties saved to {}", filePath.string());
     }
 
-    void Properties::load(const std::filesystem::path& filePath) {
+    void Properties::Load(const std::filesystem::path& filePath) 
+    {
         std::lock_guard lock(m_mutex);
 
         HARMONY_ASSERT(!filePath.empty(), "Properties file path cannot be empty");
@@ -67,148 +92,207 @@ namespace Harmony {
 
         std::ifstream file(filePath);
 
-        if (!file) HARMONY_ERROR("Failed to open properties file for writing: {}", filePath.string());
+        if (!file) 
+        {
+            HARMONY_ERROR("Failed to open properties file for reading: {}", filePath.string());
+            return;
+        }
 
-        try {
-            file >> internal_->data;
-            HARMONY_INFO("Properties loaded from {}", filePath.string());
+        internal_->data = nlohmann::json::parse(file, nullptr, false);
+        
+        if (internal_->data.is_discarded()) 
+        {
+            HARMONY_ERROR("Failed to parse configuration file: {}", filePath.string());
+            internal_->data = nlohmann::json::object();
+            return;
         }
-        catch (const nlohmann::json::parse_error& e) {
-            HARMONY_THROW("Failed to parse configuration file {}: {}", filePath.string(), e.what());
-        }
+
+        HARMONY_INFO("Properties loaded from {}", filePath.string());
     }
 
-    void Properties::clear() {
+    void Properties::Clear() 
+    {
         std::lock_guard lock(m_mutex);
         internal_->data.clear();
     }
 
-    void Properties::debugPrint() const
+    void Properties::DebugPrint() const
     {
         std::lock_guard lock(m_mutex);
         std::string data = internal_->data.dump(2);
         HARMONY_INFO("Properties Data:\n{}", data);
     }
 
-    // Helpers
-    namespace {
-        const nlohmann::json* findNode(const nlohmann::json& root, const std::vector<std::string>& keys) {
+    // ========================================================
+    // Properties Helper Functions
+    // ========================================================
+
+    namespace 
+    {
+        const nlohmann::json* FindNode(const nlohmann::json& root, const std::vector<std::string>& keys) 
+        {
             const nlohmann::json* node = &root;
-            for (const auto& key : keys) {
-                if (!node->contains(key)) return nullptr;
+            for (const auto& key : keys) 
+            {
+                if (!node->contains(key)) 
+                {
+                    return nullptr;
+                }
                 node = &(*node)[key];
             }
             return node;
         }
 
-        nlohmann::json* findOrCreateNode(nlohmann::json& root, const std::vector<std::string>& keys) {
+        nlohmann::json* FindOrCreateNode(nlohmann::json& root, const std::vector<std::string>& keys) 
+        {
             nlohmann::json* node = &root;
             for (const auto& key : keys)
+            {
                 node = &(*node)[key];
+            }
             return node;
         }
     }
 
+    // ========================================================
+    // Properties Template Implementations
+    // ========================================================
+
     template<typename Type>
-    std::optional<Type> Properties::get(const std::vector<std::string>& keys) const {
+    std::optional<Type> Properties::Get(const std::vector<std::string>& keys) const 
+    {
         std::lock_guard lock(m_mutex);
-        const auto* node = findNode(internal_->data, keys);
-        if (!node) {
-            HARMONY_WARN("Properties::get - Key path not found: {}",
+        const auto* node = FindNode(internal_->data, keys);
+        
+        if (!node) 
+        {
+            HARMONY_WARN("Properties::Get - Key path not found: {}",
                 fmt::format("[{}]", fmt::join(keys, ".")));
             return std::nullopt;
         }
 
-        try {
-            auto value = node->get<Type>();
-            HARMONY_DEBUG("Properties::get - Retrieved {} = {}",
-                fmt::format("[{}]", fmt::join(keys, ".")), value);
-            return value;
-        }
-        catch (const nlohmann::json::type_error& e) {
-            HARMONY_ERROR("Properties::get - Type mismatch at {}: {}",
-                fmt::format("[{}]", fmt::join(keys, ".")), e.what());
+        if (!node->is<Type>())
+        {
+            HARMONY_ERROR("Properties::Get - Type mismatch at {}",
+                fmt::format("[{}]", fmt::join(keys, ".")));
             return std::nullopt;
         }
+
+        Type value = node->get<Type>();
+        HARMONY_DEBUG("Properties::Get - Retrieved {} = {}",
+            fmt::format("[{}]", fmt::join(keys, ".")), value);
+        return value;
     }
 
     template<typename Type>
-    void Properties::set(const std::vector<std::string>& keys, const Type& value) {
+    void Properties::Set(const std::vector<std::string>& keys, const Type& value) 
+    {
         std::lock_guard lock(m_mutex);
-        auto* node = findOrCreateNode(internal_->data, keys);
+        auto* node = FindOrCreateNode(internal_->data, keys);
 
         bool existed = !node->is_null();
         *node = value;
 
-        auto formatValueToString = [&](const Type& val) -> std::string {
-            if constexpr (std::is_same_v<Type, std::vector<bool>>) {
-                std::string s = "[";
-                for (size_t i = 0; i < val.size(); ++i) {
-                    s += (val[i] ? "true" : "false");
-                    if (i < val.size() - 1) s += ", ";
+        auto formatValueToString = [&](const Type& val) -> std::string 
+        {
+            if constexpr (std::is_same_v<Type, std::vector<bool>>) 
+            {
+                std::string stringValue = "[";
+                for (size_t index = 0; index < val.size(); ++index) 
+                {
+                    stringValue += (val[index] ? "true" : "false");
+                    if (index < val.size() - 1) 
+                    {
+                        stringValue += ", ";
+                    }
                 }
-                s += "]";
-                return s;
+                stringValue += "]";
+                return stringValue;
             }
-            else {
+            else 
+            {
                 return fmt::format("{}", val);
             }
-            };
+        };
 
-        std::string valueStr = formatValueToString(value);
-        std::string keyStr = fmt::format("[{}]", fmt::join(keys, "."));
+        std::string valueString = formatValueToString(value);
+        std::string keyString = fmt::format("[{}]", fmt::join(keys, "."));
 
-        if (existed) {
-            HARMONY_INFO("Properties::set - Overriding {} with new value: {}", keyStr, valueStr);
+        if (existed) 
+        {
+            HARMONY_INFO("Properties::Set - Overriding {} with new value: {}", keyString, valueString);
         }
-        else {
-            HARMONY_INFO("Properties::set - Created {} = {}", keyStr, valueStr);
+        else 
+        {
+            HARMONY_INFO("Properties::Set - Created {} = {}", keyString, valueString);
         }
     }
 
-    std::optional<Properties> Properties::subsection(const std::vector<std::string>& keys) const {
+    std::optional<Properties> Properties::Subsection(const std::vector<std::string>& keys) const 
+    {
         std::lock_guard lock(m_mutex);
-        const auto* node = findNode(internal_->data, keys);
-        if (node) {
+        const auto* node = FindNode(internal_->data, keys);
+        
+        if (node) 
+        {
             Properties configuration;
             configuration.internal_->data = *node;
-            HARMONY_DEBUG("Properties::subsection - Extracted subsection {}", fmt::format("[{}]", fmt::join(keys, ".")));
+            HARMONY_DEBUG("Properties::Subsection - Extracted subsection {}", 
+                fmt::format("[{}]", fmt::join(keys, ".")));
             return configuration;
         }
-        HARMONY_WARN("Properties::subsection - Subsection not found: {}", fmt::format("[{}]", fmt::join(keys, ".")));
+        
+        HARMONY_WARN("Properties::Subsection - Subsection not found: {}", 
+            fmt::format("[{}]", fmt::join(keys, ".")));
         return std::nullopt;
     }
 
-    std::vector<std::string> Properties::extractKeys(const std::vector<std::string>& keys) const {
+    std::vector<std::string> Properties::ExtractKeys(const std::vector<std::string>& keys) const 
+    {
         std::lock_guard lock(m_mutex);
-        const auto* node = findNode(internal_->data, keys);
-        if (!node) {
-            HARMONY_WARN("Properties::extractKeys - Node not found: {}", fmt::format("[{}]", fmt::join(keys, ".")));
+        const auto* node = FindNode(internal_->data, keys);
+        
+        if (!node) 
+        {
+            HARMONY_WARN("Properties::ExtractKeys - Node not found: {}", 
+                fmt::format("[{}]", fmt::join(keys, ".")));
             return {};
         }
-        if (!node->is_object()) {
-            HARMONY_WARN("Properties::extractKeys - Node at {} is not an object", fmt::format("[{}]", fmt::join(keys, ".")));
+        
+        if (!node->is_object()) 
+        {
+            HARMONY_WARN("Properties::ExtractKeys - Node at {} is not an object", 
+                fmt::format("[{}]", fmt::join(keys, ".")));
             return {};
         }
 
-        std::vector<std::string> rKeys;
-        rKeys.reserve(node->size());
+        std::vector<std::string> extractedKeys;
+        extractedKeys.reserve(node->size());
+        
         for (const auto& [key, _] : node->items())
-            rKeys.push_back(key);
+        {
+            extractedKeys.push_back(key);
+        }
 
-        HARMONY_INFO("Properties::extractKeys - Extracted {} keys from {}",
-            rKeys.size(), fmt::format("[{}]", fmt::join(keys, ".")));
-        return rKeys;
+        HARMONY_INFO("Properties::ExtractKeys - Extracted {} keys from {}",
+            extractedKeys.size(), fmt::format("[{}]", fmt::join(keys, ".")));
+        return extractedKeys;
     }
 
     Properties Properties::operator[](const std::string& key) const
     {
-        if (auto subsectionOpt = subsection({ key }); subsectionOpt.has_value())
-            return subsectionOpt.value();
+        if (auto subsectionOptional = Subsection({ key }); subsectionOptional.has_value())
+        {
+            return subsectionOptional.value();
+        }
 
-        // Log warning with key: subsection not found, returning empty Properties
+        HARMONY_WARN("Properties::operator[] - Subsection '{}' not found, returning empty Properties", key);
         return Properties();
     }
+
+    // ========================================================
+    // Properties Global Operators
+    // ========================================================
 
     Properties operator+(const Properties& left, const Properties& right)
     {
@@ -219,146 +303,116 @@ namespace Harmony {
 
     Properties& operator+=(Properties& left, const Properties& right)
     {
-        left.merge(right);
+        left.Merge(right);
         return left;
     }
 
-    // =====================================================================================
-    // 1. SCALARS - GET
-    // =====================================================================================
+    // ========================================================
+    // Template Instantiations - Scalar Types (Get)
+    // ========================================================
 
-    // Boolean & String
-    template std::optional<bool>        Properties::get<bool>(const std::vector<std::string>&) const;
-    template std::optional<std::string> Properties::get<std::string>(const std::vector<std::string>&) const;
+    template std::optional<bool>        Properties::Get<bool>(const std::vector<std::string>&) const;
+    template std::optional<std::string> Properties::Get<std::string>(const std::vector<std::string>&) const;
 
-    // Char Types (8-bit)
-    template std::optional<char>           Properties::get<char>(const std::vector<std::string>&) const;
-    template std::optional<signed char>    Properties::get<signed char>(const std::vector<std::string>&) const;   // int8_t
-    template std::optional<unsigned char>  Properties::get<unsigned char>(const std::vector<std::string>&) const; // uint8_t
+    template std::optional<char>           Properties::Get<char>(const std::vector<std::string>&) const;
+    template std::optional<signed char>    Properties::Get<signed char>(const std::vector<std::string>&) const;
+    template std::optional<unsigned char>  Properties::Get<unsigned char>(const std::vector<std::string>&) const;
 
-    // Short Types (16-bit)
-    template std::optional<short>          Properties::get<short>(const std::vector<std::string>&) const;          // int16_t
-    template std::optional<unsigned short> Properties::get<unsigned short>(const std::vector<std::string>&) const; // uint16_t
+    template std::optional<short>          Properties::Get<short>(const std::vector<std::string>&) const;
+    template std::optional<unsigned short> Properties::Get<unsigned short>(const std::vector<std::string>&) const;
 
-    // Integer Types (32-bit usually)
-    template std::optional<int>            Properties::get<int>(const std::vector<std::string>&) const;            // int32_t
-    template std::optional<unsigned int>   Properties::get<unsigned int>(const std::vector<std::string>&) const;   // uint32_t
+    template std::optional<int>            Properties::Get<int>(const std::vector<std::string>&) const;
+    template std::optional<unsigned int>   Properties::Get<unsigned int>(const std::vector<std::string>&) const;
 
-    // Long Types (32-bit or 64-bit depending on OS)
-    template std::optional<long>           Properties::get<long>(const std::vector<std::string>&) const;
-    template std::optional<unsigned long>  Properties::get<unsigned long>(const std::vector<std::string>&) const;
+    template std::optional<long>           Properties::Get<long>(const std::vector<std::string>&) const;
+    template std::optional<unsigned long>  Properties::Get<unsigned long>(const std::vector<std::string>&) const;
 
-    // Long Long Types (64-bit)
-    template std::optional<long long>          Properties::get<long long>(const std::vector<std::string>&) const;          // int64_t
-    template std::optional<unsigned long long> Properties::get<unsigned long long>(const std::vector<std::string>&) const; // uint64_t
+    template std::optional<long long>          Properties::Get<long long>(const std::vector<std::string>&) const;
+    template std::optional<unsigned long long> Properties::Get<unsigned long long>(const std::vector<std::string>&) const;
 
-    // Floating Point Types
-    template std::optional<float>       Properties::get<float>(const std::vector<std::string>&) const;
-    template std::optional<double>      Properties::get<double>(const std::vector<std::string>&) const;
-    template std::optional<long double> Properties::get<long double>(const std::vector<std::string>&) const;
+    template std::optional<float>       Properties::Get<float>(const std::vector<std::string>&) const;
+    template std::optional<double>      Properties::Get<double>(const std::vector<std::string>&) const;
+    template std::optional<long double> Properties::Get<long double>(const std::vector<std::string>&) const;
 
+    // ========================================================
+    // Template Instantiations - Scalar Types (Set)
+    // ========================================================
 
-    // =====================================================================================
-    // 2. SCALARS - SET
-    // =====================================================================================
+    template void Properties::Set<bool>(const std::vector<std::string>&, const bool&);
+    template void Properties::Set<std::string>(const std::vector<std::string>&, const std::string&);
 
-    // Boolean & String
-    template void Properties::set<bool>(const std::vector<std::string>&, const bool&);
-    template void Properties::set<std::string>(const std::vector<std::string>&, const std::string&);
+    template void Properties::Set<char>(const std::vector<std::string>&, const char&);
+    template void Properties::Set<signed char>(const std::vector<std::string>&, const signed char&);
+    template void Properties::Set<unsigned char>(const std::vector<std::string>&, const unsigned char&);
 
-    // Char Types
-    template void Properties::set<char>(const std::vector<std::string>&, const char&);
-    template void Properties::set<signed char>(const std::vector<std::string>&, const signed char&);
-    template void Properties::set<unsigned char>(const std::vector<std::string>&, const unsigned char&);
+    template void Properties::Set<short>(const std::vector<std::string>&, const short&);
+    template void Properties::Set<unsigned short>(const std::vector<std::string>&, const unsigned short&);
 
-    // Short Types
-    template void Properties::set<short>(const std::vector<std::string>&, const short&);
-    template void Properties::set<unsigned short>(const std::vector<std::string>&, const unsigned short&);
+    template void Properties::Set<int>(const std::vector<std::string>&, const int&);
+    template void Properties::Set<unsigned int>(const std::vector<std::string>&, const unsigned int&);
 
-    // Integer Types
-    template void Properties::set<int>(const std::vector<std::string>&, const int&);
-    template void Properties::set<unsigned int>(const std::vector<std::string>&, const unsigned int&);
+    template void Properties::Set<long>(const std::vector<std::string>&, const long&);
+    template void Properties::Set<unsigned long>(const std::vector<std::string>&, const unsigned long&);
 
-    // Long Types
-    template void Properties::set<long>(const std::vector<std::string>&, const long&);
-    template void Properties::set<unsigned long>(const std::vector<std::string>&, const unsigned long&);
+    template void Properties::Set<long long>(const std::vector<std::string>&, const long long&);
+    template void Properties::Set<unsigned long long>(const std::vector<std::string>&, const unsigned long long&);
 
-    // Long Long Types
-    template void Properties::set<long long>(const std::vector<std::string>&, const long long&);
-    template void Properties::set<unsigned long long>(const std::vector<std::string>&, const unsigned long long&);
+    template void Properties::Set<float>(const std::vector<std::string>&, const float&);
+    template void Properties::Set<double>(const std::vector<std::string>&, const double&);
+    template void Properties::Set<long double>(const std::vector<std::string>&, const long double&);
 
-    // Floating Point Types
-    template void Properties::set<float>(const std::vector<std::string>&, const float&);
-    template void Properties::set<double>(const std::vector<std::string>&, const double&);
-    template void Properties::set<long double>(const std::vector<std::string>&, const long double&);
+    // ========================================================
+    // Template Instantiations - Vector Types (Get)
+    // ========================================================
 
+    template std::optional<std::vector<bool>>        Properties::Get<std::vector<bool>>(const std::vector<std::string>&) const;
+    template std::optional<std::vector<std::string>> Properties::Get<std::vector<std::string>>(const std::vector<std::string>&) const;
 
-    // =====================================================================================
-    // 3. VECTORS - GET
-    // =====================================================================================
+    template std::optional<std::vector<char>>           Properties::Get<std::vector<char>>(const std::vector<std::string>&) const;
+    template std::optional<std::vector<signed char>>    Properties::Get<std::vector<signed char>>(const std::vector<std::string>&) const;
+    template std::optional<std::vector<unsigned char>>  Properties::Get<std::vector<unsigned char>>(const std::vector<std::string>&) const;
 
-    // Boolean & String
-    template std::optional<std::vector<bool>>        Properties::get<std::vector<bool>>(const std::vector<std::string>&) const;
-    template std::optional<std::vector<std::string>> Properties::get<std::vector<std::string>>(const std::vector<std::string>&) const;
+    template std::optional<std::vector<short>>          Properties::Get<std::vector<short>>(const std::vector<std::string>&) const;
+    template std::optional<std::vector<unsigned short>> Properties::Get<std::vector<unsigned short>>(const std::vector<std::string>&) const;
 
-    // Char Types
-    template std::optional<std::vector<char>>           Properties::get<std::vector<char>>(const std::vector<std::string>&) const;
-    template std::optional<std::vector<signed char>>    Properties::get<std::vector<signed char>>(const std::vector<std::string>&) const;
-    template std::optional<std::vector<unsigned char>>  Properties::get<std::vector<unsigned char>>(const std::vector<std::string>&) const;
+    template std::optional<std::vector<int>>            Properties::Get<std::vector<int>>(const std::vector<std::string>&) const;
+    template std::optional<std::vector<unsigned int>>   Properties::Get<std::vector<unsigned int>>(const std::vector<std::string>&) const;
 
-    // Short Types
-    template std::optional<std::vector<short>>          Properties::get<std::vector<short>>(const std::vector<std::string>&) const;
-    template std::optional<std::vector<unsigned short>> Properties::get<std::vector<unsigned short>>(const std::vector<std::string>&) const;
+    template std::optional<std::vector<long>>           Properties::Get<std::vector<long>>(const std::vector<std::string>&) const;
+    template std::optional<std::vector<unsigned long>>  Properties::Get<std::vector<unsigned long>>(const std::vector<std::string>&) const;
 
-    // Integer Types
-    template std::optional<std::vector<int>>            Properties::get<std::vector<int>>(const std::vector<std::string>&) const;
-    template std::optional<std::vector<unsigned int>>   Properties::get<std::vector<unsigned int>>(const std::vector<std::string>&) const;
+    template std::optional<std::vector<long long>>          Properties::Get<std::vector<long long>>(const std::vector<std::string>&) const;
+    template std::optional<std::vector<unsigned long long>> Properties::Get<std::vector<unsigned long long>>(const std::vector<std::string>&) const;
 
-    // Long Types
-    template std::optional<std::vector<long>>           Properties::get<std::vector<long>>(const std::vector<std::string>&) const;
-    template std::optional<std::vector<unsigned long>>  Properties::get<std::vector<unsigned long>>(const std::vector<std::string>&) const;
+    template std::optional<std::vector<float>>       Properties::Get<std::vector<float>>(const std::vector<std::string>&) const;
+    template std::optional<std::vector<double>>      Properties::Get<std::vector<double>>(const std::vector<std::string>&) const;
+    template std::optional<std::vector<long double>> Properties::Get<std::vector<long double>>(const std::vector<std::string>&) const;
 
-    // Long Long Types
-    template std::optional<std::vector<long long>>          Properties::get<std::vector<long long>>(const std::vector<std::string>&) const;
-    template std::optional<std::vector<unsigned long long>> Properties::get<std::vector<unsigned long long>>(const std::vector<std::string>&) const;
+    // ========================================================
+    // Template Instantiations - Vector Types (Set)
+    // ========================================================
 
-    // Floating Point Types
-    template std::optional<std::vector<float>>       Properties::get<std::vector<float>>(const std::vector<std::string>&) const;
-    template std::optional<std::vector<double>>      Properties::get<std::vector<double>>(const std::vector<std::string>&) const;
-    template std::optional<std::vector<long double>> Properties::get<std::vector<long double>>(const std::vector<std::string>&) const;
+    template void Properties::Set<std::vector<bool>>(const std::vector<std::string>&, const std::vector<bool>&);
+    template void Properties::Set<std::vector<std::string>>(const std::vector<std::string>&, const std::vector<std::string>&);
 
+    template void Properties::Set<std::vector<char>>(const std::vector<std::string>&, const std::vector<char>&);
+    template void Properties::Set<std::vector<signed char>>(const std::vector<std::string>&, const std::vector<signed char>&);
+    template void Properties::Set<std::vector<unsigned char>>(const std::vector<std::string>&, const std::vector<unsigned char>&);
 
-    // =====================================================================================
-    // 4. VECTORS - SET
-    // =====================================================================================
+    template void Properties::Set<std::vector<short>>(const std::vector<std::string>&, const std::vector<short>&);
+    template void Properties::Set<std::vector<unsigned short>>(const std::vector<std::string>&, const std::vector<unsigned short>&);
 
-    // Boolean & String
-    template void Properties::set<std::vector<bool>>(const std::vector<std::string>&, const std::vector<bool>&);
-    template void Properties::set<std::vector<std::string>>(const std::vector<std::string>&, const std::vector<std::string>&);
+    template void Properties::Set<std::vector<int>>(const std::vector<std::string>&, const std::vector<int>&);
+    template void Properties::Set<std::vector<unsigned int>>(const std::vector<std::string>&, const std::vector<unsigned int>&);
 
-    // Char Types
-    template void Properties::set<std::vector<char>>(const std::vector<std::string>&, const std::vector<char>&);
-    template void Properties::set<std::vector<signed char>>(const std::vector<std::string>&, const std::vector<signed char>&);
-    template void Properties::set<std::vector<unsigned char>>(const std::vector<std::string>&, const std::vector<unsigned char>&);
+    template void Properties::Set<std::vector<long>>(const std::vector<std::string>&, const std::vector<long>&);
+    template void Properties::Set<std::vector<unsigned long>>(const std::vector<std::string>&, const std::vector<unsigned long>&);
 
-    // Short Types
-    template void Properties::set<std::vector<short>>(const std::vector<std::string>&, const std::vector<short>&);
-    template void Properties::set<std::vector<unsigned short>>(const std::vector<std::string>&, const std::vector<unsigned short>&);
+    template void Properties::Set<std::vector<long long>>(const std::vector<std::string>&, const std::vector<long long>&);
+    template void Properties::Set<std::vector<unsigned long long>>(const std::vector<std::string>&, const std::vector<unsigned long long>&);
 
-    // Integer Types
-    template void Properties::set<std::vector<int>>(const std::vector<std::string>&, const std::vector<int>&);
-    template void Properties::set<std::vector<unsigned int>>(const std::vector<std::string>&, const std::vector<unsigned int>&);
+    template void Properties::Set<std::vector<float>>(const std::vector<std::string>&, const std::vector<float>&);
+    template void Properties::Set<std::vector<double>>(const std::vector<std::string>&, const std::vector<double>&);
+    template void Properties::Set<std::vector<long double>>(const std::vector<std::string>&, const std::vector<long double>&);
 
-    // Long Types
-    template void Properties::set<std::vector<long>>(const std::vector<std::string>&, const std::vector<long>&);
-    template void Properties::set<std::vector<unsigned long>>(const std::vector<std::string>&, const std::vector<unsigned long>&);
-
-    // Long Long Types
-    template void Properties::set<std::vector<long long>>(const std::vector<std::string>&, const std::vector<long long>&);
-    template void Properties::set<std::vector<unsigned long long>>(const std::vector<std::string>&, const std::vector<unsigned long long>&);
-
-    // Floating Point Types
-    template void Properties::set<std::vector<float>>(const std::vector<std::string>&, const std::vector<float>&);
-    template void Properties::set<std::vector<double>>(const std::vector<std::string>&, const std::vector<double>&);
-    template void Properties::set<std::vector<long double>>(const std::vector<std::string>&, const std::vector<long double>&);
-}
+} // namespace Harmony

@@ -1,7 +1,6 @@
-#include <cassert> // must be first to avoid errors on some platforms
+#include <cassert>
 
 #include "Harmony/Assert.h"
-#include "Harmony/Exceptions.h"
 #include "Harmony/Logger.h"
 
 #include <spdlog/spdlog.h>
@@ -11,90 +10,133 @@
 
 namespace Harmony
 {
-	// Internal state
-	std::once_flag initFlag;
-	std::shared_ptr<spdlog::logger> globalLogger;
+    // ========================================================
+    // Logger Internal State
+    // ========================================================
+    
+    std::once_flag initializationFlag;
+    std::shared_ptr<spdlog::logger> globalLogger;
 
-	void Logger::initialize(const std::string& logFile,
-		size_t maxFileSize,
-		size_t maxFiles,
-		size_t queueSize,
-		size_t workerThreads)
-	{
-		// Validate parameters
-		HARMONY_ASSERT(!logFile.empty(), "Log file path cannot be empty");
-		HARMONY_ASSERT(maxFileSize > 0, "Maximum file size must be greater than 0");
-		HARMONY_ASSERT(maxFiles > 0, "Maximum number of files must be greater than 0");
-		HARMONY_ASSERT(queueSize > 0, "Queue size must be greater than 0");
-		HARMONY_ASSERT(workerThreads > 0, "Number of worker threads must be greater than 0");
+    // ========================================================
+    // Logger Initialization and Shutdown
+    // ========================================================
 
-		std::call_once(initFlag, [&] {
-			try {
-				auto console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
-				console_sink->set_pattern("[%H:%M:%S.%e] [%^%l%$] %v");
+    void Logger::Initialize(
+        const std::string& logFile,
+        std::size_t maximumFileSize,
+        std::size_t maximumFiles,
+        std::size_t queueSize,
+        std::size_t workerThreads)
+    {
+        HARMONY_ASSERT(!logFile.empty(), "Log file path cannot be empty");
+        HARMONY_ASSERT(maximumFileSize > 0, "Maximum file size must be greater than 0");
+        HARMONY_ASSERT(maximumFiles > 0, "Maximum number of files must be greater than 0");
+        HARMONY_ASSERT(queueSize > 0, "Queue size must be greater than 0");
+        HARMONY_ASSERT(workerThreads > 0, "Number of worker threads must be greater than 0");
 
-				auto file_sink = std::make_shared<spdlog::sinks::rotating_file_sink_mt>(
-					std::string{ logFile }, maxFileSize, maxFiles);
+        std::call_once(initializationFlag, [&] 
+        {
+            auto consoleSink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
+            consoleSink->set_pattern("[%H:%M:%S.%e] [%^%l%$] %v");
 
-				std::vector<spdlog::sink_ptr> sinks{ console_sink, file_sink };
+            auto fileSink = std::make_shared<spdlog::sinks::rotating_file_sink_mt>(
+                std::string{ logFile }, maximumFileSize, maximumFiles);
+
+            std::vector<spdlog::sink_ptr> sinks{ consoleSink, fileSink };
+
 #ifdef _DEBUG
-				globalLogger = std::make_shared<spdlog::logger>(
-					"Harmony",
-					sinks.begin(),
-					sinks.end()
-				);
+            globalLogger = std::make_shared<spdlog::logger>(
+                "Harmony",
+                sinks.begin(),
+                sinks.end()
+            );
 
-				globalLogger->flush_on(spdlog::level::trace);
-
+            globalLogger->flush_on(spdlog::level::trace);
 #else
-				spdlog::init_thread_pool(queueSize, workerThreads);
+            spdlog::init_thread_pool(queueSize, workerThreads);
 
-				globalLogger = std::make_shared<spdlog::async_logger>(
-					"Harmony",
-					sinks.begin(), sinks.end(),
-					spdlog::thread_pool(),
-					spdlog::async_overflow_policy::block);
+            globalLogger = std::make_shared<spdlog::async_logger>(
+                "Harmony",
+                sinks.begin(), 
+                sinks.end(),
+                spdlog::thread_pool(),
+                spdlog::async_overflow_policy::block);
 
-				globalLogger->flush_on(spdlog::level::warn);
+            globalLogger->flush_on(spdlog::level::warn);
 #endif
 
-				spdlog::register_logger(globalLogger);
-				spdlog::set_default_logger(globalLogger);
+            if (globalLogger == nullptr)
+            {
+                return;
+            }
 
-				spdlog::set_level(spdlog::level::trace);
-			}
+            spdlog::register_logger(globalLogger);
+            spdlog::set_default_logger(globalLogger);
+            spdlog::set_level(spdlog::level::trace);
 
-			catch (const std::exception& ex) {
-				HARMONY_THROW("Logger initialization failed: {}", ex.what());
-			}
-			});
-	}
+            HARMONY_INFO("Logger initialized successfully with log file: {}", logFile);
+        });
+    }
 
-	void Logger::trace(std::string_view message) {
-		if (globalLogger) globalLogger->trace(message);
-	}
+    void Logger::Shutdown() 
+    {
+        if (globalLogger)
+        {
+            HARMONY_INFO("Logger shutting down");
+            spdlog::shutdown();
+        }
+    }
 
-	void Logger::debug(std::string_view message) {
-		if (globalLogger) globalLogger->debug(message);
-	}
+    // ========================================================
+    // Logger Output Functions
+    // ========================================================
 
-	void Logger::info(std::string_view message) {
-		if (globalLogger) globalLogger->info(message);
-	}
+    void Logger::Trace(std::string_view message) 
+    {
+        if (globalLogger) 
+        {
+            globalLogger->trace(message);
+        }
+    }
 
-	void Logger::warn(std::string_view message) {
-		if (globalLogger) globalLogger->warn(message);
-	}
+    void Logger::Debug(std::string_view message) 
+    {
+        if (globalLogger) 
+        {
+            globalLogger->debug(message);
+        }
+    }
 
-	void Logger::error(std::string_view message) {
-		if (globalLogger) globalLogger->error(message);
-	}
+    void Logger::Info(std::string_view message) 
+    {
+        if (globalLogger) 
+        {
+            globalLogger->info(message);
+        }
+    }
 
-	void Logger::critical(std::string_view message) {
-		if (globalLogger) globalLogger->critical(message);
-	}
+    void Logger::Warn(std::string_view message) 
+    {
+        if (globalLogger) 
+        {
+            globalLogger->warn(message);
+        }
+    }
 
-	void Logger::shutdown() {
-		spdlog::shutdown();
-	}
-}
+    void Logger::Error(std::string_view message) 
+    {
+        if (globalLogger) 
+        {
+            globalLogger->error(message);
+        }
+    }
+
+    void Logger::Critical(std::string_view message) 
+    {
+        if (globalLogger) 
+        {
+            globalLogger->critical(message);
+        }
+    }
+
+} // namespace Harmony

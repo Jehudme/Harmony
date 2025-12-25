@@ -1,4 +1,6 @@
-// Define log levels
+// ========================================================
+// Log Level Definitions
+// ========================================================
 
 #pragma once
 
@@ -9,83 +11,96 @@
 #define HARMONY_LOG_LEVEL_ERROR    4
 #define HARMONY_LOG_LEVEL_CRITICAL 5
 
-// Set the active log level (default: INFO)
 #ifndef HARMONY_LOG_LEVEL
 #define HARMONY_LOG_LEVEL HARMONY_LOG_LEVEL_INFO
 #endif
 
-// Conditional macros
+// ========================================================
+// Conditional Logging Macros
+// ========================================================
+
 #if HARMONY_LOG_LEVEL <= HARMONY_LOG_LEVEL_TRACE
-#define HARMONY_TRACE(...)    Harmony::Logger::trace(__VA_ARGS__)
+#define HARMONY_TRACE(...)    Harmony::Logger::Trace(__VA_ARGS__)
 #else
 #define HARMONY_TRACE(...)    ((void)0)
 #endif
 
 #if HARMONY_LOG_LEVEL <= HARMONY_LOG_LEVEL_DEBUG
-#define HARMONY_DEBUG(...)    Harmony::Logger::debug(__VA_ARGS__)
+#define HARMONY_DEBUG(...)    Harmony::Logger::Debug(__VA_ARGS__)
 #else
 #define HARMONY_DEBUG(...)    ((void)0)
 #endif
 
 #if HARMONY_LOG_LEVEL <= HARMONY_LOG_LEVEL_INFO
-#define HARMONY_INFO(...)     Harmony::Logger::info(__VA_ARGS__)
+#define HARMONY_INFO(...)     Harmony::Logger::Info(__VA_ARGS__)
 #else
 #define HARMONY_INFO(...)     ((void)0)
 #endif
 
 #if HARMONY_LOG_LEVEL <= HARMONY_LOG_LEVEL_WARN
-#define HARMONY_WARN(...)     Harmony::Logger::warn(__VA_ARGS__)
+#define HARMONY_WARN(...)     Harmony::Logger::Warn(__VA_ARGS__)
 #else
 #define HARMONY_WARN(...)     ((void)0)
 #endif
 
 #if HARMONY_LOG_LEVEL <= HARMONY_LOG_LEVEL_ERROR
-#define HARMONY_ERROR(...)    Harmony::Logger::error(__VA_ARGS__)
+#define HARMONY_ERROR(...)    Harmony::Logger::Error(__VA_ARGS__)
 #else
 #define HARMONY_ERROR(...)    ((void)0)
 #endif
 
 #if HARMONY_LOG_LEVEL <= HARMONY_LOG_LEVEL_CRITICAL
-#define HARMONY_CRITICAL(...) Harmony::Logger::critical(__VA_ARGS__)
+#define HARMONY_CRITICAL(...) Harmony::Logger::Critical(__VA_ARGS__)
 #else
 #define HARMONY_CRITICAL(...) ((void)0)
 #endif
 
+// ========================================================
+// Logger Template Implementations
+// ========================================================
+
 namespace Harmony
 {
     template<typename... Args>
-    void Logger::trace(std::string_view fmt, Args&&... args) {
-        auto s = std::vformat(fmt, std::make_format_args(args...));
-        trace(s);
+    void Logger::Trace(std::string_view fmt, Args&&... arguments) 
+    {
+        auto formattedString = std::vformat(fmt, std::make_format_args(arguments...));
+        Trace(formattedString);
     }
 
     template<typename... Args>
-    void Logger::debug(std::string_view fmt, Args&&... args) {
-        auto s = std::vformat(fmt, std::make_format_args(args...));
-        debug(s);
+    void Logger::Debug(std::string_view fmt, Args&&... arguments) 
+    {
+        auto formattedString = std::vformat(fmt, std::make_format_args(arguments...));
+        Debug(formattedString);
     }
 
     template<typename... Args>
-    void Logger::info(std::string_view fmt, Args&&... args) {
-        auto s = std::vformat(fmt, std::make_format_args(args...));
-        info(s);
+    void Logger::Info(std::string_view fmt, Args&&... arguments) 
+    {
+        auto formattedString = std::vformat(fmt, std::make_format_args(arguments...));
+        Info(formattedString);
     }
 
     template<typename... Args>
-    void Logger::warn(std::string_view fmt, Args&&... args) {
-        auto s = std::vformat(fmt, std::make_format_args(args...));
-        warn(s);
+    void Logger::Warn(std::string_view fmt, Args&&... arguments) 
+    {
+        auto formattedString = std::vformat(fmt, std::make_format_args(arguments...));
+        Warn(formattedString);
     }
 
     template<typename... Args>
-    void Logger::error(std::string_view fmt, Args&&... args) {
-        auto s = std::vformat(fmt, std::make_format_args(args...));
-        error(s);
+    void Logger::Error(std::string_view fmt, Args&&... arguments) 
+    {
+        auto formattedString = std::vformat(fmt, std::make_format_args(arguments...));
+        Error(formattedString);
     }
 
     template<typename... Args>
-    void Logger::critical(std::string_view fmt, Args&&... args) {
-        auto s = std::vformat(fmt, std::make_format_args(args...));
-        critical(s);
+    void Logger::Critical(std::string_view fmt, Args&&... arguments) 
+    {
+        auto formattedString = std::vformat(fmt, std::make_format_args(arguments...));
+        Critical(formattedString);
     }
-}
+
+} // namespace Harmony

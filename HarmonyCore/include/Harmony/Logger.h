@@ -5,40 +5,46 @@
 #include <cstddef>
 #include <format>
 
-namespace Harmony {
+namespace Harmony 
+{
+    // ========================================================
+    // Logger Class for Application Logging
+    // ========================================================
 
-    class Logger {
+    class Logger 
+    {
     public:
-        static void initialize(
+        static void Initialize(
             const std::string& logFile = "Engine.log",
-            std::size_t maxFileSize = 10 * 1024 * 1024,
-            std::size_t maxFiles = 3,
+            std::size_t maximumFileSize = 10 * 1024 * 1024,
+            std::size_t maximumFiles = 3,
             std::size_t queueSize = 1 << 15,
             std::size_t workerThreads = 1
         );
 
-        static void shutdown();
+        static void Shutdown();
 
-        static void trace(std::string_view message);
-        static void debug(std::string_view message);
-        static void info(std::string_view message);
-        static void warn(std::string_view message);
-        static void error(std::string_view message);
-        static void critical(std::string_view message);
+        static void Trace(std::string_view message);
+        static void Debug(std::string_view message);
+        static void Info(std::string_view message);
+        static void Warn(std::string_view message);
+        static void Error(std::string_view message);
+        static void Critical(std::string_view message);
 
         template<typename... Args>
-        static void trace(std::string_view fmt, Args&&... args);
+        static void Trace(std::string_view fmt, Args&&... arguments);
         template<typename... Args>
-        static void debug(std::string_view fmt, Args&&... args);
+        static void Debug(std::string_view fmt, Args&&... arguments);
         template<typename... Args>
-        static void info(std::string_view fmt, Args&&... args);
+        static void Info(std::string_view fmt, Args&&... arguments);
         template<typename... Args>
-        static void warn(std::string_view fmt, Args&&... args);
+        static void Warn(std::string_view fmt, Args&&... arguments);
         template<typename... Args>
-        static void error(std::string_view fmt, Args&&... args);
+        static void Error(std::string_view fmt, Args&&... arguments);
         template<typename... Args>
-        static void critical(std::string_view fmt, Args&&... args);
+        static void Critical(std::string_view fmt, Args&&... arguments);
     };
-}
+
+} // namespace Harmony
 
 #include "Logger.inl"
