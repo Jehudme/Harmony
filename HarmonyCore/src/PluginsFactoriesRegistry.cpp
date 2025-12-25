@@ -17,7 +17,7 @@ namespace Harmony
     void PluginsFactoriesRegistry::RegisterFactory(const std::string& name, PluginsFactory factory) 
     {
         HARMONY_ASSERT(!name.empty(), "Plugin factory name cannot be empty");
-        HARMONY_ASSERT_NOT_NULL(&factory, "Plugin factory function cannot be null");
+        HARMONY_ASSERT(factory, "Plugin factory function cannot be empty");
 
         auto& factories = GetPluginsFactories();
         
