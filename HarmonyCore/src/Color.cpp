@@ -46,10 +46,15 @@ namespace Harmony
 
     Color operator+(const Color& left, const Color& right) 
     {
-        unsigned char newRed = (left.r + right.r > 255) ? 255 : left.r + right.r;
-        unsigned char newGreen = (left.g + right.g > 255) ? 255 : left.g + right.g;
-        unsigned char newBlue = (left.b + right.b > 255) ? 255 : left.b + right.b;
-        unsigned char newAlpha = (left.a + right.a > 255) ? 255 : left.a + right.a;
+        int sumRed = static_cast<int>(left.r) + static_cast<int>(right.r);
+        int sumGreen = static_cast<int>(left.g) + static_cast<int>(right.g);
+        int sumBlue = static_cast<int>(left.b) + static_cast<int>(right.b);
+        int sumAlpha = static_cast<int>(left.a) + static_cast<int>(right.a);
+        
+        unsigned char newRed = (sumRed > 255) ? 255 : static_cast<unsigned char>(sumRed);
+        unsigned char newGreen = (sumGreen > 255) ? 255 : static_cast<unsigned char>(sumGreen);
+        unsigned char newBlue = (sumBlue > 255) ? 255 : static_cast<unsigned char>(sumBlue);
+        unsigned char newAlpha = (sumAlpha > 255) ? 255 : static_cast<unsigned char>(sumAlpha);
         
         return Color(newRed, newGreen, newBlue, newAlpha);
     }
