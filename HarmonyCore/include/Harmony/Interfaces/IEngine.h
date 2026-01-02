@@ -1,41 +1,34 @@
 #pragma once
 
-#include "Harmony/Context.h"
+#include "Harmony/Interfaces/ISystemsRegistry.h"
 #include "Harmony/Properties.h"
 
-namespace Harmony 
+namespace Harmony
 {
-    struct Context;
-
-    // ========================================================
-    // Engine Interface
-    // ========================================================
-
-    class IEngine 
+class IEngine
+{
+public:
+    enum class State
     {
-    public:
-        enum class State 
-        {
-            Uninitialized,
-            Initialized,
-            Running,
-            Paused,
-            Stopped
-        };
-
-    public:
-        virtual ~IEngine() = default;
-
-        virtual void Initialize(const Properties& properties) = 0;
-        virtual void Shutdown() = 0;
-
-        virtual void Run() = 0;
-
-        virtual void Pause() = 0;
-        virtual void Resume() = 0;
-        
-        virtual State GetState() const = 0;
-        virtual Context& GetContext() = 0;
+        Uninitialized,
+        Initialized,
+        Running,
+        Shutdown,
     };
+
+public:
+    virtual ~IEngine() = default;
+
+    virtual void Initialize(const Properties& properties) = 0;
+
+    virtual void Run() = 0;
+    virtual void Shutdown() = 0;
+
+    virtual State GetState() const = 0;
+    virtual ISystemsRegistry& GetSystemsRegistry() = 0;
+
+private:
+    SystemsRegistry m_systemsRegistry;
+};
 
 } // namespace Harmony

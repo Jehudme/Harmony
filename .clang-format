@@ -1,0 +1,32 @@
+
+# Harmony Engine Coding Standard
+Language: Cpp
+BasedOnStyle: LLVM
+
+# --- Braces (Allman Style) ---
+BreakBeforeBraces: Allman
+AllowShortBlocksOnASingleLine: false
+AllowShortFunctionsOnASingleLine: Empty
+
+# --- Indentation ---
+IndentWidth: 4
+ColumnLimit: 100
+NamespaceIndentation: None # Keeps code clean in nested namespaces
+AccessModifierOffset: -4   # Aligns public/private with the class keyword
+
+# --- Templates ---
+AlwaysBreakTemplateDeclarations: Yes
+# Ensures: 
+# template<typename T>
+# void Func()...
+
+# --- Alignment & Spacing ---
+PointerAlignment: Left 
+
+# --- Includes ---
+SortIncludes: true
+IncludeBlocks: Preserve
+
+# --- C++ Version ---
+# Use 'Latest' to avoid "unknown enumerated scalar" errors in Visual Studio
+Standard: Latest 

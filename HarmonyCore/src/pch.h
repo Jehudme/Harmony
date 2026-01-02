@@ -1,28 +1,28 @@
 #pragma once
 
 // --- Standard Library ---
-#include <iostream>
-#include <memory>
-#include <utility>
 #include <algorithm>
-#include <functional>
-#include <string>
-#include <vector>
-#include <unordered_map>
-#include <unordered_set>
-#include <optional>
-#include <thread>
-#include <mutex>
 #include <chrono>
 #include <filesystem>
 #include <fstream>
+#include <functional>
+#include <iostream>
+#include <memory>
+#include <mutex>
+#include <optional>
 #include <sstream>
+#include <string>
+#include <thread>
+#include <unordered_map>
+#include <unordered_set>
+#include <utility>
+#include <vector>
 
 // --- Third Party ---
-#include <spdlog/spdlog.h>
-#include <spdlog/sinks/stdout_color_sinks.h>
-#include <spdlog/sinks/rotating_file_sink.h>
-#include <spdlog/fmt/ostr.h>
-#include <spdlog/async.h>
-#include <glm/glm.hpp>
 #include <entt/entt.hpp>
+#include <glm/glm.hpp>
+#include <spdlog/async.h>
+#include <spdlog/fmt/ostr.h>
+#include <spdlog/sinks/rotating_file_sink.h>
+#include <spdlog/sinks/stdout_color_sinks.h>
+#include <spdlog/spdlog.h>

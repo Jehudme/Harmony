@@ -1,116 +1,92 @@
 #include "Engine.h"
-#include "Harmony/Logger.h"
 #include "Harmony/Assert.h"
+#include "Harmony/Logger.h"
 
 #include <condition_variable>
 #include <shared_mutex>
 
-namespace Harmony 
+namespace Harmony
 {
-    // ========================================================
-    // Engine Constructor and Destructor
-    // ========================================================
+Engine::Engine() : m_state(State::Uninitialized) {}
 
-    Engine::Engine() :
-        m_state(State::Uninitialized) {
-    }
+Engine::~Engine() = default;
 
-    Engine::~Engine()
+void Engine::Run()
+{
+    switch (m_state)
     {
-		if (m_state != State::Uninitialized)
-            Shutdown();
-        
+    case State::Uninitialized:
+        return HARMONY_ERROR("Engine::Run - Engine not initialized");
+    case State::Running:
+        return HARMONY_ERROR("Engine::Run - Engine already running");
+    case State::Shutdown:
+        return HARMONY_ERROR("Engine::Run - Engine is shutdown");
+    case State::Initialized:
+        m_state = State::Running;
+        break;
+    default:
+        return HARMONY_ERROR("Engine::Run - Unknown engine state");
+        break;
     }
 
-    // ========================================================
-    // Engine Public Methods
-    // ========================================================
+    HARMONY_INFO("Engine::Run - Starting main loop");
+    while (m_state == State::Running) {
+        HandleEvents();
+        HandleUpdate();
+        HandleRender();
+    }
+}
 
-    void Engine::Run()
+void Engine::Initialize(const Properties& properties)
+{
+    if (m_state != State::Uninitialized)
+        return HARMONY_ERROR("Engine::Initialize - Engine already initialized");
+
+    m_state = State::Initialized;
+}
+
+void Engine::Shutdown()
+{
+    switch (m_state)
     {
-        if (std::shared_lock lock(m_stateMutex); m_state != State::Initialized)
-            return HARMONY_ERROR("Engine::Run - Engine not properly initialized");
-
-        HARMONY_INFO("Engine::Run - Starting main loop");
-
-        while (m_state != State::Stopped) 
-        {
-            WaitIfPaused();
-            HandleEvents();
-            HandleUpdate();
-            HandleRender();
-        }
+    case State::Uninitialized:
+        return HARMONY_ERROR("Engine::Shutdown - Engine not initialized");
+    case State::Shutdown:
+        return HARMONY_ERROR("Engine::Shutdown - Engine already shutdown");
+    case State::Initialized:
+    case State::Running:
+        HARMONY_INFO("Engine::Shutdown - Shutting down engine");
+        break;
+    default:
+        return HARMONY_ERROR("Engine::Shutdown - Unknown engine state");
+        break;
     }
 
-    void Engine::Initialize(const Properties& properties)
-    {
-        if (m_state != State::Uninitialized)
-		    return HARMONY_ERROR("Engine::Initialize - Engine already initialized");
-		
-        m_state = State::Initialized;
-    }
+    m_state = State::Shutdown;
+}
 
-    void Engine::Shutdown()
-    {
-    }
+Engine::State Engine::GetState() const
+{
+    return m_state;
+}
 
-    void Engine::Pause()
-    {
-        std::unique_lock lock(m_stateMutex);
-        m_state = State::Paused;
-        HARMONY_INFO("Engine paused");
-    }
+ISystemsRegistry& Engine::GetSystemsRegistry()
+{
+    // TODO: insert return statement here
+}
 
-    void Engine::Resume()
-    {
-        {
-            std::unique_lock lock(m_stateMutex);
-            m_state = State::Running;
-        }
-        
-        m_pausingCondition.notify_all();
-        HARMONY_INFO("Engine resumed");
-    }
+void Engine::HandleUpdate()
+{
+    HARMONY_TRACE("Engine::HandleUpdate - Processing update");
+}
 
-    Engine::State Engine::GetState() const
-    {
-        std::shared_lock lock(m_stateMutex);
-        return m_state;
-    }
+void Engine::HandleRender()
+{
+    HARMONY_TRACE("Engine::HandleRender - Processing render");
+}
 
-    Context& Engine::GetContext()
-    {
-        return m_context;
-    }
-
-    // ========================================================
-    // Engine Private Methods
-    // ========================================================
-
-    void Engine::HandleUpdate()
-    {
-        HARMONY_TRACE("Engine::HandleUpdate - Processing update");
-    }
-
-    void Engine::HandleRender()
-    {
-        HARMONY_TRACE("Engine::HandleRender - Processing render");
-    }
-
-    void Engine::HandleEvents()
-    {
-        HARMONY_TRACE("Engine::HandleEvents - Processing events");
-    }
-
-    void Engine::WaitIfPaused()
-    {
-
-        std::unique_lock lock(m_pausingMutex);
-        m_pausingCondition.wait(lock, [this]() 
-        {
-            std::shared_lock stateLock(m_stateMutex);
-            return m_state != State::Paused;
-        });
-    }
-
+void Engine::HandleEvents()
+{
+    HARMONY_TRACE("Engine::HandleEvents - Processing events");
+}
 } // namespace Harmony

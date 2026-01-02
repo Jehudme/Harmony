@@ -10,7 +10,9 @@
 
 // Deprecated - Do not use HARMONY_THROW
 // Use HARMONY_ERROR(...) for error logging instead
-#define HARMONY_THROW(...) \
-    do { \
-        HARMONY_ERROR("DEPRECATED: HARMONY_THROW called. Use HARMONY_ERROR instead. Message: " __VA_ARGS__); \
-    } while(0)
+#define HARMONY_THROW(...)                                                                         \
+    do                                                                                             \
+    {                                                                                              \
+        HARMONY_ERROR(                                                                             \
+            "DEPRECATED: HARMONY_THROW called. Use HARMONY_ERROR instead. Message: " __VA_ARGS__); \
+    } while (0)
