@@ -12,9 +12,6 @@ file(GLOB_RECURSE HEADERS "include/*.h" "src/*.h")
 add_executable(Harmony 
     ${SOURCES} 
     ${HEADERS} 
-    "src/Engine.h" 
-    "src/PluginsRegistry.h" 
-    "src/PluginsRegistry.cpp"
 )
 
 # ========================================================

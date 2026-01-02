@@ -1,8 +1,6 @@
 #include "Harmony/Interfaces/IEngine.h"
 #include "Harmony/Utilities/Clock.h"
 
-#include "PluginsRegistry.h"
-
 namespace Harmony 
 {
     // ========================================================
@@ -12,10 +10,13 @@ namespace Harmony
     class Engine : public IEngine 
     {
     public:
-        Engine(const Properties& properties);
+        Engine();
         ~Engine();
 
         void Run() override;
+
+		virtual void Initialize(const Properties& properties) override;
+		virtual void Shutdown() override;
 
         void Pause() override;
         void Resume() override;
@@ -29,8 +30,14 @@ namespace Harmony
         void HandleEvents();
         void WaitIfPaused();
 
-        struct Internal;
-        std::unique_ptr<Internal> m_internal;
+    private:
+		Clock m_clock;
+		State m_state;
+		Context m_context;
+
+        mutable std::mutex m_pausingMutex;
+        mutable std::shared_mutex m_stateMutex;
+        std::condition_variable m_pausingCondition;
     };
 
 } // namespace Harmony

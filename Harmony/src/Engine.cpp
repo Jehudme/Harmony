@@ -1,5 +1,4 @@
 #include "Engine.h"
-#include "PluginsRegistry.h"
 #include "Harmony/Logger.h"
 #include "Harmony/Assert.h"
 
@@ -9,42 +8,18 @@
 namespace Harmony 
 {
     // ========================================================
-    // Engine Internal Structure
-    // ========================================================
-
-    struct Engine::Internal 
-    {
-        Internal(const Properties& properties);
-
-        State state;
-        Clock clock;
-        Context context;
-        PluginsRegistry pluginsRegistry;
-
-        mutable std::shared_mutex stateMutex;
-        std::mutex pausingMutex;
-        std::condition_variable pausingCondition;
-    };
-
-    // ========================================================
     // Engine Constructor and Destructor
     // ========================================================
 
-    Engine::Engine(const Properties& properties) :
-        m_internal(std::make_unique<Internal>(properties))
-    {
-        HARMONY_ASSERT_NOT_NULL(m_internal.get(), "Engine internal structure is null");
-        HARMONY_INFO("Engine created successfully");
+    Engine::Engine() :
+        m_state(State::Uninitialized) {
     }
 
     Engine::~Engine()
     {
-        if (m_internal)
-        {
-            std::unique_lock lock(m_internal->stateMutex);
-            m_internal->state = State::Uninitialized;
-            HARMONY_INFO("Engine destroyed");
-        }
+		if (m_state != State::Uninitialized)
+            Shutdown();
+        
     }
 
     // ========================================================
@@ -53,24 +28,12 @@ namespace Harmony
 
     void Engine::Run()
     {
-        if (!m_internal)
-        {
-            HARMONY_ERROR("Engine::Run - Internal structure is null");
-            return;
-        }
-
-        {
-            std::shared_lock lock(m_internal->stateMutex);
-            if (m_internal->state <= State::Initialized) 
-            {
-                HARMONY_ERROR("Engine::Run - Engine not properly initialized");
-                return;
-            }
-        }
+        if (std::shared_lock lock(m_stateMutex); m_state != State::Initialized)
+            return HARMONY_ERROR("Engine::Run - Engine not properly initialized");
 
         HARMONY_INFO("Engine::Run - Starting main loop");
 
-        while (true) 
+        while (m_state != State::Stopped) 
         {
             WaitIfPaused();
             HandleEvents();
@@ -79,52 +42,45 @@ namespace Harmony
         }
     }
 
+    void Engine::Initialize(const Properties& properties)
+    {
+        if (m_state != State::Uninitialized)
+		    return HARMONY_ERROR("Engine::Initialize - Engine already initialized");
+		
+        m_state = State::Initialized;
+    }
+
+    void Engine::Shutdown()
+    {
+    }
+
     void Engine::Pause()
     {
-        if (!m_internal)
-        {
-            HARMONY_ERROR("Engine::Pause - Internal structure is null");
-            return;
-        }
-
-        std::unique_lock lock(m_internal->stateMutex);
-        m_internal->state = State::Paused;
+        std::unique_lock lock(m_stateMutex);
+        m_state = State::Paused;
         HARMONY_INFO("Engine paused");
     }
 
     void Engine::Resume()
     {
-        if (!m_internal)
         {
-            HARMONY_ERROR("Engine::Resume - Internal structure is null");
-            return;
-        }
-
-        {
-            std::unique_lock lock(m_internal->stateMutex);
-            m_internal->state = State::Running;
+            std::unique_lock lock(m_stateMutex);
+            m_state = State::Running;
         }
         
-        m_internal->pausingCondition.notify_all();
+        m_pausingCondition.notify_all();
         HARMONY_INFO("Engine resumed");
     }
 
     Engine::State Engine::GetState() const
     {
-        if (!m_internal)
-        {
-            HARMONY_ERROR("Engine::GetState - Internal structure is null");
-            return State::Uninitialized;
-        }
-
-        std::shared_lock lock(m_internal->stateMutex);
-        return m_internal->state;
+        std::shared_lock lock(m_stateMutex);
+        return m_state;
     }
 
     Context& Engine::GetContext()
     {
-        HARMONY_ASSERT_NOT_NULL(m_internal.get(), "Engine internal structure is null");
-        return m_internal->context;
+        return m_context;
     }
 
     // ========================================================
@@ -148,28 +104,13 @@ namespace Harmony
 
     void Engine::WaitIfPaused()
     {
-        if (!m_internal)
-        {
-            return;
-        }
 
-        std::unique_lock lock(m_internal->pausingMutex);
-        m_internal->pausingCondition.wait(lock, [this]() 
+        std::unique_lock lock(m_pausingMutex);
+        m_pausingCondition.wait(lock, [this]() 
         {
-            std::shared_lock stateLock(m_internal->stateMutex);
-            return m_internal->state != State::Paused;
+            std::shared_lock stateLock(m_stateMutex);
+            return m_state != State::Paused;
         });
-    }
-
-    // ========================================================
-    // Engine Internal Constructor
-    // ========================================================
-
-    Engine::Internal::Internal(const Properties& properties) :
-        state(State::Initialized),
-        pluginsRegistry(context, properties["Plugins"])
-    {
-        HARMONY_INFO("Engine internal structure initialized");
     }
 
 } // namespace Harmony

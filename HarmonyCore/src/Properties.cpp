@@ -158,27 +158,21 @@ namespace Harmony
     // Properties Template Implementations
     // ========================================================
 
+
     template<typename Type>
-    std::optional<Type> Properties::Get(const std::vector<std::string>& keys) const 
+    std::optional<Type> Properties::Get(const std::vector<std::string>& keys) const
     {
         std::lock_guard lock(m_mutex);
         const auto* node = FindNode(internal_->data, keys);
-        
-        if (!node) 
+
+        if (!node)
         {
             HARMONY_WARN("Properties::Get - Key path not found: {}",
                 fmt::format("[{}]", fmt::join(keys, ".")));
             return std::nullopt;
         }
 
-        if (!node->is<Type>())
-        {
-            HARMONY_ERROR("Properties::Get - Type mismatch at {}",
-                fmt::format("[{}]", fmt::join(keys, ".")));
-            return std::nullopt;
-        }
-
-        Type value = node->get<Type>();
+        Type value = node->template get<Type>();
         HARMONY_DEBUG("Properties::Get - Retrieved {} = {}",
             fmt::format("[{}]", fmt::join(keys, ".")), value);
         return value;

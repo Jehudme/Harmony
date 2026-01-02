@@ -24,13 +24,8 @@ file(GLOB_RECURSE HEADERS "include/*.h" "src/*.h")
 
 add_library(HarmonyCore STATIC 
     ${SOURCES} 
-    ${HEADERS} 
-    "include/Harmony/PluginsFactoriesRegistry.h" 
-    "include/Harmony/Interfaces/IPluginsRegistry.h" 
-    "include/Harmony/Exceptions.h" 
-    "include/Harmony/Utilities/Color.h" 
-    "src/Color.cpp"
-)
+    ${HEADERS}
+ "include/Harmony/Plugins/SystemsRegistry.h" "src/SystemsRegistry.cpp")
 
 set_target_properties(HarmonyCore PROPERTIES POSITION_INDEPENDENT_CODE ON)
 

@@ -8,10 +8,10 @@
 namespace Harmony
 {
     // ========================================================
-    // High-precision Clock for Measuring Elapsed Time
+    // Clock for Measuring Elapsed Time
     // ========================================================
     
-    /// @brief High-precision clock for measuring elapsed time
+    /// @brief clock for measuring elapsed time
     /// @details Similar to sf::Clock but as a native Harmony utility.
     /// Uses std::chrono for cross-platform time measurement.
     class Clock
