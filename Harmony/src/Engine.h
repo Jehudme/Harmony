@@ -16,7 +16,7 @@ namespace Harmony
 
 		virtual void Initialize(const Properties& properties) override;
 
-        void Run() override;
+        virtual void Run() override;
 		virtual void Shutdown() override;
 
         State GetState() const override;
@@ -29,6 +29,7 @@ namespace Harmony
 
     private:
 		Clock m_clock;
+        SystemsRegistry m_systemsRegistry;
 		std::atomic<Engine::State> m_state;
     };
 

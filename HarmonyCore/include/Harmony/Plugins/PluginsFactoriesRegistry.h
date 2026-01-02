@@ -76,35 +76,31 @@ struct PluginRegistrar
 // 1. REGISTER (Static / Global Scope)
 // ========================================================
 // Registers a class at startup.
-// Usage: HARMONY_REGISTER_PLUGIN(IWidget, Button, "MyButton", int, std::string)
+// __VA_OPT__(,) ensures the comma is only present if variadic args exist.
 #define HARMONY_REGISTER_PLUGIN(Base, Concrete, Name, ...)                                         \
-    static Harmony::Internal::PluginRegistrar<Base, Concrete, ##__VA_ARGS__> HARMONY_UNIQUE_VAR(   \
-        harmony_reg_)(Name, Harmony::Internal::RegistrationMode::Standard)
+    static Harmony::Internal::PluginRegistrar<Base, Concrete __VA_OPT__(, ) __VA_ARGS__>           \
+    HARMONY_UNIQUE_VAR(harmony_reg_)(Name, Harmony::Internal::RegistrationMode::Standard)
 
 // ========================================================
 // 2. OVERRIDE (Static / Global Scope)
 // ========================================================
 // Unregisters any existing factory with this name, then registers this one.
-// Usage: HARMONY_OVERRIDE_PLUGIN(IWidget, NewButton, "MyButton", int, std::string)
 #define HARMONY_OVERRIDE_PLUGIN(Base, Concrete, Name, ...)                                         \
-    static Harmony::Internal::PluginRegistrar<Base, Concrete, ##__VA_ARGS__> HARMONY_UNIQUE_VAR(   \
-        harmony_ovr_)(Name, Harmony::Internal::RegistrationMode::Override)
+    static Harmony::Internal::PluginRegistrar<Base, Concrete __VA_OPT__(, ) __VA_ARGS__>           \
+    HARMONY_UNIQUE_VAR(harmony_ovr_)(Name, Harmony::Internal::RegistrationMode::Override)
 
 // ========================================================
 // 3. CREATE INSTANCE (Runtime)
 // ========================================================
 // Short-hand to create a plugin instance.
-// Usage: auto btn = HARMONY_CREATE_PLUGIN(IWidget, "MyButton", 10, "Label");
 #define HARMONY_CREATE_PLUGIN(Base, Name, ...)                                                     \
-    Harmony::PluginsFactoriesRegistry::Create<Base>(Name, ##__VA_ARGS__)
+    Harmony::PluginsFactoriesRegistry::Create<Base>(Name __VA_OPT__(, ) __VA_ARGS__)
 
 // ========================================================
 // 4. UNREGISTER (Runtime)
 // ========================================================
 // Manually unregister a factory at runtime.
-// Usage: HARMONY_UNREGISTER_PLUGIN(IWidget, "MyButton", int, std::string)
-// Note: You must provide the argument types so the registry template can be found.
 #define HARMONY_UNREGISTER_PLUGIN(Base, Name, ...)                                                 \
-    Harmony::PluginsFactoriesRegistry::UnregisterFactory<Base, ##__VA_ARGS__>(Name)
+    Harmony::PluginsFactoriesRegistry::UnregisterFactory<Base __VA_OPT__(, ) __VA_ARGS__>(Name)
 
 #include "PluginsFactoriesRegistry.inl"

@@ -2,9 +2,6 @@
 #include "Harmony/Assert.h"
 #include "Harmony/Logger.h"
 
-#include <condition_variable>
-#include <shared_mutex>
-
 namespace Harmony
 {
 Engine::Engine() : m_state(State::Uninitialized) {}
@@ -72,7 +69,7 @@ Engine::State Engine::GetState() const
 
 ISystemsRegistry& Engine::GetSystemsRegistry()
 {
-    // TODO: insert return statement here
+    return m_systemsRegistry;
 }
 
 void Engine::HandleUpdate()

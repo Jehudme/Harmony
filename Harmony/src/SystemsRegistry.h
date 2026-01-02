@@ -2,6 +2,8 @@
 #include "Harmony/Interfaces/ISystemsRegistry.h"
 
 #include <unordered_map>
+#include <memory>
+#include <string>
 
 namespace Harmony {
 	class SystemsRegistry : public ISystemsRegistry {

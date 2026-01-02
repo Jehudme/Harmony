@@ -12,7 +12,7 @@ file(GLOB_RECURSE HEADERS "include/*.h" "src/*.h")
 add_executable(Harmony 
     ${SOURCES} 
     ${HEADERS} 
-)
+ "src/SystemsRegistry.cpp")
 
 # ========================================================
 # Preprocessor Definitions

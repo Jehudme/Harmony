@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Harmony/Interfaces/ISystemsRegistry.h"
 #include "Harmony/Properties.h"
+#include "Harmony/Interfaces/ISystemsRegistry.h"
 
 namespace Harmony
 {
@@ -26,9 +26,6 @@ public:
 
     virtual State GetState() const = 0;
     virtual ISystemsRegistry& GetSystemsRegistry() = 0;
-
-private:
-    SystemsRegistry m_systemsRegistry;
 };
 
 } // namespace Harmony
