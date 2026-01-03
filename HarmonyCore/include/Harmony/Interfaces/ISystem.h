@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <Harmony/Properties.h>
 
 namespace Harmony
 {
@@ -19,8 +20,7 @@ public:
     virtual std::string GetRole() const = 0;
     virtual std::string GetVersion() const = 0;
 
-private:
-    virtual void Initialize() = 0;
-    virtual void Shutdown() = 0;
+    virtual void Initialize(const Properties& properties) = 0;
+    virtual void Finalize() = 0;
 };
 } // namespace Harmony

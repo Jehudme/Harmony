@@ -39,6 +39,8 @@ void Engine::Initialize(const Properties& properties)
     if (m_state != State::Uninitialized)
         return HARMONY_ERROR("Engine::Initialize - Engine already initialized");
 
+
+
     m_state = State::Initialized;
 }
 

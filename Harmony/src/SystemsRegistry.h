@@ -1,24 +1,32 @@
 #include "Harmony/Interfaces/ISystem.h"
 #include "Harmony/Interfaces/ISystemsRegistry.h"
+#include "Harmony/Properties.h"
 
-#include <unordered_map>
 #include <memory>
 #include <string>
+#include <unordered_map>
 
-namespace Harmony {
-	class SystemsRegistry : public ISystemsRegistry {
+namespace Harmony
+{
+class Engine;
+class SystemsRegistry : public ISystemsRegistry
+{
+public:
+    SystemsRegistry() = default;
+    ~SystemsRegistry() = default;
 
-	public:
-		SystemsRegistry() = default;
-		~SystemsRegistry() = default;
-		
-		ISystem* GetSystem(const std::string role) override;
+    State GetState() const override;
+    ISystem* GetSystem(const std::string role) override;
+    bool ContainsSystem(const std::string role) const override;
 
-		void CreateSystem(const std::string name) override;
-		void DeleteSystem(const std::string role) override;
-		bool ContainsSystem(const std::string role) const override;
+    void Initialize(const Properties& properties);
+    void Finalize();
 
-	private:
-		std::unordered_map<std::string, std::unique_ptr<ISystem>> m_systems;
-	};
-}
+    void CreateSystem(const std::string name);
+    void DeleteSystem(const std::string role);
+
+private:
+    std::unordered_map<std::string, std::unique_ptr<ISystem>> m_systems;
+    State m_state = State::Uninitialized;
+};
+} // namespace Harmony

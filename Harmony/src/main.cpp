@@ -2,6 +2,7 @@
 #include "Harmony/Properties.h"
 #include "Harmony/Logger.h"
 
+
 int main() {
 	Harmony::Logger::Initialize("harmony.log");
 

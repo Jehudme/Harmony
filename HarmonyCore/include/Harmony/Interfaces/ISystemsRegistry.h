@@ -7,12 +7,18 @@ namespace Harmony
 class ISystemsRegistry
 {
 public:
+    enum class State
+    {
+        Uninitialized,
+        Initialized,
+    };
+
+public:
     virtual ~ISystemsRegistry() = default;
 
     virtual ISystem* GetSystem(const std::string role) = 0;
-    virtual void CreateSystem(const std::string name) = 0;
-    virtual void DeleteSystem(const std::string role) = 0;
     virtual bool ContainsSystem(const std::string role) const = 0;
+    virtual State GetState() const = 0;
 };
 } // namespace Harmony
 
