@@ -19,7 +19,6 @@ public:
     template <typename BasePlugin, typename... Args>
     static std::unique_ptr<BasePlugin> Create(const std::string& name, Args&&... args);
 
-private:
     template <typename BasePlugin, typename... Args>
     static void UnregisterFactory(const std::string& name);
 

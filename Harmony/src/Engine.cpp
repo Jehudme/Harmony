@@ -39,8 +39,9 @@ void Engine::Initialize(const Properties& properties)
     if (m_state != State::Uninitialized)
         return HARMONY_ERROR("Engine::Initialize - Engine already initialized");
 
+    properties.DebugPrint();
 
-
+    m_systemsRegistry.Initialize(properties["Systems"]);
     m_state = State::Initialized;
 }
 

@@ -48,6 +48,6 @@ endif()
 add_custom_command(TARGET Harmony POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
     "${CMAKE_CURRENT_SOURCE_DIR}/assets"
-    "${CMAKE_BINARY_DIR}/assets"
-    COMMENT "Copying resources from Harmony Runner to Build Root..."
+    "$<TARGET_FILE_DIR:Harmony>/assets"
+    COMMENT "Copying assets to the executable directory..."
 )
