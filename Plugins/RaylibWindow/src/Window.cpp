@@ -55,14 +55,28 @@ void RaylibWindow::Initialize(const Properties& properties)
     // Apply properties with defaults
     if (width.has_value())
     {
-        m_width = static_cast<uint32_t>(width.value());
-        HARMONY_INFO("RaylibWindow: Width set to {}", m_width);
+        if (width.value() > 0)
+        {
+            m_width = static_cast<uint32_t>(width.value());
+            HARMONY_INFO("RaylibWindow: Width set to {}", m_width);
+        }
+        else
+        {
+            HARMONY_WARN("RaylibWindow: Invalid width value {}, using default {}", width.value(), m_width);
+        }
     }
 
     if (height.has_value())
     {
-        m_height = static_cast<uint32_t>(height.value());
-        HARMONY_INFO("RaylibWindow: Height set to {}", m_height);
+        if (height.value() > 0)
+        {
+            m_height = static_cast<uint32_t>(height.value());
+            HARMONY_INFO("RaylibWindow: Height set to {}", m_height);
+        }
+        else
+        {
+            HARMONY_WARN("RaylibWindow: Invalid height value {}, using default {}", height.value(), m_height);
+        }
     }
 
     if (title.has_value())
