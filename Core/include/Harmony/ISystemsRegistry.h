@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Harmony/Interfaces/ISystem.h"
+#include "Harmony/ISystem.h"
 #include "Harmony/Plugins/PluginsFactoriesRegistry.h"
 
 namespace Harmony

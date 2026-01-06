@@ -106,5 +106,4 @@ endif()
 # ========================================================
 
 add_subdirectory("Harmony")
-add_subdirectory("HarmonyCore")
-add_subdirectory("HarmonyPlugins")
+add_subdirectory("Core")

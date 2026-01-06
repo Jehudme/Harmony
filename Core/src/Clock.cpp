@@ -1,4 +1,4 @@
-#include "Harmony/Utilities/Clock.h"
+#include "Harmony/Clock.h"
 #include "Harmony/Assert.h"
 #include "Harmony/Logger.h"
 
@@ -10,7 +10,6 @@ namespace Harmony
 
 Clock::Clock() : m_startTime(std::chrono::steady_clock::now())
 {
-    HARMONY_TRACE("Clock created");
 }
 
 Clock::~Clock() = default;

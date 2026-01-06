@@ -1,5 +1,5 @@
-#include "Harmony/Interfaces/IEngine.h"
-#include "Harmony/Utilities/Clock.h"
+#include "Harmony/IEngine.h"
+#include "Harmony/Clock.h"
 #include "SystemsRegistry.h"
 
 namespace Harmony 

@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Harmony/Context.h"
 #include "Harmony/Properties.h"
 
 #include <functional>

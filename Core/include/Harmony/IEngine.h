@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Harmony/Properties.h"
-#include "Harmony/Interfaces/ISystemsRegistry.h"
+#include "Harmony/ISystemsRegistry.h"
 
 namespace Harmony
 {

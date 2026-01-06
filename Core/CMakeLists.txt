@@ -25,7 +25,7 @@ file(GLOB_RECURSE HEADERS "include/*.h" "src/*.h")
 add_library(HarmonyCore STATIC 
     ${SOURCES} 
     ${HEADERS}
-   "include/Harmony/Interfaces/ISystemsRegistry.h")
+)
 
 set_target_properties(HarmonyCore PROPERTIES POSITION_INDEPENDENT_CODE ON)
 

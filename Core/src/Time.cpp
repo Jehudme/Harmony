@@ -1,4 +1,4 @@
-#include "Harmony/Utilities/Time.h"
+#include "Harmony/Time.h"
 #include "Harmony/Assert.h"
 
 namespace Harmony

@@ -1,4 +1,4 @@
-#include "Harmony/Utilities/Color.h"
+#include "Harmony/Color.h"
 #include "Harmony/Assert.h"
 #include "Harmony/Logger.h"
 

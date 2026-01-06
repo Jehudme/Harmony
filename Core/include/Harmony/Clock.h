@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Harmony/Utilities/Time.h"
+#include "Harmony/Time.h"
 
 #include <chrono>
 #include <shared_mutex>

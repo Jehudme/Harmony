@@ -1,5 +1,5 @@
 #pragma once
-#include "Harmony/Interfaces/ISystem.h"
+#include "Harmony/ISystem.h"
 #include "Harmony/Properties.h"
 
 #include <functional>

@@ -1,5 +1,5 @@
-#include "Harmony/Interfaces/ISystem.h"
-#include "Harmony/Interfaces/ISystemsRegistry.h"
+#include "Harmony/ISystem.h"
+#include "Harmony/ISystemsRegistry.h"
 #include "Harmony/Properties.h"
 
 #include <memory>
