@@ -8,6 +8,8 @@
 namespace Harmony
 {
 
+constexpr int DEFAULT_TARGET_FPS = 60;
+
 RaylibWindow::RaylibWindow()
 {
     HARMONY_INFO("RaylibWindow: Constructor called");
@@ -142,8 +144,8 @@ void RaylibWindow::Initialize(const Properties& properties)
     // Apply VSync after window creation
     if (m_vsync)
     {
-        SetTargetFPS(60);
-        HARMONY_INFO("RaylibWindow: Target FPS set to 60 (VSync)");
+        SetTargetFPS(DEFAULT_TARGET_FPS);
+        HARMONY_INFO("RaylibWindow: Target FPS set to {} (VSync)", DEFAULT_TARGET_FPS);
     }
 
     m_state = State::Initialized;
@@ -214,8 +216,8 @@ void RaylibWindow::SetVSync(bool enabled)
     {
         if (enabled)
         {
-            SetTargetFPS(60);
-            HARMONY_INFO("RaylibWindow: VSync enabled (60 FPS)");
+            SetTargetFPS(DEFAULT_TARGET_FPS);
+            HARMONY_INFO("RaylibWindow: VSync enabled ({} FPS)", DEFAULT_TARGET_FPS);
         }
         else
         {
