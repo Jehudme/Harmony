@@ -2,7 +2,7 @@
 #include <Harmony/Logger.h>
 #include <Harmony/Assert.h>
 #include <Harmony/Properties.h>
-#include <Harmony/ISystemsRegistry.h>
+#include <Harmony/PluginsFactoriesRegistry.h>
 #include <raylib.h>
 
 namespace Harmony
