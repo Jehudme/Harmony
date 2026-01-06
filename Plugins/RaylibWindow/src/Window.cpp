@@ -170,8 +170,9 @@ void RaylibWindow::Finalize()
 
 void RaylibWindow::OnUpdate()
 {
-    // Poll events and swap buffers
-    // Raylib handles this internally
+    // Raylib handles window event polling and buffer swapping internally
+    // through BeginDrawing/EndDrawing in the render loop
+    // This method is intentionally empty as per the plugin requirements
 }
 
 uint32_t RaylibWindow::GetWidth() const
@@ -239,8 +240,9 @@ void RaylibWindow::SetFullscreen(bool enabled)
         if (enabled != m_fullscreen)
         {
             ToggleFullscreen();
-            m_fullscreen = enabled;
-            HARMONY_INFO("RaylibWindow: Fullscreen toggled to {}", enabled);
+            // Update state from actual window state after toggling
+            m_fullscreen = IsWindowFullscreen();
+            HARMONY_INFO("RaylibWindow: Fullscreen toggled to {}", m_fullscreen);
         }
     }
     else
@@ -260,8 +262,13 @@ bool RaylibWindow::IsFullscreen() const
 
 void RaylibWindow::SetResizable(bool enabled)
 {
+    if (IsWindowReady())
+    {
+        HARMONY_WARN("RaylibWindow: SetResizable not supported at runtime, must be set before initialization");
+        return;
+    }
+    
     m_resizable = enabled;
-    HARMONY_WARN("RaylibWindow: SetResizable not supported at runtime, must be set before initialization");
 }
 
 bool RaylibWindow::IsResizable() const
