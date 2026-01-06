@@ -2,7 +2,6 @@
 
 #include <Harmony/IWindow.h>
 #include <string>
-#include <memory>
 
 namespace Harmony
 {
