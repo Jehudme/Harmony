@@ -288,19 +288,27 @@ void RaylibWindow::SetTitle(const std::string& title)
 
 void RaylibWindow::SetIcon(const std::string& path)
 {
-    if (IsWindowReady())
+    if (!IsWindowReady())
     {
-        Image icon = LoadImage(path.c_str());
-        if (icon.data != nullptr)
-        {
-            SetWindowIcon(icon);
-            UnloadImage(icon);
-            HARMONY_INFO("RaylibWindow: Icon set from '{}'", path);
-        }
-        else
-        {
-            HARMONY_WARN("RaylibWindow: Failed to load icon from '{}'", path);
-        }
+        return;
+    }
+    
+    if (path.empty())
+    {
+        HARMONY_WARN("RaylibWindow: Icon path is empty");
+        return;
+    }
+    
+    Image icon = LoadImage(path.c_str());
+    if (icon.data != nullptr)
+    {
+        SetWindowIcon(icon);
+        UnloadImage(icon);
+        HARMONY_INFO("RaylibWindow: Icon set from '{}'", path);
+    }
+    else
+    {
+        HARMONY_WARN("RaylibWindow: Failed to load icon from '{}'", path);
     }
 }
 
