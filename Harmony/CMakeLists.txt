@@ -35,11 +35,11 @@ target_include_directories(Harmony
 # Link Libraries
 # ========================================================
 
-target_link_libraries(Harmony PRIVATE HarmonyCore)
-
-if(NOT HARMONY_STATIC_LINK)
-    target_link_libraries(Harmony PRIVATE HarmonyCore)
-endif()
+target_link_libraries(Harmony 
+    PRIVATE 
+        HarmonyCore
+        RaylibWindow
+)
 
 # ========================================================
 # Resource Management
