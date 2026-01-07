@@ -1,7 +1,7 @@
 #include "SystemsRegistry.h"
-#include <Harmony/Interfaces/ISystem.h>
+#include <Harmony/ISystem.h>
 #include <Harmony/Logger.h>
-#include <Harmony/Plugins/PluginsFactoriesRegistry.h>
+#include <Harmony/PluginsFactoriesRegistry.h>
 
 namespace Harmony
 {

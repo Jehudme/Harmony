@@ -1,7 +1,9 @@
 #pragma once
 
 #include "Harmony/ISystem.h"
-#include "Harmony/Plugins/PluginsFactoriesRegistry.h"
+#include "Harmony/PluginsFactoriesRegistry.h"
+
+#include <string>
 
 namespace Harmony
 {

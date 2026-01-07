@@ -1,7 +1,7 @@
 #include "Engine.h"
 #include "Harmony/Logger.h"
 #include "Harmony/Properties.h"
-#include <Harmony/Interfaces/ISystemsRegistry.h>
+#include <Harmony/ISystemsRegistry.h>
 
 
 class TestSystem : public Harmony::ISystem

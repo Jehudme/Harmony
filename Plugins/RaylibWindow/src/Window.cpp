@@ -1,8 +1,10 @@
 #include "Window.h"
 #include <Harmony/Logger.h>
 #include <Harmony/Properties.h>
-#include <Harmony/PluginsFactoriesRegistry.h>
+#include <Harmony/ISystemsRegistry.h>
 #include <raylib.h>
+
+#include <string>
 
 namespace Harmony
 {
